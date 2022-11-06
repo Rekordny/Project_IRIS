@@ -9,7 +9,6 @@ tags={
 }
 name="~IRIS~ 九色堇之心"
 picture="thumbnail.png"
-
 replace_path="events"
 replace_path="history/countries"
 replace_path="history/states"
