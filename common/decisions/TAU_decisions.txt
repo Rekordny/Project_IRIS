@@ -1,0 +1,507 @@
+TAU_dilemma = {
+	#向博闻提供有限银行服务
+	TAU_provide_limit_banking_BOW = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { NOT = { has_idea = TAU_foreign_deposits } }
+		ai_will_do = {
+			factor = 5
+			modifier = { }
+		}
+		cost = 50
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip14
+				check_variable = { tau_bw_atti > 34 }
+			}
+		}
+		days_re_enable = 30
+		complete_effect = {
+			BOW = { country_event = { id = tau.6 } }
+		}
+	}
+	#向理事会提供有限银行服务
+	TAU_provide_limit_banking_PCC = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { NOT = { has_idea = TAU_foreign_deposits } }
+		ai_will_do = {
+			factor = 5
+			modifier = { }
+		}
+		cost = 50
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip15
+				check_variable = { tau_lsh_atti > 34 }
+			}
+		}
+		days_re_enable = 30
+		complete_effect = {
+			PCC = { country_event = { id = tau.9 } }
+		}
+	}
+	#保护理事会科研专家
+	TAU_protect_researcher_PCC = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {  }
+		
+		ai_will_do = {
+			factor = 10
+			modifier = { }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip12
+				check_variable = { tau_lsh_atti > 44 }
+			}
+		}
+		cost = 50
+		fire_only_once = yes
+		complete_effect = {
+			TAU = { 
+				add_tech_bonus = {
+					category = air_equipment
+					uses = 1
+					bonus = 1
+				}
+				add_tech_bonus = {
+					category = electronics
+					uses = 1
+					bonus = 1
+				}
+			}
+			TAU_dilemma_atti_PCC_drop_2 = yes
+		}
+	}
+	#发布中立外交原则
+	TAU_neutral_diploma = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {  }
+		
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				OR = { check_variable = { tau_lsh_atti < 30 } check_variable = { tau_bw_atti < 30 } }
+				add = 5
+			}
+			modifier = {
+				OR = { check_variable = { tau_lsh_atti > 49 } check_variable = { tau_lsh_atti > 49 } }
+				add = -20
+			}
+		}
+		available = {
+			NOT = { has_government = fascism }
+			NOT = { has_country_flag = TAU_ABANDON_DILEMA }
+		}
+		cost = 50
+		days_remove = 100
+		remove_effect = {
+			TAU_dilemma_atti_PCC_rise_1 = yes
+			TAU_dilemma_atti_BOW_rise_1 = yes
+		}
+	}
+	#着重重整军备
+	TAU_rearmament = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_nservative is_debug = yes } }
+		
+		ai_will_do = {
+			factor = 10
+			modifier = { }
+		}
+		available = { }
+		fire_only_once = yes
+		custom_cost_trigger = {
+			has_army_experience > 35
+		}
+		custom_cost_text = TAU_tooltip10
+		days_remove = 50
+		remove_effect = {
+			random_core_state = {
+				limit = { is_controlled_by = TAU }
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = arms_factory
+					level = 3
+				}
+			}
+			TAU_dilemma_atti_PCC_drop_2 = yes
+			TAU_dilemma_atti_BOW_drop_2 = yes
+			hidden_effect = {
+				army_experience = -50
+			}
+		}
+	}
+	#与兰德索尔结盟
+	TAU_stand_with_LAD = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_attack_from_afar is_debug = yes } }
+		
+		ai_will_do = {
+			factor = 10
+			modifier = { }
+		}
+		available = {
+			is_faction_leader = yes
+			LAD = { 
+				is_in_faction = no
+				has_same_ideology = yes
+				has_opinion = {
+					target = TAU
+					value > 34
+				}
+			}
+		}
+		fire_only_once = yes
+		
+		complete_effect = {
+			add_to_faction = LAD
+			TAU_dilemma_atti_PCC_drop_2 = yes
+			TAU_dilemma_atti_BOW_drop_2 = yes
+		}
+	}
+	#博文对外交不满宣战
+	TAU_invasion_incoming_BOW = {
+		activation = { check_variable = { tau_bw_atti < -30 } NOT = { has_country_flag = TAU_ABANDON_DILEMA } }
+		available = {
+			OR = {
+				has_country_flag = TAU_ABANDON_DILEMA
+				custom_trigger_tooltip = {
+					tooltip = TAU_tooltip7
+					check_variable = { tau_bw_atti > -1 }
+				}
+			}
+		}
+		is_good = no
+		war_with_on_timeout = BOW 
+		days_mission_timeout = 60
+		selectable_mission = no
+		complete_effect = { }
+		timeout_effect = {
+			remove_ideas = TAU_independent_political_status
+			BOW = { 
+				create_wargoal = {
+					target = TAU
+					type = puppet_wargoal_focus
+				}
+			}
+			TAU_dilemma_abandon = yes
+		}
+	}
+	#理事会对外交不满宣战
+	TAU_invasion_incoming_PCC = {
+		activation = { check_variable = { tau_lsh_atti < -30 } NOT = { has_country_flag = TAU_ABANDON_DILEMA } }
+		available = {
+			OR = {
+				has_country_flag = TAU_ABANDON_DILEMA
+				custom_trigger_tooltip = {
+					tooltip = TAU_tooltip8
+					check_variable = { tau_lsh_atti > -1 }
+				}
+			}
+		}
+		is_good = no
+		war_with_on_timeout = PCC
+		days_mission_timeout = 60
+		selectable_mission = no
+		complete_effect = { }
+		timeout_effect = {
+			remove_ideas = TAU_independent_political_status
+			PCC = { 
+				create_wargoal = {
+					target = TAU
+					type = puppet_wargoal_focus
+				}
+			}
+			TAU_dilemma_abandon = yes
+		}
+	}
+}
+
+TAU_dedicated_goddesses = {
+	#供奉土地女神
+	TAU_dedicated_goddess_of_land = {
+		available = {
+			NOT = { has_idea = TAU_goddess_of_land }
+			NOT = { has_idea = TAU_goddess_of_war }
+			NOT = { has_idea = TAU_goddess_of_harvest }
+		}
+		custom_cost_trigger = {
+			check_variable = { tau_nsx > 4 }
+		}
+		custom_cost_text = TAU_tooltip4
+		complete_effect = {
+			add_timed_idea = {
+				idea = TAU_goddess_of_land
+				days = 200
+			}
+			add_to_variable = { tau_nsx = -5 }
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				date > 3091.1.1
+				add = 10
+			}
+		}
+	}
+	#供奉战争女神
+	TAU_dedicated_goddess_of_war = {
+		available = {
+			NOT = { has_idea = TAU_goddess_of_land }
+			NOT = { has_idea = TAU_goddess_of_war }
+			NOT = { has_idea = TAU_goddess_of_harvest }
+		}
+		custom_cost_trigger = {
+			check_variable = { tau_nsx > 4 }
+		}
+		custom_cost_text = TAU_tooltip4
+		complete_effect = {
+			add_timed_idea = {
+				idea = TAU_goddess_of_war
+				days = 200
+			}
+			add_to_variable = { tau_nsx = -5 }
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				date > 3091.1.1
+				add = 10
+			}
+			modifier = {
+				has_war = yes
+				add = 10
+			}
+		}
+	}
+	#供奉丰收女神
+	TAU_dedicated_goddess_of_harvest = {
+		available = {
+			NOT = { has_idea = TAU_goddess_of_land }
+			NOT = { has_idea = TAU_goddess_of_war }
+			NOT = { has_idea = TAU_goddess_of_harvest }
+		}
+		custom_cost_trigger = {
+			check_variable = { tau_nsx > 4 }
+		}
+		custom_cost_text = TAU_tooltip4
+		complete_effect = {
+			add_timed_idea = {
+				idea = TAU_goddess_of_harvest
+				days = 200
+			}
+			add_to_variable = { tau_nsx = -5 }
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				date > 3091.1.1
+				add = 10
+			}
+		}
+	}
+}
+
+TAU_student_union = {
+	#扩建特雷森
+	TAU_expand_campus = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {  }
+		modifier = {
+			civilian_factory_use = 3
+		}
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				
+			}
+		}
+		available = {
+			has_war = no
+		}
+		fire_only_once = no
+		days_re_enable = 60
+		days_remove = 59
+		cost = 100
+		remove_effect = {
+			set_temp_variable = { temp_var = ROOT.max_manpower_k }
+			multiply_temp_variable = { temp_var = 10 }
+			multiply_temp_variable = { temp_var = amount_research_slots }
+			divide_temp_variable = { temp_var = 100 }
+			multiply_temp_variable = { temp_var = num_of_civilian_factories }
+			multiply_temp_variable = { temp_var = ROOT.stability }
+			multiply_temp_variable = { temp_var = ROOT.has_war_support }
+			add_manpower = temp_var
+			random_core_state = {
+				limit = { is_controlled_by = TAU }
+				add_extra_state_shared_building_slots = 1
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				industrial_complex > 20
+				add = 10
+			}
+		}
+	}
+	#批准特雷森战时条例
+	TAU_war_law1 = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_expand_the_student_union is_debug = yes } NOT = { has_idea = TAU_war_law } }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				
+			}
+		}
+		available = {
+			has_war = yes
+		}
+		fire_only_once = no
+		days_remove = 10
+		remove_effect = {
+			add_stability = -0.05
+			add_ideas = TAU_war_law
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_war = yes
+				add = 5
+			}
+			modifier = {
+				has_war = yes surrender_progress > 0.3
+				add = 10
+			}
+		}
+	}
+	#废除特雷森战时条例
+	TAU_war_law2 = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_expand_the_student_union is_debug = yes } has_idea = TAU_war_law }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				NOT = { has_war = yes }
+				add = 15
+			}
+		}
+		available = {
+		}
+		fire_only_once = no
+		days_remove = 10
+		remove_effect = {
+			remove_ideas = TAU_war_law
+		}
+	}
+	#为专制添砖加瓦
+	TAU_propaganda = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_expand_the_student_union is_debug = yes } }
+		ai_will_do = {
+			factor = 5
+			modifier = { }
+		}
+		available = {
+			has_intelligence_agency = yes
+			OR = { 
+				AND = { has_completed_focus = TAU_radical
+				fascism < 0.8 }
+				AND = { has_completed_focus = TAU_conservative
+				neutrality < 0.8 }
+			}
+		}
+		fire_only_once = no
+		days_remove = 85
+		cost = 50
+		remove_effect = { 
+			if = { limit = { has_completed_focus = TAU_radical } add_popularity = {
+				ideology = fascism
+				popularity = 0.1
+			} }
+			if = { limit = { has_completed_focus = TAU_conservative } add_popularity = {
+				ideology = neutrality
+				popularity = 0.1
+			} }
+		}
+	}
+	#乌拉拉鼓励计划
+	TAU_urara_funds = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_new_generation_student_union is_debug = yes } }
+		available = {
+			industrial_complex > 19
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_timed_idea = {
+				idea = TAU_urara_funds
+				days = 300
+			}
+		}
+	}
+	#学生会扩张指标
+	TAU_war_indicator = {
+		activation = { has_completed_focus = TAU_territorial_expansion }
+		available = {
+			has_war = yes
+		}
+		fire_only_once = yes
+		is_good = no
+		war_with_on_timeout = KIV
+		days_mission_timeout = 100
+		selectable_mission = no
+		complete_effect = {
+			add_war_support = 0.05
+		}
+		timeout_effect = {
+			add_stability = -0.2
+			add_war_support = -0.2
+		}
+	}
+	#新军备筹建指标
+	TAU_rearm_indicator = {
+		activation = { has_war = yes }
+		available = {
+			arms_factory = >24
+		}
+		is_good = no
+		fire_only_once = yes
+		days_mission_timeout = 120
+		selectable_mission = no
+		complete_effect = {
+			add_timed_idea = {
+				idea = TAU_rearmament
+				days = 120
+			}
+		}
+		timeout_effect = {
+			if = { 
+				limit = { is_ai = yes } 
+				add_timed_idea = {
+					idea = TAU_rearmament
+					days = 120
+				} 
+			}
+		}
+	}
+}
+
+#URA赏
+TAU_URA = {
+	URA_start = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { }
+		ai_will_do = {
+			factor = 1
+			modifier = {
+			}
+		}
+		available = {
+		}
+		fire_only_once = yes
+		complete_effect = {
+		}
+	}
+}
