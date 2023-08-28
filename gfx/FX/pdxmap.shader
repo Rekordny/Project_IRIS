@@ -162,8 +162,8 @@ PixelShader =
 
 VertexStruct VS_INPUT_TERRAIN_NOTEXTURE
 {
-    float4 position			: POSITION;
-	float2 height			: TEXCOORD0;
+    int4 position			: POSITION;
+	int2 height			: TEXCOORD0;
 };
 
 VertexStruct VS_OUTPUT_TERRAIN
