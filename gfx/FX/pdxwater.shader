@@ -154,7 +154,7 @@ PixelShader =
 
 VertexStruct VS_INPUT_WATER
 {
-    float2 position			: POSITION;
+    int2 position			: POSITION;
 };
 
 VertexStruct VS_OUTPUT_WATER
