@@ -20,11 +20,22 @@ USR_republic_congress_decisions = {
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
-			random_core_state = {
-				limit = { is_controlled_by = USR industrial_complex > 0 }
-				remove_building = {
-					type = industrial_complex
-					level = 1
+			if = { 
+				limit = { 682 = { industrial_complex > 0 } } 
+				682 = {
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
+				}
+			}
+			else = {
+				random_core_state = {
+					limit = { is_controlled_by = USR industrial_complex > 0 }
+					remove_building = {
+						type = industrial_complex
+						level = 1
+					}
 				}
 			}
 			hidden_effect = {
@@ -38,7 +49,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 60
+			add_political_power = 80
 		}
 	}
 	#共和国议会议程:削减军费
@@ -76,7 +87,17 @@ USR_republic_congress_decisions = {
 			else_if = { 
 				limit = { check_variable = { usr_congress = 10 } } 
 				retire_character = USR_Elfriede
-				add_ideas = USR_lacking_millitary_officer
+				if = { 
+					limit = { is_ai = yes }
+					add_timed_idea = {
+						idea = USR_lacking_millitary_officer
+						days = 210
+					}
+				}
+				else = {
+					add_ideas = USR_lacking_millitary_officer
+				}
+				
 			}
 			else_if = { 
 				limit = { check_variable = { usr_congress = 13 } } 
@@ -93,7 +114,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 35
+			add_political_power = 50
 		}
 	}
 	#共和国议会议程:改革民主教育
@@ -130,7 +151,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 20
+			add_political_power = 30
 		}
 	}
 	#共和国外交:向卡美洛提供装备
@@ -151,18 +172,19 @@ USR_republic_congress_decisions = {
 		complete_effect = {
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -5000
+				amount = -3000
 			}
 			add_popularity = {
 				ideology = democratic
 				popularity = -0.05
 			}
+			add_political_power = 100
 			UNG = { 
 				add_ideas = USR_aid_UNG_MSA
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 5000
+					amount = 3000
 				} 
 			}
 		}
@@ -185,18 +207,19 @@ USR_republic_congress_decisions = {
 		complete_effect = {
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -5000
+				amount = -3000
 			}
 			add_popularity = {
 				ideology = fascism
 				popularity = 0.05
 			}
+			add_political_power = 100
 			MSA = {
 				add_ideas = USR_aid_UNG_MSA
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 5000
+					amount = 3000
 				} 
 			}
 		}
@@ -209,12 +232,16 @@ USR_republic_congress_decisions = {
 			
 		}
 		ai_will_do = {
-			base = 10
+			base = 0
+			modifier = {
+				has_completed_focus = USR_perpetrate_a_fraud
+				add = 10
+			}
 		}
 		fire_only_once = yes
 		days_remove = 100
 		remove_effect = {
-			add_stability = -0.15
+			add_stability = -0.1
 			add_popularity = {
 				ideology = neutrality
 				popularity = -0.1
@@ -278,11 +305,17 @@ USR_industrialization = {
 				add_extra_state_shared_building_slots = 2
 			}
 		}
+		ai_will_do = {
+			base = 10
+		}
 	}
 	USR_concession_of_mineral_rights = {
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
+		}
+		ai_will_do = {
+			base = 10
 		}
 	}
 	USR_reinforce_control_of_personal_industry = {
@@ -290,17 +323,53 @@ USR_industrialization = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_centralized_control_of_industry } is_testing = yes }
 		}
+		ai_will_do = {
+			base = 10
+		}
 	}
 }
 
 
 USR_high_command_kuromorimine = {
+
+	USR_reassemble_empire_troops = {
+		visible = {
+			TAG = USR
+			OR = { USR = { has_idea = USR_the_new_born_empire } is_testing = yes }
+		}
+		custom_cost_trigger = {
+			has_army_experience > 39
+		}
+		custom_cost_text = USR_tooltip10
+		days_remove = 50
+		modifier = {
+			stability_factor = -0.05
+		}
+		days_re_enable = 20
+		complete_effect = {
+			hidden_effect = {
+				army_experience = -40
+			}
+		}
+		remove_effect = { 
+			capital_scope = {
+				create_unit = {
+					division = "name = \"Uslar Empiror Artillery Division\" division_template = \"Uslar Empiror Artillery Division\" start_experience_factor = 0.5"
+					owner = USR
+				}
+			}
+		}
+		
+	}
 	USR_recall_unit_leaders = {
 		visible = {
 			TAG = USR
 			OR = { USR = { NOT = { has_idea = USR_the_republic_congress } } is_testing = yes }
 		}
 		cost = 100
+		ai_will_do = {
+			base = 10
+		}
 		days_remove = 100
 		fire_only_once = yes
 		remove_effect = {
@@ -308,19 +377,19 @@ USR_high_command_kuromorimine = {
 				limit = { check_variable = { usr_congress > 1 } } 
 				recruit_character = USR_Helma
 			}
-			else_if = { 
+			if = { 
 				limit = { check_variable = { usr_congress > 4 } } 
 				recruit_character = USR_Edytha
 			}
-			else_if = { 
+			if = { 
 				limit = { check_variable = { usr_congress > 6 } } 
 				recruit_character = USR_Hanna
 			}
-			else_if = { 
+			if = { 
 				limit = { check_variable = { usr_congress > 9 } } 
 				recruit_character = USR_Elfriede
 			}
-			else_if = { 
+			if = { 
 				limit = { check_variable = { usr_congress > 12 } } 
 				recruit_character = USR_Gertrude
 			}
@@ -332,13 +401,21 @@ USR_high_command_kuromorimine = {
 			OR = { USR = { NOT = { has_idea = USR_the_republic_congress } has_idea = USR_lacking_millitary_officer } is_testing = yes }
 		}
 		custom_cost_trigger = {
-			has_army_experience > 99
+			has_army_experience > 79
 		}
 		custom_cost_text = USR_tooltip4
 		days_remove = 20
 		fire_only_once = yes
+		complete_effect = {
+			hidden_effect = {
+				army_experience = -80
+			}
+		}
 		remove_effect = {
 			remove_ideas = USR_lacking_millitary_officer
+		}
+		ai_will_do = {
+			base = 10
 		}
 	}
 	USR_uslar_ai_research = {
@@ -354,18 +431,26 @@ USR_high_command_kuromorimine = {
 			recruit_character = USR_PzVI
 			recruit_character = USR_PzVIII
 		}
-		
+		ai_will_do = {
+			base = 10
+		}
 	}
 	USR_rebuild_TRB = {
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_uslar_ai_research } is_testing = yes }
 		}
+		ai_will_do = {
+			base = 10
+		}
 	}
 	USR_reform_government_TRB = {
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_uslar_ai_research } is_testing = yes }
+		}
+		ai_will_do = {
+			base = 10
 		}
 	}
 }

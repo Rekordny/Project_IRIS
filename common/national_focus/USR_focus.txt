@@ -15,7 +15,7 @@ focus_tree = {
 		icon = GFX_focus_USR_perpetrate_a_fraud
 		x = 15
 		y = 0
-		cost = 10
+		cost = 5
 		ai_will_do = {
 			base = 20
 		}
@@ -46,9 +46,10 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			create_intelligence_agency = yes
 			gain_random_agency_upgrade = yes
 			gain_random_agency_upgrade = yes
+			if = { limit = { has_intelligence_agency = yes } gain_random_agency_upgrade = yes }
+			else = { create_intelligence_agency = yes }
 		}
 	}
 	#要求重新发放在野党席位
@@ -57,7 +58,7 @@ focus_tree = {
 		icon = GFX_focus_USR_demand_re_issued_seats
 		x = 3
 		y = 1
-		cost = 10
+		cost = 5
 		relative_position_id = USR_perpetrate_a_fraud
 		prerequisite = { focus = USR_perpetrate_a_fraud }
 		ai_will_do = {
@@ -258,8 +259,12 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 			modifier = {
-				NOT = { has_government = fascism }
+				has_government = fascism
 				add = -9
+			}
+			modifier = {
+				has_civil_war = yes
+				add = -100
 			}
 		}
 		available = {
@@ -280,12 +285,17 @@ focus_tree = {
 		id = USR_march_to_red_sailor_sea
 		icon = GFX_focus_USR_march_to_red_sailor_sea
 		x = 0
-		y = 1
+		y = 5
 		cost = 10
 		relative_position_id = USR_clement_for_international_arbitration
 		prerequisite = { focus = USR_clement_for_international_arbitration }
+		prerequisite = { focus = USR_the_indstrial_heritage_of_the_empire }
 		ai_will_do = {
-			base = 10
+			base = 0
+			modifier = {
+				has_completed_focus = USR_nurembery_initiative
+				add = 10
+			}
 		}
 		available = {
 			
@@ -311,10 +321,15 @@ focus_tree = {
 		prerequisite = { focus = USR_befriend_ANZ }
 		mutually_exclusive = { focus = USR_clement_for_international_arbitration }
 		ai_will_do = {
-			base = 10
+			base = 0
 			modifier = {
-				NOT = { has_government = fascism }
-				add = 100
+				has_government = fascism
+				ANZ = { has_government = fascism }
+				add = 50
+			}
+			modifier = {
+				has_civil_war = yes
+				add = -100
 			}
 		}
 		available = {
@@ -347,7 +362,11 @@ focus_tree = {
 		prerequisite = { focus = USR_senshado_alliance }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
+			base = 0
+			modifier = {
+				has_completed_focus = USR_the_third_Reich
+				add = 10
+			}
 		}
 		available = {
 			has_government = fascism
@@ -372,7 +391,7 @@ focus_tree = {
 			base = 10
 		}
 		available = {
-			UNG = { has_war_with = MSA }
+			
 		}
 		completion_reward = {
 			KST = { country_event = { id = usr.5 } }
@@ -423,6 +442,7 @@ focus_tree = {
 			}
 			recruit_character = USR_Adolfine
 			recruit_character = USR_Erika
+			country_event = { id = usr.18 }
 		}
 	}
 	
@@ -437,7 +457,11 @@ focus_tree = {
 		prerequisite = { focus = USR_meet_the_war_hero }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
+			base = 0
+			modifier = {
+				has_completed_focus = USR_establish_counter_intelligence_committee
+				add = 10
+			}
 		}
 		available = {
 			
@@ -462,7 +486,11 @@ focus_tree = {
 		prerequisite = { focus = USR_kuromorimine_industrial_department }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
+			base = 0
+			modifier = {
+				has_completed_focus = USR_the_third_Reich
+				add = 10
+			}
 		}
 		available = {
 			
@@ -529,7 +557,11 @@ focus_tree = {
 		prerequisite = { focus = USR_invest_tank_factory }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
+			base = 0
+			modifier = {
+				has_completed_focus = USR_the_indstrial_heritage_of_the_empire
+				add = 10
+			}
 		}
 		available = {
 			
@@ -748,20 +780,25 @@ focus_tree = {
 		id = USR_the_indstrial_heritage_of_the_empire
 		icon = GFX_focus_USR_the_indstrial_heritage_of_the_empire
 		x = -1
-		y = 1
+		y = 2
 		cost = 10
 		relative_position_id = USR_rekindling_indstrial_passion
 		prerequisite = { focus = USR_rekindling_indstrial_passion }
 		prerequisite = { focus = USR_the_third_Reich }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
+			base = 100
 		}
 		available = {
 			has_army_manpower = {
-				size > 1000000
+				size > 600000
 			}
-			arms_factory > 39
+			arms_factory > 34
+		}
+		bypass = {
+			NOT = { 159 = { controller = {
+				tag = USR
+			} } }
 		}
 		completion_reward = {
 			country_event = { id = usr.13 }
@@ -772,7 +809,7 @@ focus_tree = {
 		id = USR_nurembery_initiative
 		icon = GFX_focus_USR_nurembery_initiative
 		x = 1
-		y = 2
+		y = 1
 		cost = 10
 		relative_position_id = USR_the_indstrial_heritage_of_the_empire
 		prerequisite = { focus = USR_the_indstrial_heritage_of_the_empire }
@@ -832,13 +869,25 @@ focus_tree = {
 		prerequisite = { focus = USR_meet_the_war_hero }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
+			base = 1
+			modifier = {
+				has_completed_focus = USR_the_third_Reich
+				add = 10
+			}
 		}
 		available = {
 			
 		}
 		completion_reward = {
 			add_ideas = USR_air_force_club
+			random_core_state = {
+				limit = { is_controlled_by = USR }
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+				}
+			}
 		}
 	}
 	#国际战车研发技术协定
@@ -871,7 +920,7 @@ focus_tree = {
 	focus = {
 		id = USR_strike_air_force_exchange_plan
 		icon = GFX_focus_USR_strike_air_force_exchange_plan
-		x = -6
+		x = -7
 		y = 1
 		cost = 10
 		relative_position_id = USR_air_force_club
@@ -958,6 +1007,7 @@ focus_tree = {
 		completion_reward = {
 			add_stability = 0.1
 			remove_ideas = USR_the_republic_congress
+			add_ideas = USR_the_new_born_empire
 		}
 	}
 }
