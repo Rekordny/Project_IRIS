@@ -64,6 +64,7 @@ focus_tree = {
 		}
         completion_reward = {
 			remove_ideas = STG_Empty_Throne
+            STG_increase_global_unrest = yes
 		}
     }
     #一切照旧
@@ -81,6 +82,7 @@ focus_tree = {
 		}
         completion_reward = {
 			add_political_power = 50
+            add_stability = 0.05
 		}
     }
     #残存之恶
@@ -112,6 +114,8 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            STG_reduce_usr_unrest = yes
+            STG_reduce_cam_unrest = yes
 			add_popularity = {
                 ideology = fascism
                 popularity = -0.05
@@ -136,6 +140,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            STG_decrease_global_unrest
 			add_ideas = STG_watch_our_border
 		}
     }
@@ -538,12 +543,12 @@ focus_tree = {
         completion_reward = {
             add_stability = 0.20
             add_ideas = STG_neutrality_idea
+            STG_decrease_global_unrest_big
             set_rule = {
                 can_create_factions = no
                 can_join_factions = no
                 can_send_volunteers = no                
-            }
-            
+            }            
 		}
     }
 #君主制路线
@@ -558,7 +563,7 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_starting_2 }
         available = {
-            always = no
+            has_country_flag = STG_monarchy_kept
         }
         ai_will_do = {
 			factor = 1
@@ -588,6 +593,7 @@ focus_tree = {
         completion_reward = {
             remove_ideas = STG_Empty_Throne
             add_political_power = 75
+            custom_effect_tooltip = STG_strengthen_usr
             hidden_effect = {
                 add_popularity = {
                     ideology = fascism
@@ -621,11 +627,9 @@ focus_tree = {
                 character = STG_ilya
                 ideology = sub_Universalism
             }
-            STG = {
-                STG_reduce_usr_unrest_big = yes
-                STG_increase_cam_unrest = yes
-            }
-            
+            STG_decrease_global_unrest = yes
+            STG_reduce_usr_unrest_big = yes
+            STG_increase_cam_unrest = yes    
             country_event = {}
 		}
     }
@@ -687,7 +691,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            add_war_support = 0.20    
 		}
     }
     #归乡
@@ -706,9 +710,17 @@ focus_tree = {
         ai_will_do = {
 			factor = 1
 		}
-        completion_reward = {
-            
-		}
+        will_lead_to_war_with = USR
+        completion_reward = {    
+            create_wargoal = {
+                target = USR
+                type = annex_everything
+            }
+            add_timed_idea = {
+                idea = STG_ilya_storm
+                time = 270
+		    }
+        }
     }
     #合而为一
     focus = {
@@ -716,7 +728,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 20
         relative_position_id = STG_ilya_war_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_war_1 }
@@ -727,7 +739,17 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            custom_effect_tooltip = STG_add_usr_core
+            hidden_effect = {
+                every_state = {
+                    if = {
+                        limit = {
+                            is_core_of = USR
+                        }
+                        add_core = STG
+                    }
+                }
+            }
 		}
     }
     #卡美洛之敌
@@ -747,7 +769,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            country_event = {}
 		}
     }
     #拔下呆毛
@@ -766,7 +788,12 @@ focus_tree = {
         ai_will_do = {
 			factor = 1
 		}
+        will_lead_to_war_with = UNG
         completion_reward = {
+            create_wargoal = {
+                target = UNG
+                type = annex_everything
+            }
             
 		}
     }
@@ -808,7 +835,14 @@ focus_tree = {
 		}
         completion_reward = {
             add_country_leader_trait = TRAIT_STG_ilya_genius
-            
+            random_owned_controlled_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = arms_factory
+				level = 2
+				instant_build = yes
+			    }
+		    }    
 		}
     }
     #爱因兹贝伦秘术
@@ -828,7 +862,21 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = armor 
+            }
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = infantry_weapons
+            }
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = artillery
+            }
 		}
     }
     #改良玛纳主义
@@ -848,7 +896,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            add_idea = STG_ilya_mana
 		}
     }
     #爱因兹贝伦的新秩序
@@ -873,7 +921,8 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            remove_country_leader_trait = TRAIT_STG_ilya_naive
+            STG_decrease_global_unrest_big = yes    
 		}
     }
     #雪之城的女皇
@@ -895,6 +944,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            set_cosmetic_tag = STG_ilya_empire
             add_country_leader_trait = TRAIT_STG_ilya_queen
             
 		}
@@ -937,7 +987,11 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            custom_effect_tooltip = STG_more_decision_against_cam
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_cam
+            }
+            STG_reduce_cam_unrest_big = yes
 		}
     }
     #尘埃落定
@@ -951,13 +1005,19 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_monarchy_3 }
         available = {
-            
+            NOT = {
+                fascism > 0.05
+            }
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+            add_political_power = 50
+			custom_effect_tooltip = STG_can_crush_cam
+            hidden_effect = {
+                set_country_flag = STG_can_crush_cam
+            }
 		}
     }
     #有备无患
@@ -1317,13 +1377,16 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_starting_2 }
         available = {
-            
+            has_country_flag = STG_army_takeover
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			custom_effect_tooltip = STG_more_decision_against_cam
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_cam
+            }
 		}
     }
     #关门大吉
