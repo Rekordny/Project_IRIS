@@ -1,0 +1,224 @@
+#一场酝酿已久的内战
+ANZ_let_be_final_civil_war = {
+	news_event = { id = anz_news.1 }
+	country_lock_all_division_template = no
+	#处理什么国策都没点的懒狗
+	if = { 
+		limit = { NOT = { has_country_flag = ANZ_ANZIO } NOT = { has_country_flag = ANZ_LOTHIAN } }
+		set_country_flag = ANZ_ANZIO
+		#给你加点料
+		add_to_variable = {
+			anz_civil_enemy_power = 10
+		}
+	}
+	
+	#安齐奥
+	if = {
+		limit = { has_country_flag = ANZ_ANZIO }
+		#转换中立将
+		every_unit_leader = {
+			limit = { NOT = { has_trait = ANZ_scuola_industriale } NOT = { has_trait = ANZ_fazione_di_mana } }
+			#每有一个敌对将领，对面都会多俩师
+			ANZ = {
+				add_to_variable = {
+					anz_civil_enemy_power = 1
+				}
+			}
+			add_trait = {
+				trait = ANZ_fazione_di_mana
+			}
+		}
+		start_civil_war = {
+			ideology = democratic
+			size = 0.5
+			army_ratio = 0.45
+    		navy_ratio = 0
+			keep_unit_leaders_trigger = {
+				has_trait = ANZ_scuola_industriale
+			}
+			#keep_all_characters = no
+			#有bug！还是会出现对方将领在我们这边，直接丢掉
+			PREV = { 
+				every_unit_leader = {
+					limit = { has_trait = ANZ_fazione_di_mana }
+					retire = yes
+				}
+			}
+			states = { 251 239 227 237 220 223 }
+			#处理敌人难度增加师
+			while_loop_effect = {
+				limit = { check_variable = {
+					ANZ.anz_civil_enemy_power > 0
+				} }
+				add_to_variable = {
+					ANZ.anz_civil_enemy_power = -1
+				}
+				237 = {
+					create_unit = {
+						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+						owner = THIS.owner
+					}
+					create_unit = {
+						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+						owner = THIS.owner
+					}
+				}
+			}
+			#副领导人切换
+			if = { 
+				limit = { ANZ = { has_idea = ANZ_another_leader_Giovanna } }
+				PREV = {
+					swap_ideas = {
+						remove_idea = ANZ_another_leader_Giovanna
+						add_idea = ANZ_another_leader_Adriana
+					}
+				}
+			}
+			set_variable = {
+				another_country_leader_group = 3
+			}
+			add_ideas = ANZ_another_leader_Giovanna
+			
+			#安齐奥需要删除所有魔法部队模板
+			PREV = {
+				delete_unit_template_and_units = {
+					division_template = "Lottian Arcane Platton"
+					disband = yes #will refund equipment and manpower
+				}
+			}
+		}
+		#我方增加部队
+		while_loop_effect = {
+			limit = { check_variable = {
+				ANZ.anz_civil_our_power > 0
+			} }
+			add_to_variable = {
+				ANZ.anz_civil_our_power = -1
+			}
+			205 = {
+				create_unit = {
+					division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+					owner = THIS.owner
+				}
+				create_unit = {
+					division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+					owner = THIS.owner
+				}
+			}
+		}
+	}
+	#洛蒂安
+	else_if = {
+		limit = { has_country_flag = ANZ_LOTHIAN }
+		#转换中立将
+		every_unit_leader = {
+			limit = { NOT = { has_trait = ANZ_scuola_industriale } NOT = { has_trait = ANZ_fazione_di_mana } }
+			#每有一个敌对将领，对面都会多俩师
+			ANZ = {
+				add_to_variable = {
+					anz_civil_enemy_power = 1
+				}
+			}
+			add_trait = {
+				trait = ANZ_scuola_industriale
+			}
+		}
+		start_civil_war = {
+			ruling_party = democratic
+			ideology = ROOT
+			size = 0.5
+			army_ratio = 0.5
+    		navy_ratio = 1
+			keep_unit_leaders_trigger = {
+				has_trait = ANZ_fazione_di_mana
+			}
+			#keep_all_characters = no
+			#有bug！还是会出现对方将领在我们这边，直接丢掉
+			PREV = { 
+				every_unit_leader = {
+					limit = { has_trait = ANZ_scuola_industriale }
+					retire = yes
+				}
+			}
+			states = { 180 203 176 193 171 170 188 223 205 207 210 }
+			#处理敌人难度增加师
+			while_loop_effect = {
+				limit = { check_variable = {
+					ANZ.anz_civil_enemy_power > 0
+				} }
+				add_to_variable = {
+					ANZ.anz_civil_enemy_power = -1
+				}
+				205 = {
+					create_unit = {
+						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+						owner = THIS.owner
+					}
+					create_unit = {
+						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+						owner = THIS.owner
+					}
+				}
+			}
+			#副领导人切换
+			if = { 
+				limit = { ANZ = { has_idea = ANZ_another_leader_Adriana } }
+				PREV = {
+					swap_ideas = {
+						remove_idea = ANZ_another_leader_Adriana
+						add_idea = ANZ_another_leader_Carla
+					}
+				}
+			}
+			set_variable = {
+				another_country_leader_group = 3
+			}
+			add_ideas = ANZ_another_leader_Adriana
+			#洛蒂安需要删除所有装甲部队模板
+			PREV = {
+				delete_unit_template_and_units = {
+					division_template = "Anzio Panzer Division"
+					disband = yes #will refund equipment and manpower
+				}
+			}
+		}
+		#我方增加部队
+		while_loop_effect = {
+			limit = { check_variable = {
+				ANZ.anz_civil_our_power > 0
+			} }
+			add_to_variable = {
+				ANZ.anz_civil_our_power = -1
+			}
+			237 = {
+				create_unit = {
+					division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+					owner = THIS.owner
+				}
+				create_unit = {
+					division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+					owner = THIS.owner
+				}
+			}
+		}
+		if = {
+			limit = { has_completed_focus = ANZ_the_blood_crusades }
+			load_oob = "ANZ_crusader"
+		}
+		if = {
+			limit = { has_completed_focus = ANZ_icorporation_of_diocese_of_aldrich }
+			246 = { transfer_state_to = ANZ }
+			228 = { transfer_state_to = ANZ }
+			216 = { transfer_state_to = ANZ }
+			236 = { transfer_state_to = ANZ }
+			246 = { add_core_of = ANZ }
+			228 = { add_core_of = ANZ }
+			216 = { add_core_of = ANZ }
+			236 = { add_core_of = ANZ }
+		}
+	}
+	#关闭BOP
+	remove_power_balance = {
+		id = ANZ_industrialization_against_manalisation
+	}
+}
