@@ -64,6 +64,7 @@ focus_tree = {
 		}
         completion_reward = {
 			remove_ideas = STG_Empty_Throne
+            STG_increase_global_unrest = yes
 		}
     }
     #一切照旧
@@ -81,6 +82,7 @@ focus_tree = {
 		}
         completion_reward = {
 			add_political_power = 50
+            add_stability = 0.05
 		}
     }
     #残存之恶
@@ -94,29 +96,33 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_2 }
         available = {
-            OR = {
-                has_idea = STG_roylaist_discontent_low
-                has_idea = STG_roylaist_discontent_middle
-                has_idea = STG_roylaist_discontent_high
-                has_idea = STG_roylaist_discontent_very_high
-                has_idea = STG_cam_discontent_low
-                has_idea = STG_cam_discontent_middle
-                has_idea = STG_cam_discontent_high
-                has_idea = STG_cam_discontent_very_high
-            }
-            
+            custom_trigger_tooltip = {
+                tooltip = STG_has_discontent
+                OR = {
+                    has_idea = STG_usr_discontent_low
+                    has_idea = STG_usr_discontent_middle
+                    has_idea = STG_usr_discontent_high
+                    has_idea = STG_usr_discontent_very_high
+                    has_idea = STG_cam_discontent_low
+                    has_idea = STG_cam_discontent_middle
+                    has_idea = STG_cam_discontent_high
+                    has_idea = STG_cam_discontent_very_high
+                }
+            }            
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
+            STG_reduce_usr_unrest = yes
+            STG_reduce_cam_unrest = yes
 			add_popularity = {
                 ideology = fascism
-                popularity = -0.05
+                popularity = -0.02
             }
             add_popularity = {
                 ideology = reactionism
-                popularity = -0.05
+                popularity = -0.02
             }
 		}
     }
@@ -134,6 +140,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            STG_decrease_global_unrest
 			add_ideas = STG_watch_our_border
 		}
     }
@@ -311,6 +318,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            add_research_slot = 1
 			add_tech_bonus = {
 		    bonus = 1.5 
 		    uses = 2
@@ -535,13 +543,13 @@ focus_tree = {
 		}
         completion_reward = {
             add_stability = 0.20
-            add_ideas = STG_neutrality
+            add_ideas = STG_neutrality_idea
+            STG_decrease_global_unrest_big
             set_rule = {
                 can_create_factions = no
                 can_join_factions = no
                 can_send_volunteers = no                
-            }
-            
+            }            
 		}
     }
 #君主制路线
@@ -556,7 +564,7 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_starting_2 }
         available = {
-            always = no
+            has_country_flag = STG_monarchy_kept
         }
         ai_will_do = {
 			factor = 1
@@ -585,6 +593,18 @@ focus_tree = {
 		}
         completion_reward = {
             remove_ideas = STG_Empty_Throne
+            add_political_power = 75
+            custom_effect_tooltip = STG_strengthen_usr
+            hidden_effect = {
+                add_popularity = {
+                    ideology = fascism
+                    popularity = 0.05
+                }
+                add_popularity = {
+                    ideology = reactionism
+                    popularity = -0.03
+                }
+            }            
 		}
     }
     #伊莉雅之治
@@ -603,7 +623,15 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            retire_character = STG_parliament
+            promote_character = {
+                character = STG_ilya
+                ideology = sub_Universalism
+            }
+            STG_decrease_global_unrest = yes
+            STG_reduce_usr_unrest_big = yes
+            STG_increase_cam_unrest = yes    
+            country_event = {}
 		}
     }
     #扩建爱因兹贝伦城
@@ -664,7 +692,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            add_war_support = 0.20    
 		}
     }
     #归乡
@@ -683,9 +711,17 @@ focus_tree = {
         ai_will_do = {
 			factor = 1
 		}
-        completion_reward = {
-            
-		}
+        will_lead_to_war_with = USR
+        completion_reward = {    
+            create_wargoal = {
+                target = USR
+                type = annex_everything
+            }
+            add_timed_idea = {
+                idea = STG_ilya_storm
+                days = 270
+		        }
+        }
     }
     #合而为一
     focus = {
@@ -693,7 +729,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 20
         relative_position_id = STG_ilya_war_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_war_1 }
@@ -704,8 +740,18 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
-		}
+            custom_effect_tooltip = STG_add_usr_core
+            hidden_effect = {
+                every_state = {
+                    if = {
+                        limit = {
+                            is_core_of = USR
+                        }
+                        add_core_of = STG
+                    }
+                }
+            }
+		    }
     }
     #卡美洛之敌
     focus = {
@@ -724,7 +770,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            country_event = {}
 		}
     }
     #拔下呆毛
@@ -743,7 +789,12 @@ focus_tree = {
         ai_will_do = {
 			factor = 1
 		}
+        will_lead_to_war_with = UNG
         completion_reward = {
+            create_wargoal = {
+                target = UNG
+                type = annex_everything
+            }
             
 		}
     }
@@ -784,7 +835,15 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            add_country_leader_trait = TRAIT_STG_ilya_genius
+            random_owned_controlled_state = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+				type = arms_factory
+				level = 2
+				instant_build = yes
+			    }
+		    }    
 		}
     }
     #爱因兹贝伦秘术
@@ -804,8 +863,22 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
-		}
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = armor 
+            }
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = infantry_weapons
+            }
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = artillery
+            }
+		    }
     }
     #改良玛纳主义
     focus = {
@@ -824,7 +897,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            add_research_slot = 1
 		}
     }
     #爱因兹贝伦的新秩序
@@ -849,7 +922,8 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            
+            remove_country_leader_trait = TRAIT_STG_ilya_naive
+            STG_decrease_global_unrest_big = yes    
 		}
     }
     #雪之城的女皇
@@ -871,6 +945,13 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            set_cosmetic_tag = STG_ilya_empire
+            add_country_leader_trait = TRAIT_STG_ilya_queen
+            hidden_effect = {
+                set_country_leader_description = {
+                    desc = "STG_ilya_desc_2"
+                }
+            }
             
 		}
     }
@@ -912,7 +993,11 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            custom_effect_tooltip = STG_more_decision_against_cam
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_cam
+            }
+            STG_reduce_cam_unrest_big = yes
 		}
     }
     #尘埃落定
@@ -926,13 +1011,19 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_monarchy_3 }
         available = {
-            
+            NOT = {
+                fascism > 0.05
+            }
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+            add_political_power = 50
+			custom_effect_tooltip = STG_can_crush_cam
+            hidden_effect = {
+                set_country_flag = STG_can_crush_cam
+            }
 		}
     }
     #有备无患
@@ -952,7 +1043,8 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            add_command_power = 50
+            custom_effect_tooltip = STG_speical_opertaions
 		}
     }
     #格雷伯爵
@@ -968,7 +1060,7 @@ focus_tree = {
         prerequisite = { focus = STG_monarchy_1 }
         mutually_exclusive = { focus = STG_ilya_1 }
         available = {
-            
+            has_country_flag = STG_grey_elected
         }
         ai_will_do = {
 			factor = 1
@@ -1055,6 +1147,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            add_research_slot = 1
 			
 		}
     }
@@ -1292,13 +1385,16 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_starting_2 }
         available = {
-            
+            has_country_flag = STG_army_takeover
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			custom_effect_tooltip = STG_more_decision_against_cam
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_cam
+            }
 		}
     }
     #关门大吉
@@ -1358,7 +1454,13 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            if ={
+                limit = {
+                    amount_research_slots < 5
+                } 
+                add_research_slot = 1
+            }
+            add_ideas = STG_knowledge_and_power
 		}
     }
     #责任与梦想
@@ -1399,7 +1501,16 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            set_politics = {
+                ruling_party = neutrality
+            }
+            promote_character = {
+                character = STG_darjeeling_3
+                ideology = sub_National_Conservatism
+            }
+			hidden_effect = {
+                remove_ideas = STG_darjeeling_3
+            }
 		}
     }
     
@@ -1521,7 +1632,13 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            hidden_effect = {
+                retire_character = STG_darjeeling_3
+            }
+            promote_character = {
+                character = STG_darjeeling_1
+                ideology = sub_Authoritarian_Democracy
+            }
 		}
     }
     ##摄政线
@@ -1542,6 +1659,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            
 			
 		}
     }
@@ -1562,7 +1680,16 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+            set_politics = {
+                ruling_party = neutrality
+            }
+			promote_character = {
+                character = STG_darjeeling_3
+                ideology = sub_National_Conservatism
+            }
+            hidden_effect = {
+                remove_ideas = STG_darjeeling_3
+            }
 		}
     }
     #御前议会
@@ -1603,7 +1730,13 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+			hidden_effect = {
+                retire_character = STG_darjeeling_3
+            }
+            promote_character = {
+                character = STG_darjeeling_2
+                ideology = sub_enlightened_despotism
+            }
 		}
     }
     #西征
@@ -1875,6 +2008,397 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = {            
             focus = STG_tea_1
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+#外交
+    #外交事务
+    focus = {
+        id = STG_dip_1
+        icon = 1
+        x = 0
+        y = 12
+        cost = 5
+        relative_position_id = STG_starting_1
+        available_if_capitulated = yes
+        prerequisite = {            
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #两强锁喉
+    focus = {
+        id = STG_dip_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_1
+        available_if_capitulated = yes
+        prerequisite = {       
+            focus = STG_dip_1     
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #西方伪王
+    focus = {
+        id = STG_dip_3
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_2        
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #援助莫德雷德
+    focus = {
+        id = STG_dip_4
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_dip_3
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_3        
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #寻求支援
+    focus = {
+        id = STG_dip_5
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_2        
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #北方睡狮
+    focus = {
+        id = STG_dip_6
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_2        
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #与爱丽诺的盟约
+    focus = {
+        id = STG_dip_7
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_6
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_6        
+        }
+        mutually_exclusive = {
+            focus = STG_dip_9
+        }
+        mutually_exclusive = {
+            focus = STG_dip_11
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #接触安其奥
+    focus = {
+        id = STG_dip_8
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_7
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_7        
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #自治倡议
+    focus = {
+        id = STG_dip_9
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_6
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_6        
+        }
+        mutually_exclusive = {
+            focus = STG_dip_7
+        }
+        mutually_exclusive = {
+            focus = STG_dip_11
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #和平与繁荣
+    focus = {
+        id = STG_dip_10
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_9
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_9      
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #意外之盟
+    focus = {
+        id = STG_dip_11
+        icon = 1
+        x = 4
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_6
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_6      
+        }
+        mutually_exclusive = {
+            focus = STG_dip_7
+        }
+        mutually_exclusive = {
+            focus = STG_dip_9
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #合作共赢
+    focus = {
+        id = STG_dip_12
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_11
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_11
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #终将到来之役
+    focus = {
+        id = STG_dip_war_1
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_3
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_3
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #储备充盈
+    focus = {
+        id = STG_dip_war_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_war_1
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_war_1
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #多多益善
+    focus = {
+        id = STG_dip_war_3
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_war_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_war_2
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #恪尽职守
+    focus = {
+        id = STG_dip_war_4
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_war_1
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_war_1
+        }
+        available = {
+            
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			
+		}
+    }
+    #鞠躬尽瘁
+    focus = {
+        id = STG_dip_war_5
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_dip_war_4
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_dip_war_4
         }
         available = {
             

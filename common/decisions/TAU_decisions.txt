@@ -2,7 +2,7 @@ TAU_dilemma = {
 	#向博闻提供有限银行服务
 	TAU_provide_limit_banking_BOW = {
 		icon = GFX_decision_eng_trade_unions_support
-		visible = { NOT = { has_idea = TAU_foreign_deposits } }
+		visible = { NOT = { has_idea = TAU_foreign_deposits }  OR = { has_completed_focus = TAU_pass_the_brilliance has_completed_focus = TAU_break_the_balance } }
 		ai_will_do = {
 			factor = 5
 			modifier = { }
@@ -19,10 +19,42 @@ TAU_dilemma = {
 			BOW = { country_event = { id = tau.6 } }
 		}
 	}
+	#接受博闻难民
+	TAU_accept_refugee_BOW = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_pass_the_brilliance has_completed_focus = TAU_break_the_balance has_completed_focus = TAU_conservative } }
+		ai_will_do = {
+			factor = 15
+			modifier = { }
+		}
+		cost = 50
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip14
+				check_variable = { tau_bw_atti > 34 }
+			}
+		}
+		days_re_enable = 50
+		days_remove = 100
+		modifier = {
+			consumer_goods_factor = 0.03
+		}
+		remove_effect = {
+			random_core_state = {
+				limit = { is_controlled_by = TAU }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			TAU_dilemma_atti_BOW_drop_1 = yes
+		}
+	}
 	#向理事会提供有限银行服务
 	TAU_provide_limit_banking_PCC = {
 		icon = GFX_decision_eng_trade_unions_support
-		visible = { NOT = { has_idea = TAU_foreign_deposits } }
+		visible = { NOT = { has_idea = TAU_foreign_deposits }  OR = { has_completed_focus = TAU_pass_the_brilliance has_completed_focus = TAU_break_the_balance } }
 		ai_will_do = {
 			factor = 5
 			modifier = { }
@@ -42,7 +74,7 @@ TAU_dilemma = {
 	#保护理事会科研专家
 	TAU_protect_researcher_PCC = {
 		icon = GFX_decision_eng_trade_unions_support
-		visible = {  }
+		visible = { OR = { has_completed_focus = TAU_conservative has_completed_focus = TAU_pass_the_brilliance has_completed_focus = TAU_break_the_balance } }
 		
 		ai_will_do = {
 			factor = 10
@@ -72,10 +104,125 @@ TAU_dilemma = {
 			TAU_dilemma_atti_PCC_drop_2 = yes
 		}
 	}
+	#主动平衡天平
+	TAU_rebalance_the_tilting_PCC = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { OR = { has_completed_focus = TAU_take_back_disputed_territory } }
+		
+		ai_will_do = {
+			factor = 0
+			modifier = { }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip12
+				check_variable = { tau_lsh_atti > 44 }
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			remove_ideas = TAU_independent_political_status
+			set_country_flag = TAU_DISABLE_NEUTRAL_DIPLOMA
+			country_event = tau.13
+		}
+	}
+	#向理事会派出志愿军
+	TAU_send_volunteer_PCC = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { NOT = { has_idea = TAU_limit_interference } OR = { has_completed_focus = TAU_return_to_world_politics } }
+		
+		ai_will_do = {
+			factor = 10
+			modifier = { }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip12
+				check_variable = { tau_lsh_atti > 44 }
+			}
+		}
+		cost = 100
+		fire_only_once = yes
+		complete_effect = {
+			add_ideas = TAU_limit_interference
+			TAU_dilemma_atti_BOW_drop_3 = yes
+			TAU_dilemma_atti_BOW_drop_3 = yes
+		}
+	}
+	#向博闻派出志愿军
+	TAU_send_volunteer_BOW = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { NOT = { has_idea = TAU_limit_interference } OR = { has_completed_focus = TAU_return_to_world_politics } }
+		
+		ai_will_do = {
+			factor = 10
+			modifier = { }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip12
+				check_variable = { tau_lsh_atti > 44 }
+			}
+		}
+		cost = 100
+		fire_only_once = yes
+		complete_effect = {
+			add_ideas = TAU_limit_interference
+			TAU_dilemma_atti_PCC_drop_3 = yes
+			TAU_dilemma_atti_PCC_drop_3 = yes
+		}
+	}
+	#向理事会要求科学援助
+	TAU_get_research_slot_PCC = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { amount_research_slots = 2 OR = { has_completed_focus = TAU_pass_the_brilliance has_completed_focus = TAU_break_the_balance } }
+		
+		ai_will_do = {
+			factor = 10
+			modifier = { }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = TAU_tooltip15
+				check_variable = { tau_lsh_atti > 34 }
+			}
+		}
+		cost = 50
+		fire_only_once = no
+		complete_effect = {
+			if = {
+				limit = { check_variable = {
+					tau_lsh_atti > 54
+				} }
+				random = {
+					chance = 80
+					add_research_slot = 1
+					TAU_dilemma_atti_BOW_drop_2 = yes
+				}
+			}
+			else_if = {
+				limit = { check_variable = {
+					tau_lsh_atti > 39
+				} }
+				random = {
+					chance = 50
+					add_research_slot = 1
+					TAU_dilemma_atti_BOW_drop_2 = yes
+				}
+			}
+			else = {
+				random = {
+					chance = 30
+					add_research_slot = 1
+					TAU_dilemma_atti_BOW_drop_2 = yes
+				}
+			}
+		}
+	}
 	#发布中立外交原则
 	TAU_neutral_diploma = {
 		icon = GFX_decision_eng_trade_unions_support
-		visible = {  }
+		visible = {  OR = { has_completed_focus = TAU_pass_the_brilliance has_completed_focus = TAU_break_the_balance has_completed_focus = TAU_conservative } NOT = { has_country_flag = TAU_DISABLE_NEUTRAL_DIPLOMA } }
 		
 		ai_will_do = {
 			factor = 0
@@ -89,7 +236,6 @@ TAU_dilemma = {
 			}
 		}
 		available = {
-			NOT = { has_government = fascism }
 			NOT = { has_country_flag = TAU_ABANDON_DILEMA }
 		}
 		cost = 50
@@ -115,6 +261,11 @@ TAU_dilemma = {
 		}
 		custom_cost_text = TAU_tooltip10
 		days_remove = 50
+		complete_effect = {
+			hidden_effect = {
+				army_experience = -35
+			}
+		}
 		remove_effect = {
 			random_core_state = {
 				limit = { is_controlled_by = TAU }
@@ -126,9 +277,6 @@ TAU_dilemma = {
 			}
 			TAU_dilemma_atti_PCC_drop_2 = yes
 			TAU_dilemma_atti_BOW_drop_2 = yes
-			hidden_effect = {
-				army_experience = -50
-			}
 		}
 	}
 	#与兰德索尔结盟
@@ -161,7 +309,7 @@ TAU_dilemma = {
 	}
 	#博文对外交不满宣战
 	TAU_invasion_incoming_BOW = {
-		activation = { check_variable = { tau_bw_atti < -30 } NOT = { has_country_flag = TAU_ABANDON_DILEMA } }
+		activation = { check_variable = { tau_bw_atti < 0 } NOT = { has_country_flag = TAU_ABANDON_DILEMA } }
 		available = {
 			OR = {
 				has_country_flag = TAU_ABANDON_DILEMA
@@ -177,7 +325,11 @@ TAU_dilemma = {
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
-			remove_ideas = TAU_independent_political_status
+			if = { 
+				limit = { has_idea = TAU_independent_political_status }
+				remove_ideas = TAU_independent_political_status
+			}
+			
 			BOW = { 
 				create_wargoal = {
 					target = TAU
@@ -189,7 +341,7 @@ TAU_dilemma = {
 	}
 	#理事会对外交不满宣战
 	TAU_invasion_incoming_PCC = {
-		activation = { check_variable = { tau_lsh_atti < -30 } NOT = { has_country_flag = TAU_ABANDON_DILEMA } }
+		activation = { check_variable = { tau_lsh_atti < 0 } NOT = { has_country_flag = TAU_ABANDON_DILEMA } }
 		available = {
 			OR = {
 				has_country_flag = TAU_ABANDON_DILEMA
@@ -205,7 +357,10 @@ TAU_dilemma = {
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
-			remove_ideas = TAU_independent_political_status
+			if = { 
+				limit = { has_idea = TAU_independent_political_status }
+				remove_ideas = TAU_independent_political_status
+			}
 			PCC = { 
 				create_wargoal = {
 					target = TAU
@@ -431,13 +586,13 @@ TAU_student_union = {
 		icon = GFX_decision_eng_trade_unions_support
 		visible = { OR = { has_completed_focus = TAU_new_generation_student_union is_testing = yes } }
 		available = {
-			industrial_complex > 19
+			industrial_complex > 14
 		}
 		fire_only_once = yes
 		complete_effect = {
 			add_timed_idea = {
 				idea = TAU_urara_funds
-				days = 300
+				days = 365
 			}
 		}
 	}
@@ -468,7 +623,7 @@ TAU_student_union = {
 		}
 		is_good = no
 		fire_only_once = yes
-		days_mission_timeout = 120
+		days_mission_timeout = 365
 		selectable_mission = no
 		complete_effect = {
 			add_timed_idea = {

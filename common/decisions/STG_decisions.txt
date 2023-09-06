@@ -1,0 +1,965 @@
+#内部之敌
+STG_internal_ememy = {
+    #粉碎卡美洛派
+    STG_crush_cam = {
+        available = {
+            fascism < 0.02
+            has_country_flag = STG_can_crush_cam
+        }
+        visible = {
+            tag = STG
+            has_country_flag = STG_can_crush_cam
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+        }
+        cost = 0
+        days_remove = 10
+        fire_only_once = yes
+        complete_effect = {
+            add_stability = 0.10
+            STG_decrease_global_unrest_big = yes
+            custom_effect_tooltip = STG_cam_crushed_desc
+            hidden_effect = {
+                set_country_flag = STG_cam_crushed
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #打击卡美洛派
+    STG_cam = {
+        available = {
+            fascism > 0.02
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+        }
+        cost = 20
+        days_remove = 30
+        days_re_enable = 90
+        complete_effect = {
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.02
+            }
+            hidden_effect = {
+                STG = {
+                    add_to_variable = {
+                        STG_cam_unrest = -2
+                    }
+                }
+                STG_check_cam_unrest = yes
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #监视卡美洛派
+    STG_monitor_cam = {
+        available = {
+            fascism > 0.02
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+            has_country_flag = STG_more_decision_against_cam
+        }
+        cost = 0
+        days_remove = 60
+        days_re_enable = 180
+        complete_effect = {
+        }
+        modifier = {
+            political_power_cost = 0.40
+            fascism_drift = -0.05
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #拉拢温和卡美洛派
+    STG_cam_negotiate = {
+        available = {
+            fascism > 0.05
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+        }
+        cost = 30
+        days_remove = 30
+        days_re_enable = 90
+        complete_effect = {
+            add_stability = -0.05
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.02
+            }
+            if = {
+                limit = {
+                    has_government = democratic
+                }
+                add_popularity = {
+                    ideology = democratic
+                    popularity = 0.02
+                }
+            }
+            else_if = {
+                limit = {
+                    has_government = neutrality
+                }
+                add_popularity = {
+                    ideology = neutrality
+                    popularity = 0.02
+                }
+            }
+            hidden_effect = {
+                STG = {
+                    add_to_variable = {
+                        STG_cam_unrest = -6
+                    }
+                }
+                STG_check_cam_unrest = yes
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #逮捕卡美洛派领导人
+    STG_arrest_cam_leader = {
+        available = {
+            fascism > 0.10
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+            has_country_flag = STG_more_decision_against_cam     
+        }
+        custom_cost_trigger = {
+			command_power > 20
+		}
+        days_remove = 5
+        days_re_enable = 60
+        complete_effect = {
+            STG_increase_global_unrest = yes
+            STG_reduce_cam_unrest = yes
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.04
+            }
+            add_command_power = -20
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #宪兵镇压卡美洛派
+    STG_attack_cam = {
+        available = {
+            fascism > 0.15
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+            has_country_flag = STG_more_decision_against_cam     
+        }
+        custom_cost_trigger = {
+			command_power > 30
+		}
+        days_remove = 10
+        days_re_enable = 180
+        complete_effect = {
+            STG_increase_global_unrest = yes
+            STG_reduce_cam_unrest = yes
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.08
+            }
+            add_command_power = -30
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #玛蒂尔达行动
+    STG_operation_cam = {
+        available = {
+            fascism > 0.25
+            has_completed_focus = STG_monarchy_5
+            }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+            has_completed_focus = STG_monarchy_5
+        }
+        custom_cost_trigger = {
+			command_power > 50
+		}
+        days_remove = 3
+        fire_only_once = yes
+        complete_effect = {
+            add_stability = -0.15
+            STG_increase_global_unrest_big = yes
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.20
+            }
+            add_command_power = -50
+            hidden_effect = {
+                STG = {
+                    add_to_variable = {STG_cam_unrest = -20}
+                }
+                STG_check_cam_unrest = yes
+                country_event = {id = 1 days = 15}
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #与乌斯拉尔裔和解
+    STG_crush_usr = {
+        available = {
+            reactionism < 0.02
+            has_country_flag = STG_can_crush_usr
+        }
+        visible = {
+            tag = STG
+            has_country_flag = STG_can_crush_usr
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }    
+        }
+        cost = 0
+        days_remove = 10
+        fire_only_once = yes
+        complete_effect = {
+            add_stability = 0.10
+            STG_decrease_global_unrest_big = yes
+            custom_effect_tooltip = STG_usr_crushed_desc
+            hidden_effect = {
+                set_country_flag = STG_usr_crushed
+                remove_ideas = STG_usr_discontent_low
+                remove_ideas = STG_usr_discontent_middle
+                remove_ideas = STG_usr_discontent_high
+                remove_ideas = STG_usr_discontent_very_high
+                add_ideas = STG_usr_unrest_end
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #安抚乌斯拉尔裔
+    STG_usr = {
+        available = {
+            reactionism > 0.02
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        cost = 20
+        days_remove = 30
+        days_re_enable = 90
+        complete_effect = {
+            if = {
+                limit = {
+                    has_country_leader = STG_ilya
+                }
+                add_popularity = {
+                    ideology = reactionism
+                    popularity = -0.03
+                }
+            }
+            else = {
+                add_popularity = {
+                    ideology = reactionism
+                    popularity = -0.02
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = STG_ilya
+                    } 
+                    STG = {
+                        add_to_variable = {
+                            STG_usr_unrest = -4
+                        }    
+                    }
+                    STG_check_usr_unrest = yes
+                }
+                else = {
+                    STG = {
+                        add_to_variable = {
+                            STG_usr_unrest = -2
+                        }
+                    }
+                    STG_check_usr_unrest = yes
+                }    
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #推动国家认同
+    STG_usr_propaganda = {
+        available = {
+            reactionism > 0.02
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        cost = 0
+        days_remove = 60
+        days_re_enable = 180
+        complete_effect = {
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = STG_ilya
+                    } 
+                    STG = {
+                        add_to_variable = {
+                            STG_usr_unrest = -8
+                        }    
+                    }
+                    STG_check_usr_unrest = yes
+                }
+                else = {
+                    STG = {
+                        add_to_variable = {
+                            STG_usr_unrest = -5
+                        }    
+                    }
+                    STG_check_usr_unrest = yes
+                }
+            }
+        }
+        modifier = {
+            political_power_cost = 0.40
+            reactionism_drift = -0.05
+            }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #大巡游
+    STG_ilya_usr = {
+        available = {
+            reactionism > 0.02
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        visible = {
+            tag = STG
+            has_country_leader = STG_ilya
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        cost = 60
+        days_remove = 20
+        days_re_enable = 120
+        complete_effect = {
+            STG_reduce_usr_unrest_big = yes
+            STG_decrease_global_unrest = yes
+        }
+    }
+    #甄别乌斯拉尔极端分子
+    STG_arrest_usr_leader = {
+        available = {
+            reactionism > 0.10
+        }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+            has_country_flag = STG_more_decision_against_usr    
+        }
+        custom_cost_trigger = {
+			command_power > 20
+		}
+        days_remove = 5
+        days_re_enable = 60
+        complete_effect = {
+            STG_increase_global_unrest = yes
+            STG_reduce_usr_unrest = yes
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.04
+            }
+            add_command_power = -20
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+    #增加乌斯拉尔裔席位
+    STG_more_seat_for_usr = {
+        available = {
+            has_country_leader = STG_parliament
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        visible = {
+            has_country_leader = STG_parliament
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+            has_country_flag = STG_more_decision_against_usr
+        }
+        cost = 50
+        days_remove = 3
+        days_re_enable = 270
+        complete_effect = {
+            add_popularity = {
+                ideology = democratic
+                popularity = 0.03
+            }
+            STG_reduce_usr_unrest = yes
+        }
+    }
+    #任命乌斯拉尔裔官员
+    STG_more_usr_officer = {
+        available = {
+            reactionism < 0.12
+            OR = {
+                has_country_leader = STG_ilya
+                has_country_leader = STG_grey
+            }
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        visible = {
+            OR = {
+                has_country_leader = STG_ilya
+                has_country_leader = STG_grey
+            }
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+            has_country_flag = STG_more_decision_against_usr
+        }
+        cost = 30
+        days_remove = 3
+        days_re_enable = 270
+        complete_effect = {
+            STG_reduce_usr_unrest = yes
+        }
+    }
+    #铁腕镇压
+    STG_grey_usr = {
+        available  = {
+            reactionism > 0.15
+            has_country_leader = STG_grey
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        visible = {
+            has_country_leader = STG_grey
+            NOT = {
+                has_country_flag = STG_usr_crushed
+            }
+        }
+        custom_cost_trigger = {
+			command_power > 30
+		}
+        days_remove = 7
+        days_re_enable = 150
+        complete_effect ={
+            STG_increase_global_unrest = yes
+            STG_reduce_usr_unrest = yes
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.08
+            }
+            add_command_power = -30
+        }
+    }
+    #出动坦克
+    STG_panzer_vor = {
+        available = {
+            OR = {
+                has_idea = STG_unrest_4
+                has_idea = STG_unrest_5
+                has_idea = STG_unrest_6
+            }
+            OR = {
+                reactionism > 0.20
+                fascism > 0.20
+            }
+            OR = {
+                NOT = {
+                    has_country_flag = STG_cam_crushed
+                }
+                NOT = {
+                    has_country_flag = STG_usr_crushed
+                }
+            }
+        }
+        visible = {
+            OR = {
+                has_idea = STG_unrest_4
+                has_idea = STG_unrest_5
+                has_idea = STG_unrest_6
+            }
+        }
+        custom_cost_trigger = {
+			command_power > 50
+		}
+        days_remove = 7
+        days_re_enable = 365
+        complete_effect = {
+            add_command_power = -50
+            STG_increase_global_unrest_very_big = yes
+            STG_reduce_cam_unrest_big = yes
+            STG_reduce_usr_unrest_big = yes
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.10
+            }
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.10
+            }
+        }
+    }
+    #维多利娅行动
+    STG_operation_usr = {
+        available = {
+            reactionism > 0.25
+            has_completed_focus = STG_monarchy_5
+            }
+        visible = {
+            tag = STG
+            NOT = {
+                has_country_flag = STG_cam_crushed
+            }
+            has_completed_focus = STG_monarchy_5
+        }
+        custom_cost_trigger = {
+			command_power > 50
+		}
+        days_remove = 3
+        fire_only_once = yes
+        complete_effect = {
+            add_stability = -0.15
+            STG_increase_global_unrest_big = yes
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.20
+            }
+            add_command_power = -50
+            hidden_effect = {
+                STG = {
+                    add_to_variable = {STG_usr_unrest = -20}
+                }
+                STG_check_usr_unrest = yes
+                country_event = {id = 1 days = 15}
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+    }
+}
+#议会
+STG_parliament_issues = {
+    #《反颠覆法案》
+    STG_par_issue_1 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }   
+        }
+        visible = {
+            has_completed_focus = STG_parliament_issue_1
+        }
+        cost = 70
+        days_remove = 3
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+            custom_effect_tooltip = STG_can_crush_cam
+            hidden_effect = {
+                set_country_flag = STG_can_crush_cam
+            }
+            custom_effect_tooltip = STG_more_decision_against_cam
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_cam
+            }
+            set_country_flag = STG_par_issue_1_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《和平守望法案》
+    STG_par_issue_2 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_parliament_issue_2
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+			add_war_support = 0.10
+            add_timed_idea = {
+                idea = STG_rearmament
+                days = 365
+            }
+            set_country_flag = STG_par_issue_2_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《合众军改组法案》
+    STG_par_issue_3 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_parliament_issue_3
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1000
+		}
+        complete_effect = {
+            add_timed_idea = {
+                idea = STG_army_reorganization
+                days = 90
+            }
+            set_country_flag = STG_par_issue_3_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《中立法案》
+    STG_par_issue_4 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_parliament_issue_4
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+            add_political_power = 100
+            add_stability = 0.10
+            add_war_support = -0.10
+			add_ideas = STG_neurtrality_act
+            set_country_flag = STG_par_issue_4_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《工业委员会法案》
+    STG_par_issue_5 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_indusrial_issue
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+			add_ideas = STG_industrialization_committe
+            set_country_flag = STG_par_issue_5_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《爱因兹贝伦领地位法案》
+    STG_ilya_issue_1 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_ilya_issue
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+			custom_effect_tooltip = STG_ilya_more_seats
+            hidden_effect = {
+                STG = {
+                    add_to_variable = {STG_seats = 3}
+                    add_to_variable = {STG_supporter = 3}
+                    add_to_variable = {STG_supporter_needed = 2}
+                }
+            }
+            set_country_flag = STG_ilya_issue_1_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《议会改革法案》
+    STG_earl_grey_issue_1 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_grey_issue_1
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+			country_event={}
+            set_country_flag = STG_earl_grey_issue_1_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《二元君主制法案》
+    STG_earl_grey_issue_2 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            has_country_flag = STG_earl_grey_issue_1_passed
+        }
+        visible = {
+            has_completed_focus = STG_grey_issue_2
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+            custom_effect_tooltip = STG_grey_change_to_dual_monarchy
+			hidden_effect = {
+                set_party_name = { ideology = democratic long_name = STG_democratic_party_grey_long name = STG_democratic_party_grey }
+                set_country_flag = STG_can_veto
+            }
+            set_country_flag = STG_earl_grey_issue_2_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《国立战车道法案》
+    STG_earl_grey_issue_4 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_grey_issue_4
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+			add_ideas = STG_national_senshado
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 1
+                category = armor 
+            }
+            set_country_flag = STG_earl_grey_issue_4_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《工会法案》
+    STG_earl_grey_issue_3 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_grey_issue_3
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+            add_idea = STG_controlled_labor_union
+			add_popularity = {
+                ideology = communism
+                popularity = 0.04
+            }
+            set_country_flag = STG_earl_grey_issue_3_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《王家军队改组法案》
+    STG_earl_grey_issue_5 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_grey_issue_5
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1000
+		}
+        complete_effect = {
+			add_timed_idea = {
+                idea = STG_army_reorganization
+                days = 90
+            }
+            set_country_flag = STG_earl_grey_issue_5_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+    #《共和国防卫法案》
+    STG_dar_issue = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue
+                STG = {check_variable = {STG_supporter STG_seats_needed}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_dar_issue_1
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+			random_owned_controlled_state = {
+			add_extra_state_shared_building_slots = 4
+			add_building_construction = {
+				type = arms_factory
+				level = 4
+				instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			add_extra_state_shared_building_slots = 4
+			add_building_construction = {
+				type = arms_factory
+				level = 4
+				instant_build = yes
+			    }
+		    }
+            set_country_flag = STG_dar_issue_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
+}

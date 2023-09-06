@@ -1,0 +1,188 @@
+on_actions = {
+	on_startup = {
+		effect = {
+			#政府稳定初始化
+			STG = { set_variable = { STG_global_unrest = 20 } }
+			#卡美洛派威胁初始化
+			STG = { set_variable = { STG_cam_unrest = 10 } }
+			#乌斯拉尔裔不满初始化
+			STG = { set_variable = { STG_usr_unrest = 15 } }
+			#议会席位初始化
+			STG = { set_variable = { STG_seats = 30 } }
+			#支持票初始化
+			STG = { set_variable = { STG_supporter = 14 } }
+			#通过法案需求初始化
+			STG = { set_variable = { STG_supporter_needed = 20 } }
+		}
+	}
+	on_weekly = { 
+		
+		effect = {
+			if = {
+				limit = {
+					tag = STG
+				}
+				#每周卡美洛派威胁增长
+			    if = {
+			        limit = {
+				        NOT = {
+					        has_country_flag = STG_cam_curshed
+				        }
+				    }
+				    add_to_variable = {STG_cam_unrest = 1}    
+			    }
+				#每周乌斯拉尔裔威胁增长
+			    if = {
+			        limit = {
+				        NOT = {
+					        has_country_flag = STG_usr_curshed
+				        }
+				    }
+				    add_to_variable = {STG_usr_unrest = 1}    
+			    }
+				#政府稳定度变化
+				if ={
+					limit = {
+						has_war = no
+					    NOT = {
+							has_stability = 0.50
+						}
+				    }
+				    add_to_variable = {STG_global_unrest = 0.5}
+				}
+				if ={
+					limit = {
+						has_war = no
+					    NOT = {
+							has_stability = 0.40
+						}
+				    }
+				    add_to_variable = {STG_global_unrest = 0.5}
+				}
+				if ={
+					limit = {
+						has_war = no
+					    NOT = {
+							has_stability = 0.30
+						}
+				    }
+				    add_to_variable = {STG_global_unrest = 0.5}
+				}
+				if ={
+					limit = {
+						has_war = no
+					    NOT = {
+							has_stability = 0.20
+						}
+				    }
+				    add_to_variable = {STG_global_unrest = 0.5}
+				}
+			    if = {
+				    limit = {
+					    has_idea = STG_usr_discontent_low
+				    }
+				    add_to_variable = {STG_global_unrest = 0.5}
+			    }
+			    if = {
+				    limit = {
+					    has_idea = STG_usr_discontent_middle
+				    }
+				    add_to_variable = {STG_global_unrest = 1}
+			    }    
+			    if = {
+				    limit = {
+					    has_idea = STG_usr_discontent_high
+				    }
+				    add_to_variable = {STG_global_unrest = 1.5}
+			    }
+			    if = {
+				    limit = {
+					    has_idea = STG_usr_discontent_very_high
+				    }
+				    add_to_variable = {STG_global_unrest = 2}
+			    }
+			    if = {
+				    limit = {
+					has_idea = STG_cam_discontent_low
+				    }
+				    add_to_variable = {STG_global_unrest = 0.5}
+			    }
+			    if = {
+				    limit = {
+					    has_idea = STG_cam_discontent_middle
+				    }
+				    add_to_variable = {STG_global_unrest = 1}
+			    }
+			    if = {
+				    limit = {
+					has_idea = STG_cam_discontent_high
+				    }
+				    add_to_variable = {STG_global_unrest = 1.5}
+			    }
+			    if = {
+				    limit = {
+					    has_idea = STG_cam_discontent_very_high
+				    }
+				    add_to_variable = {STG_global_unrest = 2}
+			    }
+				if = {
+					limit = {
+					    has_idea = STG_usr_unrest_end
+				    }
+				    add_to_variable = {STG_global_unrest = -3}
+				}
+			    else = {
+				    add_to_variable = {STG_global_unrest = -2}
+			    }				
+			}
+			STG = {
+				STG_check_unrest = yes
+				STG_check_cam_unrest = yes
+				STG_check_usr_unrest = yes
+			}
+		}
+		
+	}
+	on_monthly = {
+		effect = {
+			if = {
+				limit = {
+					tag = STG
+					fascism > 0.40
+					NOT = {
+						has_country_flag = STG_ung_got_cb
+					}
+					NOT = {
+						STG = { has_war_with = UNG }
+					}
+				}
+				UNG = {
+				    create_wargoal = {
+					    target = STG
+					    type = annex_everything
+				    }
+			    }
+			    set_country_flag = STG_ung_got_cb
+			}
+			if = {
+				limit = {
+					tag = STG
+					reactionism > 0.40
+					NOT = {
+						has_country_flag = STG_usr_got_cb
+					}
+					NOT = {
+						STG = { has_war_with = USR}
+					}
+				}
+				USR = {
+				    create_wargoal = {
+					    target = STG
+					    type = annex_everything
+				    }
+			    }
+			    set_country_flag = STG_usr_got_cb
+			}
+		}
+	}
+}
