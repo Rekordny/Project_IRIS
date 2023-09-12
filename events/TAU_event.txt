@@ -335,6 +335,101 @@ country_event = {
 		mark_focus_tree_layout_dirty = yes
 	}
 }
+#主动平衡天平
+country_event = {
+	id = tau.13
+	title = tau.13.t
+	desc = tau.13.desc
+	picture = GFX_TAU_CE13
+	# trigger = {
+	# 	tag = TAU
+	# }
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.13.a
+		custom_effect_tooltip = TAU_tooltip21
+		if = {
+			limit = { check_variable = {
+				tau_bw_atti > 10
+			} }
+			set_variable = {
+				tau_bw_atti = 0
+			}
+		}
+		if = {
+			limit = { check_variable = {
+				tau_lsh_atti > 10
+			} }
+			set_variable = {
+				tau_lsh_atti = 0
+			}
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+#后生可畏
+country_event = {
+	id = tau.14
+	title = tau.14.t
+	desc = tau.14.desc
+	picture = GFX_TAU_CE14
+	# trigger = {
+	# 	tag = TAU
+	# }
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.14.a
+		custom_effect_tooltip = TAU_tooltip20
+		custom_effect_tooltip = TAU_tooltip22
+		swap_ideas = {
+			remove_idea = TAU_another_leader_AirGroove
+			add_idea = TAU_another_leader_SatonoDiamond
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+	option = {
+		name = tau.14.b
+		custom_effect_tooltip = TAU_tooltip20
+		custom_effect_tooltip = TAU_tooltip24
+		swap_ideas = {
+			remove_idea = TAU_another_leader_AirGroove
+			add_idea = TAU_another_leader_SatonoDiamond
+		}
+		ai_chance = {
+			factor = 20
+		}
+	}
+}
+
+#URA赏赞助
+country_event = {
+	id = tau.15
+	title = tau.15.t
+	desc = tau.15.desc
+	picture = GFX_TAU_CE15
+	# trigger = {
+	# 	tag = TAU
+	# }
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.15.a
+		#tau_ura_funds
+		add_dynamic_modifier = {
+			modifier = TAU_URA_funds_dynamic_modifier
+			days = 1000
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
 #####################################################
 ######################NEWS_EVENTS####################
 #####################################################
@@ -354,14 +449,14 @@ news_event = {
 	option = {
 		name = tau_news.1.b
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = tau_news.1.c
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = no }
 		}
 	}
@@ -382,14 +477,14 @@ news_event = {
 	option = {
 		name = tau_news.2.b
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = tau_news.2.c
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = no }
 		}
 	}
@@ -410,14 +505,14 @@ news_event = {
 	option = {
 		name = tau_news.3.b
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = tau_news.3.c
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = no }
 		}
 	}
@@ -430,10 +525,12 @@ news_event = {
 	desc = tau_news.4.desc
 	trigger = {
 		OR = { TAU = { has_war_with = BOW } TAU = { has_war_with = PCC } has_country_flag = TAU_ABANDON_DILEMA }
+		NOT = { TAU = { has_country_flag = TAU_BLOCK_NEWS_FOUR } }
 	}
 	mean_time_to_happen = { days = 1 }
 	major = yes
-	immediate = { hidden_effect = { TAU = { TAU_dilemma_abandon = yes } } }
+	#纯纯下下策，只能用FLAG检查来阻止第二次触发
+	immediate = { hidden_effect = { TAU = { TAU_dilemma_abandon = yes set_country_flag = TAU_BLOCK_NEWS_FOUR } } }
 	option = {
 		name = tau_news.4.a
 		trigger = { tag = TAU }
@@ -441,15 +538,73 @@ news_event = {
 	option = {
 		name = tau_news.4.b
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = tau_news.4.c
 		trigger = {
-			not = { tag = TAU }
+			NOT = { tag = TAU }
 			TAU = { has_same_ideology = no }
+		}
+	}
+}
+#URA赏盛大开幕
+news_event = {
+	id = tau_news.5
+	title = tau_news.5.t
+	picture = GFX_TAU_NE5
+	desc = tau_news.5.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = { add_named_threat = {
+		threat = -5
+		name = TAU_restart_ura_competition
+	} }
+	option = {
+		name = tau_news.5.a
+		trigger = { tag = TAU }
+	}
+	option = {
+		name = tau_news.5.b
+		trigger = {
+			NOT = { tag = TAU }
+			NOT = { has_war_with = TAU }
+		}
+		add_political_power = -20
+		TAU = { add_to_variable = {
+			tau_ura_funds = -0.01
+		} }
+		ai_chance = {
+			factor = 10
+			modifier = {
+				is_major = yes
+				factor = 100
+			}
+			modifier = {
+				has_opinion = {
+					target = TAU
+					value > 9
+				}
+				factor = 2
+			}
+			modifier = {
+				has_opinion = {
+					target = TAU
+					value < -9
+				}
+				factor = 0.1
+			}
+		}
+	}
+	option = {
+		name = tau_news.5.c
+		trigger = {
+			NOT = { tag = TAU }
+		}
+		ai_chance = {
+			factor = 100
 		}
 	}
 }
