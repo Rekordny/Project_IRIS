@@ -867,6 +867,11 @@ STG_parliament_issues = {
                     add_to_variable = {STG_seats = 3}
                     add_to_variable = {STG_supporter = 3}
                     add_to_variable = {STG_supporter_needed = 2}
+                    clamp_temp_variable = {
+                        var = STG_supporter
+                        min = 0
+                        max = 33
+                    }
                 }
             }
             set_country_flag = STG_ilya_issue_1_passed
@@ -1027,6 +1032,7 @@ STG_parliament_issues = {
             STG_decrease_global_unrest = yes
         }
     }
+    #《王家军队改组法案》
     STG_earl_grey_issue_5 = {
         available = {
             NOT = {
@@ -1103,6 +1109,19 @@ STG_parliament_issues = {
     #游说议员
     STG_lobby = {
         available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_can_have_supporter
+                if = {
+                    limit = {
+                        has_country_flag = STG_ilya_issue_1_passed
+                    }
+                    STG = {check_variable = {STG_supporter < 34}}
+                }
+                else = {
+                    STG = {check_variable = {STG_supporter < 31}}
+                }
+                
+            }
         }
         visible = {
         }
@@ -1115,16 +1134,18 @@ STG_parliament_issues = {
         complete_effect = {
         }
         remove_effect = {
-            custom_effect_tooltip = STG_add_two_supporters
-                hidden_effect = {
-                    STG = {add_to_variable = {STG_supporter = 2}}
-                    if = {
-                        limit = {
-                            is_ai = yes
-                        }
-                        STG = {add_to_variable = {STG_supporter = 2}}
+            custom_effect_tooltip = STG_add_one_supporter
+            hidden_effect = {
+                STG = {add_to_variable = {STG_supporter = 1}}
+                if = {
+                    limit = {
+                        is_ai = yes
+                    }
+                    STG = {
+                        add_to_variable = {STG_supporter = 1}
                     }
                 }
+            }
         }
         modifier = {
             political_power_cost = 0.15
@@ -1194,13 +1215,6 @@ STG_parliament_issues = {
     #向议员施压
     STG_general_issue_3 = {
         available = {
-            NOT = {
-                has_country_flag = STG_debate_in_process
-            }
-            custom_trigger_tooltip = {
-                tooltip = STG_can_pass_issue
-                STG = {check_variable = {STG_supporter STG_seats_needed}}
-            }
         }
         visible = {
             has_idea = STG_Nervous_Army
@@ -1224,6 +1238,23 @@ STG_parliament_issues = {
                         is_ai = yes
                     }
                     STG = {add_to_variable = {STG_supporter = 2}}
+                }
+                if = {
+                    limit = {
+                        has_country_flag = STG_ilya_issue_1_passed
+                    }
+                    clamp_temp_variable = {
+                        var = STG_supporter
+                        max = 33
+                        min = 0
+                    }
+                }
+                else = {
+                    clamp_temp_variable = {
+                        var = STG_supporter
+                        max = 30
+                        min = 0
+                    }
                 }
             }
 		}
@@ -1757,7 +1788,304 @@ STG_the_sword_of_Damocles = {
             country_event = {id = STG_ilya.16 days = 3}
         }
         ai_will_do = {
-            factor = 1
+            factor = 100
+        }
+    }
+}
+#爱因兹贝伦工坊
+STG_einzbern_workshop = {
+    #获取原材料
+    STG_gain_material = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = STG
+            has_completed_focus = STG_ilya_7
+        }
+        cancel_trigger = {
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = STG_gain_one_unit_material
+            STG = {add_to_variable = {STG_material = 1}}
+        }
+    }
+    #购买原材料
+    STG_purchase_material = {
+        available = {
+        }
+        visible = {
+        }
+        cost = 50
+        days_remove = 40
+        days_re_enable = 270
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = STG_gain_two_units_material
+            STG = {add_to_variable = {STG_material = 2}}
+        }
+    }
+    #大量购买原材料
+    STG_purchase_material_lot = {
+        available = {
+        }
+        visible = {
+        }
+        cost = 80
+        days_remove = 60
+        days_re_enable = 365
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = STG_gain_four_units_material
+            STG = {add_to_variable = {STG_material = 4}}
+        }
+    }
+    #出售原材料
+    STG_sell_material = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material_to_sell
+                STG = {check_variable = {STG_material > 1}}
+            }
+        }
+        visible = {
+        }
+        cost = 0
+        days_remove = 5
+        days_re_enable = 30
+        complete_effect = {
+        }
+        remove_effect = {
+            add_political_power = 40
+            custom_effect_tooltip = STG_sell_two_units_material
+            STG = {add_to_variable = {STG_material = -2}}
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    #实验性炼金炮弹
+    STG_experimental_shell = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+        }
+        cost = 50
+        days_remove = 120
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            set_country_flag = STG_had_experimental_shell
+            custom_effect_tooltip = STG_experimental_shell_outcome
+            STG = {add_to_variable = {STG_workshop_artillery_bonus = 0.05}}
+            STG = {add_to_variable = {STG_workshop_armor_attack_bonus = 0.05}}
+        }
+    }
+    #改良型炼金炮弹
+    STG_improved_shell = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+            has_country_flag = STG_had_experimental_shell
+        }
+        cost = 50
+        days_remove = 180
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            custom_effect_tooltip = STG_improved_shell_outcome
+            STG = {add_to_variable = {STG_workshop_artillery_bonus = 0.10}}
+            STG = {add_to_variable = {STG_workshop_armor_attack_bonus = 0.05}}
+        }
+    }
+    #实验型炼金装甲
+    STG_experimental_armor = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+        }
+        cost = 50
+        days_remove = 120
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            set_country_flag = STG_had_experimental_armor
+            custom_effect_tooltip = STG_experimental_armor_outcome
+            STG = {add_to_variable = {STG_workshop_armor_defense_bonus = 0.10}}
+        }
+    }
+    #改良型炼金装甲
+    STG_improved_armor = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+            has_country_flag = STG_had_experimental_armor
+        }
+        cost = 50
+        days_remove = 180
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            custom_effect_tooltip = STG_improved_armor_outcome
+            STG = {add_to_variable = {STG_workshop_armor_defense_bonus = 0.10}}
+        }
+    }
+    #实战型人造人技术
+    STG_artificial_1 = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+        }
+        cost = 50
+        days_remove = 180
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            custom_effect_tooltip = STG_artificial_1_outcome
+            STG = {add_to_variable = {STG_workshop_experience_loss_bonus = -0.20}}
+            STG = {add_to_variable = {STG_army_infantry_attack_bonus = 0.10}}
+        }
+    }
+    #量产型人造人技术
+    STG_artificial_2 = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+        }
+        cost = 50
+        days_remove = 180
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            custom_effect_tooltip = STG_artificial_2_outcome
+            STG = {add_to_variable = {STG_workshop_industrial_capacity_bonus = 0.10}}
+            STG = {add_to_variable = {STG_production_factory_max_efficiency_bonus = 0.10}}
+        }
+    }
+    #探索未知科技
+    STG_explore_the_unknown = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_have_enough_material
+                STG = {check_variable = {STG_material > 3}}
+            }
+            NOT = {
+                has_country_flag = STG_workshop_is_busy
+            }
+        }
+        visible = {
+        }
+        cost = 50
+        days_remove = 120
+        fire_only_once = yes
+        complete_effect = {
+            STG = {add_to_variable = {STG_material = -4}}
+            set_country_flag = STG_workshop_is_busy
+        }
+        remove_effect = {
+            clr_country_flag = STG_workshop_is_busy
+            custom_effect_tooltip = STG_unknown_outcome
+            hidden_effect = {
+                random_list = {
+                    10 = {
+                        STG = {add_to_variable = {STG_workshop_industrial_capacity_bonus = 0.05}}
+                    }
+                    10 = {
+                        STG = {add_to_variable = {STG_army_infantry_attack_bonus = 0.05}}
+                    }
+                    10 = {
+                        STG = {add_to_variable = {STG_workshop_artillery_bonus = 0.05}}
+                    }
+                    10 = {
+                        STG = {add_to_variable = {STG_workshop_armor_attack_bonus = 0.05}}
+                    }
+                    10 = {
+                        STG = {add_to_variable = {STG_workshop_armor_defense_bonus = 0.05}}
+                    }
+                    10 = {
+                        STG = {add_to_variable = {STG_workshop_experience_loss_bonus = 0.05}}
+                    }
+                    10 = {
+                        STG = {add_to_variable = {STG_production_factory_max_efficiency_bonus = 0.05}}
+                    }
+                    30 = {
+                    }
+                }
+            }
         }
     }
 }
