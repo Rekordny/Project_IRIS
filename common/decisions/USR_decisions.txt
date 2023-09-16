@@ -1,3 +1,43 @@
+#民生救济补贴
+USR_livelihood_relief_subsidies = {
+	USR_livelihood_relief_subsidies_counting = {
+		activation = { 
+			has_idea = USR_who_owns_the_republic
+		}
+		cancel_trigger = {
+			OR = { has_war = yes NOT = { USR = { has_idea = USR_who_owns_the_republic } } }
+		}
+		cancel_effect = {
+			remove_ideas = USR_who_owns_the_republic
+			remove_ideas = USR_livelihood_relief_subsidies
+		}
+		available = {  }
+		fire_only_once = yes
+		
+		is_good = yes
+		days_mission_timeout = 180
+		timeout_effect = {
+			remove_ideas = USR_who_owns_the_republic
+			remove_ideas = USR_livelihood_relief_subsidies
+		}
+		selectable_mission = yes
+		complete_effect = {
+			if = {  
+				limit = { NOT = { has_completed_focus = USR_writing_social_democratic_editorials } }
+				add_war_support = -0.03
+			}
+			add_days_mission_timeout = {
+				mission = USR_livelihood_relief_subsidies_counting
+				days = 180
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+
 #共和国议会
 USR_republic_congress_decisions = {
 	#共和国议会议程:去工业化
@@ -16,26 +56,15 @@ USR_republic_congress_decisions = {
 		available = { NOT = { USR = { has_idea = USR_the_republic_congress } } }
 		is_good = yes
 		war_with_on_timeout = PCC
-		days_mission_timeout = 55
+		days_mission_timeout = 100
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
-			if = { 
-				limit = { 682 = { industrial_complex > 0 } } 
-				682 = {
-					remove_building = {
-						type = industrial_complex
-						level = 1
-					}
-				}
-			}
-			else = {
-				random_core_state = {
-					limit = { is_controlled_by = USR industrial_complex > 0 }
-					remove_building = {
-						type = industrial_complex
-						level = 1
-					}
+			random_core_state = {
+				limit = { is_controlled_by = USR arms_factory > 0 }
+				remove_building = {
+					type = arms_factory
+					level = 1
 				}
 			}
 			hidden_effect = {
@@ -49,7 +78,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 80
+			add_political_power = 100
 		}
 	}
 	#共和国议会议程:削减军费
@@ -68,7 +97,7 @@ USR_republic_congress_decisions = {
 		available = { NOT = { USR = { has_idea = USR_the_republic_congress } } }
 		is_good = yes
 		war_with_on_timeout = PCC
-		days_mission_timeout = 55
+		days_mission_timeout = 60
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
@@ -114,7 +143,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 50
+			add_political_power = 60
 		}
 	}
 	#共和国议会议程:改革民主教育
@@ -132,7 +161,7 @@ USR_republic_congress_decisions = {
 		available = { NOT = { USR = { has_idea = USR_the_republic_congress } } }
 		is_good = yes
 		war_with_on_timeout = PCC
-		days_mission_timeout = 25
+		days_mission_timeout = 35
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
@@ -151,7 +180,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 30
+			add_political_power = 35
 		}
 	}
 	#共和国外交:向卡美洛提供装备
@@ -286,7 +315,7 @@ USR_industrialization = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_use_mana_as_fuel } is_testing = yes }
 		}
-		cost = 50
+		cost = 100
 		days_re_enable = 50
 		complete_effect = {
 			random_controlled_state = {
@@ -302,11 +331,19 @@ USR_industrialization = {
 					type = raw_mana
 					amount = -5
 				}
-				add_extra_state_shared_building_slots = 2
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+				}
 			}
 		}
 		ai_will_do = {
 			base = 10
+			modifier = {
+				date > 3094.1.1
+				add = 5
+			}
 		}
 	}
 	USR_concession_of_mineral_rights_1 = {
@@ -467,89 +504,6 @@ USR_high_command_kuromorimine = {
 		}
 		remove_effect = {
 			remove_ideas = USR_lacking_millitary_officer
-		}
-		ai_will_do = {
-			base = 10
-		}
-	}
-	USR_uslar_ai_research = {
-		visible = {
-			TAG = USR
-			OR = { USR = { has_completed_focus = USR_uslar_ai_research } is_testing = yes }
-		}
-		cost = 100
-		fire_only_once = yes
-		remove_effect = {
-			recruit_character = USR_BF109
-			recruit_character = USR_DrI
-			recruit_character = USR_PzVI
-			recruit_character = USR_PzVIII
-		}
-		ai_will_do = {
-			base = 10
-		}
-	}
-	USR_rebuild_MDS = {
-		visible = {
-			TAG = USR
-			OR = { USR = { has_completed_focus = USR_uslar_ai_research } is_testing = yes }
-		}
-		available = {
-			MDS = { 
-				all_core_state = {
-					is_controlled_by = USR
-					compliance > 20
-				} 
-			}
-		}
-		fire_only_once = yes
-		cost = 100
-		days_remove = 70
-		remove_effect = {
-			MDS = {
-				every_core_state = {
-					limit = { industrial_complex > 0 }
-					remove_building = {
-						type = industrial_complex
-						level = 1
-					}
-					USR = {
-						random_core_state = {
-							limit = { is_controlled_by = USR }
-							add_extra_state_shared_building_slots = 1
-							add_building_construction = {
-								type = industrial_complex
-								level = 1
-							}
-						}
-					}
-				}
-			}
-		}
-		ai_will_do = {
-			base = 10
-		}
-	}
-	USR_reform_government_MDS = {
-		visible = {
-			TAG = USR
-			OR = { USR = { has_completed_focus = USR_uslar_ai_research } is_testing = yes }
-		}
-		available = {
-			MDS = { 
-				all_core_state = {
-					is_controlled_by = USR
-					compliance > 50
-				} 
-			}
-		}
-		cost = 200
-		days_remove = 100
-		remove_effect = {
-			set_autonomy = {
-				target = MDS
-				autonomy_state = autonomy_reichskommissariat
-			}
 		}
 		ai_will_do = {
 			base = 10
