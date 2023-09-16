@@ -1,15 +1,77 @@
 ELN_war_department = {
+	Hidden_ELN_attck_FROM = {
+		icon = GFX_zhedie
+		visible = {
+			any_country = {
+				has_country_flag = can_be_attack_by_ELN
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			is_subject = no
+			not = {
+				has_country_flag = Hidden_ELN_attck_FROM
+			}
+		}
+		available = {
+		}
+		cost = 0
+		days_remove = 0
+		complete_effect = {
+			set_country_flag = Hidden_ELN_attck_FROM
+		}
+		remove_effect = {
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	Fold_ELN_attck_FROM = {
+		icon = GFX_zhedie
+		visible = {
+			has_country_flag = Hidden_ELN_attck_FROM
+		}
+		available = {
+		}
+		cost = 0
+		days_remove = 0
+		complete_effect = {
+			clr_country_flag = Hidden_ELN_attck_FROM
+		}
+		remove_effect = {
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
 	ELN_attck_FROM = {
 		icon = GFX_decision_generic_ignite_civil_war
 		target_trigger = {
 			FROM = {
+				exists = yes
 				has_country_flag = can_be_attack_by_ELN
 				not = {
-					has_war_with = ROOT
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
 				}
 			}
 			ROOT = {
 				is_subject = no
+				not = {
+					has_country_flag = Hidden_ELN_attck_FROM
+				}
+			}
+		}
+		visible = {
+			not = {
+				has_country_flag = Hidden_ELN_attck_FROM
 			}
 		}
 		available = {
@@ -39,6 +101,9 @@ ELN_war_department = {
 			declare_war_on = {
 				target = FROM
 				type = annex_everything
+			}
+			FROM = {
+				clr_country_flag = can_be_attack_by_ELN
 			}
 			if = {
 				limit = {
@@ -73,6 +138,127 @@ ELN_war_department = {
 	}
 }
 
+ELN_foreign_ministry = {
+	ELN_invite_FROM = {
+		icon = GFX_decision_eng_trade_unions_support
+		target_trigger = {
+			FROM = {
+				exists = yes
+				has_country_flag = can_be_invite_by_ELN
+				not = {
+					or = {
+						has_war_with = ROOT
+						is_in_faction_with = ROOT
+						is_subject_of = ROOT
+					}
+				}
+			}
+			ROOT = {
+				is_subject = no
+			}
+		}
+		available = {
+			not = {
+				is_in_faction_with = FROM
+			}
+			FROM = {
+				is_in_faction = no
+			}
+		}
+		cost = 10
+		days_remove = 7
+		remove_effect = {
+			FROM = {
+				country_event = {
+					id = elino.998
+				}
+				clr_country_flag = can_be_invite_by_ELN
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				any_home_area_neighbor_country = {
+					tag = FROM
+				}
+				add = 1000
+			}
+		}
+	}
+	#邀请欧罗巴经济共同体
+	ELN_invite_FROM_join_in_Europa_Economic_Community = {
+		icon = GFX_decision_gre_paying_ifc_debt
+		target_trigger = {
+			FROM = {
+				exists = yes
+				is_in_faction_with = ROOT
+				not = {
+					has_country_flag = ELN_invite_FROM_join_in_Europa_Economic_Community
+				}
+				not = {
+					has_country_flag = ELN_Europa_Economic_Community_member
+				}
+			}
+			ROOT = {
+				is_subject = no
+				is_faction_leader = yes
+				has_completed_focus = ELN_Europa_Economic_Community
+			}
+		}
+		available = {
+		}
+		cost = 10
+		days_remove = 10
+		remove_effect = {
+			FROM = {
+				set_country_flag = ELN_invite_FROM_join_in_Europa_Economic_Community
+				country_event = {
+					id = elino.12
+				}
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+	#邀请军事共同防御协定
+	ELN_invite_FROM_join_in_Military_Mutual_Defence_Agreement = {
+		icon = GFX_decision_generic_army_support
+		target_trigger = {
+			FROM = {
+				exists = yes
+				is_in_faction_with = ROOT
+				not = {
+					has_country_flag = ELN_invite_FROM_join_in_Military_Mutual_Defence_Agreement
+				}
+				not = {
+					has_country_flag = ELN_Military_Mutual_Defence_Agreement_member
+				}
+			}
+			ROOT = {
+				is_subject = no
+				is_faction_leader = yes
+				has_completed_focus = ELN_Military_Mutual_Defence_Agreement
+			}
+		}
+		available = {
+		}
+		cost = 10
+		days_remove = 10
+		remove_effect = {
+			FROM = {
+				set_country_flag = ELN_invite_FROM_join_in_Military_Mutual_Defence_Agreement
+				country_event = {
+					id = elino.13
+				} 
+			}
+		}
+		ai_will_do = {
+			base = 1000
+		}
+	}
+}
+
 ELN_Black_Foaming_Night = {
 	#国有化帕莉丝银行
 	ELN_Nationalization_of_Paris_Bank = {
@@ -85,7 +271,7 @@ ELN_Black_Foaming_Night = {
 		days_remove = 200
 		cost = 25
 		ai_will_do = {
-			factor = 100
+			factor = 1000
 		}
 		available = {
 		}
@@ -108,7 +294,7 @@ ELN_Black_Foaming_Night = {
 		visible = {
 		}
 		ai_will_do = {
-			factor = 100
+			factor = 1000
 		}
 		available = {
 		}
@@ -126,7 +312,7 @@ ELN_Black_Foaming_Night = {
 		fire_only_once = yes
 		cost = 50
 		ai_will_do = {
-			factor = 100
+			factor = 1000
 		}
 		visible = {
 		}
@@ -140,7 +326,7 @@ ELN_Black_Foaming_Night = {
 		fire_only_once = yes
 		cost = 25
 		ai_will_do = {
-			factor = 100
+			factor = 1000
 		}
 		available = {
 		}
