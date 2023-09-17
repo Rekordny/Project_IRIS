@@ -4,15 +4,12 @@ USR_livelihood_relief_subsidies = {
 		activation = { 
 			has_idea = USR_who_owns_the_republic
 		}
-		cancel_trigger = {
-			OR = { has_war = yes NOT = { USR = { has_idea = USR_who_owns_the_republic } } }
-		}
+		cancel_trigger = { has_war = yes }
 		cancel_effect = {
 			remove_ideas = USR_who_owns_the_republic
 			remove_ideas = USR_livelihood_relief_subsidies
 		}
-		available = {  }
-		fire_only_once = yes
+		fire_only_once = no
 		
 		is_good = yes
 		days_mission_timeout = 180
@@ -30,7 +27,14 @@ USR_livelihood_relief_subsidies = {
 				mission = USR_livelihood_relief_subsidies_counting
 				days = 180
 			}
+			hidden_effect = {
+				if = { 
+					limit = { is_ai = yes NOT = { has_completed_focus = USR_writing_social_democratic_editorials } }
+					add_war_support = 0.03
+				}
+			}
 		}
+		#AI实在太蠢了
 		ai_will_do = {
 			base = 10
 		}
@@ -422,36 +426,7 @@ USR_industrialization = {
 
 
 USR_high_command_kuromorimine = {
-
-	USR_reassemble_empire_troops = {
-		visible = {
-			TAG = USR
-			OR = { USR = { has_idea = USR_the_new_born_empire } is_testing = yes }
-		}
-		custom_cost_trigger = {
-			has_army_experience > 39
-		}
-		custom_cost_text = USR_tooltip10
-		days_remove = 50
-		modifier = {
-			stability_factor = -0.05
-		}
-		days_re_enable = 20
-		complete_effect = {
-			hidden_effect = {
-				army_experience = -40
-			}
-		}
-		remove_effect = { 
-			capital_scope = {
-				create_unit = {
-					division = "name = \"Uslar Empiror Artillery Division\" division_template = \"Uslar Empiror Artillery Division\" start_experience_factor = 0.5"
-					owner = USR
-				}
-			}
-		}
-		
-	}
+	#复职将领
 	USR_recall_unit_leaders = {
 		visible = {
 			TAG = USR
@@ -486,6 +461,7 @@ USR_high_command_kuromorimine = {
 			}
 		}
 	}
+	#移除缺少将领debuff
 	USR_upgrade_command_chain = {
 		visible = {
 			TAG = USR
@@ -504,6 +480,37 @@ USR_high_command_kuromorimine = {
 		}
 		remove_effect = {
 			remove_ideas = USR_lacking_millitary_officer
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+
+	#重整军备
+	USR_mission_aftermath = {
+		activation = { 
+			has_completed_focus = USR_the_indstrial_heritage_of_the_empire
+		}
+		fire_only_once = yes
+		available = {
+			arms_factory > 44
+		}
+		is_good = yes
+		days_mission_timeout = 240
+		timeout_effect = {
+			add_war_support = -0.05
+			hidden_effect = {
+				if = { 
+					limit = { is_ai = yes }
+					add_stability = 0.1
+					add_war_support = 0.1
+				}
+			}
+		}
+		selectable_mission = no
+		complete_effect = {
+			add_stability = 0.1
+			add_war_support = 0.1
 		}
 		ai_will_do = {
 			base = 10
