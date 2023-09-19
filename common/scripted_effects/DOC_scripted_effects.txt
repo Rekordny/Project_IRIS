@@ -1,0 +1,118 @@
+#爆发冲突！
+DOC_Conflict_Broke_out= {
+	news_event = { id = doc_news.101 }
+	country_lock_all_division_template = no
+	#如果没有点“焚典”
+	if = { 
+		limit = { NOT = { has_country_flag = DOC_Operation_Burning_Scripture }}
+		set_country_flag = DOC_No_Initiative_in_Conflict
+		#给你加点料
+		add_to_variable = {
+			doc_civil_enemy_power = 10
+		}
+	}
+	
+	#法典
+	if = {
+		limit = { has_country_flag = DOC_No_Initiative_in_Conflict }
+		start_civil_war = {
+			ideology = reactionism
+			size = 0.2
+			army_ratio = 0
+    		navy_ratio = 0
+			#有bug！还是会出现对方将领在我们这边，直接丢掉
+			capital = 60
+			states = { 45 60 59 }
+			keep_all_characters = yes
+			keep_political_leader = yes
+			keep_political_party_members = yes
+			if = { 
+				limit = { is_ai = no }
+				#处理敌人难度增加师
+				while_loop_effect = {
+					limit = { check_variable = {
+						DOC.doc_civil_enemy_power > 0
+					} }
+					add_to_variable = {
+						DOC.doc_civil_enemy_power = -1
+					}
+					50 = {
+						create_unit = {
+							division = "name = \"法典组织武装力量\" division_template = \"Shcnee_City_Defense_Corps\" start_experience_factor = 0"
+							owner = THIS.owner
+						}
+						create_unit = {
+							division = "name = \"法典组织武装力量\" division_template = \"Shcnee_City_Defense_Corps\" start_experience_factor = 0"
+							owner = THIS.owner
+						}
+					}
+				}
+			}
+			
+			
+			#删除部队模板
+			PREV = {
+				delete_unit_template_and_units = {
+					division_template = "Knights_of_the_Blue_Rose"
+					division_template = "Schnee_Grand_Ducal_Guard"
+					division_template = "Schnee_Mountaineer Division"
+					disband = yes #will refund equipment and manpower
+				}
+			}
+		}
+	}
+
+	#洛蒂安
+	else_if = {
+		limit = { has_country_flag = DOC_Operation_Burning_Scripture }
+		start_civil_war = {
+			ideology = reactionism
+			size = 0.2
+			army_ratio = 0
+    		navy_ratio = 0
+			#有bug！还是会出现对方将领在我们这边，直接丢掉
+			capital = 45
+			states = { 45 }
+			keep_all_characters = yes
+			keep_political_leader = yes
+			keep_political_party_members = yes
+			if = { 
+				limit = { is_ai = no }
+				#处理敌人难度增加师
+				while_loop_effect = {
+					limit = { check_variable = {
+						DOC.doc_civil_enemy_power > 0
+					} }
+					add_to_variable = {
+						DOC.doc_civil_enemy_power = -1
+					}
+					45 = {
+						create_unit = {
+							division = "name = \"法典组织武装力量\" division_template = \"Shcnee_City_Defense_Corps\" start_experience_factor = 0"
+							owner = THIS.owner
+						}
+						create_unit = {
+							division = "name = \"法典组织武装力量\" division_template = \"Shcnee_City_Defense_Corps\" start_experience_factor = 0"
+							owner = THIS.owner
+						}
+					}
+					
+				}
+			}
+			PREV = {
+				delete_unit_template_and_units = {
+					division_template = "Knights_of_the_Blue_Rose"
+					division_template = "Schnee_Grand_Ducal_Guard"
+					division_template = "Schnee_Mountaineer Division"
+					disband = yes #will refund equipment and manpower
+				}
+			}
+		}	
+
+
+	}
+	#关闭BOP
+	remove_power_balance = {
+		id = DOC_industrialization_against_manalisation
+	}
+}
