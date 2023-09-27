@@ -6,14 +6,8 @@ country_event = {
     title = STG_civ_war.1.t
 	desc = STG_civ_war.1.desc
 	picture = GFX_ungevent_1
-	trigger = {
-        tag = STG
-        has_country_flag = STG_is_usr_puppet
-    }
 	fire_only_once = yes
-    mean_time_to_happen = {
-        days = 365
-    }
+    is_triggered_only = yes
 	option = {
 		name = STG_civ_war.1.a
         222 = {
@@ -48,7 +42,6 @@ country_event = {
 		name = STG_civ_war.2.a
         hidden_effect = {
             STR = {
-                give_military_access = UNG
                 transfer_state = 222
                 transfer_state = 717
                 division_template = {
@@ -144,10 +137,12 @@ country_event = {
                 }
 		    }
             UNG = {
-                give_guarantee = STR
-                give_military_access = STR
+                country_event = {id = STG_civ_war.4 days = 3}
             }
-            country_event = {id = STG_civ_war.3 days = 7}
+            USR = {
+                country_event = {id = STG_civ_war.5 days = 3}
+            }
+            
         }
 		ai_chance = {
 			base = 30
@@ -173,6 +168,238 @@ country_event = {
         set_global_flag = STG_civ_war_started
 		ai_chance = {
 			base = 30
+		}
+	}
+}
+#UNG得知STG崩溃
+country_event = {
+    id = STG_civ_war.4
+    title = STG_civ_war.3.t
+	desc = STG_civ_war.3.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	option = {
+		name = STG_civ_war.3.a
+        UNG = {
+            give_guarantee = STR
+            give_military_access = STR
+        }
+        STR = {
+            give_military_access = UNG
+        }
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#USR得知STG崩溃
+country_event = {
+    id = STG_civ_war.5
+    title = STG_civ_war.5.t
+	desc = STG_civ_war.5.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	option = {
+		name = STG_civ_war.5.a
+        STG = {
+            declare_war_on = {
+                target = STR
+                type = annex_everything
+            }
+            add_ideas = STG_civ_war_idea
+        }
+        set_global_flag = STG_civ_war_started
+		ai_chance = {
+			base = 5
+		}
+	}
+    option = {
+		name = STG_civ_war.5.b
+        add_stability = -0.10
+        custom_effect_tooltip = STR_became_UNG_puppet_desc
+        hidden_effect = {
+            UNG = {
+                country_event = {id = STG_civ_war.6}
+            }
+        }
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+#UNG傀儡STR
+country_event = {
+    id = STG_civ_war.6
+    title = STG_civ_war.6.t
+	desc = STG_civ_war.6.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	option = {
+		name = STG_civ_war.6.a
+        add_political_power = 50
+        UNG = {
+            set_autonomy = {
+                target = STR
+                autonomy_state = dominion
+            }
+        }
+        STR = {
+            set_cosmetic_tag = STR_UNG_puppet
+        }
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#STG胜利
+country_event = {
+    id = STG_civ_war.7
+    title = STG_civ_war.7.t
+	desc = STG_civ_war.7.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = UNG
+        has_global_flag = STG_civ_war_started
+        NOT = {
+            222 = {is_controlled_by = STR}
+            717 = {is_controlled_by = STR}
+        }
+    }
+    immediate = {
+        set_global_flag = STG_civ_war_ended
+		STG = {
+			transfer_state = 222
+            transfer_state = 717
+            annex_country = {target = STR transfer_troops = no}
+		}
+        USR = {
+            white_peace = {
+				tag = UNG
+			}
+        }
+        STG = {
+            white_peace = {
+				tag = UNG
+				message = STG_CIV_ENDED_STG
+			}
+        }
+		news_event = { id = STG_civ_war_news.1 }
+    }
+	option = {
+		name = STG_civ_war.7.a
+        add_political_power = -100
+        add_stability = -0.10
+        clr_global_flag = STG_civ_war_started
+		ai_chance = {
+			base = 5 
+		}
+	}
+}
+#STR胜利
+country_event = {
+    id = STG_civ_war.8
+    title = STG_civ_war.8.t
+	desc = STG_civ_war.8.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = STR
+        has_global_flag = STG_civ_war_started
+        NOT = {
+            230 = {is_controlled_by = STG}
+            231 = {is_controlled_by = STG}
+        }
+    }
+	option = {
+		name = STG_civ_war.8.a
+        set_global_flag = STG_civ_war_ended
+        clr_global_flag = STG_civ_war_started
+		STR = {
+			transfer_state = 230
+            transfer_state = 231
+            annex_country = {target = STG transfer_troops = no}
+		}
+        hidden_effect = {
+            230 = {add_core_of = STR}
+            231 = {add_core_of = STR}
+            news_event = { id = STG_civ_war_news.2 }
+            STR = {
+                white_peace = {
+				    tag = USR
+				    message = STG_CIV_ENDED_STR
+			    }
+            }
+            USR = {
+                white_peace = {
+				    tag = UNG
+			    }
+            }
+        }
+		ai_chance = {
+			base = 10
+		}
+	}
+    option = {
+		name = STG_civ_war.8.b
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#STR完胜
+country_event = {
+    id = STG_civ_war.9
+    title = STG_civ_war.9.t
+	desc = STG_civ_war.9.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = STR
+        has_global_flag = STG_civ_war_started
+        NOT = {
+            230 = {is_controlled_by = STG}
+            231 = {is_controlled_by = STG}
+        }
+        USR = {
+            surrender_progress > 0.1
+        }
+    }
+    immediate = {
+        set_global_flag = STG_civ_war_ended
+		STR = {
+			transfer_state = 230
+            transfer_state = 231
+            transfer_state = 213
+            transfer_state = 206
+            transfer_state = 718
+            annex_country = {target = STG transfer_troops = no}
+		}
+        STR = {
+            white_peace = {
+				tag = USR
+				message = STG_CIV_ENDED_STR_2
+			}
+        }
+        USR = {
+            white_peace = {
+				tag = UNG
+			}
+        }
+		news_event = { id = STG_civ_war_news.3 }
+    }
+	option = {
+		name = STG_civ_war.9.a
+        clr_global_flag = STG_civ_war_started
+        hidden_effect = {
+            230 = {add_core_of = STR}
+            213 = {add_core_of = STR}
+            231 = {add_core_of = STR}
+            206 = {add_core_of = STR}
+            718 = {add_core_of = STR}
+        }
+		ai_chance = {
+			base = 5
 		}
 	}
 }
