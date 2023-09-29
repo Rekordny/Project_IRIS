@@ -1,7 +1,10 @@
 on_actions = {
 	on_startup = {
 		effect = {
+			#STG = {set_country_flag = STG_enable_parliament_events}
 			STG = {country_event = {id = STG_general.3 days = 7}}
+			STG = {country_event = {id = STG_general.5 days = 150}}
+			STG = {country_event = {id = STG_general.6 days = 200}}
 			#政府稳定初始化
 			STG = { set_variable = { STG_global_unrest = 20 } }
 			#卡美洛派威胁初始化
@@ -11,7 +14,7 @@ on_actions = {
 			#议会席位初始化
 			STG = { set_variable = { STG_seats = 30 } }
 			#支持票初始化
-			STG = { set_variable = { STG_supporter = 14 } }
+			STG = { set_variable = { STG_supporter = 18 } }
 			#通过法案需求初始化
 			STG = { set_variable = { STG_supporter_needed = 20 } }
 			#军队不满初始化
@@ -19,11 +22,37 @@ on_actions = {
 		}
 	}
 	on_weekly = { 
+		effect = {
+			if = {
+				limit = {
+					tag = STG
+					has_country_flag = STG_is_usr_puppet
+				}
+				remove_ideas = STG_unrest_1
+                remove_ideas = STG_unrest_2
+                remove_ideas = STG_unrest_3
+                remove_ideas = STG_unrest_4
+                remove_ideas = STG_unrest_5
+                remove_ideas = STG_unrest_6
+				remove_ideas = STG_usr_discontent_low
+                remove_ideas = STG_usr_discontent_middle
+                remove_ideas = STG_usr_discontent_high
+                remove_ideas = STG_usr_discontent_very_high
+                remove_ideas = STG_usr_unrest_end
+                remove_ideas = STG_cam_discontent_low
+                remove_ideas = STG_cam_discontent_middle
+                remove_ideas = STG_cam_discontent_high
+                remove_ideas = STG_cam_discontent_very_high
+			}
+		}
 		
 		effect = {
 			if = {
 				limit = {
 					tag = STG
+					NOT = {
+						has_country_flag = STG_is_usr_puppet
+					}
 				}
 				#每周卡美洛派威胁增长
 			    if = {
@@ -144,6 +173,27 @@ on_actions = {
 				STG_check_usr_unrest = yes
 			}
 		}
+		effect = {
+			STG = {
+				if = {
+                    limit = {
+                        has_country_flag = STG_ilya_issue_1_passed
+                    }
+                    clamp_temp_variable = {
+                        var = STG_supporter
+                        max = 33
+                        min = 0
+                    }
+                }
+                else = {
+                    clamp_temp_variable = {
+                        var = STG_supporter
+                        max = 30
+                        min = 0
+                    }
+                }
+			}
+		}
 		
 	}
 	on_monthly = {
@@ -151,7 +201,7 @@ on_actions = {
 			if = {
 				limit = {
 					tag = STG
-					fascism > 0.40
+					reactionism > 0.40
 					NOT = {
 						has_country_flag = STG_ung_got_cb
 					}
@@ -170,7 +220,7 @@ on_actions = {
 			if = {
 				limit = {
 					tag = STG
-					reactionism > 0.40
+					fascism > 0.40
 					NOT = {
 						has_country_flag = STG_usr_got_cb
 					}
