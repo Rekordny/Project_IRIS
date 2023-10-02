@@ -84,3 +84,70 @@ USR_retire_vice_country_leader = {
 		remove_ideas = USR_another_leader_Wagner
 	}
 }
+
+#加入战车道联盟阵营
+USR_refresh_SSD_alliance_members = {
+	for_each_scope_loop = {
+		array = USR.faction_members
+		if = {
+			limit = {
+				NOT = {
+					is_in_array = {
+						array = global.SSD_alliance_members
+						value = THIS.id
+					}
+				}
+				THIS = {
+					NOT = { is_puppet_of = USR }
+				}
+			}
+			add_to_array = {
+				array = global.SSD_alliance_members
+				value = THIS.id
+			}
+			#添加dm
+			THIS = { 
+				add_dynamic_modifier = {
+					modifier = USR_senshado_alliance_dm
+				}
+			}
+			USR_refresh_faction_effect = yes
+		}
+	}
+}
+
+#刷新阵营加成效果MONTHLY
+USR_refresh_faction_effect = {
+	#刷新dm数值(为战车道联盟)
+	if = {
+		limit = {
+			USR_is_leading_SSDA = yes
+		}
+		for_each_loop = {
+			array = global.SSD_alliance_members
+			add_to_temp_variable = { ssda_md_base = 1.5 }
+			if = {
+				limit = { USR = { has_completed_focus = USR_real_nishizumi_ryu } }
+				add_to_temp_variable = { ssda_md_base = 1.5 }
+			}
+		}
+		divide_temp_variable = {
+			ssda_md_base = 100
+		}
+		USR = {
+			
+			set_variable = {
+				usr_ssd_alliance_dm_armor = global.ssda_md_base
+			}
+			set_variable = {
+				usr_ssd_alliance_dm_morale = global.ssda_md_base
+			}
+			subtract_from_temp_variable = {
+				ssda_md_base_alt = global.ssda_md_base
+			}
+			set_variable = {
+				usr_ssd_alliance_dm_exploss = ssda_md_base_alt
+			}
+		}
+	}
+}
