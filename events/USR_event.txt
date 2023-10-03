@@ -42,24 +42,7 @@ country_event = {
 			add_compliance = 70
 			set_demilitarized_zone = no
 		}
-		if ={  
-			limit = { has_idea = USR_the_clemen_treaty }
-			swap_ideas = {
-				remove_idea = USR_the_clemen_treaty
-				add_idea = USR_the_clemen_treaty_2
-			}
-		}
-		else_if ={  
-			limit = { has_idea = USR_the_clemen_treaty_1 }
-			swap_ideas = {
-				remove_idea = USR_the_clemen_treaty
-				add_idea = USR_the_clemen_treaty_3
-			}
-		}
-		else = {
-			remove_ideas = USR_the_clemen_treaty_2
-			remove_ideas = USR_the_clemen_treaty_3
-		}
+		USR_remove_treaty_clemen = yes
 		ai_chance = {
 			factor = 10
 		}
@@ -160,10 +143,16 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = usr.6.a
-		153 = { transfer_state_to = USR add_core_of = USR }
-		721 = { transfer_state_to = USR add_core_of = USR }
-		KST = { remove_ideas = KST_pain_of_separation }
-		KST = { remove_ideas = KST_another_leader_Heinrike }
+		KST = {
+			every_core_state = {
+				add_core_of = USR
+			}
+			remove_ideas = KST_pain_of_separation
+		}
+		annex_country = {
+			target = KST
+			transfer_troops = yes
+		}
 		ai_chance = {
 			factor = 10
 		}
@@ -201,6 +190,20 @@ country_event = {
 		name = usr.8.a
 		add_to_faction = ANZ
 		news_event = { id = usr_news.3 }
+		USR = { 
+			add_ai_strategy = {
+			    type = alliance
+			    id = ANZ
+			    value = 1000
+			}
+		}
+		ANZ = { 
+			add_ai_strategy = {
+			    type = alliance
+			    id = USR
+			    value = 1000
+			}
+		}
 		ai_chance = {
 			factor = 10
 		}
@@ -641,7 +644,7 @@ country_event = {
 		BGT = { exists = yes }
 		USR = {
 			NOT = { has_country_flag = USR_WAGNER_RETURN }
-			has_defensive_war_with = ELN
+			OR = { has_defensive_war_with = ELN has_defensive_war_with = UNG }
 		}
 	}
 	mean_time_to_happen = { days = 3 }
@@ -655,28 +658,13 @@ country_event = {
 		hidden_effect = {
 			news_event = usr_news.7
 			set_country_flag = USR_WAGNER_RETURN
-			retire_vice_country_leader = yes
+			USR_retire_vice_country_leader = yes
 			add_ideas = USR_another_leader_Wagner
 			if = {
 				limit = { has_idea = USR_who_owns_the_republic }
 				remove_ideas = USR_who_owns_the_republic
 			}
-			if = {
-				limit = { has_idea = USR_the_clemen_treaty }
-				remove_ideas = USR_the_clemen_treaty
-			}
-			else_if = {
-				limit = { has_idea = USR_the_clemen_treaty_1 }
-				remove_ideas = USR_the_clemen_treaty_1
-			}
-			else_if = {
-				limit = { has_idea = USR_the_clemen_treaty_2 }
-				remove_ideas = USR_the_clemen_treaty_2
-			}
-			else_if = {
-				limit = { has_idea = USR_the_clemen_treaty_3 }
-				remove_ideas = USR_the_clemen_treaty_3
-			}
+			USR_remove_treaty_clemen = yes
 		}
 		ai_chance = {
 			factor = 10
@@ -693,7 +681,7 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = usr.25.a
-		STG = { country_event = { id = usr.26 } }
+		USR = { country_event = { id = usr.26 } }
 		ai_chance = {
 			factor = 10
 			modifier = {
@@ -704,7 +692,7 @@ country_event = {
 	}
 	option = {
 		name = usr.25.b
-		STG = { country_event = { id = usr.27 } }
+		USR = { country_event = { id = usr.27 } }
 		ai_chance = {
 			factor = 0
 			modifier = {
@@ -766,6 +754,30 @@ country_event = {
 			target = STG
 			type = annex_everything
 		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+#防御战争移除克莱门条约
+country_event = {
+	id = usr.28
+	title = usr.28.t
+	desc = usr.28.desc
+	picture = GFX_USR_CE28
+	#is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		tag = USR
+		USR = {
+			USR_the_clemen_treaty_exists = yes
+			has_defensive_war = yes
+		}
+	}
+	mean_time_to_happen = { days = 1 }
+	option = {
+		name = usr.28.a
+		USR_remove_treaty_clemen = yes
 		ai_chance = {
 			factor = 10
 		}
