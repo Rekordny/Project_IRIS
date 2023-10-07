@@ -1,4 +1,5 @@
 add_namespace = STG_civ_war
+add_namespace = STG_civ_war_news
 
 #叛乱？
 country_event = {
@@ -6,14 +7,8 @@ country_event = {
     title = STG_civ_war.1.t
 	desc = STG_civ_war.1.desc
 	picture = GFX_ungevent_1
-	trigger = {
-        tag = STG
-        has_country_flag = STG_is_usr_puppet
-    }
 	fire_only_once = yes
-    mean_time_to_happen = {
-        days = 365
-    }
+    is_triggered_only = yes
 	option = {
 		name = STG_civ_war.1.a
         222 = {
@@ -47,8 +42,8 @@ country_event = {
 	option = {
 		name = STG_civ_war.2.a
         hidden_effect = {
+            remove_ideas = STG_voice_of_rebellion
             STR = {
-                give_military_access = UNG
                 transfer_state = 222
                 transfer_state = 717
                 division_template = {
@@ -144,10 +139,12 @@ country_event = {
                 }
 		    }
             UNG = {
-                give_guarantee = STR
-                give_military_access = STR
+                country_event = {id = STG_civ_war.4 days = 3}
             }
-            country_event = {id = STG_civ_war.3 days = 7}
+            USR = {
+                country_event = {id = STG_civ_war.5 days = 3}
+            }
+            
         }
 		ai_chance = {
 			base = 30
@@ -161,6 +158,7 @@ country_event = {
 	desc = STG_civ_war.3.desc
 	picture = GFX_ungevent_1
 	fire_only_once = yes
+    is_triggered_only = yes
 	option = {
 		name = STG_civ_war.3.a
         STG = {
@@ -170,7 +168,367 @@ country_event = {
             }
         }
         add_ideas = STG_civ_war_idea
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#UNG得知STG崩溃
+country_event = {
+    id = STG_civ_war.4
+    title = STG_civ_war.3.t
+	desc = STG_civ_war.3.desc
+	picture = GFX_ungevent_1
+    is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_civ_war.3.a
+        UNG = {
+            give_guarantee = STR
+            give_military_access = STR
+        }
+        STR = {
+            give_military_access = UNG
+        }
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#USR得知STG崩溃
+country_event = {
+    id = STG_civ_war.5
+    title = STG_civ_war.5.t
+	desc = STG_civ_war.5.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+	option = {
+		name = STG_civ_war.5.a
+        STG = {
+            declare_war_on = {
+                target = STR
+                type = annex_everything
+            }
+            add_ideas = STG_civ_war_idea
+        }
+        USR = {
+            USR_remove_treaty_clemen = yes
+        }
         set_global_flag = STG_civ_war_started
+        hidden_effect = {
+            news_event = {id = STG_civ_war_news.1}
+        }
+		ai_chance = {
+			base = 5
+		}
+	}
+    option = {
+		name = STG_civ_war.5.b
+        add_stability = -0.10
+        custom_effect_tooltip = STR_became_UNG_puppet_desc
+        hidden_effect = {
+            UNG = {
+                country_event = {id = STG_civ_war.6}
+            }
+        }
+		ai_chance = {
+			base = 40
+		}
+	}
+}
+#UNG傀儡STR
+country_event = {
+    id = STG_civ_war.6
+    title = STG_civ_war.6.t
+	desc = STG_civ_war.6.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+	option = {
+		name = STG_civ_war.6.a
+        add_political_power = 50
+        UNG = {
+            set_autonomy = {
+                target = STR
+                autonomy_state = autonomy_dominion
+            }
+        }
+        STR = {
+            set_cosmetic_tag = STR_UNG_puppet
+        }
+        custom_effect_tooltip = UNG_gain_STG_tank_division_desc
+        hidden_effect = {
+            UNG = {
+                division_template = {
+                    name = "St. Gloriana Tank Division"
+                    is_locked = yes
+                    division_names_group = STR_MIL
+                    priority = 0
+                    template_counter = 0
+                    regiments = {
+                        medium_armor = { x = 0 y = 0 }
+                        medium_armor = { x = 0 y = 1 }
+                        medium_armor = { x = 0 y = 2 }
+					    medium_armor = { x = 1 y = 0 }
+                        medium_armor = { x = 1 y = 1 }
+                        medium_armor = { x = 1 y = 2 }
+                        motorized = { x = 2 y = 0}
+					    motorized = { x = 2 y = 1 }
+					    motorized = { x = 2 y = 2 }
+                        motorized = { x = 2 y = 3 }
+                    }
+                }
+                create_equipment_variant = {
+                    name = "“布尔”式巡洋坦克"
+                    type = medium_tank_chassis_0
+                    parent_version = 0
+                    modules = {
+                        main_armament_slot = tank_close_support_gun
+                        turret_type_slot = tank_medium_three_man_tank_turret
+                        suspension_type_slot = tank_bogie_suspension
+                        armor_type_slot = tank_riveted_armor
+                        engine_type_slot = tank_gasoline_engine
+                        special_type_slot_1 = tank_radio_1
+                        special_type_slot_2 = secondary_turret_hmg
+                        special_type_slot_3 = secondary_turret_hmg
+                    }
+                    upgrades = {
+                        tank_nsb_armor_upgrade = 4
+                        tank_nsb_engine_upgrade = 5
+                    }
+                    icon = "GFX_ENG_basic_light_tank_medium"
+                }
+            }
+            222 = {
+                create_unit = {
+                    division = "name = \"St. Gloriana Tank Division\" division_template = \"St. Gloriana Tank Division\" start_experience_factor = 0.75"
+                    owner = UNG
+                }
+            }
+        }
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#STG胜利
+country_event = {
+    id = STG_civ_war.7
+    title = STG_civ_war.7.t
+	desc = STG_civ_war.7.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = STG
+        has_global_flag = STG_civ_war_started
+        222 = {is_controlled_by = STG}
+        717 = {is_controlled_by = STG}
+    }
+    immediate = {
+		news_event = { id = STG_civ_war_news.2 }
+    }
+	option = {
+		name = STG_civ_war.7.a
+        add_stability = 0.10
+        add_political_power = 100
+        set_global_flag = STG_civ_war_ended
+        clr_global_flag = STG_civ_war_started
+        hidden_effect = {
+            STG = {
+			    transfer_state = 222
+                transfer_state = 717
+                annex_country = {target = STR transfer_troops = no}
+		    }
+            USR = {
+                white_peace = {
+				tag = UNG
+			    }
+            }
+            STG = {
+                white_peace = {
+				tag = UNG
+				message = STG_CIV_ENDED_STG
+			    }
+            }
+        }
+		ai_chance = {
+			base = 5 
+		}
+	}
+}
+#STR胜利
+country_event = {
+    id = STG_civ_war.8
+    title = STG_civ_war.8.t
+	desc = STG_civ_war.8.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = UNG
+        has_global_flag = STG_civ_war_started
+        NOT = {
+            230 = {is_controlled_by = STG}
+            231 = {is_controlled_by = STG}
+        }
+    }
+	option = {
+		name = STG_civ_war.8.a
+        set_global_flag = STG_civ_war_ended
+        clr_global_flag = STG_civ_war_started
+        hidden_effect = {
+            STR = {
+			    transfer_state = 230
+                transfer_state = 231
+                annex_country = {target = STG transfer_troops = no}
+		    }
+            230 = {add_core_of = STR}
+            231 = {add_core_of = STR}
+            news_event = { id = STG_civ_war_news.3 }
+            STR = {
+                white_peace = {
+				    tag = USR
+				    message = STG_CIV_ENDED_STR
+			    }
+            }
+            USR = {
+                white_peace = {
+				    tag = UNG
+			    }
+                country_event = {id = STG_civ_war.6}
+            }
+        }
+		ai_chance = {
+			base = 10
+		}
+	}
+    option = {
+		name = STG_civ_war.8.b
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#STR完胜
+country_event = {
+    id = STG_civ_war.9
+    title = STG_civ_war.9.t
+	desc = STG_civ_war.9.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = UNG
+        has_global_flag = STG_civ_war_started
+        NOT = {
+            230 = {is_controlled_by = STG}
+            231 = {is_controlled_by = STG}
+        }
+        USR = {
+            surrender_progress > 0.1
+        }
+    }
+	option = {
+		name = STG_civ_war.9.a
+        clr_global_flag = STG_civ_war_started
+        set_global_flag = STG_civ_war_ended
+        hidden_effect = {
+            230 = {add_core_of = STR}
+            213 = {add_core_of = STR}
+            231 = {add_core_of = STR}
+            206 = {add_core_of = STR}
+            718 = {add_core_of = STR}
+		    STR = {
+			    transfer_state = 230
+                transfer_state = 231
+                transfer_state = 213
+                transfer_state = 206
+                transfer_state = 718
+                annex_country = {target = STG transfer_troops = no}
+		    }
+            STR = {
+                white_peace = {
+				tag = USR
+				message = STG_CIV_ENDED_STR_2
+			    }
+            }
+            USR = {
+                white_peace = {
+				tag = UNG
+			    }
+            }
+		    news_event = { id = STG_civ_war_news.4 }
+            UNG = {
+                country_event = {id = STG_civ_war.6}
+            }
+        }
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+
+
+###############################################################################################################
+#新闻事件
+#里森堡冲突
+news_event = {
+    id = STG_civ_war_news.1
+    title = STG_civ_war_news.1.t
+	desc = STG_civ_war_news.1.desc
+	#picture = 
+	fire_only_once = yes
+    is_triggered_only = yes
+    major = yes
+	option = {
+		name = STG_civ_war_news.1.a
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#里森堡行政区凯旋
+news_event = {
+    id = STG_civ_war_news.2
+    title = STG_civ_war_news.2.t
+	desc = STG_civ_war_news.2.desc
+	#picture = 
+	fire_only_once = yes
+    is_triggered_only = yes
+    major = yes
+	option = {
+		name = STG_civ_war_news.2.a
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#里森堡解放阵线凯旋
+news_event = {
+    id = STG_civ_war_news.3
+    title = STG_civ_war_news.3.t
+	desc = STG_civ_war_news.3.desc
+	#picture = 
+	fire_only_once = yes
+    is_triggered_only = yes
+    major = yes
+	option = {
+		name = STG_civ_war_news.3.a
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#里森堡解放阵线大胜乌斯拉尔
+news_event = {
+    id = STG_civ_war_news.4
+    title = STG_civ_war_news.4.t
+	desc = STG_civ_war_news.4.desc
+	#picture = 
+	fire_only_once = yes
+    is_triggered_only = yes
+    major = yes
+	option = {
+		name = STG_civ_war_news.4.a
 		ai_chance = {
 			base = 30
 		}
