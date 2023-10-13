@@ -439,7 +439,7 @@
 	ai_will_do = { factor = 50 }
 	prerequisite = {focus = DOC_NF_A12_Investigate_the_State_of_Economy}
 	completion_reward = {
-		
+
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -623,6 +623,7 @@
 	mutually_exclusive = {	}
 	
 	completion_reward = {
+		custom_effect_tooltip = DOC_NF_A22_2_Snowy_Night_Talk_completion_reward
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -646,6 +647,7 @@
 			id = DOC_Scripture_Organization_Penetration 
 			value = 1
 		}
+		custom_effect_tooltip = DOC_NF_A23_Operation_Burning_Scripture_completion_reward 
 	}
 	bypass = {
 		has_country_flag = DOC_No_Initiative_in_Conflict 
@@ -663,6 +665,7 @@
 	x = 22
 	y = 5
 	ai_will_do = { factor = 50 }
+	available = {has_country_flag = DOC_Invitation_to_Talk }
 	prerequisite = {focus = DOC_NF_A22_2_Snowy_Night_Talk}
 	mutually_exclusive = {	}
 	
@@ -685,6 +688,7 @@
 	mutually_exclusive = {	focus = DOC_NF_A24_1_Reconciliation_with_the_Party_of_Primogeniture}
 	
 	completion_reward = {
+		set_country_flag = DOC_Break_with_the_Party_of_Primogeniture
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -703,6 +707,26 @@
 	mutually_exclusive = {focus = DOC_NF_A24_Break_with_the_Party_of_Primogeniture}
 	
 	completion_reward = {
+		set_country_flag = DOC_Reconciliation_with_the_Party_of_Primogeniture
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+
+	focus = { #整合政治力量
+
+	id = DOC_NF_A25_Integration_of_Political_Forces
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	x = 22
+	y = 9
+	ai_will_do = { factor = 50 }
+	prerequisite = {focus = DOC_NF_A24_1_Reconciliation_with_the_Party_of_Primogeniture 
+	                focus =  DOC_NF_A24_Break_with_the_Party_of_Primogeniture}
+	mutually_exclusive = {}
+	
+	completion_reward = {
+		remove_ideas = DOC_Undercurrents_of_Politics
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -720,15 +744,22 @@
 	icon = GFX_goal_generic_demand_territory
 	cost = 10
 	x = 16
-	y = 8
+	y = 10
 	ai_will_do = { factor = 50 }
 	prerequisite = {focus = DOC_NF_A16_1_Run_Neck_and_Neck_for_Brilliance
 	                focus = DOC_NF_A16_Break_the_Old_Shackle}
     prerequisite = {focus = DOC_NF_A06_Build_Modernized_Army}
+	prerequisite = {focus = DOC_NF_A16_1_Run_Neck_and_Neck_for_Brilliance
+	                focus = DOC_NF_A16_Break_the_Old_Shackle}
+	prerequisite = {focus = DOC_NF_A25_Integration_of_Political_Forces}
+	available = {
+		has_war = no
+		has_country_flag = DOC_Operation_Burning_Scripture
+		# 国策可点的条件
+	}
 
 	completion_reward = {
 		remove_ideas = DOC_Disaster_of_Black_Foaming_Night 
-		remove_ideas = DOC_Undercurrents_of_Politics
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -814,6 +845,9 @@
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_Army_01_lasGebirge_Military_Academy}
 	completion_reward = {
+
+		show_ideas_tooltip = { DOC_Veminger_Arsenal }
+
 		60 = {
 			add_extra_state_shared_building_slots = 5
 			add_building_construction = {
@@ -822,7 +856,7 @@
 				instant_build = yes 
 			}
 		}
-		show_ideas_tooltip = {DOC_Veminger_Arsenal}
+		
 	}	
 	search_filters = { FOCUS_FILTER_POLITICAL }
 
@@ -1015,6 +1049,9 @@
 	prerequisite = {focus = DOC_NF_Naval_03_1_Purchase_of_warships_from_Camelot}
 	completion_reward = {
 		navy_experience = 80
+	hidden_effect = {
+		country_event = {id= doc.8 days = 7}
+	}
         
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
@@ -1089,10 +1126,215 @@
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_Naval_05_Expansion_of_Naval_Production}
 	completion_reward = {
-		add_offsite_building = { type = dockyard 
-		                        level = 6 }
+		add_offsite_building = { type = dockyard level = 6 }
+
+		create_equipment_variant = {
+			name = "DD-SCH-I型"
+			type = ship_hull_light_2
+			name_group = DOC_DD_HISTORICAL #TODO_Manu: Namelist?
+			parent_version = 0
+			allow_without_tech = yes #Makes no difference since focus requires appropriate tech (above), but it improves tooltip
+			modules = {
+				fixed_ship_battery_slot = dp_light_battery_3
+				fixed_ship_anti_air_slot = ship_anti_air_1
+				fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+				fixed_ship_radar_slot = ship_sonar_2
+				fixed_ship_engine_slot = light_ship_engine_2
+				front_1_custom_slot = ship_torpedo_2
+				mid_1_custom_slot = ship_depth_charge_2
+				rear_1_custom_slot = ship_torpedo_2
+
+			}
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春风"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春花"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春雪"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春月"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春云"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春雨"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春波"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 春潮"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+
+		create_equipment_variant = {
+			name = "CA-SCH-I型"
+			type = heavy_cruiser_3 
+			name_group = DOC_CA_HISTORICAL #TODO_Manu: Namelist?
+			parent_version = 0
+			allow_without_tech = yes #Makes no difference since focus requires appropriate tech (above), but it improves tooltip
+			modules = {
+				fixed_ship_battery_slot = ship_medium_battery_3
+				fixed_ship_anti_air_slot = ship_anti_air_3
+				fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+				fixed_ship_radar_slot = ship_sonar_2
+				fixed_ship_armor_slot = ship_armor_cruiser_2
+				fixed_ship_engine_slot = cruiser_ship_engine_3
+				fixed_ship_secondaries_slot = dp_ship_secondaries_1
+				front_1_custom_slot = ship_torpedo_3
+				mid_1_custom_slot = dp_ship_secondaries_2
+				mid_2_custom_slot = ship_anti_air_3
+				rear_1_custom_slot = ship_medium_battery_3
+				rear_2_custom_slot = ship_anti_air_3
+			}
+		}
+    if = {
+	    limit = {
+			has_country_flag = DOC_UNG_CA
+			tag = DOC
+		}
+		DOC = {
+		country_event = { id = DOC.511 days = 0}
+		add_equipment_production = {
+			equipment = {
+				type = heavy_cruiser_3 
+				creator = "DOC" 
+				version_name = "特兰西瓦尼亚型"
+			}
+			requested_factories = 5
+			progress = 0.9
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = heavy_cruiser_3 
+				creator = "DOC" 
+				version_name = "特兰西瓦尼亚型"
+			}
+			requested_factories = 5
+			progress = 0.65
+			amount = 1
+		}
+	}
+	}
+	if = {
+		limit = {
+			has_country_flag = DOC_UNG_BB
+			tag = DOC
+		}
+		DOC = {
+		country_event = { id = DOC.512 days = 0}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_heavy_2
+				creator = "DOC"
+				version_name = "东欧罗巴型"
+			}
+			requested_factories = 5
+			progress = 0.95
+			amount = 1
+		}
+	}
+	}
+	else_if = {
+		limit = {NOT={has_country_flag = DOC_UNG_BB
+		  has_country_flag = DOC_UNG_CA}
+		}
+		DOC = {
+		add_equipment_production = {
+			equipment = {
+				type = heavy_cruiser_3 
+				creator = "DOC" 
+				version_name = "CA-SCH-I型"
+			}
+			requested_factories = 5
+			progress = 0.8
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = heavy_cruiser_3 
+				creator = "DOC" 
+				version_name = "CA-SCH-I型"
+			}
+			requested_factories = 5
+			progress = 0.95
+			amount = 1
+		}
+	}
+}
+
         
 	}
+
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
 
@@ -1108,10 +1350,151 @@
 	prerequisite = {focus = DOC_NF_Naval_06_PLAN_SCH_I}
 	completion_reward = {
 
-        
+		create_equipment_variant = {
+			name = "BBV-SCH-II型"
+			parent_version = 0
+			allow_without_tech = yes #Makes no difference since focus requires appropriate tech (above), but it improves tooltip
+			type = aviation_battleship_1
+			modules = {
+			fixed_ship_battery_slot = ship_heavy_battery_3
+			fixed_ship_anti_air_slot = ship_anti_air_4
+			fixed_ship_fire_control_system_slot = ship_fire_control_system_2
+			fixed_ship_radar_slot = ship_radar_2
+			fixed_ship_engine_slot = heavy_ship_engine_3
+			fixed_ship_secondaries_slot = dp_ship_secondaries_1
+			fixed_ship_armor_slot = ship_armor_bb_2
+			front_1_custom_slot = ship_deck_space
+			mid_1_custom_slot = ship_anti_air_4
+			mid_2_custom_slot = ship_anti_air_4
+			rear_1_custom_slot = ship_deck_space
+			}		
+		}
+		add_equipment_production = {
+			equipment = {
+				type = aviation_battleship_1
+				creator = "DOC" 
+				version_name = "BBV-SCH-II型"
+			}
+			name = "DOC 拉斯雪山"
+			requested_factories = 5
+			progress = 0.99
+			amount = 1
+		}
+
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏风"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏花"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏雪"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏月"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏云"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏雨"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏波"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 夏潮"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+
+		add_equipment_production = {
+			equipment = {
+				type = heavy_cruiser_3 
+				creator = "DOC" 
+				version_name = "CA-SCH-I型"
+			}
+			requested_factories = 5
+			progress = 0.95
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = heavy_cruiser_3 
+				creator = "DOC" 
+				version_name = "CA-SCH-I型"
+			}
+			requested_factories = 5
+			progress = 0.9
+			amount = 1
+		}
+    
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
+
 
 	focus = { #诗III造舰计划
 
@@ -1126,6 +1509,236 @@
 		focus = DOC_NF_Naval_08_1_PLAN_SCH_Urgent
 	}
 	completion_reward = {
+
+		create_equipment_variant = {
+			name_group = DOC_CV_HISTORICAL
+			name = "CV-SCH-III型"
+			parent_version = 0
+			allow_without_tech = yes #Makes no difference since focus requires appropriate tech (above), but it improves tooltip
+			type = carrier_4
+			modules = {
+			fixed_ship_deck_slot_1 = ship_deck_space
+			fixed_ship_deck_slot_2 = ship_deck_space
+			fixed_ship_anti_air_slot = ship_anti_air_4
+			fixed_ship_radar_slot = ship_radar_4
+			fixed_ship_engine_slot = carrier_ship_engine_4
+			fixed_ship_secondaries_slot = dp_ship_secondaries_4
+			front_1_custom_slot = ship_deck_space
+			front_1_custom_slot = ship_deck_space
+			mid_1_custom_slot = ship_anti_air_4
+			mid_2_custom_slot = ship_anti_air_4
+			rear_1_custom_slot = ship_deck_space
+			}		
+		}
+
+		add_equipment_production = {
+			equipment = {
+				type = carrier_4
+				creator = "DOC" 
+				version_name = "CV-SCH-III型"
+			}
+			requested_factories = 5
+			progress = 0.95
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = carrier_4
+				creator = "DOC" 
+				version_name = "CV-SCH-III型"
+			}
+			requested_factories = 5
+			progress = 0.9
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = aviation_battleship_1
+				creator = "DOC" 
+				version_name = "BBV-SCH-II型"
+			}
+			name = "DOC 青兰山脉"
+			requested_factories = 5
+			progress = 0.99
+			amount = 1
+		}
+
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋风"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋花"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋雪"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋月"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋云"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋雨"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋波"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 秋潮"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬风"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬花"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬雪"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬月"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬云"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬雨"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬波"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_light_2
+				creator = "DOC" 
+				version_name = "DD-SCH-I型"
+			}
+			name = "DOC 冬潮"
+			requested_factories = 1
+			progress = 1
+			amount = 1
+		}
 
         
 	}
@@ -1148,6 +1761,30 @@
 	available={  has_war = yes }
 	completion_reward = {
 		add_ideas = DOC_PLAN_SCH_Urgent
+
+
+		add_equipment_production = {
+			equipment = {
+				type = aviation_battleship_1
+				creator = "DOC" 
+				version_name = "BBV-SCH-II型"
+			}
+			name = "DOC 青兰山脉"
+			requested_factories = 5
+			progress = 0.99
+			amount = 1
+		}
+		add_equipment_production = {
+			equipment = {
+				type = aviation_battleship_1
+				creator = "DOC" 
+				version_name = "BBV-SCH-II型"
+			}
+			name = "DOC 艾因费兹特山脉"
+			requested_factories = 5
+			progress = 0.8
+			amount = 1
+		}
 
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
@@ -1253,6 +1890,74 @@
     }
 
 
+	##空军区
+
+	#naval_air
+
+	focus = { #黎明之翼
+	id = DOC_NF_NA1_The_dawn_of_wing#国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 1
+	x = 6
+	y = 11
+	ai_will_do = { factor = 100 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+		# 国策可点的条件
+	}
+	prerequisite = { focus = DOC_NF_Naval_04_1_Sent_Naval_Officers_to_Camelot_for_Visit focus = DOC_NF_Naval_04_Kitt_Harbour_Naval_School }
+	#prerequisite = { focus =  }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+
+		air_experience = 25
+
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+}
+
+
+	focus = { #青空海鹫
+	id = DOC_NF_NA2_Vulture_in_Blue_Sky #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 6
+	y = 12
+	ai_will_do = { factor = 100 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+		# 国策可点的条件
+	}
+	prerequisite = { focus = DOC_NF_NA1_The_dawn_of_wing }
+	prerequisite = { focus = DOC_NF_Naval_06_PLAN_SCH_I }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+
+		air_experience = 10
+
+		add_tech_bonus = {
+			name = "青空海鹫"
+			bonus = 0.4 
+			uses = 4
+			category = naval_air
+		}
+		add_tech_bonus = {
+			name = "青空海鹫"
+			bonus = 0.5 
+			uses = 2
+			category = air_doctrine
+		}
+
+		#naval_air = 舰载机 air_doctrine = 空军学说
+
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+}
+
+
+
     ##未来区
 
 
@@ -1262,7 +1967,7 @@
 	icon = GFX_goal_generic_demand_territory
 	cost = 5
 	x = 18
-	y = 10
+	y = 12
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_A_LAST_The_Now_Is_Here_The_Future_Is_the_Future
      }
@@ -1284,7 +1989,7 @@
 	icon = GFX_goal_generic_demand_territory
 	cost = 2
 	x = 18
-	y = 11
+	y = 13
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_F_W01_Revisiting_the_Wallachian_Question
      }
@@ -1309,7 +2014,7 @@
 	icon = GFX_goal_generic_demand_territory
 	cost = 2
 	x = 18
-	y = 12
+	y = 14
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus =  DOC_NF_F_W02_Ultimatum_to_the_Wallachian_Authorities
      }
