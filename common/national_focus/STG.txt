@@ -7,15 +7,24 @@ focus_tree = {
 			tag = STG
 		}
 	}
+	default = no
+
 	continuous_focus_position = {
 		x = 5000
 		y = 1000
 	}
+	
+	initial_show_position = { ###为什么不能用了?
+		#focus = STG_starting_1 
+        x = 32
+        y = 0
+	}
+
 #开局国策
     #议会开幕
     focus = {
         id = STG_starting_1
-        icon = 1
+        icon = GFX_focus_STG_starting_1
         x = 11
         y = 0
         cost = 2
@@ -32,7 +41,7 @@ focus_tree = {
     #头等大事
     focus = {
         id = STG_starting_2
-        icon = 1
+        icon = GFX_focus_STG_starting_2
         x = 0
         y = 1
         cost = 5
@@ -218,7 +227,7 @@ focus_tree = {
             custom_trigger_tooltip = {
                 tooltip = STG_army_discontent_less_than_40_desc
                 trigger = {
-                    STG = {check_variable = {STG_army_discontent < 40}}
+                    STG = { check_variable = { STG_army_discontent < 40 } }
                 }
             }
         }
@@ -553,7 +562,7 @@ focus_tree = {
     #选王事务
     focus = {
         id = STG_monarchy_1
-        icon = 1
+        icon = GFX_focus_STG_monarchy_1
         x = 0
         y = 1
         cost = 5
@@ -574,7 +583,7 @@ focus_tree = {
     #北方来客
     focus = {
         id = STG_ilya_1
-        icon = 1
+        icon = GFX_focus_STG_ilya_1
         x = -4
         y = 1
         cost = 5
@@ -604,6 +613,7 @@ focus_tree = {
                     ideology = fascism
                     popularity = 0.03
                 }
+                country_event = {id = STG_ilya.22 days = 2}
             }            
 		}
     }
@@ -731,6 +741,9 @@ focus_tree = {
 		}
         completion_reward = {
             add_war_support = 0.20    
+            hidden_effect = {
+                country_event = {id = STG_ilya.23}
+            }
 		}
     }
     #归乡
@@ -743,6 +756,15 @@ focus_tree = {
         relative_position_id = STG_ilya_4
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_4 }
+        cancelable = no
+        select_effect = {
+            country_event = {id = STG_ilya.24 days = 15}
+        }
+        bypass = {
+            NOT = {
+                country_exists = USR
+            }
+        }
         available = {
             has_country_flag = STG_ilya_took_power
             has_army_manpower = { size > 399999 }
@@ -752,14 +774,21 @@ focus_tree = {
 		}
         will_lead_to_war_with = USR
         completion_reward = {    
-            create_wargoal = {
-                target = USR
-                type = annex_everything
+            STG = {
+                declare_war_on = {
+                    target = USR
+                    type = annex_everything
+                }
             }
             add_timed_idea = {
                 idea = STG_ilya_storm
                 days = 270
 		    }
+            custom_effect_tooltip = STG_ilya_enable_war_desicions_desc
+            hidden_effect = {
+                set_country_flag = STG_enable_einzbern_storm_decisions
+                STG_ilya_check_war_stage = yes
+            }
         }
     }
     #合而为一
@@ -768,7 +797,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 7
+        cost = 5
         relative_position_id = STG_ilya_war_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_war_1 }
@@ -796,6 +825,8 @@ focus_tree = {
                         add_core_of = STG
                     }
                 }
+                clr_country_flag = STG_enable_einzbern_storm_decisions
+                STG_remove_ilya_war_ideas = yes
             }
 		}
     }
@@ -849,7 +880,7 @@ focus_tree = {
     #坐稳王位
     focus = {
         id = STG_ilya_12
-        icon = 1
+        icon = GFX_focus_STG_ilya_12
         x = 0
         y = 1
         cost = 8
@@ -862,9 +893,17 @@ focus_tree = {
         ai_will_do = {
 			factor = 1
 		}
-        completion_reward = {      
-            remove_country_leader_trait = TRAIT_STG_ilya_naive
+        completion_reward = {  
+            STG_ilya = {
+                remove_trait = {
+                    slot = country_leader
+                    trait = TRAIT_STG_ilya_naive
+                }
+            }    
             STG_reduce_army_discontent = yes
+            hidden_effect = {
+                country_event = {id = STG_ilya.25}
+            }
 		}
     }
     #点石成金
@@ -884,7 +923,12 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-            add_country_leader_trait = TRAIT_STG_ilya_genius
+            STG_ilya = {
+                add_trait = {
+                    slot  = country_leader
+                    trait = TRAIT_STG_ilya_genius
+                }
+            }
             random_owned_controlled_state = {
 			    add_extra_state_shared_building_slots = 2
 			    add_building_construction = {
@@ -930,7 +974,8 @@ focus_tree = {
             add_dynamic_modifier = {modifier = STG_workshop_dynamic_modifier}
             custom_effect_tooltip = STG_enable_einzbern_workshop
             hidden_effect = {
-                STG = {set_variable = {STG_material = 2}}
+                STG = { set_variable = { STG_material = 2 } }
+                STG = { add_to_variable = {STG_monthly_manpower_bonus = 0.10}}
             }
 		}
     }
@@ -945,17 +990,174 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_7 }
         available = {
-            
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
+            swap_ideas = {
+                remove_idea = industrial_priority
+                add_idea = STG_ilya_mana
+            }
             add_research_slot = 1
             custom_effect_tooltip = STG_gain_two_units_material
             hidden_effect = {
-                STG = {add_to_variable = {STG_material = 2}}
+                STG = { add_to_variable = { STG_material = 2 } }
             }
+		}
+    }
+    #为了拯救欧罗巴......
+    focus = {
+        id = STG_ilya_mahoushoujyo_1
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_8
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_8 }
+        allow_branch = {has_country_flag = STG_ilya_easter_enabled}
+        available = {
+            has_country_flag = STG_ilya_took_power
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_stability = -0.20
+            STG_increase_army_discontent_big = yes
+            hidden_effect = {
+                STG = { add_to_variable = { STG_material = 2 } }
+                STG = {
+                    add_to_variable = {STG_army_infantry_attack_bonus = 0.05}
+                    add_to_variable = {STG_workshop_artillery_bonus = 0.05}
+                    add_to_variable = {STG_workshop_armor_attack_bonus = 0.05}
+                    add_to_variable = {STG_workshop_armor_defense_bonus = 0.05}
+                    add_to_variable = {STG_workshop_experience_loss_bonus = 0.05}
+                    add_to_variable = {STG_workshop_industrial_capacity_bonus = 0.05}
+                    add_to_variable = {STG_production_factory_max_efficiency_bonus = 0.05}
+                    add_to_variable = {STG_monthly_manpower_bonus = 0.05}
+                }
+            }
+		}
+    }
+    #成为魔法少女吧！
+    focus = {
+        id = STG_ilya_mahoushoujyo_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_1 }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_IMA_ILYA_WA_KAWAI_NA_MAHOSHOUJYO_DESU
+            STG_increase_army_discontent_big = yes
+            hidden_effect = {
+                #TODO 变更伊莉雅肖像
+                STG_ilya = {
+                    add_trait = {
+                        slot = country_leader
+                        trait = TRAIT_STG_ilya_mahoushoujyo
+                    }
+                }
+            }
+		}
+    }
+    #异界知识
+    focus = {
+        id = STG_ilya_mahoushoujyo_3
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_2 }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            country_event = { }
+		}
+    }
+    #异乡来客
+    focus = {
+        id = STG_ilya_mahoushoujyo_4
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_3
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_3 }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            country_event = { }
+		}
+    }
+    #奇妙的礼装
+    focus = {
+        id = STG_ilya_mahoushoujyo_5
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_2 }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            add_ideas = STG_ruby
+            country_event = { }
+		}
+    }
+    #福利，不存在的？
+    focus = {
+        id = STG_ilya_mahoushoujyo_6
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_5
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_5 }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            country_event = { }
+		}
+    }
+    #魔法少女Prisma☆伊莉雅
+    focus = {
+        id = STG_ilya_mahoushoujyo_7
+        icon = 1
+        x = -1
+        y = 2
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_6
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_6 }
+        prerequisite = { focus = STG_ilya_mahoushoujyo_4 }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            country_event = {}
 		}
     }
     #爱因兹贝伦近卫军团
@@ -1083,9 +1285,6 @@ focus_tree = {
         relative_position_id = STG_ilya_3
         available_if_capitulated = yes
         prerequisite = { 
-            focus = STG_monarchy_4
-        }
-        prerequisite = { 
             focus = STG_ilya_issue_2
         }
         prerequisite = { 
@@ -1099,7 +1298,7 @@ focus_tree = {
         completion_reward = {
             add_stability = 0.05
             add_popularity = {
-                ideology = democratic
+                ideology = neutrality
                 popularity = 0.10
             }
             country_event = {id = STG_ilya.7 days = 3}
@@ -1109,7 +1308,7 @@ focus_tree = {
     #雪之城的女皇
     focus = {
         id = STG_ilya_10
-        icon = 1
+        icon = GFX_focus_STG_ilya_10
         x = 0
         y = 1
         cost = 5
@@ -1122,13 +1321,21 @@ focus_tree = {
             controls_state = 149
             controls_state = 155
             controls_state = 723
+            NOT = {
+                has_country_flag = STG_ilya_is_mahoushoujyo
+            }
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-            set_cosmetic_tag = STG_ilya_empire
-            add_country_leader_trait = TRAIT_STG_ilya_queen
+            set_cosmetic_tag = STG_ilya_empire_neutrality
+            STG_ilya = {
+                add_trait = {
+                    slot = country_leader
+                    trait = TRAIT_STG_ilya_queen
+                }
+            }
             hidden_effect = {
                 set_country_leader_description = {
                     desc = "STG_ilya_desc_3"
@@ -1180,6 +1387,10 @@ focus_tree = {
                 set_country_flag = STG_more_decision_against_cam
             }
             STG_reduce_cam_unrest_big = yes
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.08
+            }
 		}
     }
     #尘埃落定
@@ -1194,7 +1405,7 @@ focus_tree = {
         prerequisite = { focus = STG_monarchy_3 }
         available = {
             NOT = {
-                reactionism > 0.05
+                reactionism > 0.08
             }
         }
         ai_will_do = {
@@ -1489,7 +1700,7 @@ focus_tree = {
     #中意之选
     focus = {
         id = STG_grey_1
-        icon = 1
+        icon = GFX_foucs_STG_grey_1
         x = 6
         y = 1
         cost = 5
@@ -2022,7 +2233,7 @@ focus_tree = {
             custom_trigger_tooltip = {
                 tooltip = STG_army_discontent_less_than_40_desc
                 trigger = {
-                    STG = {check_variable = {STG_army_discontent < 40}}
+                    STG = { check_variable = {STG_army_discontent < 40 } }
                 }
             }
         }
@@ -2165,7 +2376,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			custom_effect_tooltip = STG_more_decision_against_cam
+			custom_effect_tooltip = STG_more_decision_against_cam_desc
             hidden_effect = {
                 set_country_flag = STG_more_decision_against_cam
             }
@@ -2367,7 +2578,7 @@ focus_tree = {
         completion_reward = {
 			custom_effect_tooltip = STG_control_par
             hidden_effect = {
-                STG = {add_to_variable = {STG_supporter = 30}}
+                STG = {add_to_variable = { STG_supporter = 30 } }
             }
 		}
     }
@@ -2966,13 +3177,17 @@ focus_tree = {
             focus = STG_dip_6        
         }
         mutually_exclusive = {
-            focus = STG_dip_9
-        }
-        mutually_exclusive = {
             focus = STG_dip_11
         }
         available = {
             country_exists = ELN
+        }
+        bypass = {
+            OR = {
+                NOT = {country_exists = ELN}
+                is_in_faction_with = ELN
+                has_war_with = ELN
+            }
         }
         ai_will_do = {
 			factor = 1
@@ -3001,6 +3216,13 @@ focus_tree = {
         ai_will_do = {
 			factor = 1
 		}
+        bypass = {
+            OR = {
+                NOT = {country_exists = ANZ}
+                is_in_faction_with = ANZ
+                has_war_with = ANZ
+            }
+        }
         completion_reward = {
 			ANZ = {
                 country_event = {id = STG_dip.5 days = 5}
@@ -3022,11 +3244,7 @@ focus_tree = {
         mutually_exclusive = {
             focus = STG_dip_7
         }
-        mutually_exclusive = {
-            focus = STG_dip_9
-        }
         available = {
-            
             USR = {
                 is_in_faction = yes
             }
@@ -3434,6 +3652,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            add_ideas = STG_advanced_artillery
 			add_tech_bonus = {
                 bonus = 1.0
                 uses = 1
@@ -3697,6 +3916,9 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
+            set_technology = {
+                long_range_patrol_support_tech = 1
+            }
             add_doctrine_cost_reduction = {
                 cost_reduction = 0.50
                 uses = 2
