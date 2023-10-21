@@ -1,0 +1,153 @@
+#乌斯拉尔移除克莱门条约
+USR_remove_treaty_clemen = {
+	if = {
+		limit = { has_idea = USR_the_clemen_treaty }
+		remove_ideas = USR_the_clemen_treaty
+	}
+	else_if = {
+		limit = { has_idea = USR_the_clemen_treaty_1 }
+		remove_ideas = USR_the_clemen_treaty_1
+	}
+	else_if = {
+		limit = { has_idea = USR_the_clemen_treaty_2 }
+		remove_ideas = USR_the_clemen_treaty_2
+	}
+	else_if = {
+		limit = { has_idea = USR_the_clemen_treaty_3 }
+		remove_ideas = USR_the_clemen_treaty_3
+	}
+}
+
+#狠狠得爆破乌斯拉尔
+USR_let_be_brokenz = {
+	for_each_scope_loop = {
+		array = USR.core_states
+		add_core_of = BGT
+		add_core_of = HSP
+		add_core_of = RBW
+		add_core_of = OST
+		add_core_of = KAL
+		add_core_of = SCK
+		add_core_of = PMB
+		add_core_of = RHB
+	}
+	120 = { add_core_of = SCK }
+	BGT = { 
+		transfer_state = 121 
+	}
+	HSP = { 
+		transfer_state = 174 
+		transfer_state = 682 
+	}
+	RBW = {
+		transfer_state = 159 
+		transfer_state = 179 
+	}
+	OST = {
+		transfer_state = 202 
+		transfer_state = 197 
+	}
+	KAL = {
+		transfer_state = 177 
+		transfer_state = 723 
+	}
+	RHB = {
+		transfer_state = 138 
+		transfer_state = 722 
+	}
+	PMB = {
+		transfer_state = 149
+		transfer_state = 155
+	}
+	SCK = {
+		transfer_state = 120
+		transfer_state = 144
+	}
+}
+
+#移除副领导人
+USR_retire_vice_country_leader = {
+	if = {
+		limit = { has_idea = USR_another_leader_Minna }
+		remove_ideas = USR_another_leader_Minna
+	}
+	if = {
+		limit = { has_idea = USR_another_leader_Erika }
+		remove_ideas = USR_another_leader_Erika
+	}
+	if = {
+		limit = { has_idea = USR_another_leader_Adolfine }
+		remove_ideas = USR_another_leader_Adolfine
+	}
+	if = {
+		limit = { has_idea = USR_another_leader_Wagner }
+		remove_ideas = USR_another_leader_Wagner
+	}
+}
+
+#加入战车道联盟阵营
+USR_refresh_SSD_alliance_members = {
+	for_each_scope_loop = {
+		array = USR.faction_members
+		if = {
+			limit = {
+				NOT = {
+					is_in_array = {
+						array = global.SSD_alliance_members
+						value = THIS.id
+					}
+				}
+				THIS = {
+					NOT = { is_puppet_of = USR }
+				}
+			}
+			add_to_array = {
+				array = global.SSD_alliance_members
+				value = THIS.id
+			}
+			#添加dm
+			THIS = { 
+				add_dynamic_modifier = {
+					modifier = USR_senshado_alliance_dm
+				}
+			}
+			USR_refresh_faction_effect = yes
+		}
+	}
+}
+
+#刷新阵营加成效果MONTHLY
+USR_refresh_faction_effect = {
+	#刷新dm数值(为战车道联盟)
+	if = {
+		limit = {
+			USR_is_leading_SSDA = yes
+		}
+		for_each_loop = {
+			array = global.SSD_alliance_members
+			add_to_temp_variable = { ssda_md_base = 1.5 }
+			if = {
+				limit = { USR = { has_completed_focus = USR_real_nishizumi_ryu } }
+				add_to_temp_variable = { ssda_md_base = 1.5 }
+			}
+		}
+		divide_temp_variable = {
+			ssda_md_base = 100
+		}
+		USR = {
+			
+			set_variable = {
+				usr_ssd_alliance_dm_armor = global.ssda_md_base
+			}
+			set_variable = {
+				usr_ssd_alliance_dm_morale = global.ssda_md_base
+			}
+			subtract_from_temp_variable = {
+				ssda_md_base_alt = global.ssda_md_base
+			}
+			set_variable = {
+				usr_ssd_alliance_dm_exploss = ssda_md_base_alt
+			}
+		}
+	}
+}

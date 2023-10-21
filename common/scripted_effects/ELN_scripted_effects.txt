@@ -94,3 +94,127 @@ ELN_Improving_the_economy_situation = {
 		remove_ideas = ELN_Aftermath_of_Black_Foaming_Night_3
 	}
 }
+
+#民主国家协约
+Entente_for_Democracies_array_effect = {
+	hidden_effect = {
+		clear_array = global.Entente_for_Democracies_members
+		set_variable = {
+			global.ELN_Europa_Economic_Community_member_index = 0
+		}
+		set_variable = {
+			global.Entente_for_Democracies_members_index = 0
+		}
+		every_country = {
+			limit = {
+				exists = yes
+				is_in_faction_with = ELN
+				ELN = {
+					is_faction_leader = yes
+					has_government = democratic
+				}
+			}
+			add_to_array = {
+				global.Entente_for_Democracies_members = THIS
+			}
+		}
+		get_sorted_scored_countries = {
+			scorer = IRIS_num_of_factories_scorer
+			array = global.Entente_for_Democracies_members
+		}
+		for_each_scope_loop = {
+			array = global.Entente_for_Democracies_members
+			add_to_variable = {
+				global.Entente_for_Democracies_members_index = 1
+			}
+			set_variable = {
+				Entente_for_Democracies_ranking = global.Entente_for_Democracies_members_index
+			}
+			if = {
+				limit = {
+					has_country_flag = ELN_Europa_Economic_Community_member
+				}
+				add_to_variable = {
+					global.ELN_Europa_Economic_Community_member_index = 1
+				}
+			}
+		}
+		for_each_scope_loop = {
+			array = global.Entente_for_Democracies_members
+			set_variable = {
+				ELN_MODIFIER_CONSUMER_GOODS_FACTOR_VAR = global.ELN_Europa_Economic_Community_member_index
+			}
+			set_variable = {
+				ELN_MODIFIER_INDUSTRIAL_CAPACITY_FACTOR_VAR = global.ELN_Europa_Economic_Community_member_index
+			}
+			set_variable = {
+				ELN_MODIFIER_PRODUCTION_FACTORY_EFFICIENCY_GAIN_FACTOR_VAR = global.ELN_Europa_Economic_Community_member_index
+			}
+			divide_variable = {
+				ELN_MODIFIER_CONSUMER_GOODS_FACTOR_VAR = -50
+			}
+			divide_variable = {
+				ELN_MODIFIER_INDUSTRIAL_CAPACITY_FACTOR_VAR = 100
+			}
+			divide_variable = {
+				ELN_MODIFIER_PRODUCTION_FACTORY_EFFICIENCY_GAIN_FACTOR_VAR = 200
+			}
+			if = {
+				limit = {
+					has_global_flag = ELN_Europa_Economic_Community_found
+					has_country_flag = ELN_Europa_Economic_Community_member
+					not = {
+						has_dynamic_modifier = {
+							modifier = ELN_Europa_Economic_Community_modifier
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = ELN_Europa_Economic_Community_modifier
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = ELN_Military_Mutual_Defence_Agreement_found
+					has_country_flag = ELN_Military_Mutual_Defence_Agreement_member
+					not = {
+						has_idea = ELN_Military_Mutual_Defence_Agreement_idea
+					}
+				}
+				add_ideas = ELN_Military_Mutual_Defence_Agreement_idea
+			}
+		}
+		clear_variable = global.Entente_for_Democracies_members_index
+	}
+}
+
+#解锁一个宣传部门槽位
+ELN_unlock_one_propaganda_slot = {
+	custom_effect_tooltip = ELN_unlock_one_propaganda_slot
+	hidden_effect = {
+		if = {
+			limit = {
+				check_variable = { ELN_propaganda_Slot_1_VAR = 1 }
+			}
+			set_variable = {
+				ELN_propaganda_Slot_1_VAR = 2
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ELN_propaganda_Slot_2_VAR = 1 }
+			}
+			set_variable = {
+				ELN_propaganda_Slot_2_VAR = 2
+			}
+		}
+		else_if = {
+			limit = {
+				check_variable = { ELN_propaganda_Slot_3_VAR = 1 }
+			}
+			set_variable = {
+				ELN_propaganda_Slot_3_VAR = 2
+			}
+		}
+	}
+}

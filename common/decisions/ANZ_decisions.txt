@@ -148,6 +148,13 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				}
 			}
 		}
+		ai_will_do = {
+			base = 10
+			modifier = {
+				has_country_flag = ANZ_LOTHIAN
+				add = 100
+			}
+		}
 	}
 	#规整地方牧区
 	ANZ_file_local_parish = {
@@ -176,6 +183,13 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				add_to_variable = {
 					anz_civil_enemy_power = 0.5
 				}
+			}
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_country_flag = ANZ_LOTHIAN
+				add = 5
 			}
 		}
 	}
@@ -235,7 +249,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 			}
 		}
 	}
-	#移除工厂
+	#关闭工厂
 	ANZ_remove_factory = {
 		cost = 0
 		remove_effect = {
@@ -248,10 +262,10 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 		days_remove = 100  
 		complete_effect = {
-			add_political_power = 50
+			add_political_power = 100
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
-				value = -0.05
+				value = -0.1
 			}
 			
 		}
@@ -261,7 +275,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				has_country_flag = ANZ_ANZIO
 				power_balance_value = {
 					id = ANZ_industrialization_against_manalisation
-					value > 0.7
+					value > 0.65
 				}
 				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_officers }
 				add = 1
@@ -270,7 +284,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				has_country_flag = ANZ_LOTHIAN
 				power_balance_value = {
 					id = ANZ_industrialization_against_manalisation
-					value > 0.7
+					value > 0.65
 				}
 				NOT = { has_completed_focus = ANZ_icorporation_of_diocese_of_aldrich }
 				add = 1
@@ -282,188 +296,49 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 ANZ_secret_papacy_cat ={
 
 }
-#战车道与工业化举措
-ANZ_secret_senshado_cat = {
-	#藏匿军用装备
-	ANZ_gather_equipment = {
-		fire_only_once = no
-		days_remove = 100
-		custom_cost_trigger = {
-			has_army_experience > 30
-		}
-		visible = {
-			has_civil_war = no
-			has_completed_focus = ANZ_ignite_the_black_flame
-		}
-		custom_cost_text = ANZ_tooltip15
-		complete_effect = {
-			hidden_effect = {
-				army_experience = -30
-			}
-		}
-		remove_effect = {
-			add_equipment_to_stockpile = {
-				type = infantry_equipment
-				amount = -2000
-			}
-			add_equipment_to_stockpile = {
-				type = support_equipment
-				amount = -100
-			}
-			add_to_variable = {
-				anz_gather_equipment_var = 1
-			}
-			custom_effect_tooltip = ANZ_tooltip16
-		}
-		ai_will_do = {
-			factor = 10
-		}
-	}
-	#将之前藏匿的军用装备投入使用
-	ANZ_reuse_equipment = {
-		visible = {
-			has_civil_war = yes
-			check_variable = {
-				anz_gather_equipment_var > 0
-			}
-		}
-		complete_effect = {
-			custom_effect_tooltip = ANZ_tooltip17
-			while_loop_effect = {
-				limit = { check_variable = {
-					ANZ.anz_gather_equipment_var > 0
-				} }
-				add_to_variable = {
-					ANZ.anz_gather_equipment_var = -1
-				}
-				add_equipment_to_stockpile = {
-					type = infantry_equipment
-					amount = -2500
-					producer = ANZ
-				}
-				add_equipment_to_stockpile = {
-					type = support_equipment
-					amount = -100
-					producer = ANZ
-				}
-			}
-		}
-	}
-	
-}
-#争夺军队和军官
-ANZ_scramble_for_troops_and_officers = {
-	#TEST
-	ANZTEST ={
-		visible = {
-			is_testing = yes
-		}
-		complete_effect = {
-			ANZ_let_be_final_civil_war = yes
-		}
-	}
-	#洛蒂安教廷正在秘密接触高级军官
-	ANZ_papacy_is_securing_officers = {
-		activation = {
-			has_completed_focus = ANZ_exposing_church_corruption
-		}
-		days_mission_timeout = 50
-		timeout_effect = {
-			random_unit_leader = {
-				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
-				add_trait = {
-					trait = ANZ_fazione_di_mana
-				}
-				ANZ = { 
-					add_to_variable = {
-						anz_civil_enemy_power = 1
-					} 
-				}
-			}
-			
-		}
-		available = {
-			NOT = { has_idea = ANZ_ancient_mana_tradition }
-		}
-	}
-	#安齐奥工业派正在秘密接触高级军官
-	ANZ_senshado_is_securing_officers = {
-		activation = {
-			has_completed_focus = ANZ_gathering_college_of_cardinals
-		}
-		days_mission_timeout = 50
-		timeout_effect = {
-			random_unit_leader = {
-				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
-				add_trait = {
-					trait = ANZ_scuola_industriale
-				}
-				ANZ = { 
-					add_to_variable = {
-						anz_civil_enemy_power = 1
-					} 
-				}
-			}
-			add_to_variable = {
-				anz_civil_enemy_power = 1
-			}
-		}
-		available = {
-			has_civil_war = yes
-		}
-	}
-	#拉拢军官
-	ANZ_securing_officers = {
-		visible = {
-			OR = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_officers has_completed_focus = ANZ_secretly_contact_military_officers }
-		}
-		cost = 50
-		days_remove = 30
-		remove_effect = {
-			random_unit_leader = {
-				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
-				if = {
-					limit = { has_country_flag = ANZ_LOTHIAN }
-					add_trait = {
-						trait = ANZ_fazione_di_mana
-					}
-				}
-				else = {
-					add_trait = {
-						trait = ANZ_scuola_industriale
-					}
-				}
-				custom_effect_tooltip = ANZ_tooltip6
-				ANZ = { 
-					add_to_variable = {
-						anz_civil_our_power = 1
-					} 
-				}
-			}
-		}
-	}
-}
-#洛蒂安玛娜教内谕
-ANZ_secret_papacy_cat ={
 
-}
 #战车道与工业化举措
 ANZ_secret_senshado_cat = {
+	#向乌斯拉尔寻求帮助
+	ANZ_ask_help_USR = {
+		days_remove = 40
+		visible = {
+			#has_civil_war = no
+			NOT = {
+				USR = { has_country_flag = USR_IN_ANZ_CIVIL_WAR }
+			}
+			has_completed_focus = ANZ_ignite_the_black_flame
+		}
+		cost = 10
+		remove_effect = {
+			USR = { country_event = { id = anz.6 } }
+			#当这个数值到10将乌斯拉尔拉入内战
+			#如果乌斯拉尔同意将会增加这个数值
+			# add_to_variable = {
+			# 	ANZ_fascism_tension = 1
+			# }
+		}
+		ai_will_do = {
+			factor = 50
+		}
+	}
 	#藏匿军用装备
 	ANZ_gather_equipment = {
 		fire_only_once = no
 		days_remove = 100
 		custom_cost_trigger = {
-			has_army_experience > 30
+			has_army_experience > 10
 		}
 		visible = {
-			has_civil_war = no
 			has_completed_focus = ANZ_ignite_the_black_flame
+			has_power_balance = {
+				id = ANZ_industrialization_against_manalisation
+			}
 		}
 		custom_cost_text = ANZ_tooltip15
 		complete_effect = {
 			hidden_effect = {
-				army_experience = -30
+				army_experience = -10
 			}
 		}
 		remove_effect = {
@@ -487,30 +362,34 @@ ANZ_secret_senshado_cat = {
 	#将之前藏匿的军用装备投入使用
 	ANZ_reuse_equipment = {
 		visible = {
-			has_civil_war = yes
 			check_variable = {
 				anz_gather_equipment_var > 0
 			}
 		}
 		complete_effect = {
 			custom_effect_tooltip = ANZ_tooltip17
-			while_loop_effect = {
-				limit = { check_variable = {
-					ANZ.anz_gather_equipment_var > 0
-				} }
-				add_to_variable = {
-					ANZ.anz_gather_equipment_var = -1
-				}
+			for_loop_effect = {
+				end = anz_gather_equipment_var
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
-					amount = -2500
+					amount = 2000
 					producer = ANZ
 				}
 				add_equipment_to_stockpile = {
 					type = support_equipment
-					amount = -100
+					amount = 100
 					producer = ANZ
 				}
+			}
+			set_variable = {
+				anz_gather_equipment_var = 0
+			}
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				has_civil_war = yes
+				add = 100
 			}
 		}
 	}
@@ -530,7 +409,7 @@ ANZ_scramble_for_troops_and_officers = {
 	#洛蒂安教廷正在秘密接触高级军官
 	ANZ_papacy_is_securing_officers = {
 		activation = {
-			has_completed_focus = ANZ_exposing_church_corruption
+			has_completed_focus = ANZ_salute_to_shout
 		}
 		days_mission_timeout = 50
 		timeout_effect = {
@@ -548,13 +427,15 @@ ANZ_scramble_for_troops_and_officers = {
 			
 		}
 		available = {
-			NOT = { has_idea = ANZ_ancient_mana_tradition }
+			NOT = { has_power_balance = {
+				id = ANZ_industrialization_against_manalisation
+			} }
 		}
 	}
 	#安齐奥工业派正在秘密接触高级军官
 	ANZ_senshado_is_securing_officers = {
 		activation = {
-			has_completed_focus = ANZ_gathering_college_of_cardinals
+			has_completed_focus = ANZ_santa_sede_and_its_children
 		}
 		days_mission_timeout = 50
 		timeout_effect = {
@@ -574,7 +455,9 @@ ANZ_scramble_for_troops_and_officers = {
 			}
 		}
 		available = {
-			has_civil_war = yes
+			NOT = { has_power_balance = {
+				id = ANZ_industrialization_against_manalisation
+			} }
 		}
 	}
 	#拉拢军官

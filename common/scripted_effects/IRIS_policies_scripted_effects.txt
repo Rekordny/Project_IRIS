@@ -1,0 +1,63 @@
+#设定本国地脉乘数,工业0，过渡0.5，魔法1
+#on_action
+#COUNTRY SCOPE
+dimai_multipler_init = {
+	if = { 
+		limit = { has_idea = industrial_priority }
+		set_variable = {
+			country_mana_multiplier = 0
+		}
+	}
+	else_if = {
+		limit = { has_idea = in_transition }
+		set_variable = {
+			country_mana_multiplier = 0.5
+		}
+	}
+	else_if = {
+		limit = { has_idea = mana_priority }
+		set_variable = {
+			country_mana_multiplier = 1
+		}
+	}
+	#预留给啥都没有的国家
+	else = {
+
+	}
+
+	get_dimai_sum_country = yes
+	
+	add_dynamic_modifier = {
+		modifier = domain_policies_modifier
+	}
+}
+
+#获取当前国家地脉总数并且更新全部dm所需数据，月更
+#COUNTRY SCOPE
+get_dimai_sum_country = {
+	ROOT = {
+		set_variable = {
+			dimai_total = 0
+		}
+		every_controlled_state = {
+			limit = { 
+				is_core_of = ROOT
+			}
+			add_to_variable = {
+				PREV.dimai_total = building_level@dimai
+			}
+		}
+		#log = "核心dimai总和: [?dimai_total]"
+		set_temp_variable = { temp_multiplier =  ROOT.dimai_total }
+		divide_temp_variable = { temp_multiplier = 300 }
+		multiply_temp_variable = { temp_multiplier = ROOT.country_mana_multiplier }
+		set_variable = { final_multiplier = temp_multiplier }
+	}
+}
+#结束附庸
+end_puppet_this = {
+	if = {
+		limit = { is_subject = yes }
+		overlord = { end_puppet = PREV }
+	}
+}
