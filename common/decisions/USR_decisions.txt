@@ -190,8 +190,9 @@ USR_republic_congress_decisions = {
 	#共和国外交:向卡美洛提供装备
 	USR_provide_equipments_UNG = {
 		visible = {
-			is_testing = yes
 			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
 			base = 10
@@ -199,25 +200,26 @@ USR_republic_congress_decisions = {
 		available = { 
 			UNG = { has_war_with = MSA }
 			UNG = { has_opinion_modifier = UNG_tigiongpanjunqingbao } 
-			has_equipment = { infantry_equipment > 4999 }
+			has_equipment = { infantry_equipment > 3999 }
 		}
 		fire_only_once = yes
 		complete_effect = {
+			set_country_flag = USR_UNG_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -3000
+				amount = -4000
 			}
-			add_popularity = {
-				ideology = democratic
-				popularity = -0.05
-			}
+			add_war_support = 0.05
 			add_political_power = 100
 			UNG = { 
-				add_ideas = USR_aid_UNG_MSA
+				add_timed_idea = {
+					idea = USR_aid_UNG_MSA
+					days = 365
+				}
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 3000
+					amount = 4000
 				} 
 			}
 		}
@@ -225,8 +227,9 @@ USR_republic_congress_decisions = {
 	#共和国外交:向莫德雷德提供装备
 	USR_provide_equipments_MSA = {
 		visible = {
-			is_testing = yes
 			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
 			base = 10
@@ -234,26 +237,71 @@ USR_republic_congress_decisions = {
 		available = { 
 			MSA = { has_war_with = UNG }
 			MSA = { has_opinion_modifier = UNG_anzhongzhichi } 
-			has_equipment = { infantry_equipment > 4999 }
+			#has_equipment = { infantry_equipment > 3999 }
 		}
 		fire_only_once = yes
 		complete_effect = {
+			set_country_flag = USR_MSA_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -3000
+				amount = -4000
 			}
-			add_popularity = {
-				ideology = fascism
-				popularity = 0.05
-			}
+			add_war_support = 0.05
 			add_political_power = 100
 			MSA = {
-				add_ideas = USR_aid_UNG_MSA
+				add_timed_idea = {
+					idea = USR_aid_UNG_MSA
+					days = 365
+				}
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 3000
+					amount = 4000
 				} 
+			}
+		}
+	}
+	#共和国外交:发送志愿军
+	USR_provide_volunteer = {
+		visible = {
+			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 50
+		available = { 
+			MSA = { has_war_with = UNG }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_timed_idea = {
+				idea = USR_volunteers
+				days = 365
+			}
+		}
+	}
+	#共和国外交:保护盎格利亚政要与难民
+	USR_protect_refugee = {
+		visible = {
+			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 100
+		available = { 
+			MSA = { has_war_with = UNG }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_timed_idea = {
+				idea = USR_protect_refugee
+				days = 365
 			}
 		}
 	}
@@ -311,46 +359,51 @@ USR_republic_congress_decisions = {
 
 #推进工业化
 USR_industrialization = {
+	#将mana转化为cic
 	USR_use_mana_as_fuel = {
-		available = {
-			raw_mana > 4
+		icon = generic_construction
+		target_trigger = {
+			FROM = {
+				raw_mana > 0
+				is_controlled_by = USR
+			}
 		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_use_mana_as_fuel } is_testing = yes }
 		}
-		cost = 100
-		days_re_enable = 50
+		on_map_mode = map_only
+		state_target = yes
+		cost = 50
 		complete_effect = {
-			random_controlled_state = {
-				limit = { raw_mana > 4 }
-				if = { 
-					limit = { dimai > 0 } 
-					remove_building = {
-						type = dimai
-						level = 1
-					}
-				}
+			FROM = {
+				set_temp_variable = { temp = 0 }
+				set_temp_variable = { temp1 = 1000 }
+				subtract_from_temp_variable = { temp = resource@raw_mana }
+				multiply_temp_variable = { temp1 = resource@raw_mana }
 				add_resource = {
 					type = raw_mana
-					amount = -5
+					amount = temp
 				}
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = arms_factory
-					level = 1
+				ROOT = {
+					add_cic = temp1
 				}
 			}
+			
 		}
 		ai_will_do = {
-			base = 10
-			modifier = {
-				date > 3094.1.1
-				add = 5
-			}
+			base = 30
 		}
 	}
 	USR_concession_of_mineral_rights_1 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state_is_fully_controlled_by_ROOT_or_subject = yes
+				state = 179
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -361,7 +414,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 179
-			add_offsite_building = { type = industrial_complex level = 2 }
+			add_cic = 25000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -369,6 +422,14 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_2 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state_is_fully_controlled_by_ROOT_or_subject = yes
+				state = 149
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -379,7 +440,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 149
-			add_offsite_building = { type = industrial_complex level = 5 }
+			add_cic = 75000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -387,6 +448,14 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_3 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state_is_fully_controlled_by_ROOT_or_subject = yes
+				state = 159
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -397,7 +466,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 159
-			add_offsite_building = { type = industrial_complex level = 4 }
+			add_cic = 60000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -405,6 +474,14 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_4 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state_is_fully_controlled_by_ROOT_or_subject = yes
+				state = 177
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -415,7 +492,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 177
-			add_offsite_building = { type = industrial_complex level = 3 }
+			add_cic = 30000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -493,10 +570,10 @@ USR_high_command_kuromorimine = {
 		}
 		fire_only_once = yes
 		available = {
-			arms_factory > 44
+			arms_factory > 49
 		}
 		is_good = yes
-		days_mission_timeout = 240
+		days_mission_timeout = 365
 		timeout_effect = {
 			add_war_support = -0.05
 			hidden_effect = {
