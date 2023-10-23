@@ -190,8 +190,9 @@ USR_republic_congress_decisions = {
 	#共和国外交:向卡美洛提供装备
 	USR_provide_equipments_UNG = {
 		visible = {
-			is_testing = yes
 			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
 			base = 10
@@ -199,25 +200,26 @@ USR_republic_congress_decisions = {
 		available = { 
 			UNG = { has_war_with = MSA }
 			UNG = { has_opinion_modifier = UNG_tigiongpanjunqingbao } 
-			has_equipment = { infantry_equipment > 4999 }
+			has_equipment = { infantry_equipment > 3999 }
 		}
 		fire_only_once = yes
 		complete_effect = {
+			set_country_flag = USR_UNG_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -3000
+				amount = -4000
 			}
-			add_popularity = {
-				ideology = democratic
-				popularity = -0.05
-			}
+			add_war_support = 0.05
 			add_political_power = 100
 			UNG = { 
-				add_ideas = USR_aid_UNG_MSA
+				add_timed_idea = {
+					idea = USR_aid_UNG_MSA
+					days = 365
+				}
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 3000
+					amount = 4000
 				} 
 			}
 		}
@@ -225,8 +227,9 @@ USR_republic_congress_decisions = {
 	#共和国外交:向莫德雷德提供装备
 	USR_provide_equipments_MSA = {
 		visible = {
-			is_testing = yes
 			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
 			base = 10
@@ -234,26 +237,71 @@ USR_republic_congress_decisions = {
 		available = { 
 			MSA = { has_war_with = UNG }
 			MSA = { has_opinion_modifier = UNG_anzhongzhichi } 
-			has_equipment = { infantry_equipment > 4999 }
+			#has_equipment = { infantry_equipment > 3999 }
 		}
 		fire_only_once = yes
 		complete_effect = {
+			set_country_flag = USR_MSA_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -3000
+				amount = -4000
 			}
-			add_popularity = {
-				ideology = fascism
-				popularity = 0.05
-			}
+			add_war_support = 0.05
 			add_political_power = 100
 			MSA = {
-				add_ideas = USR_aid_UNG_MSA
+				add_timed_idea = {
+					idea = USR_aid_UNG_MSA
+					days = 365
+				}
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 3000
+					amount = 4000
 				} 
+			}
+		}
+	}
+	#共和国外交:发送志愿军
+	USR_provide_volunteer = {
+		visible = {
+			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 50
+		available = { 
+			MSA = { has_war_with = UNG }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_timed_idea = {
+				idea = USR_volunteers
+				days = 365
+			}
+		}
+	}
+	#共和国外交:保护盎格利亚政要与难民
+	USR_protect_refugee = {
+		visible = {
+			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 100
+		available = { 
+			MSA = { has_war_with = UNG }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_timed_idea = {
+				idea = USR_protect_refugee
+				days = 365
 			}
 		}
 	}
@@ -313,6 +361,7 @@ USR_republic_congress_decisions = {
 USR_industrialization = {
 	#将mana转化为cic
 	USR_use_mana_as_fuel = {
+		icon = generic_construction
 		target_trigger = {
 			FROM = {
 				raw_mana > 0
@@ -343,11 +392,7 @@ USR_industrialization = {
 			
 		}
 		ai_will_do = {
-			base = 5
-			modifier = {
-				date > 3093.1.1
-				add = 25
-			}
+			base = 30
 		}
 	}
 	USR_concession_of_mineral_rights_1 = {
