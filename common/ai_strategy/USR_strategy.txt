@@ -42,7 +42,7 @@ USR_unit_production = {
 	ai_strategy = {
 		type = unit_ratio
 		id = submarine
-		value = 50 #because doctrine this = 50
+		value = 30 #because doctrine this = 50
 	}
 
 	ai_strategy = {
@@ -54,13 +54,13 @@ USR_unit_production = {
 	ai_strategy = {
 		type = unit_ratio
 		id = convoy
-		value = 20
+		value = 15
 	}
 
 	ai_strategy = {
 		type = equipment_production_factor
 		id = infantry
-		value = 40 #30 to 50
+		value = 50 #30 to 50
 	}
 
 	ai_strategy = {
@@ -96,14 +96,14 @@ USR_unit_production = {
 	ai_strategy = {
 		type = equipment_production_min_factories
 		id = infantry
-		value = 5
+		value = 10
 	}
 
 	#Air unit factors
 	ai_strategy = {
 		type = unit_ratio
 		id = fighter
-		value = 200
+		value = 160
 	}
 
 	ai_strategy = {
@@ -115,13 +115,19 @@ USR_unit_production = {
 	ai_strategy = {
 		type = equipment_production_min_factories
 		id = fighter
-		value = 6
+		value = 5
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = train
+		value = 1
 	}
 
 	ai_strategy = {
 		type = unit_ratio
 		id = cas
-		value = 25 #because doctrine this = 15
+		value = 35 #because doctrine this = 15
 	}
 
  	ai_strategy = {
@@ -205,7 +211,28 @@ USR_prepare_for_get_into_clemen = {
 		id = industrial_complex
 		value = 60
 	}
-	
+}
+
+USR_no_invade_until_europa_falls = {
+	allowed = {
+		original_tag = USR
+	}
+
+	enable = {
+		date < 3097.1.1
+		ELN = {
+			has_capitulated = no
+		}
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = invasion_unit_request
+		country_trigger = { always = yes }
+
+		value = -100
+	}
 }
 
 USR_prepare_for_war = {
@@ -221,7 +248,7 @@ USR_prepare_for_war = {
     }
 	ai_strategy = {
 		type = air_factory_balance
-		value = 65
+		value = 50
 	}
 	ai_strategy = {
 		type = build_army
@@ -318,21 +345,28 @@ USR_halt_light_armor_production_in_transitioning = {
 	}
 }
 
+
 USR_highered_armored_production = {
 	allowed = {
 		original_tag = USR
 	}
 	enable = {
-		num_of_military_factories > 109
+		num_of_military_factories > 74
 	}
 	abort = {
-		num_of_military_factories < 110
+		num_of_military_factories < 75
 	}
 
 	ai_strategy = {
 		type = role_ratio
 		id = armor
 		value = 10
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = medium_armor
+		value = 12
 	}
 }
 
@@ -381,5 +415,82 @@ ANZ_ally = {
 		type = alliance
 		id = "ANZ"
 		value = 200
+	}
+}
+
+USR_dont_upgrade_to_weapons_3_too_early = {
+	allowed = {
+		original_tag = USR
+	}
+	enable = {
+		has_equipment = { infantry_equipment < 60000 }
+	}
+
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = production_upgrade_desire_offset
+		id = infantry_equipment_3
+		value = -100
+	}
+}
+
+USR_europa_frontal_land_control = {
+	allowed = {
+		original_tag = USR
+		has_war_with = ELN
+		has_war_with = MDS
+	}
+	abort_when_not_enabled = yes
+	ai_strategy = {
+		type = front_control
+		tag = ELN
+		ratio = 0.7
+		ordertype = front
+		execution_type = careful
+		manual_attack = yes
+	}
+	ai_strategy = {
+		type = front_control
+		tag = MDS
+		ratio = 0.5
+		ordertype = front
+		execution_type = balanced
+		manual_attack = yes
+	}
+	ai_strategy = {
+		type = front_armor_score
+		id = MDS
+		value = -100
+	}
+	ai_strategy = {
+		type = front_armor_score
+		id = ELN
+		value = 100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = ELN
+		value = 30
+	}
+	ai_strategy = {
+		type = garrison
+		value = -15
+	}
+	ai_strategy = {
+		type = spare_unit_factor
+		value = -30
+	}
+}
+
+USR_garrison_in_war_UNG = {
+	abort_when_not_enabled = yes
+	allowed = {
+		original_tag = USR
+		has_war_with = UNG
+	}
+	ai_strategy = {
+		type = garrison
+		value = 15
 	}
 }
