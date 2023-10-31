@@ -207,6 +207,8 @@ country_event = {
 			    value = 1000
 			}
 		}
+		PREV = { add_war_support = 0.05 }
+		ROOT = { add_war_support = 0.05 }
 		ai_chance = {
 			factor = 10
 		}
@@ -372,7 +374,7 @@ country_event = {
 			custom_effect_tooltip = USR_tooltip3
 		}
 		ai_chance = {
-			factor = 50
+			base = 50
 		}
 	}
 	option = {#退缩
@@ -382,7 +384,7 @@ country_event = {
 		159 = { set_demilitarized_zone = yes }
 		FROM = { country_event = { id = usr.16 } }
 		ai_chance = {
-			factor = 10
+			base = 1
 		}
 	}
 }
@@ -430,22 +432,28 @@ country_event = {
 	picture = GFX_USR_CE17
 	is_triggered_only = yes
 	fire_only_once = no
+	trigger = {
+		OR = {
+			tag = UNG
+			tag = ELN
+		}
+	}
 	option = {
 		name = usr.17.a
 		USR = { country_event = { id = usr.14 days = 1 } }
-		if = { limit = { ROOT= {tag = UNG} } set_global_flag = UNG_refuse_USR }
-		if = { limit = { ROOT= {tag = ELN} } set_global_flag = ELN_refuse_USR }
+		if = { limit = { ROOT= { tag = UNG } } set_global_flag = UNG_refuse_USR }
+		if = { limit = { ROOT= { tag = ELN } } set_global_flag = ELN_refuse_USR }
+		add_stability = -0.1
 		ai_chance = {
-			factor = 10
+			base = 10
 			modifier = {
-				arms_factory > 35
-				factor = 3
+				arms_factory > 40
+				factor = 2
 			}
 		}
 	}
 	option = {
 		name = usr.17.b
-		add_stability = 0.05
 		add_opinion_modifier = {
 			target = USR
 			modifier = USR_broken_clemen_treaty
@@ -590,7 +598,11 @@ country_event = {
 		add_ideas = USR_senshado_affinity
 		if = { 
 			limit = { USR = { is_faction_leader = yes } }
-			USR = { add_to_faction = SCK }
+			USR = { 
+				add_to_faction = SCK
+				country_event = { id = usr.45 }
+			}
+			
 		}
 		MDS = {
 			every_core_state = {
@@ -798,8 +810,11 @@ country_event = {
 	#is_triggered_only = yes
 	fire_only_once = yes
 	trigger = {
-		mio:USR_karlsland_organization = {
-			has_mio_size > 4
+		tag = USR
+		ROOT = {
+			mio:USR_karlsland_organization = {
+				has_mio_size > 4
+			}
 		}
 	}
 	mean_time_to_happen = {
@@ -1062,16 +1077,8 @@ country_event = {
 	title = usr.40.t
 	desc = usr.40.desc
 	picture = GFX_USR_CE40
-	#is_triggered_only = yes
+	is_triggered_only = yes
 	fire_only_once = yes
-	trigger = {
-		tag = USR
-		#排除法西斯线路瓦格纳防御战争回归
-		NOT = { has_idea = USR_another_leader_Wagner }
-		BGT = { all_core_state = {
-			is_controlled_by = USR
-		} }
-	}
 	mean_time_to_happen = {
 		days = 1
 	}
@@ -1080,8 +1087,11 @@ country_event = {
 		BGT = { every_core_state = {
 			remove_core_of = BGT
 		} }
+		USR_Maho = {
+			add_country_leader_trait = USR_king_murderer
+		}
 		hidden_effect = {
-			country_event = { id = usr.41 days = 100 }
+			country_event = { id = usr.41 days = 90 }
 		}
 		ai_chance = {
 			base = 10
@@ -1158,6 +1168,11 @@ country_event = {
 	option = {
 		name = usr.43.a
 		add_to_faction = STG
+		PREV = { add_war_support = 0.05 }
+		ROOT = { add_war_support = 0.05 }
+		hidden_effect = {
+			news_event = { id = usr_news.8 }
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -1181,6 +1196,278 @@ country_event = {
 	}
 }
 
+# SCK加入战车道联盟，我们的友好
+country_event = {
+	id = usr.45
+	title = usr.45.t
+	desc = usr.45.desc
+	picture = GFX_USR_CE45
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.45.a
+		PREV = { add_war_support = 0.05 }
+		ROOT = { add_war_support = 0.05 }
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#寒堡老伙计事件链
+#老伙计其一
+country_event = {
+	id = usr.46
+	title = usr.46.t
+	desc = usr.46.desc
+	picture = GFX_USR_CE46
+	#is_triggered_only = yes
+	fire_only_once = yes
+	mean_time_to_happen = {
+		days = 40
+	}
+	trigger = {
+		tag = USR
+		has_completed_focus = USR_recall_prince_heinrich
+		153 = { is_controlled_by_ROOT_or_subject = yes }
+	}
+	option = {
+		name = usr.46.a
+		hidden_effect = {
+			country_event = { id = usr.47 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其二
+country_event = {
+	id = usr.47
+	title = usr.47.t
+	desc = usr.47.desc
+	picture = GFX_USR_CE47
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.47.a
+		
+		hidden_effect = {
+			country_event = { id = usr.48 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其三
+country_event = {
+	id = usr.48
+	title = usr.48.t
+	desc = usr.48.desc
+	picture = GFX_USR_CE48
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.48.a
+		if = {
+			limit = { 153 = { is_controlled_by_ROOT_or_subject = yes } }
+			153 = {
+				add_extra_state_shared_building_slots = 5
+				add_building_construction = {
+					type = dockyard
+					level = 5
+				}
+			}
+		}
+		create_equipment_variant = {
+			name = "Wagner Class"								
+			type = ship_hull_super_heavy_1
+			name_group = GER_BB_IMPERIAL
+			parent_version = 0
+			allow_without_tech = yes
+			modules = {
+				front_1_custom_slot = ship_anti_air_2
+				front_2_custom_slot = ship_super_heavy_battery_1
+				mid_1_custom_slot = ship_secondaries_2
+				mid_2_custom_slot = ship_secondaries_2
+				mid_3_custom_slot = ship_anti_air_2
+				rear_1_custom_slot = ship_super_heavy_battery_1
+				rear_2_custom_slot = ship_airplane_launcher_2
+				fixed_ship_battery_slot = ship_super_heavy_battery_1
+				fixed_ship_anti_air_slot = ship_anti_air_2
+				fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+				fixed_ship_radar_slot = ship_radar_1
+				fixed_ship_engine_slot = heavy_ship_engine_3
+				fixed_ship_secondaries_slot = dp_ship_secondaries_2
+				fixed_ship_armor_slot = ship_armor_shbb
+			}
+		}
+		add_equipment_production = {
+			equipment = {
+				type = ship_hull_super_heavy_1
+				creator = "USR" 
+				version_name = "Wagner Class"
+			}
+			name = "UKM Emperor Wagner III"
+			requested_factories = 5
+			progress = 0.5
+			amount = 1
+			industrial_manufacturer = mio:KST_wittgenstein_organization
+		}
+		hidden_effect = {
+			country_event = { id = usr.49 days = 80 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其四
+country_event = {
+	id = usr.49
+	title = usr.49.t
+	desc = usr.49.desc
+	picture = GFX_USR_CE49
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.49.a
+		hidden_effect = {
+			country_event = { id = usr.50 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其五
+country_event = {
+	id = usr.50
+	title = usr.50.t
+	desc = usr.50.desc
+	picture = GFX_USR_CE50
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.50.a
+		hidden_effect = {
+			country_event = { id = usr.51 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其六
+country_event = {
+	id = usr.51
+	title = usr.51.t
+	desc = usr.51.desc
+	picture = GFX_USR_CE51
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.51.a
+		hidden_effect = {
+			country_event = { id = usr.52 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其七
+country_event = {
+	id = usr.52
+	title = usr.52.t
+	desc = usr.52.desc
+	picture = GFX_USR_CE52
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.52.a
+		hidden_effect = {
+			country_event = { id = usr.53 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其八
+country_event = {
+	id = usr.53
+	title = usr.53.t
+	desc = usr.53.desc
+	picture = GFX_USR_CE53
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.53.a
+		mio:KST_wittgenstein_organization = {
+			add_mio_size = 3
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其九
+country_event = {
+	id = usr.54
+	title = usr.54.t
+	desc = usr.54.desc
+	picture = GFX_USR_CE54
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.54.a
+		hidden_effect = {
+			country_event = { id = usr.55 days = 10 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#老伙计其终
+country_event = {
+	id = usr.55
+	title = usr.55.t
+	desc = usr.55.desc
+	picture = GFX_USR_CE55
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.55.a
+		if = {
+			limit = { 
+				USR_Zeppelin = {
+					is_hired_as_advisor = yes 
+				}
+			}
+			deactivate_advisor = USR_Zeppelin
+		}
+		USR_Zeppelin = {
+			remove_advisor_role = {
+				slot = high_command
+		  	}
+			remove_unit_leader_role = yes
+		}
+		hidden_effect = {
+			random = {
+				chance = 50
+				news_event = { id = usr_news.10 days = 70 random_days = 100 }
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+
 #####################################################
 #####################NEWS_EVENTS####################
 #####################################################
@@ -1192,7 +1479,16 @@ news_event = {
 	desc = usr_news.1.desc
 	is_triggered_only = yes
 	major = yes
-	immediate = { }
+	immediate = { 
+		hidden_effect = {
+			USR = {
+				add_named_threat = {
+					threat = 1
+					name = usr_news.4.t
+				}
+			}
+		}
+	}
 	option = {
 		name = usr_news.1.a
 		trigger = { tag = USR }
@@ -1221,6 +1517,14 @@ news_event = {
 	is_triggered_only = yes
 	major = yes
 	immediate = { 
+		hidden_effect = {
+			ANZ = {
+				add_named_threat = {
+					threat = 3
+					name = usr_news.4.t
+				}
+			}
+		}
 		if = {
 			limit = { OR = { tag = UNG tag = ELN tag = BOW } }
 			add_opinion_modifier = {
@@ -1252,7 +1556,16 @@ news_event = {
 	desc = usr_news.3.desc
 	is_triggered_only = yes
 	major = yes
-	immediate = {  }
+	immediate = {  
+		hidden_effect = {
+			USR = {
+				add_named_threat = {
+					threat = 3
+					name = usr_news.4.t
+				}
+			}
+		}
+	}
 	option = {
 		name = usr_news.3.a
 		trigger = {  OR = { tag = USR tag = ANZ } }
@@ -1282,7 +1595,16 @@ news_event = {
 	desc = usr_news.4.desc
 	is_triggered_only = yes
 	major = yes
-	immediate = {  }
+	immediate = { 
+		hidden_effect = {
+			USR = {
+				add_named_threat = {
+					threat = 2
+					name = usr_news.4.t
+				}
+			}
+		}
+	}
 	option = {
 		name = usr_news.4.a
 		trigger = { tag = USR }
@@ -1312,8 +1634,14 @@ news_event = {
 	major = yes
 	immediate = { 
 		hidden_effect = {
-			UNG = { country_event = { id = usr.17 days = 2 } }
-			ELN = { country_event = { id = usr.17 days = 2 } }
+			USR = {
+				add_named_threat = {
+					threat = 5
+					name = usr_news.5.t
+				}
+			}
+			UNG = { country_event = { id = usr.17 days = 1 } }
+			ELN = { country_event = { id = usr.17 days = 1 } }
 		}
 	}
 	option = {
@@ -1372,5 +1700,106 @@ news_event = {
 	option = {
 		name = usr_news.7.b
 		trigger = { NOT = { tag = USR } }
+	}
+}
+
+#STG加入战车道联盟
+news_event = {
+	id = usr_news.8
+	title = usr_news.8.t
+	picture = GFX_USR_NE8
+	desc = usr_news.8.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {  
+		hidden_effect = {
+			STG = {
+				add_named_threat = {
+					threat = 2
+					name = usr_news.8.t
+				}
+			}
+		}
+	}
+	option = {
+		name = usr_news.8.a
+		trigger = { OR = { tag = USR tag = STG } }
+	}
+	option = {
+		name = usr_news.8.b
+		trigger = { NOT = { tag = USR } NOT = { tag = STG } }
+	}
+}
+
+#战列舰瓦格纳三世的下水仪式
+news_event = {
+	id = usr_news.9
+	title = usr_news.9.t
+	picture = GFX_USR_NE9
+	desc = usr_news.9.desc
+	#is_triggered_only = yes
+	major = yes
+	mean_time_to_happen = {
+		days = 1
+	}
+	trigger = {
+		USR = {
+			has_navy_size = {
+				size > 0
+				archetype = ship_hull_super_heavy_1
+			}
+		}
+	}
+	immediate = { 
+		hidden_effect = {
+			USR = { country_event = usr.54 }
+		}
+	}
+	option = {
+		name = usr_news.9.a
+		trigger = { OR = { tag = USR } }
+	}
+	option = {
+		name = usr_news.9.b
+		trigger = {
+			not = { tag = USR }
+			USR = { has_same_ideology = yes }
+		}
+	}
+	option = {
+		name = usr_news.9.c
+		trigger = {
+			not = { tag = USR }
+			USR = { has_same_ideology = no }
+		}
+	}
+}
+
+#原海军元帅斐迪南·冯·齐柏林病逝
+news_event = {
+	id = usr_news.10
+	title = usr_news.10.t
+	picture = GFX_USR_NE10
+	desc = usr_news.10.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {  }
+	option = {
+		name = usr_news.10.a
+		trigger = { OR = { tag = USR } }
+	}
+	option = {
+		name = usr_news.10.b
+		trigger = {
+			not = { tag = USR }
+			USR = { has_same_ideology = yes }
+		}
+	}
+	option = {
+		name = usr_news.10.c
+		trigger = {
+			not = { tag = USR }
+			USR = { has_same_ideology = no }
+		}
 	}
 }
