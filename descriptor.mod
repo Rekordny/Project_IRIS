@@ -1,4 +1,4 @@
-version="1.12.*"
+version="1.13.*"
 tags={
 	"Alternative History"
 	"Map"
@@ -27,5 +27,5 @@ replace_path="portraits"
 replace_path="tutorial"
 replace_path="common/bookmarks"
 replace_path="gfx/loadingscreens"
-supported_version="1.12.*"
+supported_version="1.13.*"
 remote_file_id="2739911713"
