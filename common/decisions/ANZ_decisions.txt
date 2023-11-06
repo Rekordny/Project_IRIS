@@ -244,12 +244,79 @@ ANZ_secret_papacy_cat ={
 
 #战车道与工业化举措
 ANZ_secret_senshado_cat = {
+	#建立战车道学院
+	ANZ_establish_senshado_school = {
+		icon = generic_construction
+		modifier = {
+			consumer_goods_factor = 0.05
+		}
+		on_map_mode = map_only
+		state_target = yes
+		target_trigger = {
+			FROM = {
+				is_core_of = ANZ
+				is_controlled_by = ANZ
+				NOT = { has_dynamic_modifier = {
+					modifier = ANZ_senshado_school_state_modifier
+				} }
+			}
+		}
+		cost = 30
+		visible = {
+			has_completed_focus = ANZ_political_loyal
+		}
+		# fire_only_once = yes
+		days_remove = 30
+		complete_effect = {
+			set_country_flag = ANZ_BUILDING_SCHOOL
+		}
+		remove_effect = {
+			clr_country_flag = ANZ_BUILDING_SCHOOL
+			FROM = {
+				add_dynamic_modifier = {
+					modifier = ANZ_senshado_school_state_modifier
+				}
+			}
+			add_to_variable = {
+				anz_nationalized_senshado_var = 1
+			}
+		}
+		ai_will_do = {
+			base = 15
+		}
+	}
+
+	#战车道全国化
+	ANZ_nationalized_senshado = {
+		visible = {
+			has_completed_focus = ANZ_political_loyal
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ANZ_tooltip24
+				check_variable = {
+					anz_nationalized_senshado_var > 5
+				}
+			}
+		}
+		complete_effect = {
+			swap_ideas = {
+				remove_idea = ANZ_senshado_industrialization
+				add_idea = ANZ_nationalized_senshado
+			}
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
 	#向乌斯拉尔寻求帮助
 	ANZ_ask_help_USR = {
 		days_remove = 75
 		visible = {
 			#has_civil_war = no
 			has_completed_focus = ANZ_ignite_the_black_flame
+			NOT = { has_country_flag = ANZ_CIVIL_ENDED }
 		}
 		cost = 10
 		remove_effect = {
@@ -284,6 +351,7 @@ ANZ_secret_senshado_cat = {
 			has_power_balance = {
 				id = ANZ_industrialization_against_manalisation
 			}
+			NOT = { has_country_flag = ANZ_CIVIL_ENDED }
 		}
 		custom_cost_text = ANZ_tooltip15
 		complete_effect = {
@@ -428,15 +496,7 @@ ANZ_demanarization = {
 }
 #争夺军队和军官
 ANZ_scramble_for_troops_and_officers = {
-	#TEST
-	ANZTEST ={
-		visible = {
-			is_testing = yes
-		}
-		complete_effect = {
-			ANZ_let_be_final_civil_war = yes
-		}
-	}
+
 	#洛蒂安教廷正在秘密接触高级军官
 	ANZ_papacy_is_securing_officers = {
 		activation = {
