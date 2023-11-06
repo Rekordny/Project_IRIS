@@ -31,6 +31,9 @@ focus_tree = {
 			retire_character = USR_yiliyasifeier
 			news_event = { id = usr_news.6 }
 			682 = { set_demilitarized_zone = yes }
+			hidden_effect = {
+				country_event = { id = usr.30 days = 1 }
+			}
 		}
 	}
 	#成立反间谍与外务委员会
@@ -72,33 +75,11 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_war_support = 0.05
-			USR_Gertrude = {
-				add_advisor_role = {
-					advisor = { 
-						slot = political_advisor
-						cost = 50
-						idea_token = USR_Gertrude
-						traits = { fascist_demagogue }
-						ai_will_do = {
-							base = 0
-						}
-					}
-				}
-			}
-			activate_advisor = USR_Gertrude
-			USR_Ottilie = {
-				add_advisor_role = {
-					advisor = { 
-						slot = political_advisor
-						cost = 200
-						idea_token = USR_Gertrude
-						traits = { falangist_syndicalist }
-						ai_will_do = {
-							base = 40
-						}
-					}
-				}
-			}
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = USR_Hanna
+			activate_advisor = USR_Hanna
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = USR_Ottilie
 		}
 	}
 	#有限干涉卡美洛
@@ -332,7 +313,7 @@ focus_tree = {
 			modifier = {
 				has_government = fascism
 				ANZ = { has_government = fascism }
-				add = 50
+				add = 30
 			}
 			modifier = {
 				has_civil_war = yes
@@ -384,10 +365,10 @@ focus_tree = {
 		}
 		available = {
 			has_government = fascism
-			NOT = { STG = { has_government = fascism } }
+			NOT = { has_war_with = STG }
 		}
 		completion_reward = {
-			STG = { country_event = { id = usr.25 } }
+			country_event = { id = usr.28 }
 		}
 	}
 	#于黑暗中前进
@@ -412,7 +393,9 @@ focus_tree = {
 		}
 		completion_reward = {
 			KST = { country_event = { id = usr.5 } }
-			
+			hidden_effect = {
+				USR = { country_event = { id = usr.59 days = 5 random_days = 10 } }
+			}
 		}
 	}
 	#撰写社会民主社论
@@ -432,9 +415,12 @@ focus_tree = {
 		completion_reward = {
 			add_timed_idea = {
 				idea = USR_big_time_editorial
-				days = 200
+				days = 365
 			}
 			custom_effect_tooltip = USR_tooltip13
+			hidden_effect = {
+				country_event = { id = usr.32 days = 1 }
+			}
 		}
 	}
 	#迎接战争英雄
@@ -458,8 +444,30 @@ focus_tree = {
 				ideology = fascism
 				popularity = 0.1
 			}
-			recruit_character = USR_Adolfine
-			recruit_character = USR_Erika
+			custom_effect_tooltip = available_chief_of_airforce
+			show_ideas_tooltip = USR_Adolfine
+			add_field_marshal_role = {
+				character = USR_Adolfine
+				traits={ organizer war_hero }
+				skill=4
+				attack_skill=3
+				defense_skill=4
+				planning_skill=2
+				logistics_skill=4
+				legacy_id=1251
+			}
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = USR_Erika
+			add_corps_commander_role = {
+				character = USR_Erika
+				traits={ panzer_leader war_hero armor_officer }
+				skill=3
+				attack_skill=2
+				defense_skill=2
+				planning_skill=2
+				logistics_skill=3
+				legacy_id=1255
+			}
 			country_event = { id = usr.18 }
 		}
 	}
@@ -491,6 +499,7 @@ focus_tree = {
 			
 		}
 		completion_reward = {
+			custom_effect_tooltip = available_industrial_concern
 			show_ideas_tooltip = USR_kuromorimine_industrial_department
 			add_tech_bonus = {
 				bonus = 1
@@ -637,6 +646,15 @@ focus_tree = {
 				}
 			}
 			761= {
+				if = { 
+					limit = { infrastructure < 5 } 
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+					}
+				}
+			}
+			764= {
 				if = { 
 					limit = { infrastructure < 5 } 
 					add_building_construction = {
@@ -854,11 +872,23 @@ focus_tree = {
 			country_event = { id = usr.13 }
 			activate_mission_tooltip = USR_mission_aftermath
 			hidden_effect = {
-				if = { 
+				if = {
 					limit = { is_ai = yes }
-					remove_advisor_role = {
-						slot = USR_Gertrude
+					if = {
+						limit = { has_idea = civilian_economy }
+						swap_ideas = {
+							remove_idea = civilian_economy
+							add_idea = partial_economic_mobilisation
+						}
 					}
+					else_if = {
+						limit = { has_idea = low_economic_mobilisation }
+						swap_ideas = {
+							remove_idea = low_economic_mobilisation
+							add_idea = partial_economic_mobilisation
+						}
+					}
+					
 				}
 			}
 		}
@@ -1025,8 +1055,8 @@ focus_tree = {
 		ai_will_do = {
 			base = 0
 			modifier = {
-				date > 3094.10.30
-				add = 10
+				date > 3094.6.30
+				add = 20
 			}
 		}
 		available = {
@@ -1074,43 +1104,44 @@ focus_tree = {
 	focus = {
 		id = USR_air_force_club
 		icon = GFX_focus_USR_air_force_club
-		x = -1
-		y = 3
-		cost = 10
-		relative_position_id = USR_meet_the_war_hero
-		prerequisite = { focus = USR_meet_the_war_hero }
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_negotiate_with_SCK
+		prerequisite = { focus = USR_negotiate_with_SCK }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 1
+			base = 0
 			modifier = {
-				has_completed_focus = USR_the_third_Reich
+				has_completed_focus = USR_drift_upstream
 				add = 10
 			}
 		}
 		available = {
-			
-		}
-		completion_reward = {
-			add_ideas = USR_air_force_club
-			random_core_state = {
-				limit = { is_controlled_by = USR }
-				add_extra_state_shared_building_slots = 2
-				add_building_construction = {
-					type = arms_factory
-					level = 2
+			SCK = {
+				OR = {
+					has_opinion = {
+						target = ROOT
+						value > 39
+					}
+					is_in_faction_with = ROOT
 				}
 			}
+		}
+		completion_reward = {
+			custom_effect_tooltip = invites_mio_tt
+			show_mio_tooltip = SCK_502_mio
 		}
 	}
 	#召回海因里克亲王
 	focus = {
 		id = USR_recall_prince_heinrich
 		icon = GFX_focus_USR_recall_prince_heinrich
-		x = 0
-		y = 1
+		x = -1
+		y = 4
 		cost = 5
-		relative_position_id = USR_air_force_club
-		prerequisite = { focus = USR_air_force_club }
+		relative_position_id = USR_meet_the_war_hero
+		prerequisite = { focus = USR_meet_the_war_hero }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
 			base = 10
@@ -1120,7 +1151,22 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_stability = 0.05
-			recruit_character = USR_Heinrike
+			custom_effect_tooltip = available_political_advisor
+			show_ideas_tooltip = USR_Heinrike
+			add_corps_commander_role = {
+				character = USR_Heinrike
+				traits={ war_hero media_personality usr_NJG_witch }
+				skill=3
+				attack_skill=2
+				defense_skill=4
+				planning_skill=2
+				logistics_skill=3
+				legacy_id=1261
+			}
+			custom_effect_tooltip = invites_mio_tt
+			show_mio_tooltip = KST_wittgenstein_organization
+			custom_effect_tooltip = available_industrial_concern
+			show_ideas_tooltip = KST_wittgenstein_petro
 		}
 	}
 	#艾尔平协议
@@ -1161,13 +1207,10 @@ focus_tree = {
 			KST = {
 				add_ideas = KST_investment_support
 				add_ideas = KST_key_defense
-				custom_effect_tooltip = USR_tooltip9
-				custom_effect_tooltip = KST_tooltip3
 			}
 			hidden_effect = {
 				KST = {
 					KST_retire_vice_country_leader = yes
-					add_ideas = KST_another_leader_Nissinen
 				}
 			}
 		}
@@ -1178,7 +1221,7 @@ focus_tree = {
 		icon = GFX_focus_USR_international_tank_development_agreement
 		x = -2
 		y = 2
-		cost = 10
+		cost = 5
 		relative_position_id = USR_senshado_alliance
 		prerequisite = { focus = USR_senshado_alliance  }
 		prerequisite = { focus = USR_a_pact_with_giant }
@@ -1198,15 +1241,34 @@ focus_tree = {
 			}
 		}
 	}
+	#黑森峰-桑达斯协定
+	focus = {
+		id = USR_USF_agreement
+		icon = GFX_focus_USR_USF_agreement
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_international_tank_development_agreement
+		prerequisite = { focus = USR_international_tank_development_agreement  }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+
+		}
+	}
 	#强袭空军交换计划
 	focus = {
 		id = USR_strike_air_force_exchange_plan
 		icon = GFX_focus_USR_strike_air_force_exchange_plan
-		x = -7
-		y = 1
-		cost = 10
-		relative_position_id = USR_air_force_club
-		prerequisite = { focus = USR_air_force_club }
+		x = 0
+		y = 2
+		cost = 5
+		relative_position_id = USR_help_liberion
 		prerequisite = { focus = USR_help_liberion }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
@@ -1224,6 +1286,26 @@ focus_tree = {
 			}
 		}
 	}
+	#空中阵线
+	focus = {
+		id = USR_air_front
+		icon = GFX_focus_USR_air_front
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_strike_air_force_exchange_plan
+		prerequisite = { focus = USR_strike_air_force_exchange_plan }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
 	#西住流归来
 	focus = {
 		id = USR_return_of_nishizumi_ryu
@@ -1233,6 +1315,9 @@ focus_tree = {
 		cost = 5
 		relative_position_id = USR_meet_the_war_hero
 		prerequisite = { focus = USR_meet_the_war_hero }
+		select_effect = {
+			country_event = { id = usr.34 random_days = 50 } 
+		}
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
 			base = 5
@@ -1255,16 +1340,13 @@ focus_tree = {
 		}
 		available = {
 			NOT = { has_government = fascism }
-			USR = { fascism > 0.4 }
+			USR = { fascism > 0.5 }
 		}
 		bypass = {
 			has_government = fascism
 		}
 		completion_reward = {
-			add_stability = 0.05
-			set_politics = {
-				ruling_party = fascism
-			}
+			country_event = { id = usr.36 }
 		}
 	}
 	#乌斯拉尔第三帝国
@@ -1712,14 +1794,15 @@ focus_tree = {
 				add = 5
 			}
 		}
-		available = {
-			has_completed_focus = USR_air_force_club
-		}
+		available = { }
 		bypass = {
 			
 		}
 		completion_reward = {
-			show_ideas_tooltip = USR_karlsland_aviation_department
+			mio:USR_karlsland_organization = {
+				add_mio_funds = 3000
+			}
+			add_war_support = 0.05
 		}
 	}
 
@@ -1981,7 +2064,7 @@ focus_tree = {
 		id = USR_negotiate_with_SCK
 		icon = GFX_focus_USR_negotiate_with_SCK
 		x = 0
-		y = 1
+		y = 3
 		cost = 5
 		relative_position_id = USR_march_in_the_dark
 		prerequisite = { focus = USR_march_in_the_dark }

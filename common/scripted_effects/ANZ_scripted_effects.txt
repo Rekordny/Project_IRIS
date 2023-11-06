@@ -18,6 +18,7 @@ ANZ_let_be_final_civil_war = {
 		#乌斯拉尔援助
 		if = {
 			limit = { 
+				NOT = { has_idea = ANZ_USR_support }
 				check_variable = {
 					ANZ.anz_fascism_tension > 4
 				} 
@@ -26,9 +27,6 @@ ANZ_let_be_final_civil_war = {
 				idea = ANZ_USR_support
 				days = 365
 			}
-		}
-		add_to_temp_variable = {
-			anz_temp = ANZ.anz_fascism_tension
 		}
 		for_loop_effect = {
 			end = anz_temp
@@ -56,10 +54,22 @@ ANZ_let_be_final_civil_war = {
 				trait = ANZ_fazione_di_mana
 			}
 		}
+		#内战分兵调整
+		set_variable = {
+			anz_civil_ratio = 0.45
+		}
+		if = {  
+			limit = { ANZ = { is_ai = no } }
+			add_to_variable = {
+				anz_civil_ratio = 0.25
+			}
+		}
+		#内战具体设置
 		start_civil_war = {
 			ideology = democratic
 			size = 0.5
-			army_ratio = 0.45
+			#ai玩家区分修改
+			army_ratio = anz_civil_ratio
     		navy_ratio = 0
 			keep_unit_leaders_trigger = {
 				has_trait = ANZ_scuola_industriale
@@ -73,9 +83,17 @@ ANZ_let_be_final_civil_war = {
 				}
 			}
 			states = { 251 239 227 237 220 223 }
+			#为ai调整难度
+			if = {
+				limit = { PREV = { is_ai = yes } }
+				add_ideas = ANZ_hidden_weaken_civil
+			}
+			
+			#保存动态国家TAG
+			set_variable = { PREV.anz_civil_revolter_tag = THIS }
+			#处理敌人难度增加师
 			if = { 
-				limit = { is_ai = no }
-				#处理敌人难度增加师
+				limit = { PREV = { is_ai = no } }
 				while_loop_effect = {
 					limit = { check_variable = {
 						ANZ.anz_civil_enemy_power > 0
@@ -108,30 +126,89 @@ ANZ_let_be_final_civil_war = {
 				another_country_leader_group = 3
 			}
 			add_ideas = ANZ_another_leader_Giovanna
-			
-			#安齐奥需要删除所有魔法部队模板
-			PREV = {
-				delete_unit_template_and_units = {
-					division_template = "Lottian Arcane Platton"
-					disband = yes #will refund equipment and manpower
+			swap_ideas = {
+				remove_idea = in_transition
+				add_idea = mana_priority
+			}
+			ANZ = {
+				swap_ideas = {
+					remove_idea = in_transition
+					add_idea = industrial_priority
 				}
 			}
+		}
+		#处理内战双方军队难度
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			var:anz_civil_revolter_tag = {
+				add_ideas = ANZ_hidden_weaken_civil
+			}
+		}
+		else = {
+			#为玩家增加常规内战难度
+			while_loop_effect = {
+				limit = { check_variable = {
+					ANZ.anz_civil_enemy_power > 0
+				} }
+				add_to_variable = {
+					ANZ.anz_civil_enemy_power = -1
+				}
+				var:anz_civil_revolter_tag = {
+					205 = {
+						create_unit = {
+							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+							owner = THIS.owner
+						}
+						create_unit = {
+							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+							owner = THIS.owner
+						}
+					}
+					#洛蒂安需要删除所有装甲部队模板
+					delete_unit_template_and_units = {
+						division_template = "Anzio Panzer Division"
+					}
+				}
+			}
+		}
+		#安齐奥需要删除所有魔法部队模板
+		delete_unit_template_and_units = {
+			division_template = "Lottian Arcane Platton"
 		}
 		#我方增加部队
 		while_loop_effect = {
 			limit = { check_variable = {
 				ANZ.anz_civil_our_power > 0
 			} }
-			add_to_variable = {
-				ANZ.anz_civil_our_power = -1
-			}
-			205 = {
-				create_unit = {
-					division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
-					owner = THIS.owner
+			#如果是ai的话多给个师稍微发门炮
+			if = {
+				limit = { ROOT = { is_ai = yes } }
+				add_to_variable = {
+					ANZ.anz_civil_our_power = -1
 				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment_1
+					amount = 20
+				}
+			}
+			else = {
+				add_to_variable = {
+					ANZ.anz_civil_our_power = -2
+				}
+			}
+			
+			205 = {
+				#如果是笨比ai的话给个炮
 				if = {
 					limit = { ROOT = { is_ai = yes } }
+					create_unit = {
+						division = "name = \"Lottian Infantry Division Upriser\" division_template = \"Lottian Infantry Division Upriser\" start_experience_factor = 0.3"
+						owner = THIS.owner
+					}
+				}
+				else = {
 					create_unit = {
 						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
 						owner = THIS.owner
@@ -160,7 +237,7 @@ ANZ_let_be_final_civil_war = {
 			ruling_party = democratic
 			ideology = ROOT
 			size = 0.5
-			army_ratio = 0.5
+			army_ratio = anz_civil_ratio
     		navy_ratio = 1
 			keep_unit_leaders_trigger = {
 				has_trait = ANZ_fazione_di_mana
@@ -174,28 +251,9 @@ ANZ_let_be_final_civil_war = {
 				}
 			}
 			states = { 180 203 176 193 171 170 188 223 205 207 210 }
-			if = { 
-				limit = { is_ai = no } 
-				#处理敌人难度增加师
-				while_loop_effect = {
-					limit = { check_variable = {
-						ANZ.anz_civil_enemy_power > 0
-					} }
-					add_to_variable = {
-						ANZ.anz_civil_enemy_power = -1
-					}
-					205 = {
-						create_unit = {
-							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
-							owner = THIS.owner
-						}
-						create_unit = {
-							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
-							owner = THIS.owner
-						}
-					}
-				}
-			}
+			#保存动态国家TAG
+			set_variable = { PREV.anz_civil_revolter_tag = THIS }
+
 			set_country_flag = ANZ_ANZIO
 			#副领导人切换
 			if = { 
@@ -209,35 +267,90 @@ ANZ_let_be_final_civil_war = {
 				another_country_leader_group = 3
 			}
 			add_ideas = ANZ_another_leader_Adriana
-			#洛蒂安需要删除所有装甲部队模板
-			PREV = {
-				delete_unit_template_and_units = {
-					division_template = "Anzio Panzer Division"
-					disband = yes #will refund equipment and manpower
+			swap_ideas = {
+				remove_idea = in_transition
+				add_idea = industrial_priority
+			}
+			ANZ = {
+				swap_ideas = {
+					remove_idea = in_transition
+					add_idea = mana_priority
 				}
 			}
+		}
+		#处理内战双方军队难度
+		if = {
+			limit = {
+				is_ai = yes
+			}
+			var:anz_civil_revolter_tag = {
+				add_ideas = ANZ_hidden_weaken_civil
+			}
+		}
+		else = {
+			#为玩家增加常规内战难度
+			while_loop_effect = {
+				limit = { check_variable = {
+					ANZ.anz_civil_enemy_power > 0
+				} }
+				add_to_variable = {
+					ANZ.anz_civil_enemy_power = -1
+				}
+				var:anz_civil_revolter_tag = {
+					205 = {
+						create_unit = {
+							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+							owner = THIS.owner
+						}
+						create_unit = {
+							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+							owner = THIS.owner
+						}
+					}
+					#安齐奥需要删除所有魔法部队模板
+					delete_unit_template_and_units = {
+						division_template = "Lottian Arcane Platton"
+					}
+				}
+			}
+		}
+		#洛蒂安需要删除所有装甲部队模板
+		delete_unit_template_and_units = {
+			division_template = "Anzio Panzer Division"
 		}
 		#我方增加部队
 		while_loop_effect = {
 			limit = { check_variable = {
 				ANZ.anz_civil_our_power > 0
 			} }
-			add_to_variable = {
-				ANZ.anz_civil_our_power = -1
-			}
-			237 = {
-				create_unit = {
-					division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
-					owner = THIS.owner
+			#如果是ai的话多给个师
+			if = {
+				limit = { ROOT = { is_ai = yes } }
+				add_to_variable = {
+					ANZ.anz_civil_our_power = -1
 				}
+			}
+			else = {
+				add_to_variable = {
+					ANZ.anz_civil_our_power = -2
+				}
+			}
+			
+			205 = {
+				#如果是笨比ai的话给个炮
 				if = {
 					limit = { ROOT = { is_ai = yes } }
+					create_unit = {
+						division = "name = \"Lottian Infantry Division Upriser\" division_template = \"Lottian Infantry Division Upriser\" start_experience_factor = 0.3"
+						owner = THIS.owner
+					}
+				}
+				else = {
 					create_unit = {
 						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
 						owner = THIS.owner
 					}
 				}
-				
 			}
 		}
 		if = {
@@ -260,15 +373,19 @@ ANZ_let_be_final_civil_war = {
 	remove_power_balance = {
 		id = ANZ_industrialization_against_manalisation
 	}
-	#按照标签读取国策
-	if = {
-		limit = { has_country_flag = ANZ_ANZIO }
-		load_focus_tree = ANZ_anzio
-	}
-	else = {
-		load_focus_tree = ANZ_lothian
+	custom_effect_tooltip = ANZ_tooltip22
+	hidden_effect = {
+		#按照标签读取国策
+		if = {
+			limit = { has_country_flag = ANZ_ANZIO }
+			load_focus_tree = ANZ_anzio
+		}
+		else = {
+			load_focus_tree = ANZ_lothian
+		}
 	}
 }
+
 #移除副领导人
 ANZ_retire_vice_country_leader = {
 	if = {
@@ -282,5 +399,9 @@ ANZ_retire_vice_country_leader = {
 	if = {
 		limit = { has_idea = ANZ_another_leader_Carla }
 		remove_ideas = ANZ_another_leader_Carla
+	}
+	if = {
+		limit = { has_idea = ANZ_another_leader_ContediCavour }
+		remove_ideas = ANZ_another_leader_ContediCavour
 	}
 }
