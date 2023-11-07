@@ -16,11 +16,12 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		complete_effect = {
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
-				value = -0.5
+				value = -0.35
 			}
+			add_stability = 0.1
 			TAU = {
 				every_core_state = {
-					add_compliance = 20
+					add_compliance = 15
 				}
 			}
 		}
@@ -99,7 +100,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 	}
 
-	#集中销毁玛娜制品
+	#集中销毁玛娜制品(ANZ)
 	ANZ_destroy_mana_artifacts = {
 		cost = 40
 		visible = {
@@ -107,7 +108,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 		# fire_only_once = yes
 		days_remove = 50
-		days_re_enable = 5
+		days_re_enable = 10
 		complete_effect = {
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
@@ -115,15 +116,9 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 			}
 			if = {
 				limit = { has_country_flag = ANZ_LOTHIAN }
-				custom_effect_tooltip = ANZ_tooltip5
+				custom_effect_tooltip = ANZ_tooltip6
 				add_to_variable = {
-					anz_civil_our_power = -1
-				}
-			}
-			else = {
-				custom_effect_tooltip = ANZ_tooltip5
-				add_to_variable = {
-					anz_civil_enemy_power = 1
+					anz_civil_enemy_power = -0.5
 				}
 			}
 		}
@@ -179,7 +174,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 					id = ANZ_industrialization_against_manalisation
 					value > 0.5
 				}
-				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_officers }
+				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_nobles }
 				add = 5
 			}
 			modifier = {
@@ -222,7 +217,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 					id = ANZ_industrialization_against_manalisation
 					value > 0.65
 				}
-				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_officers }
+				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_nobles }
 				add = 1
 			}
 			modifier = {
@@ -438,12 +433,12 @@ ANZ_demanarization = {
 	ANZ_destroy_dimai = {
 		icon = generic_construction
 		modifier = {
-			# civilian_factory_use = 1
-			consumer_goods_factor = 0.05
+			civilian_factory_use = 2
 		}
 		on_map_mode = map_and_decisions_view
 		state_target = yes
 		available = {
+			industrial_complex > 1
 			custom_trigger_tooltip = {
 				tooltip = ANZ_tooltip23
 				NOT = { has_country_flag = ANZ_REMOVING_DIMAI }
@@ -468,19 +463,6 @@ ANZ_demanarization = {
 				id = ANZ_industrialization_against_manalisation
 				value = 0.02
 			}
-			if = {
-				limit = { has_country_flag = ANZ_LOTHIAN }
-				custom_effect_tooltip = ANZ_tooltip5
-				add_to_variable = {
-					anz_civil_our_power = -0.3
-				}
-			}
-			else = {
-				custom_effect_tooltip = ANZ_tooltip5
-				add_to_variable = {
-					anz_civil_enemy_power = 0.3
-				}
-			}
 		}
 		remove_effect = {
 			clr_country_flag = ANZ_REMOVING_DIMAI
@@ -496,26 +478,23 @@ ANZ_demanarization = {
 }
 #争夺军队和军官
 ANZ_scramble_for_troops_and_officers = {
-
 	#洛蒂安教廷正在秘密接触高级军官
 	ANZ_papacy_is_securing_officers = {
 		activation = {
 			has_completed_focus = ANZ_salute_to_shout
 		}
-		days_mission_timeout = 50
+		days_mission_timeout = 70
 		timeout_effect = {
 			random_unit_leader = {
 				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
 				add_trait = {
 					trait = ANZ_fazione_di_mana
 				}
-				ANZ = { 
-					add_to_variable = {
-						anz_civil_enemy_power = 1
-					} 
-				}
 			}
-			
+			custom_effect_tooltip = ANZ_tooltip5
+			add_to_variable = {
+				anz_civil_enemy_power = 1
+			} 
 		}
 		available = {
 			NOT = { has_power_balance = {
@@ -528,19 +507,15 @@ ANZ_scramble_for_troops_and_officers = {
 		activation = {
 			has_completed_focus = ANZ_santa_sede_and_its_children
 		}
-		days_mission_timeout = 50
+		days_mission_timeout = 70
 		timeout_effect = {
 			random_unit_leader = {
 				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
 				add_trait = {
 					trait = ANZ_scuola_industriale
 				}
-				ANZ = { 
-					add_to_variable = {
-						anz_civil_enemy_power = 1
-					} 
-				}
 			}
+			custom_effect_tooltip = ANZ_tooltip5
 			add_to_variable = {
 				anz_civil_enemy_power = 1
 			}
@@ -554,10 +529,13 @@ ANZ_scramble_for_troops_and_officers = {
 	#拉拢军官
 	ANZ_securing_officers = {
 		visible = {
-			OR = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_officers has_completed_focus = ANZ_secretly_contact_military_officers }
+			OR = {
+				has_completed_focus = ANZ_santa_sede_and_its_children
+				has_completed_focus = ANZ_salute_to_shout
+			}
 		}
 		cost = 50
-		days_remove = 30
+		days_remove = 70
 		remove_effect = {
 			random_unit_leader = {
 				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
@@ -578,6 +556,59 @@ ANZ_scramble_for_troops_and_officers = {
 						anz_civil_our_power = 1
 					} 
 				}
+			}
+		}
+	}
+}
+
+#战后恢复
+ANZ_after_civil = {
+	#兑现农民承诺
+	ANZ_fulfull_promise_to_farmers = {
+		is_good = no
+		activation = {
+			is_ai = no
+			has_country_flag = ANZ_CIVIL_ENDED
+			has_country_flag = ANZ_PEASANT_DEMAND
+		}
+		days_mission_timeout = 600
+		timeout_effect = {
+			add_stability = -0.2
+			add_war_support = -0.2
+		}
+		#停止条件 
+		available = {
+			all_core_state = {
+				infrastructure > 4
+			}
+		}
+		complete_effect = {
+			
+		}
+	}
+	#兑现贵族承诺
+	ANZ_fulfull_promise_to_nobles = {
+		is_good = no
+		activation = {
+			is_ai = no
+			has_country_flag = ANZ_CIVIL_ENDED
+			has_country_flag = ANZ_PEASANT_DEMAND
+		}
+		days_mission_timeout = 600
+		timeout_effect = {
+			add_stability = -0.2
+			add_war_support = -0.2
+		}
+		#停止条件
+		available = {
+			176 = {
+				industrial_complex > 4
+			}
+			180 = {
+				industrial_complex > 4
+			}
+			171 = {
+				industrial_complex > 4
 			}
 		}
 	}
