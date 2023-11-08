@@ -7,7 +7,7 @@ tags={
 	"Sound"
 	"Historical"
 }
-name="~IRIS~ 九色堇之心"
+name="【github】~IRIS~ 九色堇之心"
 picture="thumbnail.png"
 replace_path="events"
 replace_path="history/countries"
@@ -28,4 +28,3 @@ replace_path="tutorial"
 replace_path="common/bookmarks"
 replace_path="gfx/loadingscreens"
 supported_version="1.13.*"
-remote_file_id="2739911713"
