@@ -2,9 +2,12 @@ on_actions = {
 	on_startup = {
 		effect = {
 			#STG = {set_country_flag = STG_enable_parliament_events}
-			STG = {country_event = {id = STG_general.3 days = 7}}
+			STG = {country_event = {id = STG_intro.1 days = 2}}
+			STG = {country_event = {id = STG_general.3 days = 10}}
 			STG = {country_event = {id = STG_general.5 days = 150}}
 			STG = {country_event = {id = STG_general.6 days = 200}}
+			STG = {country_event = {id = STG_general.7 days = 30}}
+			STG = {country_event = {id = STG_general.15 days = 20}}
 			#政府稳定初始化
 			STG = { set_variable = { STG_global_unrest = 20 } }
 			#卡美洛派威胁初始化
@@ -19,6 +22,46 @@ on_actions = {
 			STG = { set_variable = { STG_supporter_needed = 20 } }
 			#军队不满初始化
 			STG = { set_variable = { STG_army_discontent = 50 } }
+		}
+	}
+	on_weekly = {
+		#造核
+		effect = {
+			if = {
+				limit = {
+					tag = STG
+					has_country_flag = STG_enable_einzbern_storm_decisions
+					country_exists = USR
+				}
+				every_controlled_state = {
+                    limit = {
+                        is_core_of = USR
+						NOT = {
+							is_core_of = STG
+						}
+                    }
+                    add_core_of = STG
+            	}
+			}
+		}
+		#检测战争态势
+		effect = {
+			if = {
+				limit = {
+					tag = STG
+					country_exists = USR
+					has_country_flag = STG_enable_einzbern_storm_decisions
+				}
+				STG_ilya_check_war_stage = yes
+			}
+			else_if = {
+				limit = {
+					tag = STG
+					NOT = {country_exists = USR}
+					has_country_flag = STG_enable_einzbern_storm_decisions
+				}
+				STG_remove_ilya_war_ideas = yes
+			}
 		}
 	}
 	on_weekly = { 
@@ -171,30 +214,9 @@ on_actions = {
 				STG_check_unrest = yes
 				STG_check_cam_unrest = yes
 				STG_check_usr_unrest = yes
+				STG_check_supporters = yes
 			}
 		}
-		effect = {
-			STG = {
-				if = {
-                    limit = {
-                        has_country_flag = STG_ilya_issue_1_passed
-                    }
-                    clamp_temp_variable = {
-                        var = STG_supporter
-                        max = 33
-                        min = 0
-                    }
-                }
-                else = {
-                    clamp_temp_variable = {
-                        var = STG_supporter
-                        max = 30
-                        min = 0
-                    }
-                }
-			}
-		}
-		
 	}
 	on_monthly = {
 		effect = {
@@ -215,7 +237,9 @@ on_actions = {
 					    type = annex_everything
 				    }
 			    }
-			    set_country_flag = STG_ung_got_cb
+				STG = {
+					set_country_flag = STG_ung_got_cb
+				}
 			}
 			if = {
 				limit = {
@@ -234,7 +258,9 @@ on_actions = {
 					    type = annex_everything
 				    }
 			    }
-			    set_country_flag = STG_usr_got_cb
+				STG = {
+					set_country_flag = STG_usr_got_cb
+				}
 			}
 		}
 	}

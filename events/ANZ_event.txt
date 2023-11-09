@@ -247,22 +247,22 @@ country_event = {
 	#is_triggered_only = yes
 	#fire_only_once = yes
 	mean_time_to_happen = {
-		days = 1000
+		days = 800
 		modifier = {
 			has_stability < 0.4
 			add = -600
 		}
 		modifier = {
 			has_stability < 0.25
-			add = -120
+			add = -100
 		}
 		modifier = {
 			has_stability < 0.15
-			add = -60
+			add = -50
 		}
 		modifier = {
 			has_stability < 0.05
-			add = -60
+			add = -30
 		}
 	}
 	trigger = {
@@ -274,10 +274,11 @@ country_event = {
 		name = anz.5.a
 		add_power_balance_value = {
 			id = ANZ_industrialization_against_manalisation
-			value = 0.1
+			value = 0.04
 		}
+		add_war_support = 0.02
 		ai_chance = {
-			factor = 10
+			base = 10
 		}
 	}
 }
@@ -307,31 +308,14 @@ country_event = {
 		add_political_power = -30
 		add_command_power = -20
 		ai_chance = {
-			factor = 10
+			base = 10
 		}
 	}
 	option = {
 		name = anz.6.b
 		ANZ= { country_event = anz.8 }
 		ai_chance = {
-			factor = 0
-		}
-	}
-	option = {
-		name = anz.6.c
-		trigger = {
-			ANZ = { 
-				has_civil_war = yes
-				check_variable = {
-					anz_fascism_tension > 7
-				} 
-			}
-		}
-		set_country_flag = USR_IN_ANZ_CIVIL_WAR
-		add_war_support = 0.1
-		ANZ= { country_event = anz.9 }
-		ai_chance = {
-			factor = 100
+			base = 0
 		}
 	}
 }
@@ -355,18 +339,28 @@ country_event = {
 		}
 		else = {
 			add_equipment_to_stockpile = {
-				type = infantry_equipment_0
+				type = infantry_equipment_1
 				producer = USR
-				amount = 1500
+				amount = 2500
+			}
+			if = {
+				limit = {
+					NOT = { has_idea = ANZ_USR_support }
+					check_variable = {
+						anz_fascism_tension > 4
+					}
+				}
+				add_timed_idea = {
+					idea = ANZ_USR_support
+					days = 365
+				}
 			}
 		}
-		ANZ = { 
-			add_to_variable = {
-				anz_fascism_tension = 1
-			} 
+		add_to_variable = {
+			anz_fascism_tension = 1
 		}
 		ai_chance = {
-			factor = 10
+			base = 10
 		}
 	}
 }
@@ -383,33 +377,187 @@ country_event = {
 		name = anz.8.a
 		add_war_support = 0.05
 		ai_chance = {
-			factor = 10
+			base = 10
 		}
 	}
 }
-#乌斯拉尔同意加入内战
+#逐渐浮现的黑帮势力
 country_event = {
 	id = anz.9
 	title = anz.9.t
 	desc = anz.9.desc
 	picture = GFX_ANZ_CE9
 	is_triggered_only = yes
-	#fire_only_once = yes
+	fire_only_once = yes
 	
 	option = {
 		name = anz.9.a
-		add_war_support = 0.05
-		every_country = {
-			limit = { has_country_flag = ANZ_LOTHIAN }
-			USR = {
-				create_wargoal = {
-					target = PREV
-					type = annex_everything
+		add_ideas = ANZ_maffia_issue
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#安齐奥走出内战
+country_event = {
+	id = anz.10
+	title = anz.10.t
+	desc = anz.10.desc
+	picture = GFX_ANZ_CE10
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = anz.10.a
+		set_country_flag = ANZ_CIVIL_ENDED
+		hidden_effect = {
+			if = {
+				limit = {
+					OR = {
+						has_country_flag = ANZ_PEASANT_DEMAND
+						has_country_flag = ANZ_NOBLE_DEMAND
+					}
 				}
+				country_event = { id = anz.15 days = 1 }
 			}
+			news_event = anz_news.3
 		}
 		ai_chance = {
-			factor = 10
+			base = 10
+		}
+	}
+}
+#FROM安齐奥要求合并的最后通牒
+country_event = {
+	id = anz.11
+	title = anz.11.t
+	desc = anz.11.desc
+	picture = GFX_ANZ_CE11
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = anz.11.a
+		hidden_effect = {
+			ANZ = { country_event = { id = anz.12 } }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = anz.12.a
+		hidden_effect = {
+			ANZ = { country_event = { id = anz.13 } }
+		}
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#FROM同意合并
+country_event = {
+	id = anz.12
+	title = anz.12.t
+	desc = anz.12.desc
+	picture = GFX_ANZ_CE12
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = anz.12.a
+		annex_country = {
+			target = FROM
+		}
+		hidden_effect = {
+			
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#FROM拒绝合并
+country_event = {
+	id = anz.13
+	title = anz.13.t
+	desc = anz.13.desc
+	picture = GFX_ANZ_CE13
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = anz.13.a
+		create_wargoal = {
+			target = FROM
+			type = annex_everything
+		}
+		hidden_effect = {
+			
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#密谋的清晨：开启拉拢军官决议
+country_event = {
+	id = anz.14
+	title = anz.14.t
+	picture = GFX_ANZ_CE14
+	is_triggered_only = yes
+	fire_only_once = yes
+	desc = {
+		trigger = {
+			has_country_flag = ANZ_ANZIO
+		}
+		text = anz.14.desc
+	}
+	desc = {
+		text = anz.14.desc2
+	}
+	
+	option = {
+		name = anz.14.a
+		if = {
+			limit = { has_country_flag = ANZ_ANZIO }
+			activate_mission_tooltip = ANZ_papacy_is_securing_officers
+		}
+		else = {
+			activate_mission_tooltip = ANZ_senshado_is_securing_officers
+		}
+		hidden_effect = {
+			
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#兑现承诺
+country_event = {
+	id = anz.15
+	title = anz.15.t
+	picture = GFX_ANZ_CE15
+	is_triggered_only = yes
+	fire_only_once = yes
+	desc = anz.15.desc
+	
+	option = {
+		name = anz.14.a
+		if = {
+			limit = { has_country_flag = ANZ_NOBLE_DEMAND }
+			activate_mission_tooltip = ANZ_fulfull_promise_to_nobles
+		}
+		else = {
+			activate_mission_tooltip = ANZ_fulfull_promise_to_farmers
+		}
+		hidden_effect = {
+			
+		}
+		ai_chance = {
+			base = 10
 		}
 	}
 }
@@ -466,6 +614,34 @@ news_event = {
 	}
 	option = {
 		name = anz_news.2.c
+		trigger = {
+			not = { tag = ANZ }
+			ANZ = { has_same_ideology = no }
+		}
+	}
+}
+#安齐奥走出内战
+news_event = {
+	id = anz_news.3
+	title = anz_news.3.t
+	picture = GFX_USR_NE3
+	desc = anz_news.3.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = { }
+	option = {
+		name = anz_news.3.a
+		trigger = { tag = ANZ }
+	}
+	option = {
+		name = anz_news.3.b
+		trigger = {
+			not = { tag = ANZ }
+			ANZ = { has_same_ideology = yes }
+		}
+	}
+	option = {
+		name = anz_news.3.c
 		trigger = {
 			not = { tag = ANZ }
 			ANZ = { has_same_ideology = no }
