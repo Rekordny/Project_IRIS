@@ -33,15 +33,15 @@ country_event = {
 			}
 		}
 		239 = {
-			add_extra_state_shared_building_slots = 2
+			add_extra_state_shared_building_slots = 3
 			add_building_construction = {
 				type = industrial_complex
-				level = 2
+				level = 3
 			}
 		}
 		add_power_balance_value = {
 			id = ANZ_industrialization_against_manalisation
-			value = 0.05
+			value = 0.08
 		}
 		ai_chance = {
 			factor = 10
@@ -88,17 +88,11 @@ country_event = {
 				level = 1
 			}
 		}
-		170 = { 
-			remove_building = {
-				type = arms_factory
-				level = 1
-			}
-		}
 		239 = {
-			add_extra_state_shared_building_slots = 3
+			add_extra_state_shared_building_slots = 4
 			add_building_construction = {
 				type = arms_factory
-				level = 3
+				level = 4
 			}
 		}
 		ai_chance = {
@@ -113,6 +107,11 @@ country_event = {
 	desc = anz.3.desc
 	picture = GFX_ANZ_CE3
 	is_triggered_only = yes
+	trigger = {
+		has_power_balance = {
+			id = ANZ_industrialization_against_manalisation
+		}
+	}
 	#fire_only_once = yes
 	option = {
 		name = anz.3.a
@@ -129,6 +128,11 @@ country_event = {
 	desc = anz.4.desc
 	picture = GFX_ANZ_CE4
 	is_triggered_only = yes
+	trigger = {
+		has_power_balance = {
+			id = ANZ_industrialization_against_manalisation
+		}
+	}
 	#fire_only_once = yes
 	option = {
 		name = anz.4.a
@@ -247,18 +251,14 @@ country_event = {
 	#is_triggered_only = yes
 	#fire_only_once = yes
 	mean_time_to_happen = {
-		days = 800
-		modifier = {
-			has_stability < 0.4
-			add = -600
-		}
+		days = 240
 		modifier = {
 			has_stability < 0.25
-			add = -100
+			add = -120
 		}
 		modifier = {
 			has_stability < 0.15
-			add = -50
+			add = -55
 		}
 		modifier = {
 			has_stability < 0.05
@@ -288,13 +288,13 @@ country_event = {
 	title = anz.6.t
 	desc = {
 		trigger = {
-			NOT = { ANZ = { has_civil_war = yes } }
+			NOT = { FROM = { has_civil_war = yes } }
 		}
 		text = anz.6.desc
 	}
 	desc = {
 		trigger = {
-			ANZ = { has_civil_war = yes }
+			FROM = { has_civil_war = yes }
 		}
 		text = anz.6.desc1
 	}
@@ -304,7 +304,7 @@ country_event = {
 	
 	option = {
 		name = anz.6.a
-		ANZ= { country_event = anz.7 }
+		FROM = { country_event = anz.7 }
 		add_political_power = -30
 		add_command_power = -20
 		ai_chance = {
@@ -313,7 +313,7 @@ country_event = {
 	}
 	option = {
 		name = anz.6.b
-		ANZ= { country_event = anz.8 }
+		FROM = { country_event = anz.8 }
 		ai_chance = {
 			base = 0
 		}
@@ -323,6 +323,14 @@ country_event = {
 country_event = {
 	id = anz.7
 	title = anz.7.t
+	desc = {
+		trigger = {
+			check_variable = {
+				anz_fascism_tension = 5
+			}
+		}
+		text = anz.7.desc2
+	}
 	desc = anz.7.desc
 	picture = GFX_ANZ_CE7
 	is_triggered_only = yes
@@ -335,19 +343,24 @@ country_event = {
 			custom_effect_tooltip = ANZ_tooltip6
 			add_to_variable = {
 				anz_civil_our_power = 1
-			} 
+			}
 		}
 		else = {
 			add_equipment_to_stockpile = {
 				type = infantry_equipment_1
 				producer = USR
-				amount = 2500
+				amount = 1000
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment_1
+				producer = USR
+				amount = 200
 			}
 			if = {
 				limit = {
 					NOT = { has_idea = ANZ_USR_support }
 					check_variable = {
-						anz_fascism_tension > 4
+						anz_fascism_tension = 5
 					}
 				}
 				add_timed_idea = {
@@ -446,7 +459,7 @@ country_event = {
 		}
 	}
 	option = {
-		name = anz.12.a
+		name = anz.11.a
 		hidden_effect = {
 			ANZ = { country_event = { id = anz.13 } }
 		}
@@ -535,7 +548,7 @@ country_event = {
 		}
 	}
 }
-#兑现承诺
+#内战后兑现承诺
 country_event = {
 	id = anz.15
 	title = anz.15.t
@@ -545,7 +558,7 @@ country_event = {
 	desc = anz.15.desc
 	
 	option = {
-		name = anz.14.a
+		name = anz.15.a
 		if = {
 			limit = { has_country_flag = ANZ_NOBLE_DEMAND }
 			activate_mission_tooltip = ANZ_fulfull_promise_to_nobles
@@ -558,6 +571,69 @@ country_event = {
 		}
 		ai_chance = {
 			base = 10
+		}
+	}
+}
+
+#USR:克莱门重审
+country_event = {
+	id = anz.16
+	title = anz.16.t
+	picture = GFX_ANZ_CE16
+	is_triggered_only = yes
+	fire_only_once = yes
+	desc = anz.16.desc
+	
+	option = {
+		name = anz.16.a
+		FROM = { country_event = { id = anz.17 days = 3 } }
+		hidden_effect = {
+			
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = anz.16.b
+		FROM = { country_event = { id = anz.18 days = 3 } }
+		hidden_effect = {
+			
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#USR同意组织国际仲裁
+country_event = {
+	id = anz.17
+	title = anz.17.t
+	desc = anz.17.desc
+	picture = GFX_ANZ_CE17
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.17.a
+		ANZ_clement_treaty_trial = yes
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#USR拒绝组织国际仲裁
+country_event = {
+	id = anz.18
+	title = anz.18.t
+	desc = anz.18.desc
+	picture = GFX_ANZ_CE18
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.18.a
+		
+		ai_chance = {
+			base = 1
 		}
 	}
 }
