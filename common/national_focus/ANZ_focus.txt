@@ -23,14 +23,18 @@ focus_tree = {
 		available = {
 			
 		}
-		completion_reward = {
+		select_effect = {
 			#标示路线
 			set_country_flag = ANZ_ANZIO
+		}
+		completion_reward = {
 			add_political_power = 100
 			add_war_support = 0.05
-			activate_mission_tooltip = ANZ_papacy_is_securing_officers
 			unlock_decision_category_tooltip = ANZ_demanarization
 			custom_effect_tooltip = ANZ_tooltip21
+			hidden_effect = {
+				country_event = anz.14
+			}
 		}
 	}
 	#圣座和它的孩子们
@@ -45,16 +49,20 @@ focus_tree = {
 			base = 0
 			#此线路完成后
 		}
+		select_effect = {
+			#标示路线
+			set_country_flag = ANZ_LOTHIAN
+		}
 		available = {
 			
 		}
 		completion_reward = {
-			#标示路线
-			set_country_flag = ANZ_LOTHIAN
 			add_political_power = 100
 			add_stability = 0.05
-			activate_mission_tooltip = ANZ_senshado_is_securing_officers
 			custom_effect_tooltip = ANZ_tooltip21
+			hidden_effect = {
+				country_event = anz.14
+			}
 		}
 	}
 	#圣弥额尔多尼亚条约
@@ -270,7 +278,6 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			add_war_support = -0.1
 			add_ideas = ANZ_the_new_renaissance
 			add_to_variable = {
 				anz_completed_focus_pre_civil = 1
@@ -377,7 +384,6 @@ focus_tree = {
 		#mutually_exclusive = { focus = ANZ_salute_to_shout }
 		relative_position_id = ANZ_treaty_of_saint_michaeldonia
 		prerequisite = { focus = ANZ_treaty_of_saint_michaeldonia }
-		prerequisite = { focus = ANZ_ignite_the_black_flame }
 		x = -2
 		y = 1
 		cost = 10
@@ -385,17 +391,16 @@ focus_tree = {
 			base = 0
 			modifier = {
 				has_country_flag = ANZ_LOTHIAN
-				add = 10
+				add = 15
 			}
 		}
 		available = {
 			NOT = { is_in_faction_with = USR }
+			USR = { USR_the_clemen_treaty_exists = yes controls_state = 159 }
 		}
 		completion_reward = {
-			add_power_balance_value = {
-				id = ANZ_industrialization_against_manalisation
-				value = 0.05
-			}
+			USR = { country_event = { id = anz.16 } }
+			
 			add_to_variable = {
 				anz_completed_focus_pre_civil = 1
 			}
@@ -553,6 +558,20 @@ focus_tree = {
 				idea = ANZ_alleviate_southern_living_needs
 				days = 500
 			}
+			if = {
+				limit = { has_country_flag = ANZ_LOTHIAN }
+				custom_effect_tooltip = ANZ_tooltip28
+				add_to_variable = {
+					anz_civil_our_power = 2
+				}
+			}
+			else_if = {
+				limit = { has_country_flag = ANZ_ANZIO }
+				custom_effect_tooltip = ANZ_tooltip29
+				add_to_variable = {
+					anz_civil_enemy_power = 2
+				}
+			}
 			add_to_variable = {
 				anz_completed_focus_pre_civil = 1
 			}
@@ -612,7 +631,7 @@ focus_tree = {
 		completion_reward = {
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
-				value = 0.05
+				value = 0.1
 			}
 			add_stability = 0.05
 			swap_ideas = {
@@ -722,6 +741,7 @@ focus_tree = {
 			
 		}
 		completion_reward = {
+			custom_effect_tooltip = available_industrial_concern
 			show_ideas_tooltip = ANZ_lda_material
 			random_controlled_state = {
 				limit = { is_core_of = ANZ }
@@ -757,6 +777,7 @@ focus_tree = {
 			
 		}
 		completion_reward = {
+			custom_effect_tooltip = available_industrial_concern
 			show_ideas_tooltip = ANZ_ppln_pizza
 			random_controlled_state = {
 				limit = { is_core_of = ANZ }
@@ -951,7 +972,7 @@ focus_tree = {
 	focus = {
 		id = ANZ_disperse_the_flock
 		icon = GFX_focus_ANZ_disperse_the_flock
-		#mutually_exclusive = { focus = ANZ_salute_to_shout }
+		mutually_exclusive = { focus = ANZ_ensure_the_loyalty_of_the_nobles }
 		relative_position_id = ANZ_exposing_church_corruption
 		prerequisite = { focus = ANZ_exposing_church_corruption }
 		x = -2
@@ -964,17 +985,19 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			add_power_balance_value = {
-				id = ANZ_industrialization_against_manalisation
-				value = 0.05
+			add_timed_idea = {
+				idea = ANZ_smoothed_peasant_mood
+				days = 480
 			}
-			custom_effect_tooltip = ANZ_tooltip6
+			custom_effect_tooltip = ANZ_tooltip27
+			custom_effect_tooltip = ANZ_tooltip28
 			add_to_variable = {
-				anz_civil_our_power = 2
+				anz_civil_our_power = 2.5
 			}
 			add_to_variable = {
 				anz_completed_focus_pre_civil = 1
 			}
+			set_country_flag = ANZ_PEASANT_DEMAND
 		}
 	}
 	#集中销毁玛娜制品
@@ -1010,7 +1033,7 @@ focus_tree = {
 		icon = GFX_focus_ANZ_order_comes_first
 		#mutually_exclusive = { focus = ANZ_salute_to_shout }
 		relative_position_id = ANZ_destroy_mana_artifacts
-		prerequisite = { focus = ANZ_destroy_mana_artifacts focus = ANZ_ensure_the_loyalty_of_the_officers focus = ANZ_disperse_the_flock }
+		prerequisite = { focus = ANZ_destroy_mana_artifacts focus = ANZ_ensure_the_loyalty_of_the_nobles focus = ANZ_disperse_the_flock }
 		x = -2
 		y = 1
 		cost = 5
@@ -1022,20 +1045,16 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_stability = 0.2
-			custom_effect_tooltip = ANZ_tooltip6
-			add_to_variable = {
-				anz_civil_our_power = 2
-			}
 			add_to_variable = {
 				anz_completed_focus_pre_civil = 1
 			}
 		}
 	}
-	#确保军官忠诚
+	#确保贵族忠诚
 	focus = {
-		id = ANZ_ensure_the_loyalty_of_the_officers
-		icon = GFX_focus_ANZ_ensure_the_loyalty_of_the_officers
-		#mutually_exclusive = { focus = ANZ_salute_to_shout }
+		id = ANZ_ensure_the_loyalty_of_the_nobles
+		icon = GFX_focus_ANZ_ensure_the_loyalty_of_the_nobles
+		mutually_exclusive = { focus = ANZ_disperse_the_flock }
 		relative_position_id = ANZ_exposing_church_corruption
 		prerequisite = { focus = ANZ_exposing_church_corruption }
 		x = 0
@@ -1048,10 +1067,19 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			unlock_decision_tooltip = ANZ_securing_officers
+			add_timed_idea = {
+				idea = ANZ_noble_patronage
+				days = 480
+			}
+			custom_effect_tooltip = ANZ_tooltip26
+			custom_effect_tooltip = ANZ_tooltip28
+			add_to_variable = {
+				anz_civil_our_power = 2.5
+			}
 			add_to_variable = {
 				anz_completed_focus_pre_civil = 1
 			}
+			set_country_flag = ANZ_NOBLE_DEMAND
 		}
 	}
 	#争夺尼禄的财富
