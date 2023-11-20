@@ -13,7 +13,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.50
+				consumer_goods_expected_value = 0.50
 				production_speed_industrial_complex_factor = -0.5
 				production_speed_arms_factory_factor = -0.5
 				production_speed_dockyard_factor = -0.5
@@ -48,7 +48,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.4
+				consumer_goods_expected_value = 0.4
 				production_speed_industrial_complex_factor = -0.4
 				production_speed_arms_factory_factor = -0.4
 				production_speed_dockyard_factor = -0.4
@@ -80,7 +80,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.35
+				consumer_goods_expected_value = 0.35
 				production_speed_industrial_complex_factor = 0.3
 				production_speed_arms_factory_factor = -0.3
 				conversion_cost_civ_to_mil_factor= 0.3
@@ -92,6 +92,15 @@ ideas = {
 			default = yes
 
 			cancel_if_invalid = no
+
+			allowed_to_remove = {
+				if = {
+					limit = { tag = BOW }
+				}
+				NOT = {
+					has_country_flag = sghyjjfaflag
+				}
+			}
 		}
 
 		low_economic_mobilisation = {
@@ -142,7 +151,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.3
+				consumer_goods_expected_value = 0.3
 				production_speed_industrial_complex_factor = 0.1
 				production_speed_arms_factory_factor = -0.1
 				fuel_gain_factor = -0.25
@@ -213,7 +222,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.25
+				consumer_goods_expected_value = 0.25
 				production_speed_industrial_complex_factor = -0.1
 				production_speed_arms_factory_factor = 0.1
 				conversion_cost_civ_to_mil_factor= -0.1
@@ -261,7 +270,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.2
+				consumer_goods_expected_value = 0.2
 				production_speed_industrial_complex_factor = -0.2
 				production_speed_arms_factory_factor = 0.2
 				conversion_cost_civ_to_mil_factor= -0.2
@@ -420,7 +429,7 @@ ideas = {
 			removal_cost = -1
 
 			modifier = {
-				consumer_goods_factor = 0.10
+				consumer_goods_expected_value = 0.10
 				conscription = -0.03
 				production_speed_industrial_complex_factor = -0.3
 				production_speed_arms_factory_factor = 0.3
@@ -431,6 +440,63 @@ ideas = {
 			cancel_if_invalid = no
 		}
 
+		new_economic_policy = {
+
+			picture = new_economic_policy
+
+			allowed = {
+				always = no
+			}
+			allowed_to_remove = {
+				OR = {
+					surrender_progress > 0.75
+					NOT = { has_government = communism }
+				}
+			}
+
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_expected_value = 0.15
+				production_speed_buildings_factor = -0.15
+
+			}
+
+			cancel_if_invalid = no
+
+			ai_will_do = {
+   				factor = 0
+   			}
+		}
+		new_economic_policy_2 = {
+			name = new_economic_policy
+
+			picture = new_economic_policy
+
+			allowed = {
+				always = no
+			}
+			allowed_to_remove = {
+				OR = {
+					surrender_progress > 0.75
+					NOT = { has_government = communism }
+				}
+			}
+
+			removal_cost = -1
+
+			modifier = {
+				consumer_goods_expected_value = 0.10
+				production_speed_buildings_factor = -0.2
+				global_building_slots_factor = 0.1
+			}
+
+			cancel_if_invalid = no
+
+			ai_will_do = {
+   				factor = 0
+   			}
+		}
 	}
 
 	trade_laws = {
@@ -446,12 +512,17 @@ ideas = {
 			removal_cost = -1
 			picture = isolation
 
+			rule = {
+				can_access_market = no
+			}
+
 			modifier = {
 				min_export = 0.25
-				consumer_goods_factor = 0.05
+				consumer_goods_expected_value = 0.05
 				civilian_intel_to_others = 40.0
 				navy_intel_to_others = 40.0
 				agency_upgrade_time = 0.15
+				cic_construction_boost = 0.15
 			}
 
 			allowed_to_remove = {
@@ -473,6 +544,29 @@ ideas = {
 				}
 			}
 
+			on_remove = {
+				effect_tooltip =  {
+					remove_dynamic_modifier = { modifier = international_city }
+				}
+				hidden_effect = {
+					if = {
+						limit = {
+							tag = POL
+							85 = { is_demilitarized_zone = no }
+							has_civil_war = no 
+						}
+						85 = {
+							if = {
+								limit = {
+									has_dynamic_modifier = { modifier = international_city }
+								}
+								remove_dynamic_modifier = { modifier = international_city }
+							}
+						}
+					}
+				}
+			}
+			
 			cancel_if_invalid = no
 		}
 
@@ -499,9 +593,19 @@ ideas = {
 				research_speed_factor = 0.10
 				civilian_intel_to_others = 40.0
 				navy_intel_to_others = 20.0
+				cic_construction_boost_factor = 0.05
 			}
 
 			cancel_if_invalid = no
+
+			allowed_to_remove = {
+				if = {
+					limit = {
+						is_small_Lotus_tag = yes
+					}
+					NOT = { has_idea = SRS_unequal_treaty }
+				}
+			}
 
 			ai_will_do = {
    				factor = 1
@@ -521,6 +625,12 @@ ideas = {
 
 					tag = BRA
 					date > 1943.1.1 # at this point we can probably cash in on rubber lack in the world
+				}
+
+				modifier = {
+					factor = 400
+					original_tag = SWE
+					date > 1941.6.1
 				}
 
 				# Oil for hitlers oil throne!
@@ -564,6 +674,7 @@ ideas = {
 				research_speed_factor = 0.05
 				civilian_intel_to_others = 20.0
 				navy_intel_to_others = 10.0
+				cic_construction_boost_factor = 0.1
 			}
 
 			default = yes
@@ -599,7 +710,8 @@ ideas = {
 		limited_exports = {
 			available = {
 				OR = {
-					AND = {					
+					AND = {
+						has_government = democratic
 						has_war = yes
 						any_enemy_country = {
 							ic_ratio = {
@@ -608,13 +720,30 @@ ideas = {
 							}
 						}
 					}
-
-					OR = {
-						has_idea = partial_economic_mobilisation
-						has_idea = war_economy
-						has_idea = tot_economic_mobilisation
+					AND = {
+						NOT = { has_government = democratic }
+						OR = {
+							has_idea = partial_economic_mobilisation
+							has_idea = war_economy
+							has_idea = tot_economic_mobilisation
+						}
 					}
-					
+				}
+
+
+				if = {
+					limit = {
+						original_tag = CHI
+						has_dlc = "Waking the Tiger"
+					}
+					NOT = { has_idea = CHI_nine_power_treaty }
+				}
+				if = {
+					limit = {
+						original_tag = SPR
+						has_dlc = "La Resistance"
+					}
+					NOT = { has_completed_focus = SPR_all_must_bear_the_torch }
 				}
 			}
 
@@ -629,6 +758,8 @@ ideas = {
 				research_speed_factor = 0.01
 				civilian_intel_to_others = 10.0
 				navy_intel_to_others = 5
+				lend_lease_tension = 0.20
+				cic_construction_boost = -0.05
 			}
 
 			cancel_if_invalid = no
@@ -651,7 +782,13 @@ ideas = {
 					is_major = no
 					has_war = no
 				}
-
+				modifier = {
+					factor = 200
+					NOT = { has_government = fascism }
+					NOT = { has_idea = closed_economy }
+					has_war = yes
+					is_major = yes
+				}
 				modifier = {
 					add = 1500
 
@@ -668,9 +805,30 @@ ideas = {
 			available = {
 				has_war = yes
 				OR = {
+					has_government = fascism
+					has_government = communism
+				}
+				OR = {
 					has_idea = war_economy
 					has_idea = tot_economic_mobilisation
-				}				
+				}
+				OR = {
+					NOT = {	tag = SOV }
+					NOT = { has_opinion_modifier = MR_pact }
+				}
+
+				if = {
+					limit = {
+						original_tag = CHI
+						has_dlc = "Waking the Tiger"
+					}
+					NOT = { has_idea = CHI_nine_power_treaty }
+				}
+			}
+
+			rule = {
+				can_access_market = no
+				desc = can_not_access_market_closed_economy
 			}
 
 			cost = 150
@@ -679,10 +837,18 @@ ideas = {
 			modifier = {
 				min_export = 0
 				#civilian_intel_to_others = 0.0
+				lend_lease_tension = 0.40
+				cic_construction_boost = -0.1
 			}
 			allowed_to_remove = {
 				OR = {
 					NOT = { has_idea = SLL_ideas_yushigejue }
+				}
+				if = {
+					limit = { tag = BOW }
+					NOT = {
+						has_country_flag = sghymyfaflag
+					}
 				}
 			}
 

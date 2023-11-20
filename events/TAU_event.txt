@@ -88,6 +88,7 @@ country_event = {
 	option = {
 		name = tau.4.a
 		trigger = { NOT = { has_war_with = USF } }
+		custom_effect_tooltip = available_industrial_concern
 		show_ideas_tooltip = TAU_lbla_material
 		USF = {
 			add_opinion_modifier = {
@@ -102,6 +103,7 @@ country_event = {
 	option = {
 		name = tau.4.b
 		trigger = { NOT = { has_war_with = USF } }
+		custom_effect_tooltip = available_industrial_concern
 		show_ideas_tooltip = TAU_lda_material
 		ANZ = {
 			add_opinion_modifier = {
@@ -116,6 +118,7 @@ country_event = {
 	option = {
 		name = tau.4.c
 		trigger = { NOT = { has_war_with = USF } }
+		custom_effect_tooltip = available_industrial_concern
 		show_ideas_tooltip = TAU_xmbs_material
 		STG = {
 			add_opinion_modifier = {
@@ -186,10 +189,10 @@ country_event = {
 		name = tau.6.b
 		TAU = { country_event = { id = tau.8 days = 1 } }
 		ai_chance = {
-			base = 20
+			base = 15
 			modifier = {
 				BOW = { has_opinion_modifier = TAU_unsatisfied_with_dipatti }
-				add = 20
+				add = 15
 			}
 		}
 	}
@@ -243,10 +246,10 @@ country_event = {
 		name = tau.9.b
 		TAU = { country_event = { id = tau.8 days = 1 } }
 		ai_chance = {
-			base = 20
+			base = 15
 			modifier = {
-				BOW = { has_opinion_modifier = TAU_unsatisfied_with_dipatti }
-				add = 20
+				PCC = { has_opinion_modifier = TAU_unsatisfied_with_dipatti }
+				add = 15
 			}
 		}
 	}
@@ -282,18 +285,18 @@ country_event = {
 		tag = TAU
 	}
 	mean_time_to_happen = { 
-		days = 120
+		days = 100
 		modifier = {
 			TAU = { arms_factory < 10 }
-			add = 100
+			add = 300
 		}
 		modifier = {
-			TAU = { arms_factory > 12 }
-			add = -40
+			TAU = { arms_factory > 15 }
+			add = -20
 		}
 		modifier = {
-			TAU = { arms_factory > 20 }
-			add = -40
+			TAU = { arms_factory > 25 }
+			add = -30
 		}
 	}
 	option = {
@@ -330,8 +333,16 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = tau.12.a
-		recruit_character = TAU_OguriCap
-		show_unit_leaders_tooltip = TAU_OguriCap
+		add_corps_commander_role = {
+			character = TAU_OguriCap
+			traits={ TAU_betweener }
+			skill=3
+			attack_skill=2
+			defense_skill=3
+			planning_skill=2
+			logistics_skill=3
+			legacy_id=1105
+		}
 		mark_focus_tree_layout_dirty = yes
 	}
 }
@@ -385,9 +396,9 @@ country_event = {
 		name = tau.14.a
 		custom_effect_tooltip = TAU_tooltip20
 		custom_effect_tooltip = TAU_tooltip22
-		swap_ideas = {
-			remove_idea = TAU_another_leader_AirGroove
-			add_idea = TAU_another_leader_SatonoDiamond
+		hidden_effect = {
+			TAU_retire_vice_country_leader = yes
+			add_ideas = TAU_another_leader_SatonoDiamond
 		}
 		ai_chance = {
 			factor = 10
@@ -397,9 +408,9 @@ country_event = {
 		name = tau.14.b
 		custom_effect_tooltip = TAU_tooltip20
 		custom_effect_tooltip = TAU_tooltip24
-		swap_ideas = {
-			remove_idea = TAU_another_leader_AirGroove
-			add_idea = TAU_another_leader_SatonoDiamond
+		hidden_effect = {
+			TAU_retire_vice_country_leader = yes
+			add_ideas = TAU_another_leader_KitasanBlack
 		}
 		ai_chance = {
 			factor = 20
@@ -427,6 +438,163 @@ country_event = {
 		}
 		ai_chance = {
 			factor = 10
+		}
+	}
+}
+
+#美乐蒂大陆平衡被打破
+country_event = {
+	id = tau.16
+	title = tau.16.t
+	desc = tau.16.desc
+	picture = GFX_TAU_CE16
+	trigger = {
+		tag = TAU
+		OR = { TAU = { has_war_with = BOW } TAU = { has_war_with = PCC } has_country_flag = TAU_ABANDON_DILEMA }
+	}
+	immediate = { 
+		hidden_effect = { 
+			TAU = { TAU_dilemma_abandon = yes } 
+			news_event = { id = tau_news.4 } 
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.16.a
+
+	}
+}
+
+#隐藏开战自动移除
+country_event = {
+	id = tau.17
+	hidden = yes
+	trigger = {
+		tag = TAU
+		TAU = { has_war = yes }
+	}
+	immediate = { 
+		hidden_effect = { 
+			TAU  ={
+				if = {
+					limit = { has_idea = TAU_independent_political_status }
+					remove_ideas = TAU_independent_political_status
+				}
+			}
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	#is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.16.a
+
+	}
+}
+
+#目标国：特雷森提议胡萝卜贸易
+country_event = {
+	id = tau.18
+	title = tau.18.t
+	desc = tau.18.desc
+	picture = GFX_TAU_CE18
+	is_triggered_only = yes
+	#fire_only_once = yes
+	option = {
+		name = tau.18.a
+		TAU = { country_event = { id = tau.19 } }
+		add_ideas = TAU_carrot_food_import
+		effect_tooltip = { 
+			TAU = {
+				add_offsite_building = {
+					type = industrial_complex
+					level = 2
+				}
+			}
+		}
+		ai_chance = {
+			base = 10
+			modifier = {
+				has_opinion = {
+					target = TAU
+					value > 30 
+				}
+				factor = 2
+			}
+		}
+	}
+	option = {
+		name = tau.18.b
+		hidden_effect = {
+			set_country_flag = TAU_REJECT_FOOD_IMPORT
+		}
+		TAU = { country_event = { id = tau.20 } }
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#特雷森提议胡萝卜贸易目标国同意
+country_event = {
+	id = tau.19
+	title = tau.19.t
+	desc = tau.19.desc
+	picture = GFX_TAU_CE19
+	is_triggered_only = yes
+	#fire_only_once = yes
+	option = {
+		name = tau.19.a
+		add_offsite_building = {
+			type = industrial_complex
+			level = 2
+		}
+		effect_tooltip = { 
+			FROM = {
+				add_ideas = TAU_carrot_food_import
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#特雷森提议胡萝卜贸易目标国拒绝
+country_event = {
+	id = tau.20
+	title = tau.20.t
+	desc = tau.20.desc
+	picture = GFX_TAU_CE20
+	is_triggered_only = yes
+	#fire_only_once = yes
+	option = {
+		name = tau.20.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#胡萝卜贸易被终止
+country_event = {
+	id = tau.21
+	title = tau.21.t
+	desc = tau.21.desc
+	picture = GFX_TAU_CE21
+	is_triggered_only = yes
+	#fire_only_once = yes
+	option = {
+		name = tau.21.a
+		add_offsite_building = {
+			type = industrial_complex
+			level = -2
+		}
+		ai_chance = {
+			base = 10
 		}
 	}
 }
@@ -523,14 +691,8 @@ news_event = {
 	title = tau_news.4.t
 	picture = GFX_TAU_NE4
 	desc = tau_news.4.desc
-	trigger = {
-		OR = { TAU = { has_war_with = BOW } TAU = { has_war_with = PCC } has_country_flag = TAU_ABANDON_DILEMA }
-		NOT = { TAU = { has_country_flag = TAU_BLOCK_NEWS_FOUR } }
-	}
-	mean_time_to_happen = { days = 1 }
+	is_triggered_only = yes
 	major = yes
-	#纯纯下下策，只能用FLAG检查来阻止第二次触发
-	immediate = { hidden_effect = { TAU = { TAU_dilemma_abandon = yes set_country_flag = TAU_BLOCK_NEWS_FOUR } } }
 	option = {
 		name = tau_news.4.a
 		trigger = { tag = TAU }
@@ -558,10 +720,16 @@ news_event = {
 	desc = tau_news.5.desc
 	is_triggered_only = yes
 	major = yes
-	immediate = { add_named_threat = {
-		threat = -5
-		name = TAU_restart_ura_competition
-	} }
+	immediate = { 
+		hidden_effect = {
+			TAU = {
+				add_named_threat = {
+					threat = -5
+					name = TAU_restart_ura_competition
+				} 
+			}
+		}
+	}
 	option = {
 		name = tau_news.5.a
 		trigger = { tag = TAU }
@@ -574,7 +742,7 @@ news_event = {
 		}
 		add_political_power = -20
 		TAU = { add_to_variable = {
-			tau_ura_funds = -0.01
+			tau_ura_funds = -0.02
 		} }
 		ai_chance = {
 			factor = 10

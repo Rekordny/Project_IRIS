@@ -4,15 +4,12 @@ USR_livelihood_relief_subsidies = {
 		activation = { 
 			has_idea = USR_who_owns_the_republic
 		}
-		cancel_trigger = {
-			OR = { has_war = yes NOT = { USR = { has_idea = USR_who_owns_the_republic } } }
-		}
+		cancel_trigger = { has_war = yes }
 		cancel_effect = {
 			remove_ideas = USR_who_owns_the_republic
 			remove_ideas = USR_livelihood_relief_subsidies
 		}
-		available = {  }
-		fire_only_once = yes
+		fire_only_once = no
 		
 		is_good = yes
 		days_mission_timeout = 180
@@ -22,18 +19,24 @@ USR_livelihood_relief_subsidies = {
 		}
 		selectable_mission = yes
 		complete_effect = {
-			add_war_support = -0.05
+			if = {  
+				limit = { NOT = { has_completed_focus = USR_writing_social_democratic_editorials } }
+				add_war_support = -0.03
+			}
 			add_days_mission_timeout = {
 				mission = USR_livelihood_relief_subsidies_counting
 				days = 180
 			}
+			hidden_effect = {
+				if = { 
+					limit = { is_ai = yes NOT = { has_completed_focus = USR_writing_social_democratic_editorials } }
+					add_war_support = 0.03
+				}
+			}
 		}
+		#AI实在太蠢了
 		ai_will_do = {
 			base = 10
-			modifier = {
-				date > 3091.7.1
-				add = -10
-			}
 		}
 	}
 }
@@ -57,26 +60,15 @@ USR_republic_congress_decisions = {
 		available = { NOT = { USR = { has_idea = USR_the_republic_congress } } }
 		is_good = yes
 		war_with_on_timeout = PCC
-		days_mission_timeout = 55
+		days_mission_timeout = 100
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
-			if = { 
-				limit = { 682 = { industrial_complex > 0 } } 
-				682 = {
-					remove_building = {
-						type = industrial_complex
-						level = 1
-					}
-				}
-			}
-			else = {
-				random_core_state = {
-					limit = { is_controlled_by = USR industrial_complex > 0 }
-					remove_building = {
-						type = industrial_complex
-						level = 1
-					}
+			random_core_state = {
+				limit = { is_controlled_by = USR arms_factory > 0 }
+				remove_building = {
+					type = arms_factory
+					level = 1
 				}
 			}
 			hidden_effect = {
@@ -90,7 +82,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 80
+			add_political_power = 100
 		}
 	}
 	#共和国议会议程:削减军费
@@ -109,7 +101,7 @@ USR_republic_congress_decisions = {
 		available = { NOT = { USR = { has_idea = USR_the_republic_congress } } }
 		is_good = yes
 		war_with_on_timeout = PCC
-		days_mission_timeout = 55
+		days_mission_timeout = 60
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
@@ -155,7 +147,7 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 50
+			add_political_power = 60
 		}
 	}
 	#共和国议会议程:改革民主教育
@@ -173,7 +165,7 @@ USR_republic_congress_decisions = {
 		available = { NOT = { USR = { has_idea = USR_the_republic_congress } } }
 		is_good = yes
 		war_with_on_timeout = PCC
-		days_mission_timeout = 25
+		days_mission_timeout = 35
 		selectable_mission = no
 		complete_effect = { }
 		timeout_effect = {
@@ -192,14 +184,15 @@ USR_republic_congress_decisions = {
 				}
 			}
 			add_to_variable = { usr_congress = 1 }
-			add_political_power = 30
+			add_political_power = 35
 		}
 	}
 	#共和国外交:向卡美洛提供装备
 	USR_provide_equipments_UNG = {
 		visible = {
-			is_testing = yes
 			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
 			base = 10
@@ -207,25 +200,26 @@ USR_republic_congress_decisions = {
 		available = { 
 			UNG = { has_war_with = MSA }
 			UNG = { has_opinion_modifier = UNG_tigiongpanjunqingbao } 
-			has_equipment = { infantry_equipment > 4999 }
+			has_equipment = { infantry_equipment > 3999 }
 		}
 		fire_only_once = yes
 		complete_effect = {
+			set_country_flag = USR_UNG_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -3000
+				amount = -4000
 			}
-			add_popularity = {
-				ideology = democratic
-				popularity = -0.05
-			}
+			add_war_support = 0.05
 			add_political_power = 100
 			UNG = { 
-				add_ideas = USR_aid_UNG_MSA
+				add_timed_idea = {
+					idea = USR_aid_UNG_MSA
+					days = 365
+				}
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 3000
+					amount = 4000
 				} 
 			}
 		}
@@ -233,8 +227,9 @@ USR_republic_congress_decisions = {
 	#共和国外交:向莫德雷德提供装备
 	USR_provide_equipments_MSA = {
 		visible = {
-			is_testing = yes
 			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
 			base = 10
@@ -242,123 +237,171 @@ USR_republic_congress_decisions = {
 		available = { 
 			MSA = { has_war_with = UNG }
 			MSA = { has_opinion_modifier = UNG_anzhongzhichi } 
-			has_equipment = { infantry_equipment > 4999 }
+			#has_equipment = { infantry_equipment > 3999 }
 		}
 		fire_only_once = yes
 		complete_effect = {
+			set_country_flag = USR_MSA_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
-				amount = -3000
+				amount = -4000
 			}
-			add_popularity = {
-				ideology = fascism
-				popularity = 0.05
-			}
+			add_war_support = 0.05
 			add_political_power = 100
 			MSA = {
-				add_ideas = USR_aid_UNG_MSA
+				add_timed_idea = {
+					idea = USR_aid_UNG_MSA
+					days = 365
+				}
 				add_equipment_to_stockpile = {
 					type = infantry_equipment
 					producer = USR
-					amount = 3000
+					amount = 4000
 				} 
 			}
 		}
 	}
-	#将皇帝财产充公
-	USR_confiscate_the_emperor_property = {
-		visible = { }
-		available = {
-			has_government = democratic
-			
+	#共和国外交:发送志愿军
+	USR_provide_volunteer = {
+		visible = {
+			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED }
 		}
 		ai_will_do = {
-			base = 0
-			modifier = {
-				has_completed_focus = USR_perpetrate_a_fraud
-				add = 10
-			}
+			base = 100
+		}
+		cost = 50
+		available = { 
+			MSA = { has_war_with = UNG }
 		}
 		fire_only_once = yes
-		days_remove = 100
-		remove_effect = {
-			add_stability = -0.1
-			add_popularity = {
-				ideology = neutrality
-				popularity = -0.1
-			}
-			if ={  
-				limit = { has_idea = USR_the_clemen_treaty }
-				swap_ideas = {
-					remove_idea = USR_the_clemen_treaty
-					add_idea = USR_the_clemen_treaty_1
-				}
-			}
-			else_if ={  
-				limit = { has_idea = USR_the_clemen_treaty_1 }
-				swap_ideas = {
-					remove_idea = USR_the_clemen_treaty_1
-					add_idea = USR_the_clemen_treaty_2
-				}
-			}
-			else_if ={  
-				limit = { has_idea = USR_the_clemen_treaty_2 }
-				swap_ideas = {
-					remove_idea = USR_the_clemen_treaty_2
-					add_idea = USR_the_clemen_treaty_3
-				}
-			}
-			else = {
-				remove_ideas = USR_the_clemen_treaty_3
+		complete_effect = {
+			add_timed_idea = {
+				idea = USR_volunteers
+				days = 365
 			}
 		}
 	}
+	#共和国外交:保护盎格利亚政要与难民
+	USR_protect_refugee = {
+		visible = {
+			has_completed_focus = USR_limited_interference_with_UNG
+			UNG = { has_war_with = MSA }
+			OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED }
+		}
+		ai_will_do = {
+			base = 100
+		}
+		cost = 100
+		available = { 
+			MSA = { has_war_with = UNG }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_timed_idea = {
+				idea = USR_protect_refugee
+				days = 365
+			}
+		}
+	}
+	#将皇帝财产充公
+	# USR_confiscate_the_emperor_property = {
+	# 	visible = { }
+	# 	available = {
+	# 		has_government = democratic
+	# 	}
+	# 	ai_will_do = {
+	# 		base = 0
+	# 		modifier = {
+	# 			has_completed_focus = USR_perpetrate_a_fraud
+	# 			add = 10
+	# 		}
+	# 	}
+	# 	fire_only_once = yes
+	# 	days_remove = 100
+	# 	remove_effect = {
+	# 		add_stability = -0.1
+	# 		add_popularity = {
+	# 			ideology = neutrality
+	# 			popularity = -0.1
+	# 		}
+	# 		if ={  
+	# 			limit = { has_idea = USR_the_clemen_treaty }
+	# 			swap_ideas = {
+	# 				remove_idea = USR_the_clemen_treaty
+	# 				add_idea = USR_the_clemen_treaty_1
+	# 			}
+	# 		}
+	# 		else_if ={  
+	# 			limit = { has_idea = USR_the_clemen_treaty_1 }
+	# 			swap_ideas = {
+	# 				remove_idea = USR_the_clemen_treaty_1
+	# 				add_idea = USR_the_clemen_treaty_2
+	# 			}
+	# 		}
+	# 		else_if ={  
+	# 			limit = { has_idea = USR_the_clemen_treaty_2 }
+	# 			swap_ideas = {
+	# 				remove_idea = USR_the_clemen_treaty_2
+	# 				add_idea = USR_the_clemen_treaty_3
+	# 			}
+	# 		}
+	# 		else = {
+	# 			remove_ideas = USR_the_clemen_treaty_3
+	# 		}
+	# 	}
+	# }
 
 	
 }
 
 #推进工业化
 USR_industrialization = {
+	#将mana转化为cic
 	USR_use_mana_as_fuel = {
-		available = {
-			raw_mana > 4
+		icon = generic_construction
+		target_trigger = {
+			FROM = {
+				raw_mana > 0
+				is_controlled_by = USR
+			}
 		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_use_mana_as_fuel } is_testing = yes }
 		}
-		cost = 100
-		days_re_enable = 50
+		on_map_mode = map_only
+		state_target = yes
+		cost = 50
 		complete_effect = {
-			random_controlled_state = {
-				limit = { raw_mana > 4 }
-				if = { 
-					limit = { dimai > 0 } 
-					remove_building = {
-						type = dimai
-						level = 1
-					}
-				}
+			FROM = {
+				set_temp_variable = { temp = 0 }
+				set_temp_variable = { temp1 = 1000 }
+				subtract_from_temp_variable = { temp = resource@raw_mana }
+				multiply_temp_variable = { temp1 = resource@raw_mana }
 				add_resource = {
 					type = raw_mana
-					amount = -5
+					amount = temp
 				}
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = arms_factory
-					level = 1
+				ROOT = {
+					add_cic = temp1
 				}
 			}
+			
 		}
 		ai_will_do = {
-			base = 10
-			modifier = {
-				date > 3094.1.1
-				add = 5
-			}
+			base = 30
 		}
 	}
 	USR_concession_of_mineral_rights_1 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state = 179
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -369,7 +412,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 179
-			add_offsite_building = { type = industrial_complex level = 2 }
+			add_cic = 25000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -377,6 +420,13 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_2 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state = 149
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -387,7 +437,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 149
-			add_offsite_building = { type = industrial_complex level = 5 }
+			add_cic = 75000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -395,6 +445,13 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_3 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state = 159
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -405,7 +462,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 159
-			add_offsite_building = { type = industrial_complex level = 4 }
+			add_cic = 60000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -413,6 +470,13 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_4 = {
+		state_target = yes
+		on_map_mode = map_and_decisions_view
+		target_trigger = {
+			FROM = {
+				state = 177
+			}
+		}
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_marketizing_industry } is_testing = yes }
@@ -423,7 +487,7 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 177
-			add_offsite_building = { type = industrial_complex level = 3 }
+			add_cic = 30000
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -434,36 +498,22 @@ USR_industrialization = {
 
 
 USR_high_command_kuromorimine = {
-
-	USR_reassemble_empire_troops = {
+	#打捞并翻新艾沙茨·沃尔特号
+	USR_salvage_and_renovate_battleship = {
 		visible = {
 			TAG = USR
-			OR = { USR = { has_idea = USR_the_new_born_empire } is_testing = yes }
+			has_completed_focus = USR_recall_prince_heinrich
 		}
-		custom_cost_trigger = {
-			has_army_experience > 39
+		available = {
+			mio:KST_wittgenstein_organization = {
+				is_mio_available = yes
+			}
 		}
-		custom_cost_text = USR_tooltip10
-		days_remove = 50
-		modifier = {
-			stability_factor = -0.05
-		}
-		days_re_enable = 20
 		complete_effect = {
-			hidden_effect = {
-				army_experience = -40
-			}
+			country_event = { id = usr.46 }
 		}
-		remove_effect = { 
-			capital_scope = {
-				create_unit = {
-					division = "name = \"Uslar Empiror Artillery Division\" division_template = \"Uslar Empiror Artillery Division\" start_experience_factor = 0.5"
-					owner = USR
-				}
-			}
-		}
-		
 	}
+	#复职将领
 	USR_recall_unit_leaders = {
 		visible = {
 			TAG = USR
@@ -498,6 +548,7 @@ USR_high_command_kuromorimine = {
 			}
 		}
 	}
+	#移除缺少将领debuff
 	USR_upgrade_command_chain = {
 		visible = {
 			TAG = USR
@@ -519,6 +570,64 @@ USR_high_command_kuromorimine = {
 		}
 		ai_will_do = {
 			base = 10
+		}
+	}
+
+	#重整军备
+	USR_mission_aftermath = {
+		activation = { 
+			has_completed_focus = USR_the_indstrial_heritage_of_the_empire
+		}
+		fire_only_once = yes
+		available = {
+			arms_factory > 49
+		}
+		is_good = yes
+		days_mission_timeout = 365
+		timeout_effect = {
+			add_war_support = -0.05
+			hidden_effect = {
+				if = { 
+					limit = { is_ai = yes }
+					add_stability = 0.1
+					add_war_support = 0.1
+				}
+			}
+		}
+		selectable_mission = no
+		complete_effect = {
+			add_stability = 0.1
+			add_war_support = 0.1
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+}
+
+USR_ai_decisions = {
+	invite_YMD = {
+		available = {
+			is_faction_leader = yes
+			YMD = { has_same_ideology = yes }
+		}
+		complete_effect = {
+			add_to_faction = YMD
+		}
+		ai_will_do = {
+			base = 20
+		}
+	}
+	invite_TAU = {
+		available = {
+			is_faction_leader = yes
+			TAU = { has_same_ideology = yes }
+		}
+		complete_effect = {
+			add_to_faction = YMD
+		}	
+		ai_will_do = {
+			base = 20
 		}
 	}
 }

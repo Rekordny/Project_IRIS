@@ -1,10 +1,47 @@
+add_namespace = STG_intro
 add_namespace = STG_general 
 add_namespace = STG_ilya 
 add_namespace = STG_par 
 add_namespace = STG_grey 
 add_namespace = STG_dar 
 add_namespace = STG_war
+add_namespace = STG_dip
+add_namespace = STG_par_random_issues
+add_namespace = STG_investigation
 add_namespace = STG_news
+
+#圣葛罗莉安娜的双簧政治
+country_event = {
+    id = STG_intro.1
+    title = STG_intro.1.t
+	desc = STG_intro.1.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_intro.1.a
+		country_event = {id = STG_intro.2}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#国家的威胁
+country_event = {
+    id = STG_intro.2
+    title = STG_intro.2.t
+	desc = STG_intro.2.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_intro.2.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 
 #空空如也的王位
 country_event = {
@@ -18,7 +55,14 @@ country_event = {
 		name = STG_general.1.a
         set_country_flag = STG_monarchy_abolished
 		ai_chance = {
-			base = 10
+			base = 30
+			modifier = {
+				factor = 0
+				OR = {
+					has_country_flag = STG_debug_go_focus_ilya
+					has_country_flag = STG_debug_go_focus_grey
+				}
+			}
 		}
 	}
 	option = {
@@ -26,15 +70,13 @@ country_event = {
         set_country_flag = STG_monarchy_kept
 		hidden_effect = {
 			country_event = {id = STG_grey.1 days = 3}
-			if = {
-				limit = {
-					has_country_flag = STG_ilya_available
-				}
-				country_event = {id = STG_ilya.10 days = 9}
-			}
 		}
 		ai_chance = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_country_flag = STG_debug_go_focus_parliament
+			}
 		}
 	}
 }
@@ -53,7 +95,11 @@ country_event = {
 		}
         set_country_flag = STG_ilya_elected
 		ai_chance = {
-			base = 10
+			base = 100
+			modifier = {
+				factor = 0
+				has_country_flag = STG_debug_go_focus_grey
+			}
 		}
 	}
 	option = {
@@ -61,6 +107,10 @@ country_event = {
         set_country_flag = STG_grey_elected
 		ai_chance = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_country_flag = STG_debug_go_focus_ilya
+			}
 		}
 	}
 }
@@ -79,8 +129,237 @@ country_event = {
 		}
 	}
 }
-
-
+#七领议会的地位
+country_event = {
+    id = STG_general.4
+    title = STG_general.4.t
+	desc = STG_general.4.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.4.a
+		add_political_power = -50
+		add_stability = 0.15
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = STG_general.4.b
+		STG_add_four_supporters = yes
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#《议会安全条例》
+country_event = {
+    id = STG_general.5
+    title = STG_general.5.t
+	desc = STG_general.5.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.5.a
+		custom_effect_tooltip = STG_disable_weapons_in_parliament_desc
+		add_political_power = -100
+		add_stability = 0.05
+		hidden_effect = {
+			set_country_flag = STG_disable_weapons_in_parliament
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+	option = {
+		name = STG_general.5.b
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#弗格非尔德的巨响
+country_event = {
+    id = STG_general.6
+    title = STG_general.6.t
+	desc = STG_general.6.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.6.a
+		222 = {
+			damage_building = {
+                type = infrastructure
+                damage = 1
+            }
+			damage_building = {
+                type = dockyard
+                damage = 1
+            }
+		}
+		custom_effect_tooltip = STG_start_investigation_desc
+		STG_increase_global_unrest_big = yes
+		hidden_effect = {
+			set_country_flag = STG_start_investigation
+			STG = {set_variable = {STG_clue = 0}}
+			country_event = {id = STG_general.11 days = 2}
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+#日记（一）
+country_event = {
+    id = STG_general.7
+    title = STG_general.7.t
+	desc = STG_general.7.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.7.a
+		hidden_effect = {
+			country_event = {id = STG_general.8 days = 30}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#日记（二）
+country_event = {
+    id = STG_general.8
+    title = STG_general.8.t
+	desc = STG_general.8.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.8.a
+		hidden_effect = {
+			country_event = {id = STG_general.9 days = 30}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#日记（三）
+country_event = {
+    id = STG_general.9
+    title = STG_general.9.t
+	desc = STG_general.9.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.9.a
+		hidden_effect = {
+			country_event = {id = STG_general.10 days = 30}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#日记（四）
+country_event = {
+    id = STG_general.10
+    title = STG_general.10.t
+	desc = STG_general.10.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.10.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#日记（五）
+country_event = {
+    id = STG_general.11
+    title = STG_general.11.t
+	desc = STG_general.11.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.11.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#日记（六）
+country_event = {
+    id = STG_general.12
+    title = STG_general.12.t
+	desc = STG_general.12.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.12.a
+		hidden_effect = {
+			country_event = {id = STG_general.13 days = 14}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#家信
+country_event = {
+    id = STG_general.13
+    title = STG_general.13.t
+	desc = STG_general.13.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.13.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#舰长日志（一）
+country_event = {
+    id = STG_general.14
+    title = STG_general.14.t
+	desc = STG_general.14.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.14.a
+		custom_effect_tooltip = STG_diary_ends_desc
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#不明飞行物
+country_event = {
+    id = STG_general.15
+    title = STG_general.15.t
+	desc = STG_general.15.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.15.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #北方来客
 country_event = {
     id = STG_ilya.1
@@ -128,9 +407,8 @@ country_event = {
 				
 	option = {
 		name = STG_ilya.2.a
-		custom_effect_tooltip = STG_add_four_supporters
+		STG_add_four_supporters = yes
 		hidden_effect = {
-			STG = {add_to_variable = {STG_supporter = 4}}
 			news_event = {ID = STG_news.3}
 		}
         
@@ -168,8 +446,6 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.4.a
@@ -213,6 +489,8 @@ country_event = {
 				
 	option = {
 		name = STG_ilya.6.a
+		remove_country_leader_trait = TRAIT_STG_ilya_hate_usr
+		set_capital = {state = 682}
 		ai_chance = {
 			base = 10
 		}
@@ -249,20 +527,34 @@ country_event = {
 			ruling_only = yes
 		}
 	}
-
 	mean_time_to_happen = {
-		days = 180
+		days = 365
 	}
 
 	fire_only_once = yes
-				
 	option = {
 		name = STG_ilya.8.a
 		hidden_effect = {
-			country_event = {id = STG_ilya.9 days = 90}
+			country_event = {id = STG_ilya.9 days = 180}
 		}
 		ai_chance = {
 			base = 10
+		}
+	}
+	option = {
+		name = STG_ilya.8.b
+		hidden_effect = {
+			country_event = {id = STG_ilya.9 days = 3}
+			set_country_flag = STG_ilya_is_mahoushoujyo
+			set_country_flag = STG_ilya_easter_enabled
+			load_focus_tree = {
+				tree = STG
+				keep_completed = yes
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
+		ai_chance = {
+			base = 0
 		}
 	}
 }
@@ -330,8 +622,6 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.12.a
@@ -371,11 +661,12 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.14.a
+		hidden_effect = {
+			country_event = {id = STG_ilya.15 days = 15}
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -390,11 +681,11 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.15.a
+		custom_effect_tooltip = STG_ilya_can_invite_dar_desc
+		set_country_flag = STG_ilya_15_triggered
 		ai_chance = {
 			base = 10
 		}
@@ -409,17 +700,47 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.16.a
 		hidden_effect = {
 			random_list = {
-				70 = {
+				60 = {
+					modifier = {
+						factor = 1.1
+						STG = {check_variable = {STG_army_discontent < 80}}
+					}
+					modifier = {
+						factor = 1.2
+						STG = {check_variable = {STG_army_discontent < 30}}
+					}
+					modifier = {
+						factor = 1.3
+						STG = {check_variable = {STG_army_discontent < 20}}
+					}
+					modifier = {
+						factor = 2
+						STG = {check_variable = {STG_army_discontent < 10}}
+					}
 					country_event = {id = STG_ilya.18 days = 3}
 				}
-				30 = {
+				40 = {
+					modifier = {
+						factor = 1.1
+						STG = {check_variable = {STG_army_discontent > 50}}
+					}
+					modifier = {
+						factor = 1.25
+						STG = {check_variable = {STG_army_discontent > 60}}
+					}
+					modifier = {
+						factor = 1.5
+						STG = {check_variable = {STG_army_discontent > 70}}
+					}
+					modifier = {
+						factor = 1000
+						STG = {check_variable = {STG_army_discontent > 80}}
+					}
 					country_event = {id = STG_ilya.19 days = 3}
 				}
 			}
@@ -438,23 +759,43 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.17.a
 		custom_effect_tooltip = STG_ilya_took_power_desc
 		hidden_effect = {
+			country_event = {id = STG_ilya.21 days = 7}
+			set_cosmetic_tag = STG_ilya_kingdom_neutrality
 			set_country_flag = STG_ilya_took_power
-			set_country_flag = STG_ilyas_dream
+			set_country_flag = STG_disable_parliament_issues_decisions
+			clr_country_flag = STG_enable_parliament_events
+			set_party_name = {ideology = neutrality long_name = STG_neutrality_party_ilya_long name = STG_neutrality_party_ilya}
 			set_party_name = {ideology = democratic long_name = STG_democratic_party_ilya_long name = STG_democratic_party_ilya}
+			set_politics = {
+				ruling_party = neutrality
+			}
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.20
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.20
+			}
+			promote_character = {
+				character = STG_ilya
+				ideology = sub_enlightened_despotism
+			}
+			set_country_leader_description = {
+				desc = "STG_ilya_desc_2"
+			}
 		}
 		ai_chance = {
 			base = 10
 		}
 	}
 }
-#大吉岭同意了
+#微笑
 country_event = {
     id = STG_ilya.18
     title = STG_ilya.18.t
@@ -463,11 +804,10 @@ country_event = {
 	
 	is_triggered_only = yes
 	fire_only_once = yes
-	
-	is_triggered_only = yes
 				
 	option = {
 		name = STG_ilya.18.a
+		custom_effect_tooltip = STG_ilya_issue_2_no_argument_desc
 		hidden_effect = {
 			set_country_flag = STG_ilya_issue_2_no_argument
 		}
@@ -476,7 +816,7 @@ country_event = {
 		}
 	}
 }
-#大吉岭不置可否
+#人走茶凉
 country_event = {
     id = STG_ilya.19
     title = STG_ilya.19.t
@@ -488,11 +828,256 @@ country_event = {
 				
 	option = {
 		name = STG_ilya.19.a
+		custom_effect_tooltip = STG_ilya_failure_desc
+		hidden_effect = {
+			country_event = {id = STG_ilya.20 days = 20}
+		}
 		ai_chance = {
 			base = 10
 		}
 	}
 }
+#退位-BE
+country_event = {
+    id = STG_ilya.20
+    title = STG_ilya.20.t
+	desc = STG_ilya.20.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_ilya.20.a
+		add_stability = -0.15
+		add_popularity = {
+			ideology = fascism
+			popularity = 0.10
+		}
+		custom_effect_tooltip = STG_ilya_badend_desc
+		retire_character = STG_ilya
+		complete_national_focus = STG_parliament_1
+		hidden_effect = {
+			promote_character = {
+			    character = STG_Lynette_Bishop
+                ideology = sub_Industrial_Liberalism
+		    }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#阅兵
+country_event = {
+    id = STG_ilya.21
+    title = STG_ilya.21.t
+	desc = STG_ilya.21.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_ilya.21.a
+		custom_effect_tooltip = STG_ilya_can_train_troops_desc
+		swap_ideas = {
+			remove_idea = STG_Nervous_Army
+			add_idea = STG_controlled_Army
+		}
+		hidden_effect = {
+			country_lock_all_division_template = no
+		}
+		
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#平凡的一天
+country_event = {
+    id = STG_ilya.22
+    title = STG_ilya.22.t
+	desc = STG_ilya.22.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.22.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#噩梦
+country_event = {
+    id = STG_ilya.23
+    title = STG_ilya.23.t
+	desc = STG_ilya.23.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.23.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#最后一步棋
+country_event = {
+    id = STG_ilya.24
+    title = STG_ilya.24.t
+	desc = STG_ilya.24.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.24.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#钥匙
+country_event = {
+    id = STG_ilya.25
+    title = STG_ilya.25.t
+	desc = STG_ilya.25.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.25.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#魔法少女，变身！
+country_event = {
+    id = STG_ilya.26
+    title = STG_ilya.26.t
+	desc = STG_ilya.26.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.26.a
+		hidden_effect = {
+			set_party_name = {ideology = neutrality long_name = STG_neutrality_party_ilya_mahoushoujou_long name = STG_neutrality_party_ilya_mahoushoujou}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#投影魔术
+country_event = {
+    id = STG_ilya.27
+    title = STG_ilya.27.t
+	desc = STG_ilya.27.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.27.a
+		hidden_effect = {
+			country_event = {id = STG_ilya.28 days = 4}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#大吉岭的疑惑
+country_event = {
+    id = STG_ilya.28
+    title = STG_ilya.28.t
+	desc = STG_ilya.28.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.28.a
+		hidden_effect = {
+			country_event = {id = STG_ilya.29 days = 30}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#坦诚相见
+country_event = {
+    id = STG_ilya.29
+    title = STG_ilya.29.t
+	desc = STG_ilya.29.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_ilya.29.a
+		trigger = {
+			NOT = {
+				has_country_flag = STG_secret_discovered
+			}
+		}
+		custom_effect_tooltip = STG_dar_get_angry_desc
+		hidden_effect = {
+			add_stability = -0.20
+			STG_increase_army_discontent_big = yes
+		}
+		
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = STG_ilya.29.b
+		trigger = {
+			has_country_flag = STG_secret_discovered
+		}
+		custom_effect_tooltip = STG_dar_give_up_desc
+		hidden_effect = {
+			STG_reduce_army_discontent_big = yes
+			STG_reduce_army_discontent_big = yes
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#再会
+country_event = {
+    id = STG_ilya.30
+    title = STG_ilya.30.t
+	desc = STG_ilya.30.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_ilya.30.a
+		custom_effect_tooltip = STG_enable_miyu_and_chloe_desc
+		hidden_effect = {
+			set_country_flag = STG_enable_miyu_and_chloe
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
 #万众期待的候选人
 country_event = {
     id = STG_grey.1
@@ -510,6 +1095,429 @@ country_event = {
 		}
 	}
 }
+#两座大山
+country_event = {
+    id = STG_dip.1
+    title = STG_dip.1.t
+	desc = STG_dip.1.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.1.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#染血的王座
+country_event = {
+    id = STG_dip.2
+    title = STG_dip.2.t
+	desc = STG_dip.2.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.2.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#北方的威胁
+country_event = {
+    id = STG_dip.3
+    title = STG_dip.3.t
+	desc = STG_dip.3.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.3.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#圣葛罗莉安娜的求救
+country_event = {
+    id = STG_dip.4
+    title = STG_dip.4.t
+	desc = STG_dip.4.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.4.a
+		ELN = {
+			give_guarantee = STG
+		}
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.8 days = 5}
+			}
+		}
+		hidden_effect = {
+		    ELN = { 
+			    add_ai_strategy = {
+			        type = alliance
+			        id = STG
+			        value = 2000
+			    }
+		    }
+		    STG = {
+			    add_ai_strategy = {
+			        type = alliance
+			        id = ELN
+			        value = 2000
+			    }
+		    }
+	    }
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = {
+		name = STG_dip.4.b
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.9 days = 5}
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#圣葛罗莉安娜请求援助
+country_event = {
+    id = STG_dip.5
+    title = STG_dip.5.t
+	desc = STG_dip.5.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.5.a
+		ANZ = {
+			give_guarantee = STG
+		}
+		
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.10 days = 5}
+			}
+		}
+		hidden_effect = {
+		    ANZ = { 
+			    add_ai_strategy = {
+			        type = alliance
+			        id = STG
+			        value = 2000
+			    }
+		    }
+		    STG = {
+			    add_ai_strategy = {
+			        type = alliance
+			        id = ANZ
+			        value = 2000
+			    }
+		    }
+	    }
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = {
+		name = STG_dip.5.b
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.11 days = 5}
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#圣葛罗莉安娜归降
+country_event = {
+    id = STG_dip.6
+    title = STG_dip.6.t
+	desc = STG_dip.6.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.6.a
+		add_political_power = 100
+		add_stability = 0.10
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#奇怪的盟约
+country_event = {
+    id = STG_dip.7
+    title = STG_dip.7.t
+	desc = STG_dip.7.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.7.a
+		USR = {add_to_faction = STG}
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.12 days = 3}
+			}
+		}
+		hidden_effect = {
+		    USR = { 
+			    add_ai_strategy = {
+			        type = alliance
+			        id = STG
+			        value = 2000
+			    }
+		    }
+		    STG = {
+			    add_ai_strategy = {
+			        type = alliance
+			        id = USR
+			        value = 2000
+			    }
+		    }
+	    }
+		ai_chance = {
+			base = 10
+			modifier = {
+				factor = 15
+				STG = {
+					has_completed_focus = STG_grey_5
+				}
+			}
+		}
+	}
+	option = {
+		name = STG_dip.7.b
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.13 days = 3}
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#爱丽诺提供安全保障
+country_event = {
+    id = STG_dip.8
+    title = STG_dip.8.t
+	desc = STG_dip.8.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.8.a
+		add_political_power = 75
+		add_war_support = 0.05
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#爱丽诺提供有限支援
+country_event = {
+    id = STG_dip.9
+    title = STG_dip.9.t
+	desc = STG_dip.9.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.9.a
+		add_political_power = 25
+		add_equipment_to_stockpile = {
+			type = infantry_equipment_1
+			amount = 5000
+			producer = ELN
+		}
+		add_equipment_to_stockpile = {
+			type = artillery_equipment_1
+			amount = 500
+			producer = ELN
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#安其奥提供安全保障
+country_event = {
+    id = STG_dip.10
+    title = STG_dip.10.t
+	desc = STG_dip.10.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.10.a
+		add_political_power = 75
+		add_stability = 0.05
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#安其奥提供支援
+country_event = {
+    id = STG_dip.11
+    title = STG_dip.11.t
+	desc = STG_dip.11.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.11.a
+		add_political_power = 25
+		add_equipment_to_stockpile = {
+			type = infantry_equipment_1
+			amount = 5000
+			producer = ANZ
+		}
+		add_equipment_to_stockpile = {
+			type = support_equipment_1
+			amount = 300
+			producer = ANZ
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#达成盟约
+country_event = {
+    id = STG_dip.12
+    title = STG_dip.12.t
+	desc = STG_dip.12.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.12.a
+		add_political_power = 100
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#闭门羹
+country_event = {
+    id = STG_dip.13
+    title = STG_dip.13.t
+	desc = STG_dip.13.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.13.a
+		add_political_power = -50
+		add_war_support = 0.10
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#可疑的破坏
+country_event = {
+    id = STG_dip.14
+    title = STG_dip.14.t
+	desc = STG_dip.14.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.14.a
+		random_owned_controlled_state = {
+			damage_building = {
+                type = infrastructure
+                damage = 1
+            }
+		}
+		random_owned_controlled_state = {
+			damage_building = {
+                type = infrastructure
+                damage = 1
+            }
+		}
+		random_owned_controlled_state = {
+			damage_building = {
+                type = arms_factory
+                damage = 1
+            }
+		}
+		random_owned_controlled_state = {
+			damage_building = {
+                type = industrial_complex
+                damage = 1
+            }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#支援？
+country_event = {
+    id = STG_dip.15
+    title = STG_dip.15.t
+	desc = STG_dip.15.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.15.a
+		add_political_power = 50
+		hidden_effect = {
+			STG = {
+				country_event = {id = STG_dip.16 days = 5}
+			}
+		}
+		ai_chance = {
+			base = 50
+		}
+	}
+	option = {
+		name = STG_dip.15.b
+		add_equipment_to_stockpile = {
+			type = infantry_equipment_1
+			amount = 7500
+			producer = STG
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#莫德雷德拒绝支援
+country_event = {
+    id = STG_dip.16
+    title = STG_dip.16.t
+	desc = STG_dip.16.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_dip.16.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #战争的号角
 country_event = {
     id = STG_war.1
@@ -519,6 +1527,9 @@ country_event = {
 	
 	trigger = {
 		tag = STG
+		NOT = {
+			has_country_flag = STG_is_usr_puppet
+		}
 		OR = {
 			has_war_with = UNG
 			has_war_with = USR
@@ -549,7 +1560,7 @@ country_event = {
 					infantry = { x = 1 y = 3 }
 					artillery_brigade = { x = 2 y = 0 }
                 }
-            }
+        }
 		capital_scope = {
                 create_unit = {
                     division = "name = \"Infantry\" division_template = \"Reserve Infantry Division\" start_experience_factor = 0.15"
@@ -605,11 +1616,884 @@ country_event = {
 		}
 	}
 }
-
-
-
-
-
+#伊莉雅丝菲尔凯旋
+country_event = {
+    id = STG_war.2
+    title = STG_war.2.t
+	desc = STG_war.2.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = STG
+		STG = {has_war_with = USR}
+        has_global_flag = STG_ilya_reclaim_war_started
+        USR = {
+			NOT = {
+				any_enemy_country = {
+					NOT = {
+						OR = {
+							tag = STG
+							is_puppet_of = STG
+						}
+					}
+				}
+			}
+            surrender_progress > 0.90
+        }
+    }
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = STG_war.2.a
+        clr_global_flag = STG_ilya_reclaim_war_started
+        set_global_flag = STG_ilya_reclaim_war_ended
+		custom_effect_tooltip = STG_ilya_successful_reclaimation_desc
+        hidden_effect = {
+			STG = {
+                white_peace = {
+					tag = USR
+					message = STG_ilya_reclaim_USR
+			    }
+            }
+		    STG = {
+                annex_country = {target = USR transfer_troops = no}
+		    }
+			if = {
+				limit = {
+					STG = {has_war_with = ANZ}
+				}
+				STG = {
+					white_peace = {
+						tag = ANZ
+					}
+				}
+			}
+        }
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#故乡的茶
+country_event = {
+    id = STG_war.3
+    title = STG_war.3.t
+	desc = STG_war.3.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = STG
+		STG = {has_war_with = UNG}
+		OR = {
+			STG = {
+				has_completed_focus = STG_dar_war_1
+				has_completed_focus = STG_dar_war_2
+			}
+		}
+        UNG = {
+			NOT = {
+				any_enemy_country = {
+					NOT = {
+						OR = {
+							tag = STG
+							is_puppet_of = STG
+						}
+					}
+				}
+			}
+            surrender_progress > 0.90
+        }
+    }
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = STG_war.3.a
+		custom_effect_tooltip = STG_dar_successful_reclaimation_desc
+        hidden_effect = {
+			STG = {
+                white_peace = {
+					tag = UNG
+					message = STG_UNG_WAR_ENDED
+			    }
+            }
+		    STG = {
+                annex_country = {target = UNG transfer_troops = no}
+		    }
+        }
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#检举叛徒-卡美洛
+country_event = {
+    id = STG_par_random_issues.1
+    title = STG_par_random_issues.1.t
+	desc = STG_par_random_issues.1.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		country_exists = UNG
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_1_triggered
+			has_country_flag = STG_cam_crushed
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.1.a
+		add_popularity = {
+			ideology = reactionism
+			popularity = -0.03
+		}
+		STG_reduce_one_supporter = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_1_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.1.b
+		trigger = {
+			has_country_flag = STG_can_veto
+		}
+		add_political_power = -25
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_1_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#检举叛徒-乌斯拉尔
+country_event = {
+    id = STG_par_random_issues.2
+    title = STG_par_random_issues.2.t
+	desc = STG_par_random_issues.2.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		country_exists = USR
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_2_triggered
+			has_country_flag = STG_usr_crushed
+			has_country_flag = STG_par_random_events_recently_triggered
+			STG = {is_in_faction_with = USR}
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.2.a
+		add_popularity = {
+			ideology = fascism
+			popularity = -0.03
+		}
+		STG_reduce_one_supporter = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_2_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.2.b
+		trigger = {
+			has_country_flag = STG_can_veto
+		}
+		add_political_power = -25
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_2_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#闪转腾挪
+country_event = {
+    id = STG_par_random_issues.3
+    title = STG_par_random_issues.3.t
+	desc = STG_par_random_issues.3.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_3_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.3.a
+		STG_add_one_supporter = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_3_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#礼尚往来
+country_event = {
+    id = STG_par_random_issues.4
+    title = STG_par_random_issues.4.t
+	desc = STG_par_random_issues.4.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_4_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.4.a
+		STG_reduce_two_supporters = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_4_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#权钱交易
+country_event = {
+    id = STG_par_random_issues.5
+    title = STG_par_random_issues.5.t
+	desc = STG_par_random_issues.5.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_5_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.5.a
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_5_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.5.b
+		add_political_power = -50
+		STG_add_two_supporters = yes
+		STG_increase_army_discontent = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_5_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#削减军费？
+country_event = {
+    id = STG_par_random_issues.6
+    title = STG_par_random_issues.6.t
+	desc = STG_par_random_issues.6.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_6_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+			has_war = yes
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.6.a
+		STG_increase_army_discontent = yes
+		add_timed_idea = {idea = STG_cut_mil_cost days = 60}
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_6_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.6.b
+		trigger = {
+			has_country_flag = STG_can_veto
+		}
+		add_political_power = -25
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_6_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#廉政建设
+country_event = {
+    id = STG_par_random_issues.7
+    title = STG_par_random_issues.7.t
+	desc = STG_par_random_issues.7.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_6_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.7.a
+		add_stability = 0.075
+		add_political_power = 35
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_7_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.7.b
+		add_political_power = -50
+		STG_add_three_supporters = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_7_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#海军的预算
+country_event = {
+    id = STG_par_random_issues.8
+    title = STG_par_random_issues.8.t
+	desc = STG_par_random_issues.8.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_8_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+			has_war = yes
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.8.a
+		hidden_effect = {
+			STG_increase_army_discontent_big = yes
+			STG_increase_army_discontent_big = yes
+		}
+		navy_experience = - 30
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_8_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.8.b
+		trigger = {
+			has_country_flag = STG_can_veto
+		}
+		add_political_power = -25
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_8_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#族裔冲突
+country_event = {
+    id = STG_par_random_issues.9
+    title = STG_par_random_issues.9.t
+	desc = STG_par_random_issues.9.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_9_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+			has_war = yes
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.9.a
+		STG_increase_usr_unrest = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_9_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.9.b
+		trigger = {
+			has_country_flag = STG_can_veto
+		}
+		add_political_power = -25
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_9_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#文斗与武斗
+country_event = {
+    id = STG_par_random_issues.10
+    title = STG_par_random_issues.10.t
+	desc = STG_par_random_issues.10.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_10_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+			has_country_flag = STG_disable_weapons_in_parliament
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.10.a
+		add_political_power = -50
+		Manpower = -1
+		STG_reduce_one_supporter = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_10_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+			country_event = {id = STG_general.5 days = 3}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#柚子厨？
+country_event = {
+    id = STG_par_random_issues.11
+    title = STG_par_random_issues.11.t
+	desc = STG_par_random_issues.11.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_11_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	fire_only_once = yes
+	option = {
+		name = STG_par_random_issues.11.a
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_11_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.11.b
+		add_political_power = 5
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_11_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#大不敬！
+country_event = {
+    id = STG_par_random_issues.12
+    title = STG_par_random_issues.12.t
+	desc = STG_par_random_issues.12.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		OR = {
+			has_country_leader = {
+				character = STG_ilya
+				ruling_only = yes
+			}
+			has_country_leader = {
+				character = STG_grey
+				ruling_only = yes
+			}
+		}
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_12_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.12.a
+		STG_reduce_two_supporters = yes
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_12_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.12.b
+		add_political_power = -25
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_12_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#笑话
+country_event = {
+    id = STG_par_random_issues.13
+    title = STG_par_random_issues.13.t
+	desc = STG_par_random_issues.13.desc
+	picture = GFX_ungevent_1
+	trigger = {
+		has_country_flag = STG_enable_parliament_events
+		NOT = {
+			has_country_flag = STG_debate_in_process
+			has_country_flag = STG_par_random_issues_13_triggered
+			has_country_flag = STG_par_random_events_recently_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 400
+	}
+	option = {
+		name = STG_par_random_issues.13.a
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_13_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+	option = {
+		name = STG_par_random_issues.13.b
+		add_political_power = -50
+		hidden_effect = {
+			set_country_flag = {flag = STG_par_random_issues_13_triggered value = 1 days = 365}
+			set_country_flag = {flag = STG_par_random_events_recently_triggered value = 1 days = 80}
+		}
+		ai_chance = {
+			base = 30
+		}
+	}
+}
+#调查报告：弗格非尔德军港
+country_event = {
+    id = STG_investigation.1
+    title = STG_investigation.1.t
+	desc = STG_investigation.1.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.1.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：军港值班士兵
+country_event = {
+    id = STG_investigation.2
+    title = STG_investigation.2.t
+	desc = STG_investigation.2.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.2.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：军港弹药库
+country_event = {
+    id = STG_investigation.3
+    title = STG_investigation.3.t
+	desc = STG_investigation.3.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.3.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：军队后勤系统
+country_event = {
+    id = STG_investigation.4
+    title = STG_investigation.4.t
+	desc = STG_investigation.4.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.4.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：军队资金来源
+country_event = {
+    id = STG_investigation.5
+    title = STG_investigation.5.t
+	desc = STG_investigation.5.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.5.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：卡美洛
+country_event = {
+    id = STG_investigation.6
+    title = STG_investigation.6.t
+	desc = STG_investigation.6.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.6.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：国内卡美洛分子
+country_event = {
+    id = STG_investigation.7
+    title = STG_investigation.7.t
+	desc = STG_investigation.7.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.7.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：卡美洛分子资金来源
+country_event = {
+    id = STG_investigation.8
+    title = STG_investigation.8.t
+	desc = STG_investigation.8.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.8.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#调查报告：刘易斯郡政府
+country_event = {
+    id = STG_investigation.9
+    title = STG_investigation.9.t
+	desc = STG_investigation.9.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.9.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#水落石出
+country_event = {
+    id = STG_investigation.10
+    title = STG_investigation.10.t
+	desc = STG_investigation.10.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.10.a
+		STG_decrease_global_unrest_big = yes
+		add_stability = 0.15
+		add_political_power = 100
+		hidden_effect = {
+			STG_reduce_army_discontent_big = yes
+			STG_reduce_army_discontent_big = yes
+			set_country_flag = STG_end_investigation
+			set_country_flag = STG_secret_discovered
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#真相？
+country_event = {
+    id = STG_investigation.11
+    title = STG_investigation.11.t
+	desc = STG_investigation.11.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.11.a
+		STG_decrease_global_unrest = yes
+		add_stability = 0.05
+		add_political_power = 50
+		hidden_effect = {
+			STG_reduce_army_discontent_big = yes
+			set_country_flag = STG_end_investigation
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#一无所获
+country_event = {
+    id = STG_investigation.12
+    title = STG_investigation.12.t
+	desc = STG_investigation.12.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_investigation.12.a
+		STG_increase_global_unrest_very_big = yes
+		add_stability = - 0.20
+		add_political_power = -150
+		hidden_effect = {
+			STG_increase_army_discontent_big = yes
+			STG_increase_army_discontent_big = yes
+			set_country_flag = STG_end_investigation
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 ##########################################################################################################
 #新闻事件
 news_event = {
@@ -624,8 +2508,5 @@ news_event = {
 	
 	option = {
 		name = STG_news.3.a
-		trigger = {
-			
-		}
 	}
 }
