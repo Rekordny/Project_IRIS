@@ -205,6 +205,10 @@ focus_tree = {
         prerequisite = { focus = STG_parliament_3 }
         available = {
             NOT = {has_country_flag = STG_army_takeover}
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
         }
         ai_will_do = {
 			#factor = 1
@@ -823,7 +827,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_ilya_4
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_4 }
@@ -832,8 +836,13 @@ focus_tree = {
             country_event = {id = STG_ilya.24 days = 15}
         }
         bypass = {
-            NOT = {
-                country_exists = USR
+            OR = {
+                NOT = {
+                    country_exists = USR
+                }
+                USR = {
+                    is_puppet_of = STG
+                }
             }
         }
         available = {
@@ -850,10 +859,49 @@ focus_tree = {
 		}
         will_lead_to_war_with = USR
         completion_reward = {    
-            STG = {
-                declare_war_on = {
-                    target = USR
-                    type = annex_everything
+            if = {
+                limit = {
+                    country_exists = KST
+                }
+                KST = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = SCK
+                }
+                SCK = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = BGT
+                }
+                BGT = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = {
+                        STG = {
+                            has_war_with = USR
+                        }
+                        USR = {
+                            is_puppet_of = STG
+                        }
+                        USR = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                STG = {
+                    declare_war_on = {
+                        target = USR
+                        type = annex_everything
+                    }
                 }
             }
             add_timed_idea = {
@@ -897,7 +945,54 @@ focus_tree = {
             custom_effect_tooltip = STG_gain_usr_core_desc
             if = {
                 limit = {
+                    KST = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = KST
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    SCK = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = SCK
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    BGT = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = BGT
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
                     country_exists = KST
+                    NOT = {
+                        KST = {
+                            is_puppet_of = STG
+                        }
+                        KST = {
+                            is_in_faction_with = STG
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = KST
@@ -907,6 +1002,14 @@ focus_tree = {
             if = {
                 limit = {
                     country_exists = SCK
+                    NOT = {
+                        SCK = {
+                            is_puppet_of = STG
+                        }
+                        SCK = {
+                            is_in_faction_with = STG
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = SCK
@@ -916,6 +1019,14 @@ focus_tree = {
             if = {
                 limit = {
                     country_exists = BGT
+                    NOT = {
+                        BGT = {
+                            is_puppet_of = STG
+                        }
+                        BGT = {
+                            is_in_faction_with = STG
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = BGT
@@ -1955,8 +2066,12 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_monarchy_3 }
         available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
             NOT = {
-                reactionism > 0.08
+                reactionism > 0.06
             }
         }
         ai_will_do = {
