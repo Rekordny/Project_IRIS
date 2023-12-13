@@ -851,7 +851,10 @@ focus_tree = {
                 ruling_only = yes
             }
             has_country_flag = STG_ilya_took_power
-            has_army_manpower = { size > 399999 }
+            OR = {
+                has_army_manpower > { size > 399999 }
+                has_war_with = USR
+            }
         }
         ai_will_do = {
 			#factor = 1
@@ -906,7 +909,7 @@ focus_tree = {
             }
             add_timed_idea = {
                 idea = STG_ilya_storm
-                days = 600
+                days = 365
 		    }
             custom_effect_tooltip = STG_ilya_enable_war_desicions_desc
             hidden_effect = {
@@ -984,6 +987,19 @@ focus_tree = {
             }
             if = {
                 limit = {
+                    MDS = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = MDS
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
                     country_exists = KST
                     NOT = {
                         KST = {
@@ -1033,6 +1049,23 @@ focus_tree = {
                     type = annex_everything
                 }
             }
+             if = {
+                limit = {
+                    country_exists = MDS
+                    NOT = {
+                        MDS = {
+                            is_puppet_of = STG
+                        }
+                        MDS = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                create_wargoal = {
+                    target = MDS
+                    type = annex_everything
+                }
+            }
             hidden_effect = {
                 set_capital = {state = 682}
                 every_state = {
@@ -1043,6 +1076,7 @@ focus_tree = {
                                 is_core_of = KST
                                 is_core_of = SCK
                                 is_core_of = BGT
+                                is_core_of = MDS
                             }
                         }
                         add_core_of = STG
@@ -1932,7 +1966,16 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-            add_country_leader_trait = TRAIT_STG_ILYA_DEVIL
+            add_stability = 0.10
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_ILYA_DEVIL
+            }
 		}
     }
     #芸芸众生的权力
@@ -2001,7 +2044,16 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-            add_country_leader_trait = TRAIT_STG_ILYA_ANGLE
+            add_war_support = 0.10
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_ILYA_ANGLE
+            }
 		}
     }
     #议会地位
@@ -2724,7 +2776,7 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-            add_ideas = new_economic_policy_2
+            add_ideas = new_economic_policy
 		}
     }
     #促进社会公平
@@ -2874,6 +2926,10 @@ focus_tree = {
             swap_ideas = {
                 remove_idea = STG_fyp_2
                 add_idea = STG_fyp_3
+            }
+            swap_ideas = {
+                remove_idea = new_economic_policy
+                add_idea = new_economic_policy_2
             }
 		}
     }
@@ -3285,6 +3341,7 @@ focus_tree = {
                     type = annex_everything
                 }
             }
+            add_ideas = STG_dar_war_for_ang
 		}
     }
     #红茶皇座
@@ -3695,8 +3752,10 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
+            country_lock_all_division_template = no
             custom_effect_tooltip = STG_dev_in_progress_desc
             add_stability = -0.25
+            add_ideas = STG_emergency_law
 			custom_effect_tooltip = STG_more_decision_against_cam_desc
             hidden_effect = {
                 set_country_flag = STG_more_decision_against_cam
@@ -3711,6 +3770,12 @@ focus_tree = {
                     ideology = sub_National_Conservatism
                 }
                 remove_ideas = STG_darjeeling_3
+                if = {
+                    limit = {
+                        STG = {check_variable = {STG_global_unrest > 50}}
+                    }
+                    STG = {set_variable = {STG_global_unrest = 50}}
+                }
             }
 		}
     }
@@ -3920,16 +3985,20 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dar_issue_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_issue_1 }
         available = {
-            has_army_manpower > { size > 399999 }
+            OR = {
+                has_army_manpower > { size > 399999 }
+                has_war_with = UNG
+                has_war_with = MSA
+            }
         }
         ai_will_do = {
 			#factor = 1
-            factor = 100
+            factor = 1000
 		}
         cancelable = no
         bypass = {
@@ -4091,6 +4160,12 @@ focus_tree = {
         completion_reward = {
             add_stability = 0.15
             add_ideas = STG_without_a_monarchy
+            if = {
+                limit = {
+                    has_idea = STG_Empty_Throne
+                }
+                remove_ideas = STG_Empty_Throne
+            }
 		}
     }
     #御前议会
@@ -4151,16 +4226,20 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dar_14
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_14 }
          available = {
-            has_army_manpower > { size > 399999 }
+            OR = {
+                has_army_manpower > { size > 399999 }
+                has_war_with = UNG
+                has_war_with = MSA
+            }
         }
         ai_will_do = {
 			#factor = 1
-            factor = 100
+            factor = 1000
 		}
         bypass = {
             NOT = {
@@ -4531,7 +4610,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 8
-        cost = 5
+        cost = 3
         relative_position_id = STG_mil_1
         available_if_capitulated = yes
         prerequisite = {            
@@ -4558,7 +4637,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dip_1
         available_if_capitulated = yes
         prerequisite = {       
