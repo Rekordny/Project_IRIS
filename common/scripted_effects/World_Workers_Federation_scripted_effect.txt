@@ -1,0 +1,128 @@
+#成立世界工人理事会
+Build_World_Workers_Federation = {
+    set_politics = {
+        ruling_party = communism
+    }
+    create_faction = World_Workers_Federation
+    set_country_flag = Firist_International_Leader
+    save_global_event_target_as = Firist_International_Leader
+    World_Workers_Federation_array_effect = yes
+}
+
+#第一国际成员计算
+World_Workers_Federation_array_effect = {
+	hidden_effect = {
+		clear_array = global.World_Workers_Federation_members
+		set_variable = {
+			global.World_Workers_Federation_members_index = 0
+		}
+        #加入数组
+		every_country = {
+			limit = {
+				exists = yes
+				is_in_faction = yes
+				faction_leader = {
+					or = {
+						has_country_flag = Firist_International_Leader
+						has_country_flag = Firist_International_Branch_Leader
+					}
+				}
+			}
+			add_to_array = {
+				global.World_Workers_Federation_members = THIS
+			}
+            #选票分配
+            if = {
+                limit = { has_country_flag = Firist_International_Leader }
+                set_variable = {
+                    THIS.ballot_paper_num_Firist_International = 3
+                }
+            }
+            else = {
+                set_variable = {
+                    THIS.ballot_paper_num_Firist_International = 1
+                }
+            }
+		}
+        #数组排序
+		get_sorted_scored_countries = {
+			scorer = IRIS_num_of_factories_scorer_World_Workers_Federation
+			array = global.World_Workers_Federation_members
+		}
+		for_each_scope_loop = {
+			array = global.World_Workers_Federation_members
+			add_to_variable = {
+				global.World_Workers_Federation_members_index = 1
+			}
+			set_variable = {
+				World_Workers_Federation_ranking = global.World_Workers_Federation_members_index
+			}
+		}
+		clear_variable = global.World_Workers_Federation_members_index
+	}
+}
+
+#变量计算
+World_Workers_Federation_Variable_calculations = {
+    ##总票数计算
+    set_variable = {
+        global.ELN_Firist_International_total_num = 0
+    }
+    set_variable = {
+        global.ELN_Firist_International_num_of_support = 0
+    }
+    for_each_scope_loop = {
+        array = global.World_Workers_Federation_members
+        add_to_variable = {
+            global.ELN_Firist_International_total_num = THIS.ballot_paper_num_Firist_International
+        }
+    #赞成票
+        if = {
+            limit = { check_variable = { ELN_Firist_International_ROOT_attitude_VAR = 4 } }
+            add_to_variable = {
+                global.ELN_Firist_International_num_of_support = THIS.ballot_paper_num_Firist_International
+            }
+        }
+    }
+}
+
+#表决结果
+World_Workers_Federation_result_of_vote = {
+    set_temp_variable = {
+        global.World_Workers_Federation_result_of_vote_VAR = global.ELN_Firist_International_num_of_support
+    }
+    divide_temp_variable = {
+        global.World_Workers_Federation_result_of_vote_VAR = global.ELN_Firist_International_total_num
+    }
+    if = {
+        limit = { check_variable = { global.World_Workers_Federation_result_of_vote_VAR > 0.5 } }
+		set_variable = { global.ELN_Firist_International_motion_going^global.ELN_Firist_International_num_of_motion_going = 1 }
+    }
+    else = {
+		set_variable = { global.ELN_Firist_International_motion_going^global.ELN_Firist_International_num_of_motion_going = -1 }
+    }
+}
+
+#结束当前议案
+World_Workers_Federation_add_to_his_motion_and_change_to_none = {
+    #当前议案加入历史议案
+	add_to_array = {
+		global.ELN_Firist_International_past_motion = global.ELN_Firist_International_num_of_motion_going
+	}
+	add_to_array = {
+		global.ELN_Firist_International_past_motion_state^ELN_Firist_International_past_motion_i = global.ELN_Firist_International_motion_going^global.ELN_Firist_International_num_of_motion_going
+	}
+    #当前议案归零
+	set_variable = {
+		global.ELN_Firist_International_motion_going^global.ELN_Firist_International_num_of_motion_going = 0
+	}
+	set_variable = {
+		global.ELN_Firist_International_num_of_motion_going = 0
+	}
+    #各国投票状态归零
+    for_each_scope_loop = {
+        array = global.World_Workers_Federation_members
+        set_variable = { ELN_Firist_International_ROOT_attitude_VAR = 1 }
+    }
+    World_Workers_Federation_Variable_calculations = yes
+}
