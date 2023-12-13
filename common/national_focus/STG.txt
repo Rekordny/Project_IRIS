@@ -205,6 +205,10 @@ focus_tree = {
         prerequisite = { focus = STG_parliament_3 }
         available = {
             NOT = {has_country_flag = STG_army_takeover}
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
         }
         ai_will_do = {
 			#factor = 1
@@ -823,7 +827,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_ilya_4
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_4 }
@@ -832,8 +836,13 @@ focus_tree = {
             country_event = {id = STG_ilya.24 days = 15}
         }
         bypass = {
-            NOT = {
-                country_exists = USR
+            OR = {
+                NOT = {
+                    country_exists = USR
+                }
+                USR = {
+                    is_puppet_of = STG
+                }
             }
         }
         available = {
@@ -850,10 +859,49 @@ focus_tree = {
 		}
         will_lead_to_war_with = USR
         completion_reward = {    
-            STG = {
-                declare_war_on = {
-                    target = USR
-                    type = annex_everything
+            if = {
+                limit = {
+                    country_exists = KST
+                }
+                KST = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = SCK
+                }
+                SCK = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = BGT
+                }
+                BGT = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = {
+                        STG = {
+                            has_war_with = USR
+                        }
+                        USR = {
+                            is_puppet_of = STG
+                        }
+                        USR = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                STG = {
+                    declare_war_on = {
+                        target = USR
+                        type = annex_everything
+                    }
                 }
             }
             add_timed_idea = {
@@ -897,7 +945,54 @@ focus_tree = {
             custom_effect_tooltip = STG_gain_usr_core_desc
             if = {
                 limit = {
+                    KST = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = KST
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    SCK = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = SCK
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    BGT = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = BGT
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
                     country_exists = KST
+                    NOT = {
+                        KST = {
+                            is_puppet_of = STG
+                        }
+                        KST = {
+                            is_in_faction_with = STG
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = KST
@@ -907,6 +1002,14 @@ focus_tree = {
             if = {
                 limit = {
                     country_exists = SCK
+                    NOT = {
+                        SCK = {
+                            is_puppet_of = STG
+                        }
+                        SCK = {
+                            is_in_faction_with = STG
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = SCK
@@ -916,6 +1019,14 @@ focus_tree = {
             if = {
                 limit = {
                     country_exists = BGT
+                    NOT = {
+                        BGT = {
+                            is_puppet_of = STG
+                        }
+                        BGT = {
+                            is_in_faction_with = STG
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = BGT
@@ -927,7 +1038,12 @@ focus_tree = {
                 every_state = {
                     if = {
                         limit = {
-                            is_core_of = USR
+                            OR = {
+                                is_core_of = USR
+                                is_core_of = KST
+                                is_core_of = SCK
+                                is_core_of = BGT
+                            }
                         }
                         add_core_of = STG
                     }
@@ -1043,7 +1159,13 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-            STG_ilya = {
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
                 add_country_leader_trait = TRAIT_STG_ilya_genius
             }
             random_owned_controlled_state = {
@@ -1164,7 +1286,7 @@ focus_tree = {
                     add_to_variable = {STG_workshop_artillery_bonus = 0.05}
                     add_to_variable = {STG_workshop_armor_attack_bonus = 0.05}
                     add_to_variable = {STG_workshop_armor_defense_bonus = 0.05}
-                    add_to_variable = {STG_workshop_experience_loss_bonus = 0.05}
+                    add_to_variable = {STG_workshop_experience_loss_bonus = -0.05}
                     add_to_variable = {STG_workshop_industrial_capacity_bonus = 0.05}
                     add_to_variable = {STG_production_factory_max_efficiency_bonus = 0.05}
                     add_to_variable = {STG_monthly_manpower_bonus = 0.05}
@@ -1200,7 +1322,13 @@ focus_tree = {
                 set_country_leader_portrait = {
                     portrait = GFX_STG_Prisma_Illya
                 }
-                STG_ilya = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = STG_ilya
+                            ruling_only = yes
+                        }
+                    }
                     add_country_leader_trait = TRAIT_STG_ilya_mahoushoujyo
                 }
                 set_country_flag = STG_ilya_enable_more_workshop_decisions
@@ -1253,7 +1381,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 2
         relative_position_id = STG_ilya_mahoushoujyo_3
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_mahoushoujyo_3 }
@@ -1836,7 +1964,18 @@ focus_tree = {
 		}
         completion_reward = {
             STG_decrease_global_unrest_big = yes
-            remove_ideas = STG_paradox
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                remove_ideas = STG_paradox
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                remove_ideas = STG_paradox_2
+            }
 		}
     }
     #王座上的天使
@@ -1927,8 +2066,12 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_monarchy_3 }
         available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
             NOT = {
-                reactionism > 0.08
+                reactionism > 0.06
             }
         }
         ai_will_do = {
@@ -2960,10 +3103,25 @@ focus_tree = {
             hidden_effect = {
                 set_country_flag = STG_can_crush_usr
             }
-            swap_ideas = {
-                remove_idea = STG_paradox
-                add_idea = STG_no_paradox
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                swap_ideas = {
+                    remove_idea = STG_paradox
+                    add_idea = STG_no_paradox
+                }
             }
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                swap_ideas = {
+                    remove_idea = STG_paradox_2
+                    add_idea = STG_no_paradox
+                }
+            }
+            
 		}
     }
     #女王与执政官
@@ -3237,9 +3395,17 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-           add_country_leader_trait = TRAIT_STG_grey_monarch_2
-           hidden_effect = {
-            remove_country_leader_trait = TRAIT_STG_grey_monarch
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_grey
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_grey_monarch_2
+            }
+            hidden_effect = {
+                remove_country_leader_trait = TRAIT_STG_grey_monarch
            }
 		}
     }
@@ -3368,7 +3534,18 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-            remove_ideas = STG_paradox
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                remove_ideas = STG_paradox
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                remove_ideas = STG_paradox_2
+            }
 		}
     }
     #奥术之秘
@@ -3488,7 +3665,15 @@ focus_tree = {
                 uses = 2
                 category = land_doctrine
             }
-            add_country_leader_trait = TRAIT_STG_grey_marshall_king
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_grey
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_grey_marshall_king
+            }
 		}
     }
 #大吉岭
@@ -4032,7 +4217,21 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
-            add_country_leader_trait = TRAIT_STG_conqueror_of_ang
+            if = {
+                limit = {
+                    OR = {
+                        has_country_leader = {
+                            character = STG_darjeeling_1
+                            ruling_only = yes
+                        }
+                        has_country_leader = {
+                            character = STG_darjeeling_2
+                            ruling_only = yes
+                        }
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_conqueror_of_ang
+            }
 		}
     }
     #直到永远......
