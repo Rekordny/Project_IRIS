@@ -498,19 +498,11 @@ STG_internal_ememy = {
     #增加乌斯拉尔裔席位
     STG_more_seat_for_usr = {
         available = {
-            has_country_leader = {
-                    character = STG_parliament
-                    ruling_only = yes
-                }
             NOT = {
                 has_country_flag = STG_usr_crushed
             }
         }
         visible = {
-            has_country_leader = {
-                    character = STG_parliament
-                    ruling_only = yes
-                }
             NOT = {
                 has_country_flag = STG_usr_crushed
             }
@@ -558,6 +550,7 @@ STG_internal_ememy = {
                     character = STG_grey
                     ruling_only = yes
                 }
+                has_government = communism
             }
             NOT = {
                 has_country_flag = STG_usr_crushed
@@ -835,12 +828,16 @@ STG_parliament_issues = {
         }
         remove_effect = {
             custom_effect_tooltip = STG_can_crush_cam_desc
+            custom_effect_tooltip = STG_can_crush_usr_desc
             hidden_effect = {
                 set_country_flag = STG_can_crush_cam
+                set_country_flag = STG_can_crush_usr
             }
             custom_effect_tooltip = STG_more_decision_against_cam_desc
+            custom_effect_tooltip = STG_more_decision_against_usr_desc
             hidden_effect = {
                 set_country_flag = STG_more_decision_against_cam
+                set_country_flag = STG_more_decision_against_usr
             }
             set_country_flag = STG_par_issue_1_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
@@ -3484,6 +3481,479 @@ STG_national_emergency = {
         }
         ai_will_do = {
 			factor = 1
+		}
+    }
+}
+#工团主义革命
+STG_revolution = {
+    #革命热情增长
+    STG_rev_zeal_change = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            has_country_flag = STG_rev_started
+        }
+        cancel_trigger = {
+            has_country_flag = STG_army_takeover
+        }
+        days_mission_timeout = 15
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            STG_rev_zeal_naturally_increase = yes
+        }
+    }
+    #军队疑惑增长
+    STG_mil_doubt_change = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            has_country_flag = STG_rev_started
+        }
+        cancel_trigger = {
+            has_country_flag = STG_army_takeover
+        }
+        days_mission_timeout = 30
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            STG_mil_doubt_naturally_increase = yes
+        }
+    }
+    #逼迫七领议会妥协
+    STG_force_par_to_compromise = {
+        available = {
+            has_country_flag = STG_syn_cooperates_with_sd
+            custom_trigger_tooltip = {
+                trigger = STG_gov_strength_less_than_40
+                STG = {check_variable = {STG_gov_strength < 40}}
+            }
+            communism > 0.30
+        }
+        visible = {
+        }
+        cost = 0
+        days_remove = 3
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            add_stability = 0.20
+            add_political_power = 200
+            complete_national_focus = STG_com_6
+            set_politics = {
+                ruling_party = communism
+            }
+            custom_effect_tooltip = STG_reset_par_desc
+            hidden_effect = {
+                set_country_flag = STG_syn_sd_union_controls_par
+                clr_country_flag = STG_rev_started
+                clr_country_flag = STG_conservative_controls_par
+                clr_country_flag = STG_enbale_revolution_decisions
+                STG = {set_variable = {STG_supporter = 16}}
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #推翻资产阶级政府
+    STG_overthrow_gov = {
+        available = {
+            NOT = {
+                has_country_flag = STG_syn_cooperates_with_sd
+            }
+            custom_trigger_tooltip = {
+                trigger = STG_gov_strength_less_than_20
+                STG = {check_variable = {STG_gov_strength < 20}}
+            }
+            communism > 0.50
+        }
+        visible = {
+        }
+        cost = 0
+        days_remove = 3
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            add_stability = 0.20
+            add_political_power = 200
+            complete_national_focus = STG_com_5
+            set_politics = {
+                ruling_party = communism
+            }
+            custom_effect_tooltip = STG_reset_par_desc
+            hidden_effect = {
+                set_country_flag = STG_syn_controls_par
+                clr_country_flag = STG_conservative_controls_par
+                clr_country_flag = STG_rev_started
+                clr_country_flag = STG_enbale_revolution_decisions
+                STG = {set_variable = {STG_supporter = 20}}
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #团结学生
+    STG_unite_with_students = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 50
+        days_remove = 20
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_increase_rev_zeal_big = yes
+            STG_reduce_gov_strength = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.07
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #团结农民
+    STG_unite_with_peasants = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 50
+        days_remove = 20
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_increase_rev_zeal_big = yes
+            STG_reduce_gov_strength = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.07
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #团结军队
+    STG_unite_with_army = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 50
+        days_remove = 20
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_increase_rev_zeal_big = yes
+            STG_reduce_mil_doubt_big = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.077
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #抨击政府
+    STG_criticize_gov = {
+        available = {
+            custom_trigger_tooltip = {
+                trigger = STG_has_enough_zeal_10
+                STG = {check_variable = {STG_rev_zeal > 9}}
+            }
+        }
+        visible = {
+        }
+        cost = 0
+        days_remove = 7
+        days_re_enable = 10
+        complete_effect = {
+            STG_reduce_rev_zeal = yes
+        }
+        remove_effect = {
+            STG_reduce_gov_strength = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.02
+            }
+        }
+        ai_will_do = {
+			factor = 1000
+		}
+    }
+    #组织示威
+    STG_protest = {
+        available = {
+            custom_trigger_tooltip = {
+                trigger = STG_has_enough_zeal_10
+                STG = {check_variable = {STG_rev_zeal > 9}}
+            }
+        }
+        visible = {
+        }
+        cost = 15
+        days_remove = 10
+        days_re_enable = 20
+        complete_effect = {
+            STG_reduce_rev_zeal = yes
+        }
+        remove_effect = {
+            STG_reduce_gov_strength = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.02
+            }
+        }
+        ai_will_do = {
+			factor = 1000
+		}
+    }
+    #延长罢工
+    STG_strike = {
+        available = {
+            custom_trigger_tooltip = {
+                trigger = STG_has_enough_zeal_20
+                STG = {check_variable = {STG_rev_zeal > 19}}
+            }
+        }
+        visible = {
+        }
+        cost = 15
+        days_remove = 15
+        days_re_enable = 30
+        complete_effect = {
+            STG_reduce_rev_zeal_big = yes
+        }
+        remove_effect = {
+            STG_reduce_gov_strength_big = yes
+        }
+        modifier = {
+            industrial_capacity_factory = -0.15
+			industrial_capacity_dockyard = -0.15
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #约束激进行为
+    STG_constrain_radical_action = {
+        available = {
+        }
+        visible = {
+            NOT = {has_completed_focus = STG_com_4}
+        }
+        cost = 0
+        days_remove = 7
+        days_re_enable = 10
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_rev_zeal = yes
+            STG_reduce_mil_doubt = yes
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #约束激进行为
+    STG_constrain_radical_action_upgraded = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_4
+        }
+        cost = 0
+        days_remove = 7
+        days_re_enable = 10
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_rev_zeal = yes
+            STG_reduce_mil_doubt_big = yes
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #与社民派会谈
+    STG_meet_with_sd = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_syn_cooperates_with_sd
+        }
+        cost = 20
+        days_remove = 10
+        days_re_enable = 10
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_increase_rev_zeal_small = yes
+            STG_reduce_gov_strength_small = yes
+            add_popularity = {
+                ideology = democratic
+                popularity = 0.03
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #邀请工人领袖到议会演讲
+    STG_invite_leaders = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_syn_cooperates_with_sd
+        }
+        cost = 10
+        days_remove = 3
+        days_re_enable = 30
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_increase_rev_zeal = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.02
+            }
+            add_popularity = {
+                ideology = democratic
+                popularity = 0.02
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #拉拢进步派将领
+    STG_invite_generals = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_syn_cooperates_with_sd
+        }
+        cost = 10
+        days_remove = 7
+        days_re_enable = 20
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_mil_doubt = yes
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #揭露资本家丑恶面目
+    STG_ugly_capitalists = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 10
+        days_remove = 10
+        days_re_enable = 20
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_increase_rev_zeal = yes
+            STG_reduce_gov_strength = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.025
+            }
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #占领工厂
+    STG_occupy_factories = {
+        available = {
+            custom_trigger_tooltip = {
+                trigger = STG_has_enough_zeal_20
+                STG = {check_variable = {STG_rev_zeal > 19}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 0
+        days_remove = 30
+        days_re_enable = 60
+        complete_effect = {
+            STG_reduce_rev_zeal_big = yes
+        }
+        remove_effect = {
+            STG_reduce_gov_strength_big = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+        }
+        modifier = {
+            industrial_capacity_factory = -0.30
+			industrial_capacity_dockyard = -0.30
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #冲击政府
+    STG_attack_gov = {
+        available = {
+            custom_trigger_tooltip = {
+                trigger = STG_has_enough_zeal_20
+                STG = {check_variable = {STG_rev_zeal > 19}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 0
+        days_remove = 3
+        days_re_enable = 60
+        complete_effect = {
+            STG_reduce_rev_zeal_big = yes
+        }
+        remove_effect = {
+            STG_reduce_gov_strength_big = yes
+            STG_increase_mil_doubt_big = yes
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+        }
+        ai_will_do = {
+			factor = 0
 		}
     }
 }
