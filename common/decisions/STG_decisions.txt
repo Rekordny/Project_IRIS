@@ -5,6 +5,10 @@ STG_internal_ememy = {
         available = {
             reactionism < 0.04
             has_country_flag = STG_can_crush_cam
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
         }
         visible = {
             tag = STG
@@ -21,6 +25,15 @@ STG_internal_ememy = {
         remove_effect = {
             add_stability = 0.10
             STG_decrease_global_unrest_big = yes
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                swap_ideas = {
+                    remove_idea = STG_paradox
+                    add_idea = STG_paradox_2
+                }
+            }
             custom_effect_tooltip = STG_cam_crushed_desc
             hidden_effect = {
                 set_country_flag = STG_cam_crushed
@@ -112,7 +125,7 @@ STG_internal_ememy = {
         complete_effect = {
         }
         remove_effect = {
-            add_stability = -0.05
+            add_stability = -0.025
             add_popularity = {
                 ideology = reactionism
                 popularity = -0.02
@@ -171,7 +184,7 @@ STG_internal_ememy = {
             STG_reduce_cam_unrest = yes
             add_popularity = {
                 ideology = reactionism
-                popularity = -0.04
+                popularity = -0.06
             }
             add_command_power = -20
         }
@@ -256,7 +269,7 @@ STG_internal_ememy = {
     #与乌斯拉尔裔和解
     STG_crush_usr = {
         available = {
-            fascism < 0.04
+            fascism < 0.06
             has_country_flag = STG_can_crush_usr
         }
         visible = {
@@ -273,6 +286,15 @@ STG_internal_ememy = {
         }
         remove_effect = {
             add_stability = 0.10
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                swap_ideas = {
+                    remove_idea = STG_paradox
+                    add_idea = STG_paradox_2
+                }
+            }
             STG_decrease_global_unrest_big = yes
             custom_effect_tooltip = STG_usr_crushed_desc
             hidden_effect = {
@@ -572,10 +594,6 @@ STG_internal_ememy = {
                 has_country_flag = STG_usr_crushed
             }
         }
-        custom_cost_trigger = {
-			command_power > 30
-		}
-        custom_cost_text = decision_cost_CP_30
         days_remove = 7
         days_re_enable = 150
         complete_effect = {
@@ -696,6 +714,7 @@ STG_internal_ememy = {
         }
         remove_effect = {
             STG_decrease_global_unrest_big = yes
+            add_stability = 0.20
             add_political_power = 100
             hidden_effect = {
                 set_country_flag = STG_disable_internal_ememy_decisions
@@ -937,9 +956,11 @@ STG_parliament_issues = {
         complete_effect = {
         }
         remove_effect = {
-            country_event = {id = STG_ilya.17 days = 7}
             set_country_flag = STG_ilya_issue_2_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+            hidden_effect = {
+                country_event = {id = STG_ilya.17 days = 7}
+            }
 		}
     }
     #《议会改革法案》
@@ -1469,18 +1490,18 @@ STG_parliament_issues = {
         }
         visible = {
         }
-        cost = 40
+        cost = 5
         days_remove = 7
         days_re_enable = 365
         ai_will_do = {
-			#factor = 1
-			factor = 100
+			factor = 1
 		}
         complete_effect = {
         }
         remove_effect = {
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
             add_political_power = 100
+            STG_reduce_two_supporters = yes
 		}
     }
     #裁撤冗余部门
@@ -1504,19 +1525,18 @@ STG_parliament_issues = {
         }
         visible = {
         }
-        cost = 10
+        cost = 5
         days_remove = 7
         days_re_enable = 365
         ai_will_do = {
-			#factor = 1
-			factor = 100
+			factor = 1
 		}
         complete_effect = {
         }
         remove_effect = {
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
             add_political_power = 70
-            STG_reduce_one_supporter = yes
+            STG_reduce_three_supporters = yes
 		}
     }
     #紧急动员
@@ -1854,6 +1874,7 @@ STG_the_sword_of_Damocles = {
         complete_effect = {
         }
         remove_effect = {
+            custom_effect_tooltip = STG_vital_decision_ilya_desc
             country_event = {id = STG_ilya.16 days = 3}
         }
         ai_will_do = {
@@ -2355,7 +2376,7 @@ STG_einzbern_storm = {
         complete_effect = {
         }
         remove_effect = {
-            add_manpowerr = 25000
+            add_manpower = 25000
         }
     }
     #购买武器
@@ -2456,6 +2477,7 @@ STG_einzbern_storm = {
         available = {
             NOT = {
                 has_country_flag = STG_einzbern_storm_strategy_1_recently_used
+                has_country_flag = STG_strategy_selected
             }
             has_war_with = USR
         }
@@ -2492,6 +2514,7 @@ STG_einzbern_storm = {
         available = {
             NOT = {
                 has_country_flag = STG_einzbern_storm_strategy_2_recently_used
+                has_country_flag = STG_strategy_selected
             }
             has_war_with = USR
         }
@@ -2527,6 +2550,7 @@ STG_einzbern_storm = {
         available = {
             NOT = {
                 has_country_flag = STG_einzbern_storm_strategy_3_recently_used
+                has_country_flag = STG_strategy_selected
             }
             has_war_with = USR
         }
@@ -2850,8 +2874,11 @@ STG_explosion_investigation = {
         days_remove = 3
         fire_only_once = yes
         complete_effect = {
+            set_country_flag = STG_investigation_in_progress
         }
         remove_effect = {
+            remove_ideas = STG_investigation
+            set_country_flag = STG_investigation_ended
             hidden_effect = {
                 if = {
                     limit = {
@@ -2880,7 +2907,449 @@ STG_explosion_investigation = {
 		}
     }
 }
-
+#bop决议
+STG_bop_decisions = {
+    #区域民族自治
+    STG_choose_side_decentralization = {
+        available = {
+        }
+        visible = {
+            NOT = {has_country_flag = STG_decentralization_side_chosen}
+        }
+        cost = 0
+        days_remove = 1
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = STG_bop_suggestions_desc
+            hidden_effect = {
+                set_country_flag = STG_decentralization_side_chosen
+                if = {
+                    limit = {
+                        has_country_flag = STG_centralization_side_chosen
+                    }
+                    clr_country_flag = STG_centralization_side_chosen
+                    add_political_power = -50
+                    STG_increase_army_discontent = yes
+                    STG_increase_global_unrest = yes
+                }
+            }
+        }
+        ai_will_do = {
+			base = 100
+            modifier = {
+                add = -100
+                has_country_flag = STG_centralization_side_chosen #AI不会左右横跳
+            }
+		}
+    }
+    #下放权力
+    STG_add_autonomy = {
+        available = {
+        }
+        visible = {
+           has_country_flag = STG_decentralization_side_chosen
+        }
+        cost = 30
+        days_remove = 30
+        days_re_enable = 180
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_usr_unrest = yes
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.10
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #禁止地方武装
+    STG_ban_millitia = {
+        available = {
+            NOT = {has_country_flag = STG_millitia_kept}
+        }
+        visible = {
+           has_country_flag = STG_decentralization_side_chosen
+           NOT = {has_country_flag = STG_millitia_kept}
+        }
+        cost = 50
+        days_remove = 30
+        fire_only_once = yes
+        complete_effect = {
+            set_country_flag = STG_millitia_banned
+        }
+        remove_effect = {
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.03
+            }
+            STG_increase_usr_unrest = yes
+            add_equipment_to_stockpile = {
+		        type = infantry_equipment_1
+		        amount = 2500
+		        producer = USR
+	        }
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = -0.05
+                tooltip_side = STG_centralized_vs_decentralized_left_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #允许保留民兵
+    STG_allow_millitia = {
+        available = {
+            NOT = {has_country_flag = STG_millitia_banned}
+        }
+        visible = {
+           has_country_flag = STG_decentralization_side_chosen
+           NOT = {has_country_flag = STG_millitia_banned}
+        }
+        cost = 30
+        days_remove = 30
+        fire_only_once = yes
+        complete_effect = {
+            set_country_flag = STG_millitia_kept
+        }
+        remove_effect = {
+            STG_reduce_usr_unrest = yes
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.10
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+            custom_effect_tooltip = STG_dont_worry_desc
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #民族团结月
+    STG_unity_month = {
+        available = {
+        }
+        visible = {
+            OR = {
+                has_country_flag = STG_decentralization_side_chosen
+                has_country_flag = STG_centralization_side_chosen
+            }
+        }
+        cost = 20
+        days_remove = 30
+        days_re_enable = 365
+        complete_effect = {
+        }
+        remove_effect = {
+            add_stability = 0.025
+            STG_reduce_usr_unrest = yes
+            STG_reduce_cam_unrest = yes
+            STG_decrease_global_unrest = yes
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #教育自主
+    STG_education_decentralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_decentralization_side_chosen
+        }
+        cost = 20
+        days_remove = 30
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            add_popularity = {
+                ideology = fascism
+                popularity = 0.03
+            }
+            STG_reduce_usr_unrest = yes
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.10
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #司法自主
+    STG_judicial_decentralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_decentralization_side_chosen
+        }
+        cost = 25
+        days_remove = 30
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_usr_unrest = yes
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.10
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #赋权各郡议会
+    STG_parliament_decentralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_decentralization_side_chosen
+        }
+        cost = 25
+        days_remove = 50
+        days_re_enable = 270
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_usr_unrest = yes
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.15
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #允许设立地方税种
+    STG_tax_decentralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_decentralization_side_chosen
+        }
+        cost = 50
+        days_remove = 10
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_usr_unrest = yes
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.15
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #单一制
+    STG_choose_side_centralization = {
+        available = {
+        }
+        visible = {
+            NOT = {has_country_flag = STG_centralization_side_chosen}
+        }
+        cost = 0
+        days_remove = 1
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = STG_bop_suggestions_desc
+            hidden_effect = {
+                set_country_flag = STG_centralization_side_chosen
+                if = {
+                    limit = {
+                        has_country_flag = STG_decentralization_side_chosen
+                    }
+                    clr_country_flag = STG_decentralization_side_chosen
+                    add_political_power = -50
+                    STG_increase_army_discontent = yes
+                    STG_increase_global_unrest = yes
+                }
+            }
+        }
+        ai_will_do = {
+			base = 100
+            modifier = {
+                add = -100
+                has_country_flag = STG_decentralization_side_chosen #AI不会左右横跳
+            }
+		}
+    }
+    #重申中央权威
+    STG_assert_authority = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 30
+        days_remove = 30
+        days_re_enable = 180
+        complete_effect = {
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = -0.10
+                tooltip_side = STG_centralized_vs_decentralized_left_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #向地方暂时让步
+    STG_step_back = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 30
+        days_remove = 30
+        days_re_enable = 180
+        complete_effect = {
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = 0.05
+                tooltip_side = STG_centralized_vs_decentralized_right_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #统一教材
+    STG_education_centralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 50
+        days_remove = 30
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = -0.15
+                tooltip_side = STG_centralized_vs_decentralized_left_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #明确官方语言
+    STG_language_centralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 25
+        days_remove = 50
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = -0.15
+                tooltip_side = STG_centralized_vs_decentralized_left_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #民族混编部队
+    STG_mil_centralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 50
+        days_remove = 100
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            army_experience = 100
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = -0.10
+                tooltip_side = STG_centralized_vs_decentralized_left_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #统一税收政策
+    STG_tax_centralization = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 50
+        days_remove = 50
+        days_re_enable = 270
+        complete_effect = {
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value = -0.10
+                tooltip_side = STG_centralized_vs_decentralized_left_side
+            }
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+    #强化国家认同
+    STG_identity = {
+        available = {
+        }
+        visible = {
+            has_country_flag = STG_centralization_side_chosen
+        }
+        cost = 20
+        days_remove = 30
+        days_re_enable = 300
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_cam_unrest_big = yes
+            STG_increase_usr_unrest = yes
+        }
+        ai_will_do = {
+			base = 10
+		}
+    }
+}
 ###debug国策路线 ##debug focus road
 IRIS_debug_decisions = {
 
