@@ -1,0 +1,120 @@
+World_Workers_Federation_debug_decisions = {
+	Build_World_Workers_Federation_debug = {
+		complete_effect = { Build_World_Workers_Federation = yes }
+	}
+	World_Workers_Federation_member_debug = {
+		available = {
+			has_country_flag = Firist_International_Leader
+			is_faction_leader = yes
+		}
+		complete_effect = {
+			every_other_country = {
+				limit = {
+					or = {
+						tag = UNG
+						tag = USR
+						tag = ELN
+						tag = NAC
+					}
+				}
+				set_politics = {
+					ruling_party = communism
+				}
+				ROOT = {
+					add_to_faction = PREV
+				}
+			}
+			World_Workers_Federation_array_effect = yes
+		}
+	}
+	World_Workers_Federation_motion_debug = {
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = is_member_of_World_Workers_Federation
+				is_in_array = {
+					array = global.World_Workers_Federation_members
+					value = THIS
+				}
+			}
+		}
+		complete_effect = {
+			custom_effect_tooltip = ELN_Firist_International_build_of_Comecon
+			set_variable = {
+				global.ELN_Firist_International_num_of_motion_going = 1
+			}
+			hidden_effect = {
+				for_each_scope_loop = {
+					array = global.World_Workers_Federation_members
+					not = {
+						tag = ROOT
+					}
+					country_event = {
+						id = elino.2019
+					}
+				}
+				activate_mission = World_Workers_Federation_motion_is_being_voted_on
+			}
+		}
+	}
+	#议案表决中
+	World_Workers_Federation_motion_is_being_voted_on = {
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 10
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		selectable_mission = yes
+		cancel_trigger = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		timeout_effect = {
+			hidden_effect = {
+				for_each_scope_loop = {
+					array = global.World_Workers_Federation_members
+					if = {
+						limit = { check_variable = { THIS.ELN_Firist_International_ROOT_attitude_VAR < 2 } }
+						set_variable = { THIS.ELN_Firist_International_ROOT_attitude_VAR = 2 }
+						World_Workers_Federation_Variable_calculations = yes
+					}
+				}
+				activate_mission = World_Workers_Federation_voting_results_announced
+				World_Workers_Federation_result_of_vote = yes
+			}
+		}
+	}
+	#表决结果公示
+	World_Workers_Federation_voting_results_announced = {
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		priority = 20
+		days_mission_timeout = 10
+		activation = {
+			always = no
+		}
+		visible = {
+		}
+		cancel_if_not_visible = yes
+		selectable_mission = yes
+		cancel_trigger = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		timeout_effect = {
+			World_Workers_Federation_add_to_his_motion_and_change_to_none = yes
+		}
+	}
+}

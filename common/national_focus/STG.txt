@@ -7,31 +7,48 @@ focus_tree = {
 			tag = STG
 		}
 	}
+	default = no
+
 	continuous_focus_position = {
-		x = 3700
+		x = 6500
 		y = 1000
 	}
+	
+	initial_show_position = { ###为什么不能用了?
+		#focus = STG_starting_1 
+        x = 47
+        y = 0
+	}
+
 #开局国策
     #议会开幕
     focus = {
         id = STG_starting_1
-        icon = 1
+        icon = GFX_focus_STG_starting_1
         x = 11
         y = 0
         cost = 2
         available_if_capitulated = yes
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			add_political_power = 50
+            set_country_flag = STG_enable_parliament_events
+            set_power_balance = {
+				id = STG_centralized_vs_decentralized
+				left_side = STG_centralized_vs_decentralized_left_side
+				right_side = STG_centralized_vs_decentralized_right_side
+				set_default = yes
+			}
 		}
     }
 
     #头等大事
     focus = {
         id = STG_starting_2
-        icon = 1
+        icon = GFX_focus_STG_starting_2
         x = 0
         y = 1
         cost = 5
@@ -39,7 +56,8 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_starting_1 }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			country_event = { id = STG_general.1 }
@@ -49,7 +67,7 @@ focus_tree = {
     #王冠落地
     focus = {
         id = STG_parliament_1
-        icon = 1
+        icon = GFX_focus_generic_monarchy_1
         x = -14
         y = 1
         cost = 5
@@ -58,11 +76,14 @@ focus_tree = {
         prerequisite = { focus = STG_starting_2 }
         available = {
             has_country_flag = STG_monarchy_abolished
+            NOT = {has_country_flag = STG_army_takeover}
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            set_cosmetic_tag = STG_parliament_democratic
 			remove_ideas = STG_Empty_Throne
             STG_increase_global_unrest = yes
 		}
@@ -77,8 +98,15 @@ focus_tree = {
         relative_position_id = STG_parliament_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_1 }
+        mutually_exclusive = {
+            focus = STG_com_1
+        }
+        available = {
+            NOT = {has_country_flag = STG_army_takeover}
+        }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			add_political_power = 50
@@ -96,6 +124,7 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_2 }
         available = {
+            NOT = {has_country_flag = STG_army_takeover}
             custom_trigger_tooltip = {
                 tooltip = STG_has_discontent
                 OR = {
@@ -111,7 +140,8 @@ focus_tree = {
             }            
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             STG_reduce_usr_unrest = yes
@@ -136,8 +166,10 @@ focus_tree = {
         relative_position_id = STG_parliament_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_2 }
+        available = {NOT = {has_country_flag = STG_army_takeover}}
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             STG_decrease_global_unrest
@@ -154,11 +186,14 @@ focus_tree = {
         relative_position_id = STG_parliament_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_2 }
+        available = {NOT = {has_country_flag = STG_army_takeover}}
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			country_event = {}
+            STG_reduce_army_discontent = yes
 		}
     }
     #《反颠覆法案》
@@ -172,22 +207,19 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_3 }
         available = {
+            NOT = {has_country_flag = STG_army_takeover}
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             custom_effect_tooltip = STG_unlock_par_issue_1
-            custom_effect_tooltip = STG_add_two_supporters
-            hidden_effect = {
-                STG = {add_to_variable = {STG_supporter = 2}
-                    clamp_temp_variable = {
-                        var = STG_supporter
-                        min = 0
-                        max = 30
-                    }
-                }
-            }
+            STG_add_two_supporters = yes
 		}
     }
     #《和平守望法案》
@@ -201,21 +233,14 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_4 }
         available = {
+            NOT = {has_country_flag = STG_army_takeover}
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			custom_effect_tooltip = STG_add_two_supporters
-            hidden_effect = {
-                    STG = {add_to_variable = {STG_supporter = 2}
-                        clamp_temp_variable = {
-                            var = STG_supporter
-                            min = 0
-                            max = 30
-                        }
-                    }
-                }
+			STG_add_two_supporters = yes
 			custom_effect_tooltip = STG_unlock_par_issue_2
 		}
     }
@@ -230,22 +255,19 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_parliament_5 }
         available = {
+            NOT = {has_country_flag = STG_army_takeover}
+            custom_trigger_tooltip = {
+                tooltip = STG_army_discontent_less_than_40_desc
+                trigger = {
+                    STG = { check_variable = { STG_army_discontent < 40 } }
+                }
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			custom_effect_tooltip = STG_reduce_five_supporters
-            hidden_effect = {
-                    STG = {
-                        add_to_variable = {STG_supporter = -5}
-                        clamp_temp_variable = {
-                            var = STG_supporter
-                            min = 0
-                            max = 30
-                        }
-                    }
-                }
 			custom_effect_tooltip = STG_unlock_par_issue_3
 		}
     }
@@ -264,9 +286,11 @@ focus_tree = {
             focus = STG_parliament_issue_3
             }
         available = {
+            NOT = {has_country_flag = STG_army_takeover}
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             add_political_power = 100
@@ -284,12 +308,15 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { 
             focus = STG_parliament_issue_4
-            }
+            focus = STG_com_6
+        }
         available = {
             has_war = yes
+            NOT = {has_country_flag = STG_army_takeover}
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			add_ideas = STG_Hold_Your_Gun
@@ -307,9 +334,11 @@ focus_tree = {
         prerequisite = { focus = STG_national_defense_1 }
         available = {
             has_country_flag = STG_par_issue_2_passed
+            NOT = {has_country_flag = STG_army_takeover}
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			random_owned_controlled_state = {
@@ -331,18 +360,20 @@ focus_tree = {
         cost = 5
         relative_position_id = STG_parliament_issue_4
         available_if_capitulated = yes
+        available = {NOT = {has_country_flag = STG_army_takeover}}
         prerequisite = { 
             focus = STG_parliament_issue_4
             }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             add_research_slot = 1
 			add_tech_bonus = {
-		    bonus = 1.5 
-		    uses = 2
-		    category = armor
+                bonus = 1.5 
+                uses = 2
+                category = armor
             }
 		}
     }
@@ -357,9 +388,11 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { 
             focus = STG_parliament_issue_4
-            }
+        }
+        available = {NOT = {has_country_flag = STG_army_takeover}}
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             custom_effect_tooltip = STG_build_bunker
@@ -503,19 +536,20 @@ focus_tree = {
         prerequisite = { 
             focus = STG_parliament_issue_4
             }
+        available = {NOT = {has_country_flag = STG_army_takeover}}
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             random_owned_controlled_state = {
-			add_extra_state_shared_building_slots = 4
-			add_building_construction = {
-				type = industrial_complex
-				level = 4
-				instant_build = yes
+			    add_extra_state_shared_building_slots = 4
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 4
+				    instant_build = yes
 			    }
 		    }
-
 		}
     }
     #《工业委员会法案》
@@ -531,15 +565,14 @@ focus_tree = {
             focus = STG_national_defense_4
         }
         available = {
+            NOT = {has_country_flag = STG_army_takeover}
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            custom_effect_tooltip = STG_reduce_three_supporters
-            hidden_effect = {
-                    STG = {add_to_variable = {STG_supporter = -3}}
-                }
+            STG_reduce_three_supporters = yes
             custom_effect_tooltip = STG_unlock_par_issue_5
 		}
     }
@@ -555,12 +588,14 @@ focus_tree = {
         available = {
             has_war = no
             has_country_flag = STG_par_issue_4_passed
+            NOT = {has_country_flag = STG_army_takeover}
         }
         prerequisite = { 
             focus = STG_parliament_issue_4
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             add_stability = 0.20
@@ -573,22 +608,1398 @@ focus_tree = {
             }            
 		}
     }
+#红线
+    #打破旧秩序
+    focus = {
+        id = STG_com_1
+        icon = 1
+        x = -14
+        y = 0
+        cost = 3
+        relative_position_id = STG_parliament_2
+        available_if_capitulated = yes
+        mutually_exclusive = {
+            focus = STG_parliament_2
+        }
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_parliament_1
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_increase_global_unrest = yes
+            add_political_power = 150
+            add_timed_idea = {idea = STG_voice_of_people days = 730}
+		}
+    }
+    #加入社会主义大家庭
+    focus = {
+        id = STG_com_101
+        icon = 1
+        x = 2
+        y = 1
+        cost = 1
+        relative_position_id = STG_com_1
+        available_if_capitulated = yes
+        available = {
+            NOT = {
+                is_in_faction = yes
+            }
+        }
+        prerequisite = { 
+            focus = STG_com_1
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #扩大罢工
+    focus = {
+        id = STG_com_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_1
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_1
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_popularity = {
+                ideology = communism
+                popularity = 0.03
+            }
+            custom_effect_tooltip = STG_start_revolution_desc
+            hidden_effect = {
+                set_country_flag = STG_enbale_revolution_decisions
+                set_country_flag = STG_rev_started
+                STG = {
+                    set_variable = {STG_rev_zeal = 20}
+                    set_variable = {STG_gov_strength = 80}
+                    set_variable = {STG_mil_doubt = 10}
+                }
+            }
+		}
+    }
+    #火上浇油
+    focus = {
+        id = STG_com_3
+        icon = 1
+        x = -2
+        y = 1
+        cost = 3
+        relative_position_id = STG_com_2
+        available_if_capitulated = yes
+        mutually_exclusive = {
+            focus = STG_com_4
+        }
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_2
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        bypass = {
+            has_government = communism
+        }
+        completion_reward = {
+            add_war_support = 0.05
+            custom_effect_tooltip = STG_increase_both_zeal_and_doubt_desc
+		}
+    }
+    #踩下刹车
+    focus = {
+        id = STG_com_4
+        icon = 1
+        x = 2
+        y = 1
+        cost = 3
+        relative_position_id = STG_com_2
+        available_if_capitulated = yes
+        mutually_exclusive = {
+            focus = STG_com_3
+        }
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_2
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        bypass = {
+            has_government = communism
+        }
+        completion_reward = {
+            add_stability = 0.05
+            custom_effect_tooltip = STG_decrease_both_zeal_and_doubt_desc
+		}
+    }
+    #工人党胜利
+    focus = {
+        id = STG_com_5
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_3
+        available_if_capitulated = yes
+        available = {
+            always = no
+        }
+        prerequisite = { 
+            focus = STG_com_3
+            focus = STG_com_4
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            set_cosmetic_tag = STG_syn_communism
+		}
+    }
+    #联合阵线
+    focus = {
+        id = STG_com_6
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_4
+        available_if_capitulated = yes
+        available = {
+            always = no
+        }
+        prerequisite = { 
+            focus = STG_com_3
+            focus = STG_com_4
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            set_cosmetic_tag = STG_syn_sd_communism
+		}
+    }
+    #当务之急
+    focus = {
+        id = STG_com_7
+        icon = 1
+        x = 2
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_3
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_5
+            focus = STG_com_6
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.10
+            STG_reduce_cam_unrest_big = yes
+            STG_reduce_usr_unrest_big = yes
+            custom_effect_tooltip = STG_more_decision_against_cam_desc
+            custom_effect_tooltip = STG_more_decision_against_usr_desc
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_cam
+                set_country_flag = STG_more_decision_against_usr
+            }
+		}
+    }
+    #阶级矛盾，而非民族矛盾
+    focus = {
+        id = STG_com_8
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_7
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_7
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_can_crush_cam_desc
+            custom_effect_tooltip = STG_can_crush_usr_desc
+            hidden_effect = {
+                set_country_flag = STG_can_crush_cam
+                set_country_flag = STG_can_crush_usr
+            }
+		}
+    }
+    #干戈玉帛
+    focus = {
+        id = STG_com_9
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_8
+        available_if_capitulated = yes
+        available = {
+            has_country_flag = STG_cam_crushed
+            has_country_flag = STG_usr_crushed
+        }
+        prerequisite = { 
+            focus = STG_com_8
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.10
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                remove_ideas = STG_paradox_2
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                remove_ideas = STG_paradox
+            }
+		}
+    }
+    #脱胎换骨
+    focus = {
+        id = STG_com_10
+        icon = 1
+        x = 0
+        y = 1
+        cost = 1
+        relative_position_id = STG_com_5
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_5
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_dynamic_modifier = {modifier = STG_rev_modifier}
+            hidden_effect = {
+                STG = {
+                    add_to_variable = {STG_rev_stability_factor = -0.25}
+                    add_to_variable = {STG_rev_political_power_gain = 0.1}
+                    add_to_variable = {STG_rev_production_speed_buildings_factor = -0.10}
+                    add_to_variable = {STG_rev_industrial_capacity_factory = 0.025}
+                    add_to_variable = {STG_rev_industrial_capacity_dockyard = 0.025}
+                }
+            }
+		}
+    }
+    #工业遗产
+    focus = {
+        id = STG_com_11
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_10
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_10
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_11_bonus_desc
+            add_to_variable = {STG_rev_industrial_capacity_factory = 0.025}
+            add_to_variable = {STG_rev_industrial_capacity_dockyard = 0.025}
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+                    type = arms_factory
+                    level = 1
+                    instant_build = yes
+                }
+                add_building_construction = {
+                    type = industrial_complex
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+                    type = arms_factory
+                    level = 1
+                    instant_build = yes
+                }
+                add_building_construction = {
+                    type = industrial_complex
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+                    type = arms_factory
+                    level = 1
+                    instant_build = yes
+                }
+                add_building_construction = {
+                    type = industrial_complex
+                    level = 1
+                    instant_build = yes
+                }
+            }
+		}
+    }
+    #更新设备
+    focus = {
+        id = STG_com_12
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_11
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_11
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_12_bonus_desc
+            add_to_variable = {STG_rev_industrial_capacity_factory = 0.025}
+            add_to_variable = {STG_rev_industrial_capacity_dockyard = 0.025}
+            add_to_variable = {STG_rev_production_speed_buildings_factor = 0.15}
+            add_tech_bonus = {
+                bonus = 1.5
+                uses = 3
+                category = industry
+            }
+		}
+    }
+    #修订劳动法
+    focus = {
+        id = STG_com_13
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_12
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_12
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_political_power = -75
+            custom_effect_tooltip = STG_unlock_syn_labor_law
+		}
+    }
+    #重整社保系统
+    focus = {
+        id = STG_com_14
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_13
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_13
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_14_bonus_desc
+            add_to_variable = {STG_rev_stability_factor = 0.10}
+            add_to_variable = {STG_rev_war_support_factor = 0.10}
+            add_to_variable = {STG_rev_political_power_gain = 0.10}
+            add_to_variable = {STG_rev_consumer_goods_factor = 0.15}
+		}
+    }
+    #社会主义教育
+    focus = {
+        id = STG_com_15
+        icon = 1
+        x = 2
+        y = 1
+        cost = 8
+        relative_position_id = STG_com_10
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_10
+        }
+        prerequisite = { 
+            focus = STG_com_7
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_research_slot = 1
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_15_bonus_desc
+            add_to_variable = {STG_rev_research_speed_factor = 0.05}
+		}
+    }
+    #有教无类
+    focus = {
+        id = STG_com_16
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_15
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_15
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_decrease_global_unrest = yes
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.05
+            }
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.05
+            }
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_16_bonus_desc
+            add_to_variable = {STG_rev_research_speed_factor = 0.025}
+		}
+    }
+    #扩大夜校
+    focus = {
+        id = STG_com_17
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_16
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_16
+        }
+        prerequisite = { 
+            focus = STG_com_12
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.05
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_16_bonus_desc
+            add_to_variable = {STG_rev_research_speed_factor = 0.025}
+            add_tech_bonus = {
+                bonus = 2.0
+                uses = 2
+                category = electronics
+            }
+		}
+    }
+    #改造资产阶级
+    focus = {
+        id = STG_com_18
+        icon = 1
+        x = -4
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_10
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_10
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_popularity = {
+                ideology = communism
+                popularity = 0.10
+            }
+		}
+    }
+    #打倒反动派
+    focus = {
+        id = STG_com_19
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_18
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_18
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_19_bonus_desc
+            add_to_variable = {STG_rev_stability_factor = 0.10}
+		}
+    }
+    #丈量土地
+    focus = {
+        id = STG_com_20
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_19
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_19
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_20_bonus_desc
+            add_to_variable = {STG_rev_production_speed_industrial_complex_factor = 0.05}
+            add_to_variable = {STG_rev_production_speed_arms_factory_factor = 0.05}
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+            }
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+            }
+		}
+    }
+    #扫地出门
+    focus = {
+        id = STG_com_21
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_20
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_20
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_manpower = -3000
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_21_bonus_desc
+            add_to_variable = {STG_rev_stability_factor = 0.10}
+            add_to_variable = {STG_rev_party_popularity_stability_factor = 0.25}
+		}
+    }
+    #补偿进步派
+    focus = {
+        id = STG_com_22
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_18
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_18
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_political_power = -100
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_19_bonus_desc
+            add_to_variable = {STG_rev_stability_factor = 0.10}
+		}
+    }
+    #允许公私合营
+    focus = {
+        id = STG_com_23
+        icon = 1
+        x = 0
+        y = 1
+        cost = 8
+        relative_position_id = STG_com_22
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_22
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_popularity = {
+                ideology = democratic
+                popularity = 0.075
+            }
+            add_ideas = new_economic_policy
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_23_bonus_desc
+            add_to_variable = {STG_rev_production_speed_industrial_complex_factor = 0.05}
+            add_to_variable = {STG_rev_production_speed_arms_factory_factor = 0.05}
+            add_to_variable = {STG_rev_consumer_goods_factor = -0.25}
+		}
+    }
+    #广纳谏言
+    focus = {
+        id = STG_com_24
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_23
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_23
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_24_bonus_desc
+            add_to_variable = {STG_rev_political_power_gain = 0.10}
+		}
+    }
+    #改造武装力量
+    focus = {
+        id = STG_com_25
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_10
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_10
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_timed_idea = {idea = STG_reform_army days = 365}
+            STG_increase_army_discontent_big = yes
+		}
+    }
+    #加强政治教育
+    focus = {
+        id = STG_com_26
+        icon = 1
+        x = 0
+        y = 1
+        cost = 10
+        relative_position_id = STG_com_25
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_25
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_political_power = -100
+            country_lock_all_division_template = no
+            swap_ideas = {
+                remove_idea = STG_Nervous_Army
+                add_idea = STG_controlled_Army 
+            }
+            set_country_flag = STG_disable_the_sword_of_Damocles_decisions
+		}
+    }
+    #崭新的红军
+    focus = {
+        id = STG_com_27
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_26
+        available_if_capitulated = yes
+        available = {
+            NOT = {
+                has_idea = STG_reform_army
+            }
+        }
+        prerequisite = { 
+            focus = STG_com_26
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_27_bonus_desc
+            add_to_variable = {STG_rev_army_attack_factor = 0.10}
+            add_to_variable = {STG_rev_army_defence_factor = 0.10}
+            add_to_variable = {STG_rev_conscription_factor = 0.15}
+		}
+    }
+    #灿烂未来
+    focus = {
+        id = STG_com_28
+        icon = 1
+        x = 1
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_24
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_14
+        }
+        prerequisite = { 
+            focus = STG_com_21
+        }
+        prerequisite = { 
+            focus = STG_com_24
+        }
+        prerequisite = { 
+            focus = STG_com_27
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_ideas = STG_victory_of_syn
+            add_manpower = 100000
+            add_popularity = {
+                ideology = communism
+                popularity = 0.10
+            }
+		}
+    }
+    #革命先锋
+    focus = {
+        id = STG_com_29
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_28
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_28
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        will_lead_to_war_with = USR
+        will_lead_to_war_with = UNG
+        will_lead_to_war_with = ANZ
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_com_29_bonus_desc
+            add_to_variable = {STG_rev_war_support_factor = 0.20}
+            add_to_variable = {STG_rev_army_attack_factor = 0.025}
+            add_to_variable = {STG_rev_army_defence_factor = 0.025}
+            if = {
+                limit = {
+                    country_exists = USR
+                }
+                create_wargoal = {
+                    target = USR
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = UNG
+                }
+                create_wargoal = {
+                    target = UNG
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = ANZ
+                }
+                create_wargoal = {
+                    target = ANZ
+                    type = annex_everything
+                }
+            }
+		}
+    }
+    #红彤彤的世界
+    focus = {
+        id = STG_com_30
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_29
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_29
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            set_cosmetic_tag = STG_syn_union_communism
+            custom_effect_tooltip = STG_can_form_syn_union_desc
+		}
+    }
+    #为工人发声
+    focus = {
+        id = STG_com_31
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_6
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_6
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #《议会改革法案》
+    focus = {
+        id = STG_com_32
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_31
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_31
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #《均等选举权法案》
+    focus = {
+        id = STG_com_33
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_32
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_32
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #《国民教育法案》
+    focus = {
+        id = STG_com_34
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_33
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_33
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #工业化的基石
+    focus = {
+        id = STG_com_35
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_6
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_6
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #统一计量标准
+    focus = {
+        id = STG_com_36
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_35
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_35
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #提高工业补贴
+    focus = {
+        id = STG_com_37
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_36
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_36
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #欧罗巴的引擎
+    focus = {
+        id = STG_com_38
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_37
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_37
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #为公平而战
+    focus = {
+        id = STG_com_39
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_6
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_6
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #《累进税法案》
+    focus = {
+        id = STG_com_40
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_39
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_39
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #《医疗保障法案》
+    focus = {
+        id = STG_com_41
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_40
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_40
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #《公民福利法案》
+    focus = {
+        id = STG_com_42
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_41
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_41
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #现代化社保系统
+    focus = {
+        id = STG_com_43
+        icon = 1
+        x = -1
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_42
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_42
+        }
+        prerequisite = { 
+            focus = STG_com_34
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #廉价医疗
+    focus = {
+        id = STG_com_44
+        icon = 1
+        x = -2
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_43
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_43
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #免费教育
+    focus = {
+        id = STG_com_45
+        icon = 1
+        x = 2
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_43
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_43
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #军人优待
+    focus = {
+        id = STG_com_46
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_43
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_43
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #美好年代
+    focus = {
+        id = STG_com_47
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_com_46
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_44
+        }
+        prerequisite = { 
+            focus = STG_com_45
+        }
+        prerequisite = { 
+            focus = STG_com_46
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #捍卫劳动法
+    focus = {
+        id = STG_com_48
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_39
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_39
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #落实最低工资
+    focus = {
+        id = STG_com_49
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_48
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_48
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
+    #获取军队信任
+    focus = {
+        id = STG_com_50
+        icon = 1
+        x = 5
+        y = 1
+        cost = 5
+        relative_position_id = STG_com_6
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_6
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+		}
+    }
 #君主制路线
     #选王事务
     focus = {
         id = STG_monarchy_1
-        icon = 1
+        icon = GFX_focus_STG_monarchy_1
         x = 0
         y = 1
         cost = 5
         relative_position_id = STG_starting_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_starting_2 }
+        select_effect = {
+            if = {
+				limit = {
+					has_country_flag = STG_ilya_available
+				}
+				country_event = {id = STG_ilya.10 days = 15}
+			}
+        }
         available = {
             has_country_flag = STG_monarchy_kept
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			country_event = {id = STG_general.2}
@@ -598,7 +2009,7 @@ focus_tree = {
     #北方来客
     focus = {
         id = STG_ilya_1
-        icon = 1
+        icon = GFX_focus_STG_ilya_1
         x = -4
         y = 1
         cost = 5
@@ -610,7 +2021,8 @@ focus_tree = {
             has_country_flag = STG_ilya_elected
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             remove_ideas = STG_Empty_Throne
@@ -621,20 +2033,21 @@ focus_tree = {
             custom_effect_tooltip = STG_strengthen_usr
             hidden_effect = {
                 add_popularity = {
-                    ideology = fascism
+                    ideology = reactionism
                     popularity = -0.05
                 }
                 add_popularity = {
-                    ideology = reactionism
+                    ideology = fascism
                     popularity = 0.03
                 }
+                country_event = {id = STG_ilya.22 days = 2}
             }            
 		}
     }
     #伊莉雅之治
     focus = {
         id = STG_ilya_2
-        icon = 1
+        icon = GFX_focus_STG_ilya_2
         x = 0
         y = 1
         cost = 5
@@ -644,10 +2057,10 @@ focus_tree = {
         available = {
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            retire_character = STG_parliament
             promote_character = {
                 character = STG_ilya
                 ideology = sub_Universalism
@@ -661,7 +2074,7 @@ focus_tree = {
     #扩建爱因兹贝伦城
     focus = {
         id = STG_ilya_3
-        icon = 1
+        icon = GFX_focus_STG_ilya_3
         x = 2
         y = 1
         cost = 5
@@ -670,37 +2083,42 @@ focus_tree = {
         prerequisite = { focus = STG_ilya_2 }
         available = {
             owns_state = 682
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 500
 		}
         completion_reward = {
             country_event = {id = STG_ilya.3 days = 3}
             682 = {
-			add_extra_state_shared_building_slots = 1
-			add_building_construction = {
-				type = arms_factory
-				level = 1
-				instant_build = yes
-			    }
-            add_extra_state_shared_building_slots = 1
-			add_building_construction = {
-				type = industrial_complex
-				level = 1
-				instant_build = yes
-			    }
-			add_building_construction = {
-				type = bunker
-				level = 3
-				instant_build = yes
-			    }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                        type = arms_factory
+                        level = 1
+                        instant_build = yes
+                    }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                add_building_construction = {
+                        type = bunker
+                        level = 3
+                        instant_build = yes
+                    }
 		    }
 		}
     }
     #《爱因兹贝伦领地位法案》
     focus = {
         id = STG_ilya_issue
-        icon = 1
+        icon = GFX_focus_STG_ilya_issue
         x = 0
         y = 1
         cost = 5
@@ -709,28 +2127,24 @@ focus_tree = {
         prerequisite = { focus = STG_ilya_3 }
         prerequisite = { focus = STG_monarchy_2 }
         available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 500
 		}
         completion_reward = {
-            custom_effect_tooltip = STG_reduce_three_supporters
-            hidden_effect = {
-                    STG = {
-                        add_to_variable = {STG_supporter = -3}
-                        clamp_temp_variable = {
-                            var = STG_supporter
-                            min = 0
-                        }
-                    }
-                }
+            STG_reduce_three_supporters = yes
             custom_effect_tooltip = STG_unlock_ilya_issue_1
 		}
     }
     #《爱因兹贝伦至尊法案》
     focus = {
         id = STG_ilya_issue_2
-        icon = 1
+        icon = GFX_focus_STG_ilya_issue_2
         x = 0
         y = 1
         cost = 5
@@ -738,10 +2152,14 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_issue }
         available = {
-            
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 500
 		}
         completion_reward = {
             custom_effect_tooltip = STG_unlock_ilya_issue_2
@@ -750,49 +2168,126 @@ focus_tree = {
     #乌斯拉尔之怨
     focus = {
         id = STG_ilya_4
-        icon = 1
-        x = -2
+        icon = GFX_focus_STG_ilya_4
+        x = -4
         y = 1
         cost = 5
         relative_position_id = STG_ilya_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_2 }
         available = {
-            
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             add_war_support = 0.20    
+            hidden_effect = {
+                country_event = {id = STG_ilya.23}
+            }
 		}
     }
     #归乡
     focus = {
         id = STG_ilya_war_1
-        icon = 1
+        icon = GFX_focus_STG_ilya_war_1
         x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_ilya_4
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_4 }
+        cancelable = no
+        select_effect = {
+            country_event = {id = STG_ilya.24 days = 15}
+        }
+        bypass = {
+            OR = {
+                NOT = {
+                    country_exists = USR
+                }
+                USR = {
+                    is_puppet_of = STG
+                }
+            }
+        }
         available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
             has_country_flag = STG_ilya_took_power
+            OR = {
+                has_army_manpower > { size > 399999 }
+                has_war_with = USR
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         will_lead_to_war_with = USR
         completion_reward = {    
-            create_wargoal = {
-                target = USR
-                type = annex_everything
+            if = {
+                limit = {
+                    country_exists = KST
+                }
+                KST = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = SCK
+                }
+                SCK = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = BGT
+                }
+                BGT = {
+                    country_event = {id = STG_ilya.31}
+                }
+            }
+            if = {
+                limit = {
+                    NOT = {
+                        STG = {
+                            has_war_with = USR
+                        }
+                        USR = {
+                            is_puppet_of = STG
+                        }
+                        USR = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                STG = {
+                    declare_war_on = {
+                        target = USR
+                        type = annex_everything
+                    }
+                }
             }
             add_timed_idea = {
                 idea = STG_ilya_storm
-                days = 270
+                days = 365
 		    }
+            custom_effect_tooltip = STG_ilya_enable_war_desicions_desc
+            hidden_effect = {
+                set_country_flag = STG_enable_einzbern_storm_decisions
+                set_global_flag = STG_ilya_reclaim_war_started
+                STG_ilya_check_war_stage = yes
+            }
         }
     }
     #合而为一
@@ -801,37 +2296,172 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 20
+        cost = 2
         relative_position_id = STG_ilya_war_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_war_1 }
         available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+            NOT = { country_exists = USR }
             controls_state = 149
             controls_state = 155
             controls_state = 723
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             country_event = {id = STG_ilya.6 days = 1}
-            custom_effect_tooltip = STG_add_usr_core
+            custom_effect_tooltip = STG_gain_usr_core_desc
+            if = {
+                limit = {
+                    KST = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = KST
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    SCK = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = SCK
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    BGT = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = BGT
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    MDS = {
+                        is_puppet_of = STG
+                    }
+                }
+                STG = {
+                    annex_country = {
+                        target = MDS
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = KST
+                    NOT = {
+                        KST = {
+                            is_puppet_of = STG
+                        }
+                        KST = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                create_wargoal = {
+                    target = KST
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = SCK
+                    NOT = {
+                        SCK = {
+                            is_puppet_of = STG
+                        }
+                        SCK = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                create_wargoal = {
+                    target = SCK
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = BGT
+                    NOT = {
+                        BGT = {
+                            is_puppet_of = STG
+                        }
+                        BGT = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                create_wargoal = {
+                    target = BGT
+                    type = annex_everything
+                }
+            }
+             if = {
+                limit = {
+                    country_exists = MDS
+                    NOT = {
+                        MDS = {
+                            is_puppet_of = STG
+                        }
+                        MDS = {
+                            is_in_faction_with = STG
+                        }
+                    }
+                }
+                create_wargoal = {
+                    target = MDS
+                    type = annex_everything
+                }
+            }
             hidden_effect = {
+                set_capital = {state = 682}
                 every_state = {
                     if = {
                         limit = {
-                            is_core_of = USR
+                            OR = {
+                                is_core_of = USR
+                                is_core_of = KST
+                                is_core_of = SCK
+                                is_core_of = BGT
+                                is_core_of = MDS
+                            }
                         }
                         add_core_of = STG
                     }
                 }
+                clr_country_flag = STG_enable_einzbern_storm_decisions
+                STG_remove_ilya_war_ideas = yes
             }
 		}
     }
     #登台亮相
     focus = {
         id = STG_ilya_5
-        icon = 1
+        icon = GFX_focus_STG_ilya_5
         x = 0
         y = 1
         cost = 5
@@ -839,83 +2469,113 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_2 }
         available = {
-            
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            add_political_power = 50
             country_event = {id = STG_ilya.12}
 		}
     }
     #团结乌斯拉尔裔
     focus = {
         id = STG_ilya_11
-        icon = 1
+        icon = GFX_focus_STG_ilya_11
         x = 0
         y = 1
-        cost = 5
+        cost = 8
         relative_position_id = STG_ilya_5
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_5 }
         available = {
-            has_country_flag = STG_ilya_took_power
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.10
+            }
             add_stability = 0.10
             STG_reduce_usr_unrest_big = yes
-            capital_scope = {
-                create_unit = {
-                    division = "name = \"Infantry\" division_template = \"Infantry Division\" start_experience_factor = 0.3"
-                    owner = STG
-                }
-                create_unit = {
-                    division = "name = \"Infantry\" division_template = \"Infantry Division\" start_experience_factor = 0.3"
-                    owner = STG
-                }
+            country_event = {id = STG_ilya.11 days = 5}
+            custom_effect_tooltip = STG_more_decision_against_usr_desc
+            hidden_effect = {
+                set_country_flag = STG_more_decision_against_usr
             }
 		}
     }
     #坐稳王位
     focus = {
         id = STG_ilya_12
-        icon = 1
+        icon = GFX_focus_STG_ilya_12
         x = 0
         y = 1
-        cost = 5
+        cost = 8
         relative_position_id = STG_ilya_11
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_11 }
         available = {
             has_country_flag = STG_ilya_took_power
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
-        completion_reward = {      
+        completion_reward = {  
+            STG_reduce_army_discontent = yes
+            hidden_effect = {
+                remove_country_leader_trait = TRAIT_STG_ilya_naive
+                country_event = {id = STG_ilya.25}
+            }
 		}
     }
     #点石成金
     focus = {
         id = STG_ilya_6
         icon = 1
-        x = -4
+        x = -2
         y = 1
         cost = 5
         relative_position_id = STG_ilya_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_2 }
         available = {
-            
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            add_country_leader_trait = TRAIT_STG_ilya_genius
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_ilya_genius
+            }
             random_owned_controlled_state = {
 			    add_extra_state_shared_building_slots = 2
 			    add_building_construction = {
@@ -932,15 +2592,19 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 8
         relative_position_id = STG_ilya_6
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_6 }
         available = {
-            
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             add_tech_bonus = {
@@ -961,7 +2625,8 @@ focus_tree = {
             add_dynamic_modifier = {modifier = STG_workshop_dynamic_modifier}
             custom_effect_tooltip = STG_enable_einzbern_workshop
             hidden_effect = {
-                STG = {set_variable = {STG_material = 2}}
+                STG = { set_variable = { STG_material = 2 } }
+                STG = { add_to_variable = {STG_monthly_manpower_bonus = 0.10}}
             }
 		}
     }
@@ -971,36 +2636,419 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 8
         relative_position_id = STG_ilya_7
         available_if_capitulated = yes
         prerequisite = { focus = STG_ilya_7 }
         available = {
-            
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            swap_ideas = {
+                remove_idea = industrial_priority
+                add_idea = STG_ilya_mana
+            }
             add_research_slot = 1
             custom_effect_tooltip = STG_gain_two_units_material
             hidden_effect = {
-                STG = {add_to_variable = {STG_material = 2}}
+                STG = { add_to_variable = { STG_material = 2 } }
+            }
+		}
+    }
+    #为了拯救欧罗巴......
+    focus = {
+        id = STG_ilya_mahoushoujyo_1
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_8
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_8 }
+        allow_branch = {has_country_flag = STG_ilya_easter_enabled}
+        available = {
+            has_country_flag = STG_ilya_took_power
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = -0.20
+            STG_increase_army_discontent_big = yes
+            hidden_effect = {
+                STG = { add_to_variable = { STG_material = 2 } }
+                STG = {
+                    add_to_variable = {STG_army_infantry_attack_bonus = 0.05}
+                    add_to_variable = {STG_workshop_artillery_bonus = 0.05}
+                    add_to_variable = {STG_workshop_armor_attack_bonus = 0.05}
+                    add_to_variable = {STG_workshop_armor_defense_bonus = 0.05}
+                    add_to_variable = {STG_workshop_experience_loss_bonus = -0.05}
+                    add_to_variable = {STG_workshop_industrial_capacity_bonus = 0.05}
+                    add_to_variable = {STG_production_factory_max_efficiency_bonus = 0.05}
+                    add_to_variable = {STG_monthly_manpower_bonus = 0.05}
+                }
+            }
+		}
+    }
+    #成为魔法少女吧！
+    focus = {
+        id = STG_ilya_mahoushoujyo_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_1 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_IMA_ILYA_WA_KAWAI_NA_MAHOSHOUJYO_DESU
+            STG_increase_army_discontent_big = yes
+            hidden_effect = {
+                country_event = {id = STG_ilya.26}
+                set_country_leader_portrait = {
+                    portrait = GFX_STG_Prisma_Illya
+                }
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = STG_ilya
+                            ruling_only = yes
+                        }
+                    }
+                    add_country_leader_trait = TRAIT_STG_ilya_mahoushoujyo
+                }
+                set_country_flag = STG_ilya_enable_more_workshop_decisions
+                set_country_leader_description = {
+                    desc = "STG_ilya_desc_4"
+                }
+            }
+		}
+    }
+    #异界知识
+    focus = {
+        id = STG_ilya_mahoushoujyo_3
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_2 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_equipment_to_stockpile = {
+		        type = infantry_equipment_1
+		        amount = 10000
+		        producer = STG
+	        }
+            add_equipment_to_stockpile = {
+		        type = artillery_equipment_1
+		        amount = 1000
+		        producer = STG
+	        }
+            STG_increase_army_discontent_big = yes
+            hidden_effect = {
+                country_event = {id = STG_ilya.27}
+            }
+		}
+    }
+    #异乡来客
+    focus = {
+        id = STG_ilya_mahoushoujyo_4
+        icon = 1
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_ilya_mahoushoujyo_3
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_3 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            country_event = {id = STG_ilya.30}
+		}
+    }
+    #奇妙的礼装
+    focus = {
+        id = STG_ilya_mahoushoujyo_5
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_2 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            add_ideas = STG_ruby
+		}
+    }
+    #福利，不存在的？
+    focus = {
+        id = STG_ilya_mahoushoujyo_6
+        icon = 1
+        x = 0
+        y = 1
+        cost = 1
+        relative_position_id = STG_ilya_mahoushoujyo_5
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_5 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_ilya_no_ero_desc
+		}
+    }
+    #魔法少女Prisma☆伊莉雅
+    focus = {
+        id = STG_ilya_mahoushoujyo_7
+        icon = 1
+        x = -1
+        y = 2
+        cost = 5
+        relative_position_id = STG_ilya_mahoushoujyo_6
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_mahoushoujyo_6 }
+        prerequisite = { focus = STG_ilya_mahoushoujyo_4 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_increase_army_discontent_big = yes
+            create_wargoal = {
+                target = UNG
+                type = annex_everything
+            }
+            create_wargoal = {
+                target = USR
+                type = annex_everything
+            }
+            create_wargoal = {
+                target = ELN
+                type = annex_everything
+            }
+            create_wargoal = {
+                target = ANZ
+                type = annex_everything
+            }
+            add_equipment_to_stockpile = {
+		        type = infantry_equipment_1
+		        amount = 25000
+		        producer = STG
+	        }
+            add_equipment_to_stockpile = {
+		        type = artillery_equipment_1
+		        amount = 5000
+		        producer = STG
+	        }
+            add_equipment_to_stockpile = {
+		        type = support_equipment_1
+		        amount = 5000
+		        producer = STG
+	        }
+            add_manpower = 100000
+		}
+    }
+    #爱因兹贝伦近卫军团
+    focus = {
+        id = STG_ilya_imperial_guard
+        icon = GFX_focus_STG_ilya_imperial_guard
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_ilya_12
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_12 }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            division_template = {
+                name = "Imperial Guard"
+                is_locked = no
+                division_names_group = STG_MIL
+                priority = 0
+                template_counter = 0
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    infantry = { x = 0 y = 2 }
+                    infantry = { x = 0 y = 3 }
+                    infantry = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                    infantry = { x = 1 y = 2 }
+                    infantry = { x = 1 y = 3 }
+                    infantry = { x = 2 y = 0 }
+                    infantry = { x = 2 y = 1 }
+                    infantry = { x = 2 y = 2 }
+                    infantry = { x = 2 y = 3 }
+                    artillery_brigade = { x = 3 y = 0 }
+                    artillery_brigade = { x = 3 y = 1 }
+                    artillery_brigade = { x = 3 y = 2 }
+                    artillery_brigade = { x = 3 y = 3 }
+                }
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"Imperial Guard\" division_template = \"Imperial Guard\" start_experience_factor = 1.0"
+                    owner = STG
+                }
+                create_unit = {
+                    division = "name = \"Imperial Guard\" division_template = \"Imperial Guard\" start_experience_factor = 1.0"
+                    owner = STG
+                }
+            }
+		}
+    }
+    #爱因兹贝伦之耀
+    focus = {
+        id = STG_ilya_dreadnought
+        icon = GFX_focus_STG_ilya_dreadnought
+        x = 0
+        y = 1
+        cost = 8
+        relative_position_id = STG_ilya_imperial_guard
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_imperial_guard }
+        available = {
+            has_tech = ship_hull_super_heavy
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            create_equipment_variant = {
+		        name = "爱因兹贝伦之耀"
+		        type = ship_hull_super_heavy_1
+		        name_group = STG_BB_HISTORICAL
+		        parent_version = 0
+		        modules = {
+			        fixed_ship_battery_slot = ship_super_heavy_battery_2
+			        fixed_ship_anti_air_slot = ship_anti_air_2
+			        fixed_ship_fire_control_system_slot = ship_fire_control_system_2
+			        fixed_ship_radar_slot = ship_radar_2
+			        fixed_ship_engine_slot = heavy_ship_engine_2
+			        fixed_ship_secondaries_slot = ship_secondaries_2
+			        fixed_ship_armor_slot = ship_armor_shbb
+			        front_1_custom_slot = ship_super_heavy_battery_2
+			        mid_1_custom_slot = ship_secondaries_2
+			        mid_2_custom_slot = ship_secondaries_2
+			        rear_1_custom_slot = ship_super_heavy_battery_2
+		        }
+		        obsolete = no
+	        }
+            add_equipment_production = {
+		        equipment = {
+			        type = ship_hull_super_heavy_1
+			        creator = "STG" 
+			        version_name = "爱因兹贝伦之耀"
+		        }
+		        name = "SGN 爱因兹贝伦之耀"
+		        requested_factories = 1
+		        progress = 0.85
+		        amount = 1
+	        }
+            add_equipment_production = {
+		        equipment = {
+			        type = ship_hull_super_heavy_1
+			        creator = "STG" 
+			        version_name = "爱因兹贝伦之耀"
+		        }
+		        name = "SGN 汐月海军上将"
+		        requested_factories = 1
+		        progress = 0.60
+		        amount = 1
+	        }
+            hidden_effect = {
+                country_event = {id = STG_general.14 days = 2}
             }
 		}
     }
     #爱因兹贝伦的新秩序
     focus = {
         id = STG_ilya_9
-        icon = 1
+        icon = GFX_focus_STG_ilya_9
         x = 0
         y = 3
         cost = 5
         relative_position_id = STG_ilya_3
         available_if_capitulated = yes
-        prerequisite = { 
-            focus = STG_monarchy_4
-        }
         prerequisite = { 
             focus = STG_ilya_issue_2
         }
@@ -1008,12 +3056,21 @@ focus_tree = {
             focus = STG_ilya_12
         }
         available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            remove_country_leader_trait = TRAIT_STG_ilya_naive
+            add_stability = 0.05
+            add_popularity = {
+                ideology = neutrality
+                popularity = 0.10
+            }
             country_event = {id = STG_ilya.7 days = 3}
             STG_decrease_global_unrest_big = yes    
 		}
@@ -1021,32 +3078,356 @@ focus_tree = {
     #雪之城的女皇
     focus = {
         id = STG_ilya_10
-        icon = 1
+        icon = GFX_focus_STG_ilya_10
         x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_ilya_9
         available_if_capitulated = yes
         prerequisite = { 
             focus = STG_ilya_9
         }
         available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
             controls_state = 149
             controls_state = 155
             controls_state = 723
+            NOT = { country_exists = USR }
+            NOT = {
+                has_country_flag = STG_ilya_is_mahoushoujyo
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            set_cosmetic_tag = STG_ilya_empire
-            add_country_leader_trait = TRAIT_STG_ilya_queen
+            set_cosmetic_tag = STG_ilya_empire_neutrality
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_ilya_queen
+            }
+            custom_effect_tooltip = STG_unlock_a_new_branch_desc
             hidden_effect = {
                 set_country_leader_description = {
-                    desc = "STG_ilya_desc_2"
+                    desc = "STG_ilya_desc_3"
                 }
+                set_country_flag = STG_ilya_phase2_enabled
+                load_focus_tree = {
+                        tree = STG
+                        keep_completed = yes
+                    }
+                mark_focus_tree_layout_dirty = yes
             }
-            
+		}
+    }
+    #新的开始
+    focus = {
+        id = STG_ilya_phase2_1
+        icon = GFX_focus_STG_ilya_11
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_ilya_10
+        available_if_capitulated = yes
+        allow_branch = {has_country_flag = STG_ilya_phase2_enabled}
+        prerequisite = { 
+            focus = STG_ilya_9
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.20
+            add_war_support = 0.20
+		}
+    }
+    #根除余孽
+    focus = {
+        id = STG_ilya_phase2_2
+        icon = GFX_focus_STG_ilya_11
+        x = 0
+        y = 1
+        cost = 3
+        relative_position_id = STG_ilya_phase2_1
+        available_if_capitulated = yes
+        prerequisite = { 
+            focus = STG_ilya_phase2_1
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_popularity = {
+                ideology = fascism
+                popularity = -1
+            }
+		}
+    }
+    #女皇陛下的权威
+    focus = {
+        id = STG_ilya_phase2_3
+        icon = GFX_focus_STG_ilya_11
+        x = -2
+        y = 1
+        cost = 3
+        relative_position_id = STG_ilya_phase2_2
+        available_if_capitulated = yes
+        mutually_exclusive = {focus = STG_ilya_phase2_7 }
+        prerequisite = { 
+            focus = STG_ilya_phase2_2
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+            power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value < -0.1
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_popularity = {
+                ideology = neutrality
+                popularity = 0.25
+            }
+            add_political_power = 100
+		}
+    }
+    #荣耀属于雪之城
+    focus = {
+        id = STG_ilya_phase2_4
+        icon = GFX_focus_STG_ilya_11
+        x = -2
+        y = 1
+        cost = 1
+        relative_position_id = STG_ilya_phase2_3
+        available_if_capitulated = yes
+        prerequisite = { 
+            focus = STG_ilya_phase2_3
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+            owns_state = 682
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_victory_points = {
+                province = 7661
+                value = 30
+            }
+            add_war_support = 0.10
+		}
+    }
+    #继续工业化
+    focus = {
+        id = STG_ilya_phase2_5
+        icon = GFX_focus_STG_ilya_11
+        x = 0
+        y = 1
+        cost = 10
+        relative_position_id = STG_ilya_phase2_3
+        available_if_capitulated = yes
+        prerequisite = { 
+            focus = STG_ilya_phase2_3
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_tech_bonus = {
+                bonus = 3.0
+                uses = 1
+                category = industry
+            }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+		}
+    }
+    #小恶魔的帝国
+    focus = {
+        id = STG_ilya_phase2_6
+        icon = GFX_focus_STG_ilya_11
+        x = 1
+        y = 1
+        cost = 2
+        relative_position_id = STG_ilya_phase2_4
+        available_if_capitulated = yes
+        prerequisite = { 
+            focus = STG_ilya_phase2_4
+        }
+        prerequisite = { 
+            focus = STG_ilya_phase2_5
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.10
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_ILYA_DEVIL
+            }
+		}
+    }
+    #芸芸众生的权力
+    focus = {
+        id = STG_ilya_phase2_7
+        icon = GFX_focus_STG_ilya_11
+        x = 0
+        y = 1
+        cost = 3
+        relative_position_id = STG_ilya_phase2_2
+        available_if_capitulated = yes
+        mutually_exclusive = {focus = STG_ilya_phase2_3 }
+        prerequisite = { 
+            focus = STG_ilya_phase2_2
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+            power_balance_value = {
+                id = STG_centralized_vs_decentralized
+                value > 0.1
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_decrease_global_unrest_big = yes
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                remove_ideas = STG_paradox
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                remove_ideas = STG_paradox_2
+            }
+		}
+    }
+    #王座上的天使
+    focus = {
+        id = STG_ilya_phase2_8
+        icon = GFX_focus_STG_ilya_11
+        x = 0
+        y = 2
+        cost = 2
+        relative_position_id = STG_ilya_phase2_7
+        available_if_capitulated = yes
+        prerequisite = { 
+            focus = STG_ilya_phase2_7
+        }
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_war_support = 0.10
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_ilya
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_ILYA_ANGLE
+            }
 		}
     }
     #议会地位
@@ -1064,10 +3445,11 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 500
 		}
         completion_reward = {
-			
+			country_event = {id = STG_general.4 days = 2}
 		}
     }
     #消灭卡美洛派
@@ -1084,14 +3466,19 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 500
 		}
         completion_reward = {
-            custom_effect_tooltip = STG_more_decision_against_cam
+            custom_effect_tooltip = STG_more_decision_against_cam_desc
             hidden_effect = {
                 set_country_flag = STG_more_decision_against_cam
             }
             STG_reduce_cam_unrest_big = yes
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.08
+            }
 		}
     }
     #尘埃落定
@@ -1100,21 +3487,27 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 2
         relative_position_id = STG_monarchy_3
         available_if_capitulated = yes
         prerequisite = { focus = STG_monarchy_3 }
         available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_threat_solved_desc
+                has_country_flag = STG_investigation_ended
+            }
             NOT = {
-                fascism > 0.05
+                reactionism > 0.06
             }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 500
 		}
         completion_reward = {
+            STG_decrease_global_unrest_big = yes
             add_political_power = 50
-			custom_effect_tooltip = STG_can_crush_cam
+			custom_effect_tooltip = STG_can_crush_cam_desc
             hidden_effect = {
                 set_country_flag = STG_can_crush_cam
             }
@@ -1134,18 +3527,168 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             add_command_power = 50
             custom_effect_tooltip = STG_speical_opertaions
 		}
     }
+    #天命在我
+    focus = {
+        id = STG_monarchy_6
+        icon = 1
+        x = 0
+        y = 3
+        cost = 5
+        relative_position_id = STG_monarchy_5
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_ilya_10 focus = STG_grey_11 }
+        available = {
+            has_war = no
+            OR = {
+                has_army_manpower = { size > 399999 }
+                num_of_factories > 49
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 0
+		}
+        completion_reward = {
+            add_ideas = STG_for_the_emperor
+            set_major = yes
+            if = {
+                limit = {
+                    is_in_faction = yes
+                }
+                leave_faction = yes
+            }
+		}
+    }
+    #帝国征途
+    focus = {
+        id = STG_monarchy_7
+        icon = 1
+        x = 0
+        y = 1
+        cost = 10
+        relative_position_id = STG_monarchy_6
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_monarchy_6 }
+        available = {
+            OR = {
+                has_government = democratic
+                has_government = neutrality
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        will_lead_to_war_with = UNG
+        will_lead_to_war_with = ELN
+        will_lead_to_war_with = ANZ
+        will_lead_to_war_with = USR
+        completion_reward = {
+            if = {
+                limit = {
+                    country_exists = UNG
+                }
+                create_wargoal = {
+                    target = UNG
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = ELN
+                }
+                create_wargoal = {
+                    target = ELN
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = ANZ
+                }
+                create_wargoal = {
+                    target = ANZ
+                    type = annex_everything
+                }
+            }if = {
+                limit = {
+                    country_exists = USR
+                }
+                create_wargoal = {
+                    target = USR
+                    type = annex_everything
+                }
+            }
+		}
+    }
+    #喝一杯茶
+    focus = {
+        id = STG_monarchy_12
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_monarchy_7
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_monarchy_7 }
+        available = {
+            num_of_factories > 149
+            OR = {
+                NOT = {
+                    country_exists = UNG
+                }
+                UNG = {
+                    is_puppet_of = STG
+                }
+            }
+            OR = {
+                NOT = {
+                    country_exists = USR
+                }
+                USR = {
+                    is_puppet_of = STG
+                }
+            }
+            OR = {
+                NOT = {
+                    country_exists = ELN
+                }
+                ELN = {
+                    is_puppet_of = STG
+                }
+            }
+            OR = {
+                NOT = {
+                    country_exists = ANZ
+                }
+                ANZ = {
+                    is_puppet_of = STG
+                }
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.20
+            add_political_power = 200
+            add_research_slot = 1
+		}
+    }
     #格雷伯爵
     #中意之选
     focus = {
         id = STG_grey_1
-        icon = 1
+        icon = GFX_foucs_STG_grey_1
         x = 6
         y = 1
         cost = 5
@@ -1157,10 +3700,23 @@ focus_tree = {
             has_country_flag = STG_grey_elected
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            custom_effect_tooltip = STG_dev_in_progress_desc
+            promote_character = {
+                character = STG_grey
+                ideology = sub_Industrial_Liberalism
+            }
+            add_political_power = 100
+			STG_decrease_global_unrest = yes
+            hidden_effect = {
+                country_event = {id = STG_grey.11 days = 3}
+                clr_country_flag = STG_conservative_controls_par
+                set_country_flag = STG_sd_controls_par
+                set_party_name = {ideology = democratic long_name = STG_democratic_party_sd_long name = STG_democratic_party_sd}
+            }
 		}
     }
     #尊重传统
@@ -1174,13 +3730,24 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_1 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            add_stability = 0.05
+			add_popularity = {
+                ideology = democratic
+                popularity = 0.10
+            }
+            hidden_effect = {
+                country_event = {id = STG_grey.12 days = 3}
+            }
 		}
     }
     #《议会改革法案》
@@ -1195,22 +3762,17 @@ focus_tree = {
         prerequisite = { focus = STG_grey_2 }
         prerequisite = { focus = STG_monarchy_2 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            custom_effect_tooltip = STG_reduce_four_supporters
-            hidden_effect = {
-                    STG = {
-                        add_to_variable = {STG_supporter = -4}
-                        clamp_temp_variable = {
-                            var = STG_supporter
-                            min = 0
-                        }
-                    }
-                }
+            STG_reduce_four_supporters = yes
             custom_effect_tooltip = STG_unlock_grey_issue_1
 		}
     }
@@ -1225,22 +3787,17 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_issue_1 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            custom_effect_tooltip = STG_reduce_eight_supporters
-            hidden_effect = {
-                    STG = {
-                        add_to_variable = {STG_supporter = -8}
-                        clamp_temp_variable = {
-                            var = STG_supporter
-                            min = 0
-                        }
-                    }
-                }
+            STG_reduce_eight_supporters = yes
 			custom_effect_tooltip = STG_unlock_grey_issue_2
 		}
     }
@@ -1250,19 +3807,23 @@ focus_tree = {
         icon = 1
         x = 2
         y = 1
-        cost = 5
+        cost = 8
         relative_position_id = STG_grey_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_1 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            STG_decrease_global_unrest = yes
             add_research_slot = 1
-			
 		}
     }
     #《3085年宪章》正式化
@@ -1276,13 +3837,20 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_3 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            add_ideas = STG_constitution
+			hidden_effect = {
+                country_event = {id = STG_grey.13 days = 3}
+            }
 		}
     }
     #战车道纽带
@@ -1291,18 +3859,28 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_grey_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_2 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            army_experience = 50
+			USR = {
+                country_event = {id = STG_grey.14}
+            }
+            ANZ = {
+                country_event = {id = STG_grey.14}
+            }
 		}
     }
     #圣葛罗莉安娜之魂
@@ -1316,13 +3894,29 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_5 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            add_tech_bonus = {
+                bonus = 1.5
+                uses = 2
+                category = armor
+            }
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.80
+                uses = 1
+                category = cat_mobile_warfare
+            }
+            hidden_effect = {
+                country_event = {id = STG_grey.15 days = 3}
+            }
 		}
     }
     #《国立战车道法案》
@@ -1336,23 +3930,59 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_6 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            custom_effect_tooltip = STG_add_four_supporters
-            hidden_effect = {
-                    STG = {
-                        add_to_variable = {STG_supporter = 4}
-                        clamp_temp_variable = {
-                            var = STG_supporter
-                            min = 0
-                        }
-                    }
-                }
+            STG_add_four_supporters = yes
 			custom_effect_tooltip = STG_unlock_grey_issue_4
+		}
+    }
+    #圣葛罗莉安娜战车道学院
+    focus = {
+        id = STG_grey_senshaddo_college
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_issue_4
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_issue_4 }
+        available = {
+            has_country_flag = STG_earl_grey_issue_4_passed
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_darjeeling = {
+                add_attack = 1
+                add_unit_leader_trait = armor_officer
+            }
+            STG_orange_pekoe = {
+                add_attack = 1
+                add_unit_leader_trait = armor_officer
+            }
+            STG_assam = {
+                add_attack = 1
+            }
+            STG_rosehip = {
+                add_attack = 1
+            }
+            hidden_effect = {
+                country_event = {id = STG_grey.16 days = 3}
+            }
 		}
     }
     #王家格雷伯爵工会
@@ -1366,13 +3996,41 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_4 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = industry
+            }
+			random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 1
+				    instant_build = yes
+			    }
+		    }
 		}
     }
     #《工会法案》
@@ -1386,13 +4044,517 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_7 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
 			custom_effect_tooltip = STG_unlock_grey_issue_3
+		}
+    }
+    #借鉴社会主义
+    focus = {
+        id = STG_grey_five_year_plan_1
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_issue_3
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_issue_3 }
+        available = {
+            communism > 0.10
+            has_country_flag = STG_earl_grey_issue_3_passed
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_ideas = STG_fyp_1
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+		}
+    }
+    #成立国有企业
+    focus = {
+        id = STG_grey_five_year_plan_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_1 }
+        available = {
+            communism > 0.15
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+		}
+    }
+    #合理的市场竞争
+    focus = {
+        id = STG_grey_five_year_plan_3
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_2 }
+        available = {
+            communism > 0.20
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_ideas = new_economic_policy
+		}
+    }
+    #促进社会公平
+    focus = {
+        id = STG_grey_five_year_plan_4
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_1 }
+        available = {
+            communism > 0.15
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+            add_stability = -0.10
+            STG_decrease_global_unrest = yes
+            STG_reduce_cam_unrest = yes
+            STG_reduce_usr_unrest = yes
+		}
+    }
+    #捍卫八小时工作制
+    focus = {
+        id = STG_grey_five_year_plan_5
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_4
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_4 }
+        available = {
+            communism > 0.15
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_ideas = STG_labor_law
+            add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+		}
+    }
+    #更多的学校
+    focus = {
+        id = STG_grey_five_year_plan_6
+        icon = 1
+        x = 4
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_1 }
+        available = {
+            communism > 0.10
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_research_slot = 1
+		}
+    }
+    #普及医疗保险
+    focus = {
+        id = STG_grey_five_year_plan_7
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_6
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_6 }
+        available = {
+            communism > 0.15
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = STG_fyp_1
+                add_idea = STG_fyp_2
+            }
+		}
+    }
+    #我们的五年计划
+    focus = {
+        id = STG_grey_five_year_plan_8
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_five_year_plan_5
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_3 }
+        prerequisite = { focus = STG_grey_five_year_plan_5 }
+        prerequisite = { focus = STG_grey_five_year_plan_7 }
+        available = {
+            communism > 0.25
+            has_war = no
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = industry
+            }
+            swap_ideas = {
+                remove_idea = STG_fyp_2
+                add_idea = STG_fyp_3
+            }
+            swap_ideas = {
+                remove_idea = new_economic_policy
+                add_idea = new_economic_policy_2
+            }
+		}
+    }
+    #社会主义的胜利
+    focus = {
+        id = STG_grey_com_1
+        icon = 1
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_grey_five_year_plan_8
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_five_year_plan_8 }
+        allow_branch = {has_country_flag = STG_grey_com_phase2_enabled}
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            NOT = {
+                country_exists = UNG
+            }
+            controls_state = 195
+            controls_state = 218
+            controls_state = 166
+            controls_state = 182
+            controls_state = 255
+            controls_state = 214
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.20
+            add_popularity = {
+                ideology = communism
+                popularity = 0.10
+            }
+            hidden_effect = {
+                set_country_flag = STG_com_par
+            }
+		}
+    }
+    #另类的革命
+    focus = {
+        id = STG_grey_com_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_com_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_com_1 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            has_government = communism
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_ideas = STG_grey_monarchy_socialist_rev
+		}
+    }
+    #崭新的国家
+    focus = {
+        id = STG_grey_com_3
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_com_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_com_2 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            has_government = communism
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = STG_fyp_3
+                add_idea = STG_fyp_4
+            }
+		}
+    }
+    #女皇同志
+    focus = {
+        id = STG_grey_com_4
+        icon = 1
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_grey_com_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_com_2 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            has_government = communism
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_grey = {
+                add_attack = 1
+                add_defense = 1
+                add_logistics = 1
+                add_planning = 1
+            }
+		}
+    }
+    #扩大土地改革
+    focus = {
+        id = STG_grey_com_5
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_com_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_com_2 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            has_government = communism
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+		    }
+		}
+    }
+    #向北输出革命
+    focus = {
+        id = STG_grey_com_6
+        icon = 1
+        x = -1
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_com_4
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_com_3 }
+        prerequisite = { focus = STG_grey_com_4 }
+        will_lead_to_war_with = USR
+        bypass = {
+            NOT = {country_exists = USR}
+        }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            has_government = communism
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            create_wargoal = {
+                target = USR
+                type = annex_everything
+            }
+		}
+    }
+    #幸福的人民
+    focus = {
+        id = STG_grey_com_7
+        icon = 1
+        x = 1
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_com_4
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_com_5 }
+        prerequisite = { focus = STG_grey_com_4 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            has_government = communism
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_can_crush_usr_desc
+            hidden_effect = {
+                set_country_flag = STG_can_crush_usr
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                swap_ideas = {
+                    remove_idea = STG_paradox
+                    add_idea = STG_no_paradox
+                }
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                swap_ideas = {
+                    remove_idea = STG_paradox_2
+                    add_idea = STG_no_paradox
+                }
+            }
+            
 		}
     }
     #女王与执政官
@@ -1406,13 +4568,18 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_1 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			STG_reduce_army_discontent_big = yes
+            #country_event = {}
 		}
     }
     #《王家军队改组法案》
@@ -1426,10 +4593,20 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_8 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_army_discontent_less_than_40_desc
+                trigger = {
+                    STG = { check_variable = {STG_army_discontent < 40 } }
+                }
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			custom_effect_tooltip = STG_unlock_grey_issue_5
@@ -1446,13 +4623,44 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_issue_5 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            NOT = {
+                has_idea = STG_Nervous_Army
+            }
+            OR = {
+                has_completed_focus = STG_mil_14
+                has_completed_focus = STG_mil_22
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			army_experience = 25
+            navy_experience = 25
+            air_experience = 25
+            if = {
+                limit = {
+                    has_idea = STG_Graceful_Army_attack
+                }
+                swap_ideas = {
+                    remove_idea = STG_Graceful_Army_attack 
+                    add_idea = STG_Graceful_Army_attack_grey
+                }
+            }
+            if = {
+                limit = {
+                    has_idea = STG_Graceful_Army_defence
+                }
+                swap_ideas = {
+                    remove_idea = STG_Graceful_Army_defence
+                    add_idea = STG_Graceful_Army_defence_grey
+                }
+            }
 		}
     }
     #格雷盛世
@@ -1468,13 +4676,49 @@ focus_tree = {
         prerequisite = { focus = STG_grey_issue_3 }
         prerequisite = { focus = STG_grey_issue_4 }
         available = {
-            
+            num_of_factories > 39   
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
+        bypass = {
+            NOT = {
+                country_exists = UNG
+            }
+            NOT = {
+                country_exists = MSA
+            }
+        }
+        will_lead_to_war_with = UNG
+        will_lead_to_war_with = MSA
         completion_reward = {
-			
+			add_stability = 0.15
+            add_war_support = 0.15
+            STG_decrease_global_unrest_big = yes
+            if = {
+                limit = {
+                    country_exists = UNG
+                }
+                create_wargoal = {
+                    target = UNG
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = MSA
+                }
+                create_wargoal = {
+                    target = MSA
+                    type = annex_everything
+                }
+            }
+            add_ideas = STG_dar_war_for_ang
 		}
     }
     #红茶皇座
@@ -1488,20 +4732,391 @@ focus_tree = {
         available_if_capitulated = yes
         prerequisite = { focus = STG_grey_10 }
         available = {
-            
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+            NOT = {
+                country_exists = UNG
+            }
+            NOT = {
+                country_exists = MSA
+            }
+            controls_state = 195
+            controls_state = 218
+            controls_state = 166
+            controls_state = 182
+            controls_state = 255
+            controls_state = 214
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            STG_decrease_global_unrest_big = yes
+            custom_effect_tooltip = STG_gain_ung_core_desc
+            custom_effect_tooltip = STG_unlock_a_new_branch_desc
+            hidden_effect = {
+                set_capital = {state = 182}
+                if = {
+                    limit = {
+                        communism > 0.30
+                    }
+                    set_country_leader_description = {
+                        desc = "STG_grey_desc_com"
+                    }
+                    set_cosmetic_tag = STG_grey_empire_communism
+                    set_politics = {
+                        ruling_party = communism
+                    }
+                    set_party_name = {
+                        ideology = communism long_name = STG_communism_party_grey_long name = STG_communism_party_grey
+                    }
+                    set_country_flag = STG_grey_com_phase2_enabled
+                    clr_country_flag = STG_sd_controls_par
+                    set_country_flag = STG_sm_controls_par
+                    promote_character = {
+                        character = STG_grey
+                        ideology = sub_Social_monarchism
+                    }
+                    load_focus_tree = {
+                        tree = STG
+                        keep_completed = yes
+                    }
+                    mark_focus_tree_layout_dirty = yes
+                }
+                else = {
+                    set_cosmetic_tag = STG_grey_empire_democratic
+                    set_country_leader_description = {
+                        desc = "STG_grey_desc_2"
+                    }
+                    set_country_flag = STG_grey_phase2_enabled
+                    load_focus_tree = {
+                        tree = STG
+                        keep_completed = yes
+                    }
+                    mark_focus_tree_layout_dirty = yes
+                }
+                every_state = {
+                    if = {
+                        limit = {
+                            is_core_of = UNG
+                        }
+                        add_core_of = STG
+                    }
+                }
+            }
+		}
+    }
+    #昂格利亚及里森堡的新王
+    focus = {
+        id = STG_grey_phase2_1
+        icon = 1
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_grey_11
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_11 }
+        allow_branch = {has_country_flag = STG_grey_phase2_enabled}
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_grey
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_grey_monarch_2
+            }
+            hidden_effect = {
+                remove_country_leader_trait = TRAIT_STG_grey_monarch
+           }
+		}
+    }
+    #游子归乡
+    focus = {
+        id = STG_grey_phase2_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_grey_phase2_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_1 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_political_power = 100
+		}
+    }
+    #功迈前朝
+    focus = {
+        id = STG_grey_phase2_3
+        icon = 1
+        x = 0
+        y = 2
+        cost = 3
+        relative_position_id = STG_grey_phase2_2
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_2 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.10
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.20
+            }
+		}
+    }
+    #弥合裂隙
+    focus = {
+        id = STG_grey_phase2_4
+        icon = 1
+        x = -3
+        y = 1
+        cost = 2
+        relative_position_id = STG_grey_phase2_1
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_1 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_stability = 0.05
+		}
+    }
+    #知恩图报
+    focus = {
+        id = STG_grey_phase2_5
+        icon = 1
+        x = 1
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_phase2_4
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_4 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_reduce_usr_unrest_big = yes
+            custom_effect_tooltip = STG_can_crush_usr_desc
+            hidden_effect = {
+                set_country_flag = STG_can_crush_usr
+            }
+		}
+    }
+    #一视同仁
+    focus = {
+        id = STG_grey_phase2_6
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_phase2_5
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_5 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            if = {
+                limit = {
+                    has_idea = STG_paradox
+                }
+                remove_ideas = STG_paradox
+            }
+            if = {
+                limit = {
+                    has_idea = STG_paradox_2
+                }
+                remove_ideas = STG_paradox_2
+            }
+		}
+    }
+    #奥术之秘
+    focus = {
+        id = STG_grey_phase2_7
+        icon = 1
+        x = -1
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_phase2_4
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_4 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_decrease_global_unrest = yes
+            swap_ideas = {
+                remove_idea = industrial_priority
+                add_idea = STG_grey_mana
+            }
+		}
+    }
+    #工业之火
+    focus = {
+        id = STG_grey_phase2_8
+        icon = 1
+        x = 0
+        y = 1
+        cost = 10
+        relative_position_id = STG_grey_phase2_7
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_7 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            add_tech_bonus = {
+                bonus = 3.0
+                uses = 1
+                category = industry
+            }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+		}
+    }
+    #元帅国王
+    focus = {
+        id = STG_grey_phase2_9
+        icon = 1
+        x = 0
+        y = 1
+        cost = 2
+        relative_position_id = STG_grey_phase2_6
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_phase2_3 }
+        prerequisite = { focus = STG_grey_phase2_6 }
+        prerequisite = { focus = STG_grey_phase2_8 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            STG_decrease_global_unrest_big = yes
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.75
+                uses = 2
+                category = land_doctrine
+            }
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = STG_grey
+                        ruling_only = yes
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_grey_marshall_king
+            }
 		}
     }
 #大吉岭
     #紧急状态
     focus = {
         id = STG_dar_1
-        icon = 1
+        icon = GFX_focus_generic_military_dictatorship
         x = 15
         y = 1
         cost = 5
@@ -1512,12 +5127,34 @@ focus_tree = {
             has_country_flag = STG_army_takeover
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			custom_effect_tooltip = STG_more_decision_against_cam
+            country_lock_all_division_template = no
+            custom_effect_tooltip = STG_dev_in_progress_desc
+            add_stability = -0.25
+            add_ideas = STG_emergency_law
+			custom_effect_tooltip = STG_more_decision_against_cam_desc
             hidden_effect = {
                 set_country_flag = STG_more_decision_against_cam
+                set_country_flag = STG_disable_the_sword_of_Damocles_decisions
+                set_cosmetic_tag = STG_dar_coup_neutrality
+                set_politics = {
+                    ruling_party = neutrality
+                }
+                set_party_name = {ideology = neutrality long_name = STG_neutrality_party_coup_long name = STG_neutrality_party_coup}
+                promote_character = {
+                    character = STG_darjeeling_3
+                    ideology = sub_National_Conservatism
+                }
+                remove_ideas = STG_darjeeling_3
+                if = {
+                    limit = {
+                        STG = {check_variable = {STG_global_unrest > 50}}
+                    }
+                    STG = {set_variable = {STG_global_unrest = 50}}
+                }
             }
 		}
     }
@@ -1535,10 +5172,21 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            add_popularity = {
+                ideology = democratic
+                popularity = -0.20
+            }
+            add_popularity = {
+                ideology = neutrality
+                popularity = 0.20
+            }
+            hidden_effect = {
+                set_country_flag = STG_disable_parliament_issues_decisions
+            }
 		}
     }
     #战争与和平
@@ -1555,10 +5203,12 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			add_stability = 0.15
+            add_war_support = 0.15
 		}
     }
     #知识与力量
@@ -1575,7 +5225,8 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
             if ={
@@ -1601,10 +5252,29 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			army_experience = 100
+            navy_experience = 100
+            air_experience = 100
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+		    }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 1
+				    instant_build = yes
+			    }
+		    }
 		}
     }
     ##护国公线
@@ -1618,23 +5288,19 @@ focus_tree = {
         relative_position_id = STG_dar_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_2 }
+        mutually_exclusive = {focus = STG_dar_11}
         available = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            set_politics = {
-                ruling_party = neutrality
-            }
-            promote_character = {
-                character = STG_darjeeling_3
-                ideology = sub_National_Conservatism
-            }
-			hidden_effect = {
-                remove_ideas = STG_darjeeling_3
-            }
+            add_stability = 0.05
+            STG_decrease_global_unrest_big = yes
+            STG_reduce_cam_unrest_big = yes
+            STG_reduce_usr_unrest_big = yes
 		}
     }
     
@@ -1652,10 +5318,23 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            if = {
+                limit = {has_idea = STG_Empty_Throne}
+                remove_ideas = STG_Empty_Throne
+            }
+            add_stability = -0.05
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.05
+            }
+			custom_effect_tooltip = STG_become_republic_desc
+            hidden_effect = {
+                set_cosmetic_tag = STG_dar_neutrality
+            }
 		}
     }
     #《共和国防卫法案》
@@ -1672,7 +5351,8 @@ focus_tree = {
             has_completed_focus = STG_dar_8
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
 			custom_effect_tooltip = STG_unlock_dar_issue
@@ -1684,18 +5364,45 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dar_issue_1
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_issue_1 }
         available = {
-            
+            OR = {
+                has_army_manpower > { size > 399999 }
+                has_war_with = UNG
+                has_war_with = MSA
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 1000
 		}
+        cancelable = no
+        bypass = {
+            NOT = {
+                country_exists = UNG
+            }
+            NOT = {
+                country_exists = MSA
+            }
+        }
+        will_lead_to_war_with = UNG
+        will_lead_to_war_with = MSA
         completion_reward = {
-			
+            add_war_support = 0.10
+			STG = {
+                declare_war_on = {
+                    target = UNG
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = MSA
+                    type = annex_everything
+                }
+            }
+            add_ideas = STG_dar_war_for_ang
 		}
     }
     #装点门面
@@ -1712,12 +5419,25 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			custom_effect_tooltip = STG_control_par
+			custom_effect_tooltip = STG_control_par_desc
             hidden_effect = {
-                STG = {add_to_variable = {STG_supporter = 30}}
+                set_party_name = {ideology = neutrality long_name = STG_neutrality_party_protector_long name = STG_neutrality_party_protector}
+                STG = {
+                    set_country_flag = STG_puppet_par
+                    clr_country_flag = STG_disable_parliament_issues_decisions
+                    set_variable = { STG_supporter = 30 } 
+                    set_variable = { STG_seats = 30 } 
+                    set_variable = { STG_supporter_needed = 20 }
+                    clamp_temp_variable = {
+                        var = STG_supporter
+                        max = 30
+                        min = 0
+                    }
+                }
             }
 		}
     }
@@ -1735,10 +5455,15 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			add_ideas = STG_new_country
+            add_popularity = {
+                ideology = democratic
+                popularity = -0.10
+            }
 		}
     }
     #大护国公
@@ -1756,15 +5481,16 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            custom_effect_tooltip = STG_hail_for_dar_desc
             hidden_effect = {
-                retire_character = STG_darjeeling_3
-            }
-            promote_character = {
-                character = STG_darjeeling_1
-                ideology = sub_Authoritarian_Democracy
+                promote_character = {
+                    character = STG_darjeeling_1
+                    ideology = sub_Authoritarian_Democracy
+                }
             }
 		}
     }
@@ -1783,11 +5509,14 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            
-			
+            custom_effect_tooltip = STG_back_to_kingdom_desc
+            hidden_effect = {
+                set_cosmetic_tag = STG_dar2_neutrality
+            }
 		}
     }
     #无君之国
@@ -1804,18 +5533,17 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-            set_politics = {
-                ruling_party = neutrality
-            }
-			promote_character = {
-                character = STG_darjeeling_3
-                ideology = sub_National_Conservatism
-            }
-            hidden_effect = {
-                remove_ideas = STG_darjeeling_3
+            add_stability = 0.15
+            add_ideas = STG_without_a_monarchy
+            if = {
+                limit = {
+                    has_idea = STG_Empty_Throne
+                }
+                remove_ideas = STG_Empty_Throne
             }
 		}
     }
@@ -1833,10 +5561,14 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			add_ideas = STG_rule_of_four
+            hidden_effect = {
+                set_party_name = {ideology = neutrality long_name = STG_neutrality_party_regent_long name = STG_neutrality_party_regent}
+            }
 		}
     }
     #永恒摄政
@@ -1845,7 +5577,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dar_13
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_13 }
@@ -1854,15 +5586,16 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
+            custom_effect_tooltip = STG_dar_rule_forever_desc
 			hidden_effect = {
-                retire_character = STG_darjeeling_3
-            }
-            promote_character = {
-                character = STG_darjeeling_2
-                ideology = sub_enlightened_despotism
+                promote_character = {
+                    character = STG_darjeeling_2
+                    ideology = sub_enlightened_despotism
+                }
             }
 		}
     }
@@ -1872,18 +5605,45 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dar_14
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_14 }
-        available = {
-            
+         available = {
+            OR = {
+                has_army_manpower > { size > 399999 }
+                has_war_with = UNG
+                has_war_with = MSA
+            }
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 1000
 		}
+        bypass = {
+            NOT = {
+                country_exists = UNG
+            }
+            NOT = {
+                country_exists = MSA
+            }
+        }
+        cancelable = no
+        will_lead_to_war_with = UNG
+        will_lead_to_war_with = MSA
         completion_reward = {
-			
+            add_war_support = 0.10
+			STG = {
+                declare_war_on = {
+                    target = UNG
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = MSA
+                    type = annex_everything
+                }
+            }
+            add_ideas = STG_dar_war_for_ang
 		}
     }
     #盎格利亚之主
@@ -1892,38 +5652,113 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dar_war_2
         available_if_capitulated = yes
         prerequisite = { focus = STG_dar_war_2 }
         available = {
-            
+            NOT = {
+                country_exists = UNG
+            }
+            NOT = {
+                country_exists = MSA
+            }
+            controls_state = 195
+            controls_state = 218
+            controls_state = 166
+            controls_state = 182
+            controls_state = 255
+            controls_state = 214
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+            if = {
+                limit = {
+                    OR = {
+                        has_country_leader = {
+                            character = STG_darjeeling_1
+                            ruling_only = yes
+                        }
+                        has_country_leader = {
+                            character = STG_darjeeling_2
+                            ruling_only = yes
+                        }
+                    }
+                }
+                add_country_leader_trait = TRAIT_STG_conqueror_of_ang
+            }
 		}
     }
     #直到永远......
     focus = {
         id = STG_dar_16
         icon = 1
-        x = 0
+        x = -2
         y = 1
         cost = 5
         relative_position_id = STG_dar_15
         available_if_capitulated = yes
-        prerequisite = { focus = STG_dar_15 }
+        prerequisite = { focus = STG_dar_15   focus = STG_dar_10}
         available = {
-            
+            NOT = {
+                country_exists = UNG
+            }
+            NOT = {
+                country_exists = MSA
+            }
+            controls_state = 195
+            controls_state = 218
+            controls_state = 166
+            controls_state = 182
+            controls_state = 255
+            controls_state = 214
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1
+            factor = 100
 		}
         completion_reward = {
-			
+			add_stability = 0.20
+            add_political_power = 100
+            custom_effect_tooltip = STG_unite_ang_desc
+            hidden_effect = {
+                set_capital = {state = 182}
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = STG_darjeeling_2
+                            ruling_only = yes
+                        }
+                    }
+                    set_country_leader_description = {
+                        desc = "STG_darjeeling_2_desc_2"
+                    }
+                    set_cosmetic_tag = STG_dar3_neutrality
+                }
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = STG_darjeeling_1
+                            ruling_only = yes
+                        }
+                    }
+                    set_country_leader_description = {
+                        desc = "STG_darjeeling_1_desc_2"
+                    }
+                    set_cosmetic_tag = STG_dar4_neutrality
+                }
+                every_state = {
+                    if = {
+                        limit = {
+                            is_core_of = UNG
+                        }
+                        add_core_of = STG
+                    }
+                }
+            }
 		}
     }
 #红茶国策
@@ -1942,7 +5777,8 @@ focus_tree = {
             
         }
         ai_will_do = {
-			factor = 1
+			#factor = 1 #暂时禁止ai点
+            factor = 0
 		}
         completion_reward = {
 			
@@ -2152,20 +5988,26 @@ focus_tree = {
         id = STG_dip_1
         icon = 1
         x = 0
-        y = 12
-        cost = 5
-        relative_position_id = STG_starting_1
+        y = 8
+        cost = 3
+        relative_position_id = STG_mil_1
         available_if_capitulated = yes
         prerequisite = {            
         }
         available = {
-            
+            OR = {
+                has_completed_focus = STG_parliament_1
+                has_completed_focus = STG_ilya_1
+                has_completed_focus = STG_grey_1
+                has_completed_focus = STG_dar_1
+            }
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_political_power = 50
+            add_stability = 0.05
 		}
     }
     #两强锁喉
@@ -2174,7 +6016,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dip_1
         available_if_capitulated = yes
         prerequisite = {       
@@ -2186,7 +6028,8 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_war_support = 0.10
+            country_event = {id = STG_dip.1 days = 3}
 		}
     }
     #西方伪王
@@ -2195,7 +6038,7 @@ focus_tree = {
         icon = 1
         x = -2
         y = 1
-        cost = 5
+        cost = 3
         relative_position_id = STG_dip_2
         available_if_capitulated = yes
         prerequisite = {    
@@ -2208,29 +6051,34 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+			country_event = {id = STG_dip.2 days = 3}
 		}
     }
-    #援助莫德雷德
+    #卡美洛之乱
     focus = {
         id = STG_dip_4
         icon = 1
         x = 0
         y = 2
-        cost = 5
+        cost = 3
         relative_position_id = STG_dip_3
         available_if_capitulated = yes
         prerequisite = {    
             focus = STG_dip_3        
         }
         available = {
-            
+            MSA = {has_war_with = UNG}
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			MSA = {
+                country_event = {id = STG_dip.15 days = 5}
+            }
+            UNG = {
+                country_event = {id = STG_dip.14 days = 3}
+            }
 		}
     }
     #寻求支援
@@ -2239,20 +6087,33 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 1
         relative_position_id = STG_dip_2
         available_if_capitulated = yes
         prerequisite = {    
             focus = STG_dip_2        
         }
         available = {
-            
+            OR = {
+                has_war_with = UNG
+                has_war_with = USR
+            }
         }
         ai_will_do = {
-			factor = 1
+			factor = 1000
 		}
         completion_reward = {
-			
+			manpower = 75000
+            add_equipment_to_stockpile = {
+		        type = infantry_equipment_1
+		        amount = 5000
+		        producer = STG
+	        }
+            add_equipment_to_stockpile = {
+		        type = artillery_equipment_1
+		        amount = 300
+		        producer = STG
+	        }
 		}
     }
     #北方睡狮
@@ -2274,7 +6135,8 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_command_power = 50
+            country_event ={id = STG_dip.3 days = 3}
 		}
     }
     #与爱丽诺的盟约
@@ -2290,19 +6152,25 @@ focus_tree = {
             focus = STG_dip_6        
         }
         mutually_exclusive = {
-            focus = STG_dip_9
-        }
-        mutually_exclusive = {
             focus = STG_dip_11
         }
         available = {
-            
+            country_exists = ELN
+        }
+        bypass = {
+            OR = {
+                NOT = {country_exists = ELN}
+                is_in_faction_with = ELN
+                has_war_with = ELN
+            }
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			ELN = {
+                country_event = {id = STG_dip.4 days = 5}
+            }
 		}
     }
     #接触安其奥
@@ -2318,70 +6186,29 @@ focus_tree = {
             focus = STG_dip_7        
         }
         available = {
-            
+            country_exists = ANZ
         }
         ai_will_do = {
 			factor = 1
 		}
+        bypass = {
+            OR = {
+                NOT = {country_exists = ANZ}
+                is_in_faction_with = ANZ
+                has_war_with = ANZ
+            }
+        }
         completion_reward = {
-			
-		}
-    }
-    #自治倡议
-    focus = {
-        id = STG_dip_9
-        icon = 1
-        x = 2
-        y = 1
-        cost = 5
-        relative_position_id = STG_dip_6
-        available_if_capitulated = yes
-        prerequisite = {    
-            focus = STG_dip_6        
-        }
-        mutually_exclusive = {
-            focus = STG_dip_7
-        }
-        mutually_exclusive = {
-            focus = STG_dip_11
-        }
-        available = {
-            
-        }
-        ai_will_do = {
-			factor = 1
-		}
-        completion_reward = {
-			
-		}
-    }
-    #和平与繁荣
-    focus = {
-        id = STG_dip_10
-        icon = 1
-        x = 0
-        y = 1
-        cost = 5
-        relative_position_id = STG_dip_9
-        available_if_capitulated = yes
-        prerequisite = {    
-            focus = STG_dip_9      
-        }
-        available = {
-            
-        }
-        ai_will_do = {
-			factor = 1
-		}
-        completion_reward = {
-			
+			ANZ = {
+                country_event = {id = STG_dip.5 days = 5}
+            }
 		}
     }
     #意外之盟
     focus = {
         id = STG_dip_11
         icon = 1
-        x = 4
+        x = 2
         y = 1
         cost = 5
         relative_position_id = STG_dip_6
@@ -2392,17 +6219,33 @@ focus_tree = {
         mutually_exclusive = {
             focus = STG_dip_7
         }
-        mutually_exclusive = {
-            focus = STG_dip_9
-        }
         available = {
-            
+            USR = {
+                is_in_faction = yes
+            }
+            USR = {
+                has_opinion = {
+                    target = STG
+                    value > 50
+                }
+            }
+            NOT = {
+                has_country_leader = {
+                    character = STG_ilya
+                    ruling_only = yes
+                }
+            }
+        }
+        bypass = {
+            is_in_faction_with = USR
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			USR = {
+                country_event = {id = STG_dip.7 days = 3}
+            }
 		}
     }
     #合作共赢
@@ -2418,13 +6261,34 @@ focus_tree = {
             focus = STG_dip_11
         }
         available = {
-            
+            is_in_faction_with = USR
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_tech_bonus = {
+                bonus = 3.0
+                uses = 1
+                category = armor
+            }
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.80
+                uses = 2
+                category = land_doctrine
+            }
+            USR = {
+                add_tech_bonus = {
+                    bonus = 3.0
+                    uses = 1
+                    category = armor
+                }
+                add_doctrine_cost_reduction = {
+                    cost_reduction = 0.80
+                    uses = 2
+                    category = land_doctrine
+                }
+            }
 		}
     }
     #终将到来之役
@@ -2433,20 +6297,35 @@ focus_tree = {
         icon = 1
         x = -2
         y = 1
-        cost = 5
+        cost = 1
         relative_position_id = STG_dip_3
         available_if_capitulated = yes
         prerequisite = {    
             focus = STG_dip_3
         }
         available = {
-            
+            OR = {
+                threat > 0.30
+                has_war = yes
+            }
+            has_war_support > 0.50
         }
         ai_will_do = {
-			factor = 1
+			factor = 1000
 		}
         completion_reward = {
-			
+            if = {
+                limit = {
+                    NOT = {
+                        has_idea = war_economy
+                    }
+                }
+                add_ideas = war_economy
+            }
+			else = {
+                add_political_power = 100
+                add_command_power = 50
+            }
 		}
     }
     #储备充盈
@@ -2455,7 +6334,7 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_dip_war_1
         available_if_capitulated = yes
         prerequisite = {    
@@ -2468,7 +6347,11 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_equipment_to_stockpile = {
+                type = infantry_equipment_1
+                amount = 10000
+                producer = STG
+            }
 		}
     }
     #多多益善
@@ -2477,20 +6360,37 @@ focus_tree = {
         icon = 1
         x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_dip_war_2
         available_if_capitulated = yes
         prerequisite = {    
             focus = STG_dip_war_2
         }
         available = {
-            
+            has_war_with = UNG
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_equipment_to_stockpile = {
+                type = artillery_equipment_1
+                amount = 1000
+                producer = STG
+            }
+            add_equipment_to_stockpile = {
+                type = support_equipment_1
+                amount = 500
+                producer = STG
+            }
+            random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
 		}
     }
     #恪尽职守
@@ -2512,7 +6412,7 @@ focus_tree = {
 			factor = 1
 		}
         completion_reward = {
-			
+			add_ideas = STG_call_of_duty
 		}
     }
     #鞠躬尽瘁
@@ -2528,13 +6428,633 @@ focus_tree = {
             focus = STG_dip_war_4
         }
         available = {
-            
+            has_war_with = UNG
         }
         ai_will_do = {
 			factor = 1
 		}
         completion_reward = {
-			
+			swap_ideas = {
+                remove_idea = STG_call_of_duty
+                add_idea = STG_call_of_duty_2
+            }
 		}
+    }
+#军事
+    #国防事务
+    focus = {
+        id = STG_mil_1
+        icon = 1
+        x = -42
+        y = 2
+        cost = 1
+        relative_position_id = STG_starting_1
+        available_if_capitulated = yes
+        prerequisite = {    
+        }
+        available = {
+            OR = {
+                has_completed_focus = STG_parliament_1
+                has_completed_focus = STG_ilya_1
+                has_completed_focus = STG_grey_1
+                has_completed_focus = STG_dar_1
+            }
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			army_experience = 15
+            navy_experience = 15
+            air_experience = 15
+		}
+    }
+    #转动齿轮
+    focus = {
+        id = STG_mil_2
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_1
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_1
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			random_owned_controlled_state = {
+			    add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
+		}
+    }
+    #破敌之矛
+    focus = {
+        id = STG_mil_3
+        icon = 1
+        x = -4
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_2
+        }
+        available = {
+        }
+        mutually_exclusive = {
+            focus = STG_mil_15
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = infantry_weapons
+            }
+            add_equipment_to_stockpile = {
+		        type = infantry_equipment_1
+		        amount = 4000
+		        producer = STG
+	        }
+		}
+    }
+    #战车道之国
+    focus = {
+        id = STG_mil_4
+        icon = 1
+        x = 0
+        y = 2
+        cost = 5
+        relative_position_id = STG_mil_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_2
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_equipment_to_stockpile = {
+		        type = medium_tank_chassis_0
+                variant_name = "“布尔”式巡洋坦克"
+		        amount = 150
+		        producer = STG
+	        }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"St. Gloriana Tank Division\" division_template = \"St. Gloriana Tank Division\" start_experience_factor = 0.25"
+                    owner = STG
+                }
+            }
+		}
+    }
+    #秉持优雅
+    focus = {
+        id = STG_mil_5
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_4
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_4
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = land_doctrine
+            }
+		}
+    }
+    #克敌制胜
+    focus = {
+        id = STG_mil_6
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_5
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_5
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            army_experience = 50
+            set_technology = { blackshirt_assault_battalion_tech = 1 }
+		}
+    }
+    #机动火力
+    focus = {
+        id = STG_mil_7
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_3
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_3
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_ideas = STG_advanced_artillery
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 1
+                category = artillery
+            }
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 1
+                category = motorized_equipment
+            }
+            add_equipment_to_stockpile = {
+		        type = artillery_equipment_1
+		        amount = 200
+		        producer = STG
+	        }
+		}
+    }
+    #冲破防线
+    focus = {
+        id = STG_mil_8
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_7
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_7
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = cat_mobile_warfare
+            }
+		}
+    }
+    #舰炮轰鸣
+    focus = {
+        id = STG_mil_9
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_3
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_3
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = bb_tech
+            }
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = cat_fleet_in_being
+            }
+		}
+    }
+    #航母之梦
+    focus = {
+        id = STG_mil_10
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_9
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_9
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_equipment_production = {
+		        equipment = {
+			        type = ship_hull_carrier_1
+			        creator = "STG" 
+			        version_name = "圣葛罗莉安娜"
+		        }
+		        name = "SGN 圣葛罗莉安娜"
+		        requested_factories = 1
+		        progress = 0.75
+		        amount = 1
+	        }
+		}
+    }
+    #掌握天空
+    focus = {
+        id = STG_mil_11
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_3
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_3
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = light_air
+            }
+		}
+    }
+    #战略打击
+    focus = {
+        id = STG_mil_12
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_11
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_11
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 1
+                category = heavy_air
+            }
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = strategic_destruction_tree
+            }
+		}
+    }
+    #拔出宝剑
+    focus = {
+        id = STG_mil_14
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_8
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_8 focus = STG_mil_10 focus = STG_mil_12
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = STG_Graceful_Army
+                add_idea = STG_Graceful_Army_attack
+            }
+		}
+    }
+    #国家之盾
+    focus = {
+        id = STG_mil_15
+        icon = 1
+        x = 4
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_2
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_2
+        }
+        mutually_exclusive = {
+            focus = STG_mil_3
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = engineers_tech
+            }
+            add_equipment_to_stockpile = {
+		        type = support_equipment_1
+		        amount = 300
+		        producer = STG
+	        }
+		}
+    }
+    #坦克的噩梦
+    focus = {
+        id = STG_mil_16
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_15
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_15
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = cat_anti_tank
+            }
+            add_equipment_to_stockpile = {
+		        type = anti_tank_equipment
+		        amount = 250
+		        producer = STG
+	        }
+		}
+    }
+    #不破的防线
+    focus = {
+        id = STG_mil_17
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_16
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_16
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            set_technology = {
+                long_range_patrol_support = 1
+            }
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = cat_grand_battle_plan
+            }
+		}
+    }
+    #缄默猎手
+    focus = {
+        id = STG_mil_18
+        icon = 1
+        x = -2
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_15
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_15
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_equipment_production = {
+		        equipment = {
+			        type = ship_hull_submarine_1
+			        creator = "STG" 
+			        version_name = "O/P/R Class"
+		        }
+		        name = "SGN Submarine"
+		        requested_factories = 1
+		        progress = 0.70
+		        amount = 5
+	        }
+            add_equipment_production = {
+		        equipment = {
+			        type = ship_hull_submarine_1
+			        creator = "STG" 
+			        version_name = "O/P/R Class"
+		        }
+		        name = "SGN Submarine"
+		        requested_factories = 1
+		        progress = 0.70
+		        amount = 5
+	        }
+        }
+    }
+    #航线袭扰
+    focus = {
+        id = STG_mil_19
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_18
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_18
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = cat_trade_interdiction
+            }
+        }
+    }
+    #捍卫天空
+    focus = {
+        id = STG_mil_20
+        icon = 1
+        x = 2
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_15
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_15
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = cat_anti_air
+            }
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 1
+                category = light_air
+            }
+            every_state = {
+                limit = {
+                    is_owned_and_controlled_by = STG
+                }
+                add_building_construction = {
+			        type = anti_air_building
+			        level = 1
+			        instant_build = yes
+		        }
+            }
+        }
+    }
+    #保存实力
+    focus = {
+        id = STG_mil_21
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_20
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_20
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 2
+                category = cat_operational_integrity
+            }
+        }
+    }
+    #竖起盾牌
+    focus = {
+        id = STG_mil_22
+        icon = 1
+        x = 0
+        y = 1
+        cost = 5
+        relative_position_id = STG_mil_17
+        available_if_capitulated = yes
+        prerequisite = {    
+            focus = STG_mil_17 focus = STG_mil_19 focus = STG_mil_21
+        }
+        available = {
+        }
+        ai_will_do = {
+			factor = 1
+		}
+        completion_reward = {
+            swap_ideas = {
+                remove_idea = STG_Graceful_Army
+                add_idea = STG_Graceful_Army_defence
+            }
+        }
     }
 }

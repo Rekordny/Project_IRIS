@@ -26,7 +26,7 @@ DOC_Emergency_decision_category = {
 		}
 
 		ai_will_do = {
-			factor = 1
+			factor = 100
 			modifier = {
 				
 			}
@@ -158,16 +158,477 @@ DOC_Emergency_decision_category = {
 		remove_effect = {
 
 		}
-
 	}
-
+	#加强部队战斗意志
+	DOC_TO_OCE_morale = {
+		cost = 30
+		fire_only_once = no
+		days_re_enable = 40
+		ai_will_do = {
+				factor = 300
+				modifier = {}
+				}
+		available = {
+			check_variable = { DOC_morale < 40 }
+		}
+		remove_trigger = { NOT = { has_war_with = OCE } }
+		remove_effect = {
+			##计算诗旎公国
+			add_to_variable = { DOC_morale = 15 }
+		}
+		force_opdate_dynamic_modifier = YES
+	}
+	#是否控制洛姆
+	DOC_TO_Lom = {
+        fire_only_once = no
+		days_re_enable = 0
+        activation = {
+            AND = {
+                has_war_with = OCE
+             }
+        }
+		remove_trigger = { NOT = { has_war_with = OCE } }
+        available = {NOT = { OCE = { controls_state = 69  } } }
+        is_good = NO
+		days_mission_timeout = 10
+		timeout_effect = {
+			##计算诗旎公国
+			add_to_variable = { DOC_morale = -7 }
+			##刷新奥西娅意志
+			#set_variable = { OCE_morale_DOC = 0 } 
+			#add_to_variable = { OCE_morale_DOC = OCE_morale }
+			}
+			complete_effect = {
+			add_to_variable = { DOC_morale = 2 }
+		}
+		force_opdate_dynamic_modifier = YES
+	}
+	#是否控制南斯拉
+	DOC_TO_yugoslavia = {
+        fire_only_once = no
+		days_re_enable = 0
+        activation = {
+            AND = {
+                has_war_with = OCE
+             }
+        }
+		remove_trigger = { NOT = { has_war_with = OCE } }
+        available = { NOT = { OCE = { controls_state = 114  } } }
+        is_good = NO
+		days_mission_timeout = 10
+		timeout_effect = {
+			##计算诗旎公国
+			add_to_variable = { DOC_morale = -7 }
+			}
+			complete_effect = {
+			add_to_variable = { DOC_morale = 2 }
+		}
+		force_opdate_dynamic_modifier = YES
+	}
+	#是否控制北斯拉
+	DOC_TO_North_Slavic = {
+        fire_only_once = no
+		days_re_enable = 0
+		remove_trigger = { NOT = { has_war_with = OCE } }
+        activation = {
+            AND = {
+                has_war_with = OCE
+             }
+        }
+        available = { NOT = { OCE = { controls_state = 86  } } }
+        is_good = NO
+		days_mission_timeout = 10
+		timeout_effect = {
+			##计算诗旎公国
+			add_to_variable = { DOC_morale = -15 }
+			##刷新奥西娅意志
+			#set_variable = { OCE_morale_DOC = 0 } 
+			#add_to_variable = { OCE_morale_DOC = OCE_morale }
+			}
+		complete_effect = {
+			add_to_variable = { DOC_morale = 2 }
+		}
+		force_opdate_dynamic_modifier = YES
+	}
+	#是否控制东斯拉
+	DOC_TO_East_Slavic = {
+        fire_only_once = no
+		days_re_enable = 0
+		remove_trigger = { NOT = { has_war_with = OCE } }
+        activation = {
+            AND = {
+                has_war_with = OCE
+             }
+        }
+        available = { NOT = { OCE = { controls_state = 85  } } }
+        is_good = NO
+		days_mission_timeout = 10
+		timeout_effect = {
+			##计算诗旎公国
+			add_to_variable = { DOC_morale = -7 }
+			##刷新奥西娅意志
+			#set_variable = { OCE_morale_DOC = 0 } 
+			#add_to_variable = { OCE_morale_DOC = OCE_morale }
+			}
+		complete_effect = {
+			add_to_variable = { DOC_morale = 2 }
+		}
+		force_opdate_dynamic_modifier = YES
+	}
+	#我们将会胜利
+	DOC_We_will_win = {
+        fire_only_once = no
+		days_re_enable = 0
+		available = { NOT = { has_war_with = OCE } }
+        activation = {
+			has_completed_focus = DOC_NF_A04_Before_the_counteroffensive
+            has_war_with = OCE
+        }
+        is_good = yes
+		days_mission_timeout = 10
+		timeout_effect = {
+			##计算诗旎公国
+			add_to_variable = { DOC_morale = 10 }
+			##刷新奥西娅意志
+			#set_variable = { OCE_morale_DOC = 0 } 
+			#add_to_variable = { OCE_morale_DOC = OCE_morale }
+			}
+		force_opdate_dynamic_modifier = YES
+	}
+	#刷新部队战斗意志（新）
+	DOC_Will_to_War = {
+        fire_only_once = no
+		days_re_enable = 0
+		remove_trigger = { NOT = { has_war_with = OCE } }
+        activation = {
+            AND = {
+                has_war_with = OCE
+             }
+        }
+        available = { NOT = { has_war_with = OCE } }
+        is_good = NO
+		days_mission_timeout = 12
+		timeout_effect = {
+			if = {
+    		limit = {
+				AND = {check_variable = { DOC_morale<-20 }}
+    		}
+				if = {
+					limit = {has_idea = DOC_Will_to_War_2}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_2
+					add_idea = DOC_Will_to_War_1	
+					}
+				}
+    			else_if = {
+					limit = {has_idea = DOC_Will_to_War_3}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_3
+					add_idea = DOC_Will_to_War_1	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_4}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_4
+					add_idea = DOC_Will_to_War_1	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_5}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_5
+					add_idea = DOC_Will_to_War_1	
+					}
+				}
+		}else_if = {
+    		limit = {
+				AND = {check_variable = { var = DOC_morale value = -20 compare = greater_than_or_equals}check_variable = { DOC_morale<0 }}
+    		}
+    			if = {
+					limit = {has_idea = DOC_Will_to_War_1}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_1
+					add_idea = DOC_Will_to_War_2
+					}
+				}
+    			else_if = {
+					limit = {has_idea = DOC_Will_to_War_3}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_3
+					add_idea = DOC_Will_to_War_2	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_4}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_4
+					add_idea = DOC_Will_to_War_2	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_5}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_5
+					add_idea = DOC_Will_to_War_2	
+					}
+				}
+		}
+		else_if = {
+    		limit = {
+				AND = {check_variable = { var = DOC_morale value = 0 compare = greater_than_or_equals}check_variable = { DOC_morale<35 }}
+    		}
+    			if = {
+					limit = {has_idea = DOC_Will_to_War_1}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_1
+					add_idea = DOC_Will_to_War_3
+					}
+				}
+    			else_if = {
+					limit = {has_idea = DOC_Will_to_War_2}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_2
+					add_idea = DOC_Will_to_War_3
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_4}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_4
+					add_idea = DOC_Will_to_War_3	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_5}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_5
+					add_idea = DOC_Will_to_War_3	
+					}
+				}
+		}
+		else_if = {
+    		limit = {
+				AND = {check_variable = { var = DOC_morale value = 35 compare = greater_than_or_equals}check_variable = { DOC_morale<60 }}
+    		}
+    			if = {
+					limit = {has_idea = DOC_Will_to_War_1}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_1
+					add_idea = DOC_Will_to_War_4	
+					}
+				}
+    			else_if = {
+					limit = {has_idea = DOC_Will_to_War_2}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_2
+					add_idea = DOC_Will_to_War_4	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_3}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_3
+					add_idea = DOC_Will_to_War_4	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_5}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_5
+					add_idea = DOC_Will_to_War_4	
+					}
+				}
+		}
+		else_if = {
+    		limit = {
+				AND = {check_variable = { var = DOC_morale value = 60 compare = greater_than_or_equals}}
+    		}
+    			if = {
+					limit = {has_idea = DOC_Will_to_War_1}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_1
+					add_idea = DOC_Will_to_War_5	
+					}
+				}
+    			else_if = {
+					limit = {has_idea = DOC_Will_to_War_2}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_2
+					add_idea = DOC_Will_to_War_5	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_3}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_3
+					add_idea = DOC_Will_to_War_5	
+					}
+				}
+				else_if = {
+					limit = {has_idea = DOC_Will_to_War_4}
+					swap_ideas = {
+					remove_idea = DOC_Will_to_War_4
+					add_idea = DOC_Will_to_War_5	
+					}
+				}
+		}
+		}
+		force_opdate_dynamic_modifier = YES
+	}
+	#刷新部队战斗意志（数据）
+	#DOC_TO_OCE_morale_new = {
+	#	cost = 0
+	#	fire_only_once = no
+	#	days_re_enable = 0
+	#	ai_will_do = {
+	#		factor = 1
+	#		modifier = {	
+	#		}
+	#	}
+	#	remove_trigger = { NOT = { has_war_with = OCE } }
+	#	remove_effect = {
+	#		##计算诗旎公国
+	#		add_to_variable = { DOC_morale = 0 }
+	#		##刷新奥西娅意志
+	#		#set_variable = { OCE_morale_DOC = 0 } 
+	#		#add_to_variable = { OCE_morale_DOC = OCE_morale }
+	#	}
+	#	force_opdate_dynamic_modifier = YES
+	#}
+	#DOC_TO_OCE_morale2 = {
+	#	cost = 0
+	#	remove_effect = {
+	#		add_to_variable = { DOC_morale = -1000 }
+    #        set_variable = { DOC_stability_factorN = DOC_stability_factor } 
+	#       set_variable = { DOC_war_support_factorN = DOC_war_support_factor } 
+    #        set_variable = { DOC_land_reinforce_rateN = DOC_land_reinforce_rate } 
+    #        set_variable = { DOC_army_attack_factorN = DOC_army_attack_factor } 
+    #        set_variable = { DOC_army_defence_factorN = DOC_army_defence_factor }
+    #        set_variable = { DOC_army_morale_factorN = DOC_army_morale_factor } 
+    #        set_variable = { DOC_army_org_factorN = DOC_army_org_factor } 
+	#
+    #       multiply_variable = { DOC_stability_factorN = DOC_morale }
+    #       multiply_variable = { DOC_war_support_factorN = DOC_morale }
+    #       multiply_variable = { DOC_land_reinforce_rateN = DOC_morale }
+    #       multiply_variable = { DOC_army_attack_factorN = DOC_morale }
+    #       multiply_variable = { DOC_army_defence_factorN = DOC_morale }
+    #       multiply_variable = { DOC_army_morale_factorN = DOC_morale }
+    #       multiply_variable = { DOC_army_org_factorN = DOC_morale }
+	#	}
+	#	force_opdate_dynamic_modifier = YES
+	#}
 }
 
 
 
 #经济治理
 DOC_Economy_decision_category = {
+	DOC_Remake_the_Tax_Act_D_C = {
 
+		cost = 0
+		fire_only_once = yes
+		#days_re_enable = 
+		visible = {
+		}
+		available = {
+			has_completed_focus = DOC_NF_A13_Remake_the_Tax_Act
+		}
+		
+		days_remove = 7
+
+		modifier  = {
+	    stability_weekly = 0.1
+		}
+		
+		complete_effect = {
+		}
+
+
+		remove_effect = {
+			add_political_power = 50	
+		}
+
+	}
+
+
+	DOC_Promote_social_welfare_D_C = {
+
+		cost = 0
+		fire_only_once = yes
+		#days_re_enable = 
+		visible = {
+		}
+		available = {
+			has_completed_focus = DOC_NF_A13_1_Promote_social_welfare
+		}
+		
+		days_remove = 14
+
+		modifier  = {
+			political_power_cost = 3
+		}
+		
+		complete_effect = {
+		}
+
+
+		remove_effect = {
+			add_stability = 0.1	
+			add_ideas = DOC_Welfare_System
+			set_country_flag = DOC_Promote_social_welfare
+		}
+
+	}
+
+
+
+	DOC_Industrial_restructuring_D_C = {
+
+		cost = 10
+		fire_only_once = yes
+		#days_re_enable = 
+		visible = {
+		}
+		available = {
+			has_completed_focus = DOC_NF_A13_3_Industrial_restructuring
+		}
+		
+		days_remove = 100
+
+		modifier  = {
+			political_power_cost = 1
+			production_speed_infrastructure_factor = 0.66
+			production_speed_arms_factory_factor = 0.66
+			production_speed_industrial_complex_factor = 0.66
+		}
+		
+		complete_effect = {
+			hidden_effect = {
+				country_event = { id = DOC.7 days = 30 }
+			}
+		}
+
+
+		remove_effect = {
+			random_controlled_state = {
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+				}
+			set_country_flag = DOC_Promote_social_welfare
+			}
+		}
+
+	}
 
 }
 	
@@ -289,7 +750,7 @@ DOC_Kitt_Harbour_Naval_School_decision_category = {
 		visible = {
 		}
 		available = {
-			has_political_power > 150
+			has_political_power > 200
 			has_idea = DOC_Torpedo_fleet 
 			has_navy_size = { type = screen_ship size > 0 
 		}
@@ -308,7 +769,136 @@ DOC_Kitt_Harbour_Naval_School_decision_category = {
 		}
 
 	}
+
+		#大口径主炮射击训练
+		DOC_Large_Caliber_Main_Gun_Training_D_C = {
+
+			cost = 150
+			fire_only_once = yes
+			visible = {
+			}
+			available = {
+				has_political_power > 150
+				has_idea = DOC_Torpedo_fleet 
+				has_navy_size = { type = capital_ship size > 0 
+			}
+		}
+			days_remove = 30
+	
+			modifier  = {
+			}
+			
+			complete_effect = {
+			}
+	
+			remove_effect = {
+				add_ideas = { DOC_Large_Caliber_Main_Gun_Training }
+			}
+	
+		}
+
+
+		#大型船只整备训练
+		DOC_Large_Ship_Preparation_Training_D_C = {
+
+			cost = 150
+			fire_only_once = yes
+			visible = {
+			}
+			available = {
+				has_political_power > 150
+				has_idea = DOC_Torpedo_fleet 
+				has_navy_size = { type = capital_ship size > 0 
+			}
+		}
+			days_remove = 30
+	
+			modifier  = {
+			}
+			
+			complete_effect = {
+			}
+	
+			remove_effect = {
+				add_ideas = { DOC_Large_Ship_Preparation_Training }
+			}
+	
+		}
 }
+
+ #反制§P“法典”§!组织的措施(BOP)
+DOC_Scripture_Organization_Penetration_decision_cat = {
+	#彻查§P“法典”§!组织
+	DOC_Investigate_the_Scripture_organization = {
+		visible = {
+			has_completed_focus =  DOC_NF_A21_1_Thorough_Investigate_the_Scripture_organization
+		}
+		available = {
+			has_completed_focus =  DOC_NF_A21_1_Thorough_Investigate_the_Scripture_organization
+		}
+		fire_only_once = yes
+		complete_effect = {
+			add_power_balance_value = {
+				id = DOC_Scripture_Organization_Penetration 
+				value = 0.2
+			}
+		}
+	}
+
+	#放缓调查脚步
+	DOC_Slow_Down_the_Investigation= {
+		visible = {
+			has_completed_focus =  DOC_NF_A21_1_Thorough_Investigate_the_Scripture_organization
+		}
+		available = {
+			has_completed_focus =  DOC_NF_A21_1_Thorough_Investigate_the_Scripture_organization
+		}
+		fire_only_once = no
+		cost = 100
+		days_remove = 7
+		complete_effect = {
+			add_power_balance_value = {
+				id = DOC_Scripture_Organization_Penetration 
+				value = -0.05
+			}
+		}
+	}
+
+	DOC_test_0 = {
+		visible = {
+			is_debug = yes
+		}
+		available = {
+			is_debug = yes
+		}
+		fire_only_once = no
+		complete_effect = {
+			add_power_balance_value = {
+				id = DOC_Scripture_Organization_Penetration 
+				value = -1
+			}
+		}
+	}
+
+	DOC_test_1 = {
+		visible = {
+			is_debug = yes
+		}
+		available = {
+			is_debug = yes
+		}
+		fire_only_once = no
+		complete_effect = {
+			add_power_balance_value = {
+				id = DOC_Scripture_Organization_Penetration 
+				value = 1
+			}
+		}
+	}
+
+
+}
+
 
 
 
