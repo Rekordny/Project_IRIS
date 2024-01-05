@@ -1,0 +1,455 @@
+focus_tree = {
+    id = DOC_state_of_emergency
+    country = {
+        base = 0
+        modifier = {
+            add = 0
+            tag = DOC
+        }
+    }
+    continuous_focus_position = { x = 1200 y = 200 } #持续性国策位置
+    focus = { #重启加尼温堡会议
+
+	id = DOC_NF_A21_Restart_the_Meeting_in_Garniwinburg
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	x = 5
+	y = 0
+	ai_will_do = { factor = 50 }
+    available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		has_global_flag = OCE_DOC_WAR_OVER
+	}
+	mutually_exclusive = {
+        add_ideas = DOC_plan_of_operation
+		}
+	
+	completion_reward = {
+		add_to_variable = { DOC_morale = 10 }
+		hidden_effect = {
+			country_event = { id = DOC.10 days = 2 }
+		}
+		custom_effect_tooltip = DOC_NF_A21_Restart_the_Meeting_in_Garniwinburg.TXT
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+    # focus = { #制定作战计划
+	# id = DOC_NF_00_plan_of_operation
+	# icon = DOC_NF_00_plan_of_operation
+	# cost = 3
+	# x = 5
+	# y = 0
+	# ai_will_do = { factor = 100 }
+	# completion_reward = {
+	# 	add_ideas = DOC_plan_of_operation
+	# }
+    # available={  
+    #     NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	# }
+    # bypass = {
+	# 	has_global_flag = OCE_DOC_WAR_OVER
+	# }
+	# search_filters = { FOCUS_FILTER_POLITICAL }
+    # }
+
+    focus = { #整顿骑士团
+	id = DOC_NF_A02_Rectify_Knights
+	icon = GFX_DOC_NF_A02_Rectify_Knights
+	cost = 2
+	x = 3
+	y = 1
+    available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		has_global_flag = OCE_DOC_WAR_OVER
+	}
+	ai_will_do = { factor = 100 }
+	prerequisite = {
+		focus = DOC_NF_A21_Restart_the_Meeting_in_Garniwinburg 
+	}
+	completion_reward = {
+		add_command_power = 80
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #紧急征召！
+	id = DOC_NF_A03_Emergency_Recruitment
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	x = 1
+	y = 2
+	ai_will_do = { factor = 100 }
+	prerequisite = {
+		focus = DOC_NF_A02_Rectify_Knights
+	}
+	available={  
+		86 = { is_controlled_by = DOC }
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		OR = { 
+			NOT = {86 = { is_controlled_by = DOC }}
+			has_global_flag = OCE_DOC_WAR_OVER
+		}
+	}
+	completion_reward = {
+		add_to_variable = { DOC_morale = 5 }
+		custom_effect_tooltip = DOC_NF_A03_Emergency_Recruitment.TXT
+		hidden_effect = {
+		division_template = {
+			name = "Schnee_Mountaineer_Recruitment_Division"
+			regiments = {
+				mountaineers = { x = 0 y = 0 }
+				mountaineers = { x = 0 y = 1 }
+				mountaineers = { x = 0 y = 2 }
+				mountaineers = { x = 1 y = 0 }
+				mountaineers = { x = 1 y = 1 }
+				mountaineers = { x = 1 y = 2 }
+				mountaineers = { x = 2 y = 0 }
+				mountaineers = { x = 2 y = 1 }
+				mountaineers = { x = 2 y = 2 }
+			}
+			support = {
+				engineer = { x = 0 y = 0 }
+				recon = { x = 0 y = 1 }
+			}
+		}
+	 }
+		86 = {
+			limit = {
+			is_owned_and_controlled_by =   DOC }
+			transfer_state_to = DOC
+
+			create_unit = {
+				division = "name = \"Schnee_Mountaineer_Recruitment_Division\" division_template = \"Schnee_Mountaineer_Recruitment_Division\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+				owner = DOC
+			}
+
+			create_unit = {
+				division = "name = \"Schnee_Mountaineer_Recruitment_Division\" division_template = \"Schnee_Mountaineer_Recruitment_Division\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+				owner = DOC
+			}
+		}
+		  
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #稳固防线！
+	id = DOC_NF_A03_1_Strengthen_Defense
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	x = 3
+	y = 2
+	ai_will_do = { factor = 100 }
+	prerequisite = {
+		focus = DOC_NF_A02_Rectify_Knights 
+	}
+	available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		OR = {
+			AND = {
+				NOT = {
+					85 = { is_controlled_by = DOC }
+					114 = { is_controlled_by = DOC }
+					74 = { is_controlled_by = DOC }
+					69 = { is_controlled_by = DOC }
+				}
+			}
+			has_global_flag = OCE_DOC_WAR_OVER
+		}
+	}
+	completion_reward = {
+			limit = {
+				is_controlled_by = DOC
+			}
+		114 = { add_building_construction = 
+		{
+			type = bunker
+			level = 1
+			instant_build = yes 
+			province = 7360
+		}
+		}
+		86 = { add_building_construction = 
+		{
+			type = bunker
+			level = 1
+			instant_build = yes 
+			province = 5798 
+		}
+		}
+		86 = { add_building_construction = 
+		{
+			type = bunker
+			level = 1
+			instant_build = yes 
+			province = 9894
+		}
+		}
+		86 = { add_building_construction = 
+		{
+			type = bunker
+			level = 1
+			instant_build = yes 
+			province = 8143
+			
+		}
+		}
+		74 = { add_building_construction = 
+		{
+			type = bunker
+			level = 1
+			instant_build = yes 
+			province = 7638
+		}
+		}
+		69 = { add_building_construction = 
+		{
+			type = bunker
+			level = 1
+			instant_build = yes 
+			province = 7976
+		}
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+
+     }
+
+focus = { #修筑海岸防线
+	id = DOC_NF_00_Coastal_defense_line
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	x = 5
+	y = 1
+	ai_will_do = { factor = 100 }
+	prerequisite = {
+		focus = DOC_NF_A21_Restart_the_Meeting_in_Garniwinburg 
+	}
+	available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		OR = {
+			AND = {
+				NOT = {
+					114 = { is_controlled_by = DOC }
+					69 = { is_controlled_by = DOC }
+				}
+			}
+			has_global_flag = OCE_DOC_WAR_OVER
+		}
+	}
+	completion_reward = {
+			limit = {
+				is_controlled_by = DOC
+			}
+		69 = { add_building_construction = 
+		{
+			type = coastal_bunker
+			level = 1
+			instant_build = yes 
+			province = 409
+		}
+		}
+		114 = { add_building_construction = 
+		{
+			type = coastal_bunker
+			level = 1
+			instant_build = yes 
+			province = 10200 
+		    }
+	    }
+     }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+}
+
+focus = { #号召群众抵抗
+	id = DOC_NF_00_Mass_resistance
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	x = 7
+	y = 2
+	ai_will_do = { factor = 100 }
+	prerequisite = {
+		focus = DOC_NF_A11_Relief_to_the_People 
+	}
+    available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+        check_variable = { DOC_morale > 19 }
+	}
+    bypass = {
+		OR = {
+			AND = {
+				NOT = {
+					85 = { is_controlled_by = OCE }
+				}
+			}
+			has_global_flag = OCE_DOC_WAR_OVER
+		}
+	}
+	completion_reward = {
+		custom_effect_tooltip = DOC_NF_00_Mass_resistance.TXT
+			limit = {
+				is_controlled_by = DOC
+			}
+		85 = {add_resistance = 75 add_manpower = -31293}
+        DOC = { add_manpower = 29808 }
+        add_to_variable = { DOC_morale = 5 }
+     }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+}
+    focus = { #开放救济
+
+	id = DOC_NF_A11_Relief_to_the_People
+	icon = GFX_DOC_NF_A11_Relief_to_the_People
+	cost = 2
+	x = 7
+	y = 1
+	ai_will_do = { factor = 50 }
+	prerequisite = {focus = DOC_NF_A21_Restart_the_Meeting_in_Garniwinburg}
+	available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		has_global_flag = OCE_DOC_WAR_OVER
+	}
+	completion_reward = {
+		add_ideas = DOC_Relief_to_the_People
+		limit = {
+				is_controlled_by = DOC
+			}
+        add_political_power = 50
+        add_to_variable = { DOC_morale = 15 }
+		custom_effect_tooltip = DOC_NF_A11_Relief_to_the_People.TXT
+		hidden_effect = {
+			country_event = { id = DOC.4 days = 15 }
+		}
+    }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+    # focus = { #我们必胜！
+	# id = DOC_NF_00_be_sure_of_victory
+	# icon = GFX_goal_generic_demand_territory
+	# cost = 1
+	# x = 7
+	# y = 2
+	# ai_will_do = { factor = 100 }
+	# prerequisite = {
+	# 	focus = DOC_NF_00_Mass_resistance 
+	# }
+	# available={  
+    #     NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+    #     check_variable = { DOC_morale > 30 }
+	# }
+    # bypass = {
+	# 	has_global_flag = OCE_DOC_WAR_OVER
+	# }
+	# completion_reward = {
+	# 		limit = {
+	# 			is_controlled_by = DOC
+	# 		}
+    #     add_political_power = 50
+    #     add_to_variable = { DOC_morale = 20 }
+    #     set_variable = { DOC_stability_factorN = DOC_stability_factor } 
+    #     set_variable = { DOC_war_support_factorN = DOC_war_support_factor } 
+    #     set_variable = { DOC_land_reinforce_rateN = DOC_war_support_factor } 
+    #     set_variable = { DOC_army_attack_factorN = DOC_war_support_factor } 
+    #     set_variable = { DOC_army_defence_factorN = DOC_war_support_factor } 
+    #     set_variable = { DOC_army_morale_factorN = DOC_war_support_factor } 
+    #     set_variable = { DOC_army_org_factorN = DOC_war_support_factor } 
+
+    #     multiply_variable = { DOC_stability_factorN = DOC_morale }
+    #     multiply_variable = { DOC_war_support_factorN = DOC_morale }
+    #     multiply_variable = { DOC_land_reinforce_rateN = DOC_morale }
+    #     multiply_variable = { DOC_army_attack_factorN = DOC_morale }
+    #     multiply_variable = { DOC_army_defence_factorN = DOC_morale }
+    #     multiply_variable = { DOC_army_morale_factorN = DOC_morale }
+    #     multiply_variable = { DOC_army_org_factorN = DOC_morale }
+    #  }
+	# search_filters = { FOCUS_FILTER_POLITICAL }
+    # }
+    focus = { #民兵
+	id = DOC_NF_00_militia
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	x = 9
+	y = 2
+	ai_will_do = { factor = 100 }
+	prerequisite = {
+		focus = DOC_NF_A11_Relief_to_the_People
+	}
+	available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+        check_variable = { DOC_morale > 39 }
+	}
+    bypass = {
+		has_global_flag = OCE_DOC_WAR_OVER
+	}
+	completion_reward = {
+        add_equipment_to_stockpile = {
+		type = infantry_equipment
+		amount = 100
+		producer = DOC
+	    }
+		add_equipment_to_stockpile = {
+		type = support_equipment
+		amount = 1000
+		producer = DOC
+	    }
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #反攻前夜
+	id = DOC_NF_A04_Before_the_counteroffensive
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	x = 5
+	y = 3
+    available={  
+        NOT = { has_global_flag = OCE_DOC_WAR_OVER }
+	}
+    bypass = {
+		has_global_flag = OCE_DOC_WAR_OVER
+	}
+	ai_will_do = { factor = 100 }
+	prerequisite = {focus =  DOC_NF_A03_Emergency_Recruitment}
+    prerequisite = {focus = DOC_NF_A03_1_Strengthen_Defense}
+    prerequisite = {focus = DOC_NF_00_Coastal_defense_line}
+	prerequisite = {focus = DOC_NF_00_Mass_resistance focus = DOC_NF_00_militia}
+	completion_reward = {
+        add_to_variable = { DOC_morale = 20 }
+		custom_effect_tooltip = DOC_NF_A04_Before_the_counteroffensive.TXT
+		add_ideas = DOC_Counterattack_Horn
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+	focus = { #战争结束
+	id = DOC_NF_A04_war_is_over
+	icon = GFX_goal_generic_demand_territory
+	cost = 0.3
+	x = 5
+	y = 4
+    available={  
+        has_global_flag = OCE_DOC_WAR_OVER
+	}
+    bypass = {
+		
+	}
+	ai_will_do = { factor = 100 }
+	prerequisite = {focus =  DOC_NF_A04_Before_the_counteroffensive}
+	completion_reward = {
+        load_focus_tree = DOC_general
+		custom_effect_tooltip = DOC_NF_A04_war_is_over.TXT
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+}

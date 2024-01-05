@@ -5,7 +5,11 @@ focus_tree = {
 		modifier = {
 			add = 50
 			tag = ANZ
-			has_completed_focus = ANZ_detonate_the_bomb_in_advance
+			OR = {
+				has_completed_focus = ANZ_detonate_the_bomb_in_advance
+				has_completed_focus = ANZ_demanarization
+			}
+			
 		}
 	}
 	default = no
@@ -24,8 +28,19 @@ focus_tree = {
 		available = {
 			has_civil_war = no
 		}
+		select_effect = {
+			#触发黑帮问题
+			country_event = { id = anz.9 days = 7 random_days = 30 }
+		}
 		completion_reward = {
-			add_stability = 0.15
+			add_stability = 0.1
+			set_capital = {
+				state = 237
+			}
+			add_victory_points = {
+				province = 1719
+				value = 35
+			}
 			custom_effect_tooltip = ANZ_tooltip20
 			hidden_effect = {
 				for_loop_effect = {
@@ -40,10 +55,329 @@ focus_tree = {
 							level = 1
 						}
 					}
-					
 				}
 			}
 			
 		}
 	}
+
+	#领袖至上
+	focus = {
+		id = ANZ_duce_first
+		icon = GFX_focus_ANZ_duce_first
+		# mutually_exclusive = { focus = ANZ_santa_sede_and_its_children }
+		x = 0
+		y = 1
+		relative_position_id = ANZ_recover_from_civil_war
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		prerequisite = {
+			focus = ANZ_recover_from_civil_war
+		}
+		completion_reward = {
+			ANZ_Anchovy = {
+				add_trait = {
+					trait = ANZ_duce_first
+				}
+			}
+			hidden_effect = {
+			}
+		}
+	}
+
+	#南部移民政策
+	focus = {
+		id = ANZ_southern_immigration_policy
+		icon = GFX_focus_ANZ_southern_immigration_policy
+		mutually_exclusive = { focus = ANZ_adhere_maritime_economy }
+		x = -1
+		y = 1
+		relative_position_id = ANZ_duce_first
+		prerequisite = {
+			focus = ANZ_duce_first
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			if = {
+				limit = { is_ai = no }
+				has_equipment = {
+					train_equipment > 149
+				}
+				all_core_state = {
+					rail_way > 2
+				}
+			}
+		}
+		
+		completion_reward = {
+			if = {
+				limit = { has_idea = ANZ_imbalance_development }
+				remove_ideas = ANZ_imbalance_development
+			}
+			if = {
+				limit = { has_idea = ANZ_imbalance_development_1 }
+				remove_ideas = ANZ_imbalance_development_1
+			}
+			if = {
+				limit = { has_idea = ANZ_imbalance_development_2 }
+				remove_ideas = ANZ_imbalance_development_2
+			}
+			hidden_effect = {
+			}
+		}
+	}
+
+	#坚持海事经济
+	focus = {
+		id = ANZ_adhere_maritime_economy
+		icon = GFX_focus_ANZ_adhere_maritime_economy
+		mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = 1
+		y = 1
+		relative_position_id = ANZ_duce_first
+		prerequisite = {
+			focus = ANZ_duce_first
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			if = {
+				limit = { has_idea = ANZ_imbalance_development }
+				swap_ideas = {
+					remove_idea = ANZ_imbalance_development
+					add_idea = ANZ_adhere_maritime_economy
+				}
+			}
+			if = {
+				limit = { has_idea = ANZ_imbalance_development_1 }
+				swap_ideas = {
+					remove_idea = ANZ_imbalance_development_1
+					add_idea = ANZ_adhere_maritime_economy
+				}
+			}
+			if = {
+				limit = { has_idea = ANZ_imbalance_development_2 }
+				swap_ideas = {
+					remove_idea = ANZ_imbalance_development_2
+					add_idea = ANZ_adhere_maritime_economy
+				}
+			}
+			hidden_effect = {
+			}
+		}
+	}
+
+
+	#船舶订单管理处
+	focus = {
+		id = ANZ_ship_order_management_office
+		icon = GFX_focus_ANZ_ship_order_management_office
+		#mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = 1
+		y = 1
+		relative_position_id = ANZ_adhere_maritime_economy
+		prerequisite = {
+			focus = ANZ_adhere_maritime_economy
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			#增加卖船决议，如果卖的够多可以上viceLeader
+			custom_effect_tooltip = ANZ_tooltip14
+			custom_effect_tooltip = ANZ_tooltip25
+			hidden_effect = {
+				ANZ_retire_vice_country_leader = yes
+				add_ideas = ANZ_another_leader_ContediCavour
+			}
+		}
+	}
+
+	#经济转型
+	focus = {
+		id = ANZ_economic_transformation
+		icon = GFX_focus_ANZ_economic_transformation
+		#mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = -1
+		y = 1
+		relative_position_id = ANZ_southern_immigration_policy
+		prerequisite = {
+			focus = ANZ_southern_immigration_policy
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			#增加工厂
+			#给阿德丽安娜增加trait
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+				}
+			}
+			random_owned_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+				}
+			}
+			add_advisor_role = {
+				character = ANZ_Fernandia
+				advisor = {
+					slot = political_advisor
+					idea_token = ANZ_Fernandia
+					traits = { industry_magnate }
+				}
+			}
+			hidden_effect = {
+			}
+		}
+	}
+
+	#重整军队
+	focus = {
+		id = ANZ_rebuild_army
+		icon = GFX_focus_ANZ_rebuild_army
+		#mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = 7
+		y = 1
+		relative_position_id = ANZ_duce_first
+		prerequisite = {
+			focus = ANZ_duce_first
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			army_experience = 30
+			add_doctrine_cost_reduction = {
+				uses = 2
+				category = land_doctrine
+				cost_reduction = 0.75
+			}
+			hidden_effect = {
+			}
+		}
+	}
+
+	#战车道政治忠诚
+	focus = {
+		id = ANZ_political_loyal
+		icon = GFX_focus_ANZ_political_loyal
+		#mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = -7
+		y = 1
+		relative_position_id = ANZ_duce_first
+		prerequisite = {
+			focus = ANZ_duce_first
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			#解锁决议建立战车道学院
+			#可以在全国省份加modifier
+			#每次建立都将增加dynamic总modifier效果
+			unlock_decision_tooltip = ANZ_establish_senshado_school
+			unlock_decision_tooltip = ANZ_nationalized_senshado
+			hidden_effect = {
+			}
+		}
+	}
+
+	#整合边境
+	focus = {
+		id = ANZ_intergrate_borders
+		icon = GFX_focus_ANZ_intergrate_borders
+		#mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = -1
+		y = 1
+		relative_position_id = ANZ_political_loyal
+		prerequisite = {
+			focus = ANZ_political_loyal
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			#向埃尔施塔特与苏瓦尔发送最后通牒
+			EYS = {
+				country_event = anz.11
+			}
+			SWA = {
+				country_event = anz.11
+			}
+			hidden_effect = {
+			}
+		}
+	}
+
+	#黑帮问题
+	focus = {
+		id = ANZ_maffia_issue
+		icon = GFX_focus_ANZ_maffia_issue
+		#mutually_exclusive = { focus = ANZ_southern_immigration_policy }
+		x = 1
+		y = 1
+		relative_position_id = ANZ_political_loyal
+		prerequisite = {
+			focus = ANZ_political_loyal
+		}
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = { }
+		
+		completion_reward = {
+			#可以开始着手解决黑帮问题用决议
+			remove_ideas = ANZ_maffia_issue
+			hidden_effect = {
+			}
+		}
+	}
+
+	#
 }
