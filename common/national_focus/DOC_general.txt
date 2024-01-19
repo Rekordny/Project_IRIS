@@ -12,29 +12,98 @@ focus_tree = {
 
 	continuous_focus_position = { x = 2400 y = 1200 } #持续性国策位置
 
-    focus = { #重建秩序
-		id = DOC_NF_A01_Restore_order #国策id
-		icon = GFX_DOC_NF_A01_Restore_order  #在.gfx文件里的图片名
-		cost = 1
-		x = 14
-		y = 0
-		ai_will_do = { factor = 100 } #ai点国策的倾向，数字越高几率越大，上限为100
-		available = {
-			# 国策可点的条件
-			custom_trigger_tooltip = {
-				tooltip = DOC_NF_A01_Restore_order_tip
+    
+	focus = { #战后重建
+    available={  
+	}
+	id = DOC_NF_00_Post_war_reconstruction
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	x = 14
+	y = 0
+	ai_will_do = { factor = 100 }
+	completion_reward = {
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 0
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = infrastructure
+										size > 0
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 2
+			}
+			random_owned_controlled_state = {
+				limit = {
+					free_building_slots = {
+						building = infrastructure
+						size > 1
+					}
+					OR = {
+						is_in_home_area = yes
+						NOT = {
+							owner = {
+								any_owned_state = {
+									free_building_slots = {
+										building = infrastructure
+										size > 1
+									}
+									is_in_home_area = yes
+								}
+							}
+						}
+					}
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 2
+					instant_build = yes
+				}
+				add_extra_state_shared_building_slots = 1
 			}
 		}
-		mutually_exclusive = {
-			focus = DOC_NF_B01_Break_Reaffirmation_of_the_System_of_Primogeniture
-		}
-		bypass = {
-			# 跳过国策的条件
-		}
-		completion_reward = {
-			add_ideas = DOC_Restore_order
-	    }
-		search_filters = { FOCUS_FILTER_POLITICAL }
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #彻查“法典”组织
+
+	id = DOC_NF_A21_1_Thorough_Investigate_the_Scripture_organization
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	x = 14
+	y = 1
+	ai_will_do = { factor = 100 }
+	prerequisite = {focus = DOC_NF_00_Post_war_reconstruction}
+	mutually_exclusive = {	}
+	
+	completion_reward = {
+		add_power_balance_modifier = {
+			id = DOC_Scripture_Organization_Penetration
+			modifier = DOC_Scripture_Organization_Penetration_weekly
+		}  
+	}
+	bypass = {
+		has_country_flag = DOC_No_Initiative_in_Conflict 
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
     }
 
     focus = { #我们从这场战争中学到了什么？
@@ -48,7 +117,7 @@ focus_tree = {
 			NOT = {has_war_with = OCE}
 			# 国策可点的条件
 		}
-		prerequisite = { focus = DOC_NF_A01_Restore_order }
+		prerequisite = { focus = DOC_NF_00_Post_war_reconstruction }
 		bypass = {
 			# 跳过国策的条件
 		}
@@ -78,9 +147,13 @@ focus_tree = {
 	x = 20
 	y = 1
 	ai_will_do = { factor = 50 }
-	prerequisite = {focus = DOC_NF_A01_Restore_order}
+	prerequisite = {focus = DOC_NF_00_Post_war_reconstruction}
+	available = {
+		has_completed_focus = DOC_NF_A21_1_Thorough_Investigate_the_Scripture_organization
+	}
 	completion_reward = {
 		add_political_power = 50
+		custom_effect_tooltip = DOC_NF_A12_Investigate_the_State_of_Economy.TXT
 		set_country_flag = DOC_Investigate_the_State_of_Economy
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
@@ -134,7 +207,6 @@ focus_tree = {
 		86 = {
 			limit = {
 			is_owned_and_controlled_by =   DOC }
-			transfer_state_to = DOC
 
 			create_unit = {
 				division = "name = \"Schnee Modernized Division\" division_template = \"Schnee Modernized Division\" start_experience_factor = 0.6 start_equipment_factor = 1 "
@@ -161,9 +233,9 @@ focus_tree = {
 	prerequisite = {focus = DOC_NF_A06_Build_Modernized_Army}
 	completion_reward = {
 		Army_experience = 50
-
-		country_event = { id = DOC.2  days = 7  }
-
+		hidden_effect = {
+			country_event = { id = DOC.2  days = 7  }
+		}
 		swap_ideas = {
 			remove_idea = DOC_modern_military_1
 			add_idea = DOC_modern_military_2			
@@ -199,7 +271,7 @@ focus_tree = {
 
 	id = DOC_NF_radio
 	icon = GFX_goal_generic_demand_territory
-	cost = 7
+	cost = 3
 	x = 15
 	y = 4
 	ai_will_do = { factor = 100 }
@@ -218,7 +290,7 @@ focus_tree = {
 
 	id = DOC_NF_mechanize
 	icon = GFX_goal_generic_demand_territory
-	cost = 10
+	cost = 7
 	x = 16
 	y = 5
 	ai_will_do = { factor = 100 }
@@ -230,6 +302,40 @@ focus_tree = {
 		uses = 3
 		category = armor
 		}
+		division_template = {
+			name = "诗旎装甲部队"
+			regiments = {
+				medium_armor = { x = 0 y = 0 }
+				medium_armor = { x = 0 y = 1 }
+				medium_armor = { x = 0 y = 2 }
+				medium_armor = { x = 0 y = 3 }
+				motorized = { x = 1 y = 0 }
+				motorized = { x = 1 y = 1 }
+				motorized = { x = 2 y = 2 }
+				motorized = { x = 2 y = 3 }
+			    }
+
+				support = {
+					engineer = { x = 0 y = 0 }
+					recon = { x = 0 y = 1 }
+					signal_company ={ x =0 y =2}
+				}
+				#	infantry = 步兵营 cavalry = 骑兵营 motorized = 摩托化 artillery_brigade = 炮兵营
+		}
+		60 = {
+			limit = {
+			is_owned_and_controlled_by =   DOC }
+
+			create_unit = {
+				division = "name = \"诗旎装甲实验部队1师\" division_template = \"诗旎装甲部队\" start_experience_factor = 0.9 start_equipment_factor = 1 "
+				owner = DOC
+			}
+
+			create_unit = {
+				division = "name = \"诗旎装甲实验部队2师\" division_template = \"诗旎装甲部队\" start_experience_factor = 0.8 start_equipment_factor = 1 "
+				owner = DOC
+			}
+		}
 	}	
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -238,7 +344,7 @@ focus_tree = {
 
 	id = DOC_NF_supply
 	icon = GFX_goal_generic_demand_territory
-	cost = 7
+	cost = 3
 	x = 13
 	y = 6
 	ai_will_do = { factor = 100 }
@@ -311,7 +417,7 @@ focus_tree = {
 
 	id = DOC_NF_Advanced_artillery
 	icon = GFX_goal_generic_demand_territory
-	cost = 7
+	cost = 3
 	x = 15
 	y = 6
 	ai_will_do = { factor = 100 }
@@ -373,16 +479,16 @@ focus_tree = {
 
 	id = DOC_NF_Army_02_1_Invite_ELN_military_advisers
 	icon = GFX_goal_generic_demand_territory
-	cost = 5
+	cost = 1
 	x = 13
 	y = 4
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_Army_01_lasGebirge_Military_Academy}
 	available = {
-		NOT = {has_war_with = UNG}
+		NOT = {has_war_with = ELN}
 	}
 	bypass = {
-		has_war_with = UNG
+		has_war_with = ELN
 	}
 	completion_reward = {
 		army_experience = 20
@@ -442,34 +548,378 @@ focus_tree = {
 		# 跳过国策的条件
 	}
 	completion_reward = {
-
+		#custom_effect_tooltip = DOC_NF_A06_Improving_Knight_Order_system.TXT
 		country_lock_all_division_template = no
 		
 		division_template = {
-			name = "Magic main force"
+			name = "诗旎玛纳部队"
 			regiments = {
 				Arcane_Battle_Camp = { x = 0 y = 0 }
 				Arcane_Battle_Camp = { x = 0 y = 1 }
 				Arcane_Battle_Camp = { x = 0 y = 2 }
 				Arcane_Battle_Camp = { x = 0 y = 3 }
 				Arcane_Battle_Camp = { x = 1 y = 0 }
-				Arcane_Battle_Camp = { x = 1 y = 1 }
-				Arcane_Battle_Camp = { x = 1 y = 2 }
-				Arcane_Battle_Camp = { x = 1 y = 3 }
 				Magic_Breakthrough_Camp = { x = 2 y = 0 }
 				Magic_Breakthrough_Camp = { x = 2 y = 1 }
-				Magic_Breakthrough_Camp = { x = 2 y = 2 }
-				Magic_Breakthrough_Camp = { x = 2 y = 3 }
-				Heavy_Magic_Guide_Battle_Battalion = { x = 3 y = 0 }
 			    }
 				support = {
 					field_hospital = { x = 0 y = 0 }
 					logistics_company = { x = 0 y = 1 }
 				}
 			}
+			60 = {
+			limit = {
+			is_owned_and_controlled_by =   DOC }
+
+			create_unit = {
+				division = "name = \"诗旎玛纳实验部队1师\" division_template = \"诗旎玛纳部队\" start_experience_factor = 0.9 start_equipment_factor = 1 "
+				owner = DOC
+			}
+
+			create_unit = {
+				division = "name = \"诗旎玛纳实验部队2师\" division_template = \"诗旎玛纳部队\" start_experience_factor = 0.8 start_equipment_factor = 1 "
+				owner = DOC
+			}
+		}
+		add_ideas = DOC_Order_1
 		}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
+
+	focus = { #建立骑士团驻地
+	id = DOC_Establishing_Knight_Order_base #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 4
+	y = 3
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_NF_A06_Improving_Knight_Order_system }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		swap_ideas = {
+			remove_idea = DOC_Order_1
+			add_idea = DOC_Order_2			
+			}
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #职能分化改革
+	id = DOC_Functional_differentiation_reform #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 3
+	y = 4
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Establishing_Knight_Order_base }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+			division_template = {
+			name = "蓝蔷薇骑士团非玛纳分团"
+			regiments = {
+				infantry = { x = 0 y = 0 }
+				infantry = { x = 0 y = 1 }
+				infantry = { x = 0 y = 2 }
+				infantry = { x = 1 y = 0 }
+				infantry = { x = 1 y = 1 }
+				infantry = { x = 1 y = 2 }
+				infantry = { x = 2 y = 0 }
+				infantry = { x = 2 y = 1 }
+				infantry = { x = 2 y = 2 }
+				artillery_brigade = { x = 3 y = 0 }
+				artillery_brigade = { x = 3 y = 1 }
+			    }
+				support = {
+					field_hospital = { x = 0 y = 0 }
+					logistics_company = { x = 0 y = 1 }
+				}
+			}
+			86 = {
+			limit = {
+			is_owned_and_controlled_by =   DOC }
+			create_unit = {
+				division = "name = \"蓝蔷薇骑士团非玛纳分团\" division_template = \"蓝蔷薇骑士团非玛纳1团\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = DOC
+			}
+			create_unit = {
+				division = "name = \"蓝蔷薇骑士团非玛纳分团\" division_template = \"蓝蔷薇骑士团非玛纳2团\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = DOC
+			}
+			create_unit = {
+				division = "name = \"蓝蔷薇骑士团非玛纳分团\" division_template = \"蓝蔷薇骑士团非玛纳3团\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = DOC
+			}
+			create_unit = {
+				division = "name = \"蓝蔷薇骑士团非玛纳分团\" division_template = \"蓝蔷薇骑士团非玛纳4团\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = DOC
+			}
+			create_unit = {
+				division = "name = \"蓝蔷薇骑士团非玛纳分团\" division_template = \"蓝蔷薇骑士团非玛纳5团\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = DOC
+			}
+			create_unit = {
+				division = "name = \"蓝蔷薇骑士团非玛纳分团\" division_template = \"蓝蔷薇骑士团非玛纳6团\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = DOC
+			}
+		}
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #邀请玛纳术士
+	id = DOC_Inviting_Mana_Warlock #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 5
+	y = 4
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Establishing_Knight_Order_base }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		add_ideas = DOC_Mana_weapon_production
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #扩大训练规模
+	id = DOC_Expand_training_scale #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 2
+	y = 6
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Functional_differentiation_reform }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		army_experience = 15
+		if = {
+    		limit = {
+        		has_idea = DOC_Order_2
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_2
+				add_idea = DOC_Order_3	
+			}
+		}
+		else_if = {
+    		limit = {
+        		has_idea = DOC_Order_3
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_3
+				add_idea = DOC_Order_4
+			}
+		}
+		else_if = {
+			limit = {
+        		has_idea = DOC_Order_4
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_4
+				add_idea = DOC_Order_5
+			}
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #骑士团准军事化
+	id = DOC_Paramilitarization_Knights_Order #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 10
+	x = 2
+	y = 5
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	completion_reward = {
+		army_experience = 50
+		every_state = {
+			limit = {		
+					is_owned_by = DOC
+				}
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = arms_factory
+				level = 1
+				instant_build = yes 
+			}
+		}
+		add_doctrine_cost_reduction = {
+		cost_reduction = 0.75
+		uses = 2
+		category = land_doctrine
+		}
+		if = {
+    		limit = {
+        		has_idea = DOC_Order_2
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_2
+				add_idea = DOC_Order_3	
+			}
+		}
+		else_if = {
+    		limit = {
+        		has_idea = DOC_Order_3
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_3
+				add_idea = DOC_Order_4
+			}
+		}
+		else_if = {
+			limit = {
+        		has_idea = DOC_Order_4
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_4
+				add_idea = DOC_Order_5
+			}
+		}
+	}	
+	prerequisite = { focus = DOC_Functional_differentiation_reform }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #贝恩格玛纳术士协会
+	id = DOC_Baingemana_Warlock_Association #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 4
+	y = 5
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Functional_differentiation_reform focus = DOC_Inviting_Mana_Warlock }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		if = {
+    		limit = {
+        		has_idea = DOC_Order_2
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_2
+				add_idea = DOC_Order_3	
+			}
+		}
+		else_if = {
+    		limit = {
+        		has_idea = DOC_Order_3
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_3
+				add_idea = DOC_Order_4
+			}
+		}
+		else_if = {
+			limit = {
+        		has_idea = DOC_Order_4
+    		}
+    			swap_ideas = {
+				remove_idea = DOC_Order_4
+				add_idea = DOC_Order_5
+			}
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #地脉培育计划
+	id = DOC_Ground_vein_cultivation_plan #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 4
+	y = 6
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Baingemana_Warlock_Association }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		every_state = {
+			limit = {		
+					is_owned_by = DOC
+				}
+			add_resource = {
+				type = raw_mana
+				amount = 10
+			}
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #玛纳术协同作战
+	id = DOC_Mana_Technique_Collaborative_Operations #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 6
+	y = 5
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Inviting_Mana_Warlock }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		add_ideas = DOC_Mana_Technique_Collaborative_Operations_ideas
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #革新玛纳导具
+	id = DOC_Innovate_Mana_Guide #国策id
+	icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+	cost = 5
+	x = 6
+	y = 6
+	ai_will_do = { factor = 0 } #ai点国策的倾向，数字越高几率越大，上限为100
+	available = {
+
+	}
+	prerequisite = { focus = DOC_Inviting_Mana_Warlock }
+	bypass = {
+		# 跳过国策的条件
+	}
+	completion_reward = {
+		add_ideas = DOC_Innovate_Mana_Guide_ideas
+		}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
     #海军
 
     focus = { #关于制海权的讨论
@@ -556,7 +1006,9 @@ focus_tree = {
 	prerequisite = {focus = DOC_NF_Naval_02_Sea_Supremacy}
 	completion_reward = {
 		navy_experience = 80
-		country_event = { id = DOC.5  days = 1  }
+		hidden_effect = {
+			country_event = { id = DOC.5  days = 1  }
+		}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
 
@@ -645,7 +1097,7 @@ focus_tree = {
 	completion_reward = {
 		navy_experience = 80
 	hidden_effect = {
-		country_event = {id= doc.8 days = 7}
+		country_event = {id= DOC.8 days = 7}
 	}
         
 	}
@@ -682,8 +1134,7 @@ focus_tree = {
 	x = 9
 	y = 7
 	ai_will_do = { factor = 100 }
-	prerequisite = {focus = DOC_NF_Naval_04_1_Sent_Naval_Officers_to_Camelot_for_Visit }
-	prerequisite = { focus = DOC_NF_Naval_04_Kitt_Harbour_Naval_School}
+	prerequisite = {focus = DOC_NF_Naval_04_1_Sent_Naval_Officers_to_Camelot_for_Visit focus = DOC_NF_Naval_04_Kitt_Harbour_Naval_School }
 	completion_reward = {
 		navy_experience = 100
         add_tech_bonus = {
@@ -710,10 +1161,11 @@ focus_tree = {
 	id = DOC_NF_Naval_06_PLAN_SCH_I
 	icon = GFX_goal_generic_demand_territory
 	cost = 10
-	x = 11
+	x = 10
 	y = 8
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_Naval_05_Expansion_of_Naval_Production}
+	prerequisite = {focus = DOC_NF_Naval_05_1_Advanced_Naval_Combat_Concept }
 	completion_reward = {
 		add_offsite_building = { type = dockyard level = 6 }
 
@@ -933,10 +1385,10 @@ focus_tree = {
 	id = DOC_NF_Naval_07_PLAN_SCH_II
 	icon = GFX_goal_generic_demand_territory
 	cost = 10
-	x = 11
+	x = 10
 	y = 9
 	ai_will_do = { factor = 100 }
-	prerequisite = {focus = DOC_NF_Naval_06_PLAN_SCH_I}
+	prerequisite = {focus = DOC_NF_Naval_06_PLAN_SCH_I }
 	completion_reward = {
 
 		create_equipment_variant = {
@@ -1385,13 +1837,14 @@ focus_tree = {
 
 	id = DOC_NF_Naval_EX01_Codename_Pheromerinue
 	icon = GFX_goal_generic_demand_territory
-	cost = 25
-	x = 9
-	y = 8
+	cost = 15
+	x = 8
+	y = 10
 	ai_will_do = { factor = 100 }
-	prerequisite = {focus = DOC_NF_Naval_05_1_Advanced_Naval_Combat_Concept }
+	prerequisite = {focus = DOC_NF_Naval_07_PLAN_SCH_II }
 	
 	completion_reward = {
+		custom_effect_tooltip = DOC_NF_Naval_EX01_Codename_Pheromerinue.TXT
 		hidden_effect = {
 			country_event = { id = DOC.3  days = 1  }
 			
@@ -1553,6 +2006,7 @@ focus_tree = {
 	prerequisite = {focus = DOC_NF_A12_Investigate_the_State_of_Economy}
 	completion_reward = {
 		#解锁重置税务法案的决议
+		custom_effect_tooltip = DOC_NF_A13_Remake_the_Tax_Act.TXT
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -1568,7 +2022,7 @@ focus_tree = {
 	prerequisite = {focus = DOC_NF_A12_Investigate_the_State_of_Economy}
 	completion_reward = {
 		#解锁推行社会福利的决议
-
+		custom_effect_tooltip = DOC_NF_A13_1_Promote_social_welfare.TXT
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
 
@@ -1587,7 +2041,7 @@ focus_tree = {
 	ai_will_do = { factor = 50 }
 	prerequisite = {focus = DOC_NF_A12_Investigate_the_State_of_Economy}
 	completion_reward = {
-
+		custom_effect_tooltip = DOC_NF_A13_3_Industrial_restructuring.TXT
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -1655,7 +2109,7 @@ focus_tree = {
 
 	id = DOC_NF_A_LAST_The_Now_Is_Here_The_Future_Is_the_Future
 	icon = GFX_goal_generic_demand_territory
-	cost = 10
+	cost = 7
 	x = 20
 	y = 6
 	ai_will_do = { factor = 50 }
@@ -1663,7 +2117,6 @@ focus_tree = {
 	                focus = DOC_NF_A16_1_Run_Neck_and_Neck_for_Brilliance}
 	available = {
 		has_war = no
-		has_country_flag = DOC_Operation_Burning_Scripture
         NOT = { has_idea = DOC_Undercurrents_of_Politics } 
 		# 国策可点的条件
 	}
@@ -1681,10 +2134,17 @@ focus_tree = {
 	icon = GFX_goal_generic_demand_territory
 	cost = 5
 	x = 21
-	y = 7
+	y = 9
+	bypass = {
+		DOC = {
+			owns_state = 75
+			owns_state = 70
+			owns_state = 61
+			owns_state = 58
+		}
+	}
 	ai_will_do = { factor = 100 }
-	prerequisite = {focus = DOC_NF_A_LAST_The_Now_Is_Here_The_Future_Is_the_Future
-     }
+	prerequisite = {focus = DOC_NF_F_P01_The_Mana_Circle_in_Garniwinburg}
 	                
 	completion_reward = {
 		PLD = {
@@ -1703,19 +2163,22 @@ focus_tree = {
 	icon = GFX_goal_generic_demand_territory
 	cost = 2
 	x = 21
-	y = 8
+	y = 10
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = DOC_NF_F_W01_Revisiting_the_Wallachian_Question
      }
-	                
+	bypass = {
+		DOC = {
+			owns_state = 75
+			owns_state = 70
+			owns_state = 61
+			owns_state = 58
+		}
+	}
 	completion_reward = {
 		PLD = {
 			country_event = DOC.101
 		}	
-	    58={add_core_of = DOC}
-		61={add_core_of = DOC}
-		70={add_core_of = DOC}
-		75={add_core_of = DOC}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
 
@@ -1727,30 +2190,53 @@ focus_tree = {
 	id = DOC_NF_F_W03_Revisiting_Disputed_Territories
 	icon = GFX_goal_generic_demand_territory
 	cost = 2
-	x = 21
-	y = 9
+	x = 19
+	y = 10
 	ai_will_do = { factor = 100 }
-	prerequisite = {focus =  DOC_NF_F_W02_Ultimatum_to_the_Wallachian_Authorities
+	prerequisite = {focus =  DOC_NF_F_P01_The_Mana_Circle_in_Garniwinburg
      }
-	 available = {
-		NOT = {has_war_with = PLD}
-		controls_state = 58 
-		controls_state = 61 
-		controls_state = 70
-		controls_state = 75
-		# 国策可点的条件
+	available = {
+		NOT = { country_exists = PLD }
 	}              
 	completion_reward = {
-		PLP = {
+		if = {
+    		limit = {
+        		OR = {
+					PLP = {
+						owns_state = 51
+					}
+					PLP = {
+						owns_state = 39
+					}
+				}
+    		}
+    		PLP = {
 			country_event = DOC.201
+			}
 		}	
-		URU= {
+		if = {
+    		limit = {
+        		OR = {
+					URU = {
+						owns_state = 105
+					}
+					URU = {
+						owns_state = 97
+					}
+				}
+    		}
+    		URU = {
 			country_event = DOC.201
+			}
 		}	
-	    39={add_core_of = DOC}
-		51={add_core_of = DOC}
-		105={add_core_of = DOC}
-		97={add_core_of = DOC}
+	}
+	bypass = {
+		DOC = {
+			owns_state = 105
+			owns_state = 97
+			owns_state = 39
+			owns_state = 51
+		}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -1760,13 +2246,30 @@ focus_tree = {
     id = DOC_NF_F_P01_The_Mana_Circle_in_Garniwinburg
     icon = GFX_goal_generic_demand_territory
     cost = 2
-    x = 18
-    y = 7
+    x = 20
+    y = 8
+	available = {
+		OR = {
+			AND = {
+				has_completed_focus = DOC_Expand_training_scale
+				has_completed_focus = DOC_Ground_vein_cultivation_plan
+				has_completed_focus = DOC_Innovate_Mana_Guide
+			}
+			has_completed_focus = DOC_NF_Modern_military
+		}
+		has_completed_focus = DOC_NF_NA2_Vulture_in_Blue_Sky
+		OR = {
+			has_completed_focus = DOC_NF_Naval_08_1_PLAN_SCH_Urgent
+			has_completed_focus = DOC_NF_Naval_EX01_Codename_Pheromerinue
+			has_completed_focus = DOC_NF_Naval_08_PLAN_SCH_III
+		}
+	}
+	
     ai_will_do = { factor = 100 }
-    prerequisite = {focus = DOC_NF_A_LAST_The_Now_Is_Here_The_Future_Is_the_Future
-        }
+    prerequisite = {focus = DOC_NF_A_LAST_The_Now_Is_Here_The_Future_Is_the_Future}
 				
     completion_reward = {
+	custom_effect_tooltip = DOC_NF_F_P01_The_Mana_Circle_in_Garniwinburg.TXT
     DOC = {country_event = DOC.9 }
     }
     search_filters = { FOCUS_FILTER_POLITICAL }

@@ -79,6 +79,13 @@ STG_internal_ememy = {
         ai_will_do = {
 			#factor = 1
 			factor = 100
+
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
     }
     #监视卡美洛派
@@ -106,6 +113,12 @@ STG_internal_ememy = {
         }
         ai_will_do = {
 			factor = 1
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
     }
     #拉拢温和卡美洛派
@@ -376,6 +389,13 @@ STG_internal_ememy = {
         ai_will_do = {
 			#factor = 1
 			factor = 100
+
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
     }
     #推动国家认同
@@ -429,14 +449,21 @@ STG_internal_ememy = {
         }
         ai_will_do = {
 			factor = 1
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
     }
     #大巡游
     STG_ilya_usr = {
         available = {
-            fascism > 0.02
+            #fascism > 0.02
             NOT = {
-                has_country_flag = STG_usr_crushed
+                #has_country_flag = STG_usr_crushed
+                has_idea = STG_unrest_2
             }
         }
         visible = {
@@ -446,7 +473,8 @@ STG_internal_ememy = {
                 ruling_only = yes
             }
             NOT = {
-                has_country_flag = STG_usr_crushed
+                #has_country_flag = STG_usr_crushed
+                has_idea = STG_unrest_2
             }
         }
         cost = 60
@@ -460,6 +488,12 @@ STG_internal_ememy = {
         }
         ai_will_do = {
 			factor = 100
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
     }
     #甄别乌斯拉尔极端分子
@@ -710,9 +744,9 @@ STG_internal_ememy = {
             STG_decrease_global_unrest_big = yes
             add_stability = 0.20
             add_political_power = 100
-            hidden_effect = {
-                set_country_flag = STG_disable_internal_ememy_decisions
-            }
+            #hidden_effect = {
+            #    set_country_flag = STG_disable_internal_ememy_decisions
+            #}
         }
         ai_will_do = {
 			factor = 1000
@@ -732,11 +766,17 @@ STG_parliament_issues = {
         activation = {
             tag = STG
             NOT = {
-                has_country_flag = STG_army_takeover
+                OR = {
+                    has_country_flag = STG_army_takeover
+                    has_country_flag = STG_disable_parliament_issues_decisions
+                }
             }
         }
         cancel_trigger = {
-            has_country_flag = STG_army_takeover
+            OR = {
+                has_country_flag = STG_army_takeover
+                has_country_flag = STG_disable_parliament_issues_decisions
+            }
         }
         days_mission_timeout = 30
         selectable_mission = no
@@ -1073,12 +1113,16 @@ STG_parliament_issues = {
         }
         remove_effect = {
             STG_reduce_army_discontent = yes
+            remove_ideas = STG_full_of_corruption
             custom_effect_tooltip = STG_disable_corruption_event_desc
             hidden_effect = {
                 set_country_flag = STG_disable_corruption_event
             }
             set_country_flag = STG_earl_grey_issue_1_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+            hidden_effect = {
+                country_event = {id = STG_grey.20 days = 2}
+            }
 		}
     }
     #《二元君主制法案》
@@ -1226,6 +1270,9 @@ STG_parliament_issues = {
             }
             set_country_flag = STG_earl_grey_issue_5_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+            hidden_effect = {
+                country_event = {id = STG_grey.19 days = 3}
+            }
 		}
     }
     #《共和国防卫法案》
@@ -1272,6 +1319,42 @@ STG_parliament_issues = {
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
 		}
     }
+    #《共和国劳动法》
+    STG_syn_issue_1 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_debate_in_process
+                has_country_flag = STG_national_emergency_flag
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_can_pass_issue_important
+                STG = {check_variable = {STG_supporter > 19}}
+            }
+        }
+        visible = {
+            has_completed_focus = STG_com_13
+        }
+        cost = 70
+        days_remove = 0
+        fire_only_once = yes
+        ai_will_do = {
+			factor = 1
+		}
+        complete_effect = {
+        }
+        remove_effect = {
+			add_popularity = {
+                ideology = communism
+                popularity = 0.05
+            }
+            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
+            custom_effect_tooltip = STG_syn_issue_1_bonus_desc
+            add_to_variable = {STG_production_factory_max_efficiency_factor = 0.05}
+            add_to_variable = {STG_rev_consumer_goods_factor = 0.05}
+            set_country_flag = STG_syn_issue_1_passed
+            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+		}
+    }
     #游说议员
     STG_lobby = {
         available = {
@@ -1298,6 +1381,12 @@ STG_parliament_issues = {
         days_re_enable = 90
         ai_will_do = {
             factor = 1000
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
         }
         complete_effect = {
         }
@@ -1531,7 +1620,13 @@ STG_parliament_issues = {
         days_remove = 7
         days_re_enable = 270
         ai_will_do = {
-			factor = 1
+			factor = 100
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
         complete_effect = {
         }
@@ -1585,12 +1680,13 @@ STG_parliament_issues = {
         days_remove = 7
         days_re_enable = 365
         ai_will_do = {
-			factor = 1
+			factor = 200
 		}
         complete_effect = {
+            set_country_flag = { flag = STG_debate_in_process value = 1 days = 97 }
         }
         remove_effect = {
-            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+            #set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
             add_political_power = 100
             STG_reduce_two_supporters = yes
 		}
@@ -1621,12 +1717,13 @@ STG_parliament_issues = {
         days_remove = 7
         days_re_enable = 365
         ai_will_do = {
-			factor = 1
+			factor = 200
 		}
         complete_effect = {
+            set_country_flag = { flag = STG_debate_in_process value = 1 days = 97 }
         }
         remove_effect = {
-            set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
+            #set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
             add_political_power = 100
             STG_reduce_three_supporters = yes
 		}
@@ -1746,13 +1843,18 @@ STG_the_sword_of_Damocles = {
         activation = {
             tag = STG
             NOT = {
-                has_country_flag = STG_army_takeover
+                OR = {
+                    has_country_flag = STG_army_takeover
+                    has_completed_focus = STG_com_26
+                    has_country_flag = STG_disable_the_sword_of_Damocles_decisions
+                }
             }
         }
         cancel_trigger = {
             OR = {
                 has_country_flag = STG_army_takeover
                 has_completed_focus = STG_com_26
+                has_country_flag = STG_disable_the_sword_of_Damocles_decisions
             }
         }
         days_mission_timeout = 30
@@ -1855,6 +1957,12 @@ STG_the_sword_of_Damocles = {
                 factor = 0
                 STG = {check_variable = {STG_army_discontent < 1}}
             }
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
         complete_effect = {
         }
@@ -1892,6 +2000,12 @@ STG_the_sword_of_Damocles = {
             modifier = {
                 factor = 0
                 STG = {check_variable = {STG_army_discontent < 1}}
+            }
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
             }
 		}
         complete_effect = {
@@ -2591,6 +2705,9 @@ STG_einzbern_storm = {
                 set_country_flag = {flag = STG_einzbern_storm_strategy_1_recently_used value = 1 days = 30} 
             }
         }
+        ai_will_do = {
+			factor = 1
+		}
     }
     #策略：坚定守住
     STG_einzbern_storm_strategy_2 = {
@@ -3024,6 +3141,12 @@ STG_bop_decisions = {
                 add = -100
                 has_country_flag = STG_centralization_side_chosen #AI不会左右横跳
             }
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
+            }
 		}
     }
     #下放权力
@@ -3270,6 +3393,12 @@ STG_bop_decisions = {
             modifier = {
                 add = -100
                 has_country_flag = STG_decentralization_side_chosen #AI不会左右横跳
+            }
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_country_flag = STG_investigation_ended
+                }
             }
 		}
     }
@@ -3551,7 +3680,7 @@ STG_revolution = {
         complete_effect = {
         }
         remove_effect = {
-            add_stability = -0.20
+            add_stability = -0.15
             add_political_power = 200
             complete_national_focus = STG_com_6
             set_politics = {
@@ -3563,6 +3692,8 @@ STG_revolution = {
                 clr_country_flag = STG_rev_started
                 clr_country_flag = STG_conservative_controls_par
                 clr_country_flag = STG_enbale_revolution_decisions
+                remove_ideas = STG_full_of_corruption
+                set_party_name = {ideology = democratic long_name = STG_democratic_party_sd_long name = STG_democratic_party_sd}
                 STG = {set_variable = {STG_supporter = 16}}
             }
         }
@@ -3604,6 +3735,8 @@ STG_revolution = {
                 clr_country_flag = STG_conservative_controls_par
                 clr_country_flag = STG_rev_started
                 clr_country_flag = STG_enbale_revolution_decisions
+                remove_ideas = STG_full_of_corruption
+                set_party_name = {ideology = democratic long_name = STG_democratic_party_sd_long name = STG_democratic_party_sd}
                 STG = {set_variable = {STG_supporter = 20}}
             }
         }
@@ -3616,7 +3749,10 @@ STG_revolution = {
         available = {
         }
         visible = {
-            has_completed_focus = STG_com_3
+            OR = {
+                has_completed_focus = STG_com_3
+                has_completed_focus = STG_com_4
+            }
         }
         cost = 50
         days_remove = 20
@@ -3640,7 +3776,10 @@ STG_revolution = {
         available = {
         }
         visible = {
-            has_completed_focus = STG_com_3
+            OR = {
+                has_completed_focus = STG_com_3
+                has_completed_focus = STG_com_4
+            }
         }
         cost = 50
         days_remove = 20
@@ -3664,7 +3803,10 @@ STG_revolution = {
         available = {
         }
         visible = {
-            has_completed_focus = STG_com_3
+            OR = {
+                has_completed_focus = STG_com_3
+                has_completed_focus = STG_com_4
+            }
         }
         cost = 50
         days_remove = 20
@@ -4036,6 +4178,106 @@ STG_syn_union = {
         }
     }
 }
+#宣告昂格利亚统一
+Unite_Anglia = {
+    #STG
+    STG_unite_decision = {
+        available = {
+            controls_state = 218
+        }
+        visible = {
+            tag = STG
+        }
+        cost = 150
+        days = 70
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = ANGLIA_UNITED
+            hidden_effect = {
+                every_state = {
+                    if = {
+                        limit = {
+                            OR = {
+                                is_core_of = UNG
+                                is_core_of = MSA
+                            }
+                            }
+                        add_core_of = STG
+                        remove_core_of = UNG
+                        remove_core_of = MSA
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #UNG
+    UNG_unite_decision = {
+        available = {
+            controls_state = 230
+        }
+        visible = {
+            tag = UNG
+        }
+        cost = 150
+        days = 70
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = ANGLIA_UNITED
+            hidden_effect = {
+                every_state = {
+                    if = {
+                        limit = {
+                            is_core_of = STG
+                            }
+                        add_core_of = UNG
+                        remove_core_of = STG
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #MSA
+    MSA_unite_decision = {
+        available = {
+            controls_state = 230
+        }
+        visible = {
+            tag = MSA
+        }
+        cost = 150
+        days = 70
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = ANGLIA_UNITED
+            hidden_effect = {
+                every_state = {
+                    if = {
+                        limit = {
+                            is_core_of = STG
+                            }
+                        add_core_of = MSA
+                        remove_core_of = STG
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
 ###debug国策路线 ##debug focus road
 IRIS_debug_decisions = {
 
@@ -4044,6 +4286,7 @@ IRIS_debug_decisions = {
         visible = {
 			is_debug = yes
 			is_ai = no
+            tag = STG
 		}
 		ai_will_do = {
 			factor = 0
@@ -4058,6 +4301,7 @@ IRIS_debug_decisions = {
         visible = {
 			is_debug = yes
 			is_ai = no
+            tag = STG
 		}
 		ai_will_do = {
 			factor = 0
@@ -4072,6 +4316,7 @@ IRIS_debug_decisions = {
         visible = {
 			is_debug = yes
 			is_ai = no
+            tag = STG
 		}
 		ai_will_do = {
 			factor = 0
@@ -4086,6 +4331,7 @@ IRIS_debug_decisions = {
         visible = {
 			is_debug = yes
 			is_ai = no
+            tag = STG
 		}
 		ai_will_do = {
 			factor = 0
