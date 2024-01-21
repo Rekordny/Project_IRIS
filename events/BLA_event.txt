@@ -154,6 +154,70 @@ country_event = {
 		}
 	}
 }
+#神谕
+country_event = {
+    id = BLA_pol.4
+    title = BLA_pol.4.t
+	desc = BLA_pol.4.desc
+	#picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = BLA_pol.4.a
+        trigger = {
+            NOT = {
+                has_completed_focus = BLA_Anna_industry_3
+            }
+        }
+		ai_chance = {
+			base = 10
+		}
+	}
+    option = {
+        trigger = {
+            has_completed_focus = BLA_Anna_industry_3
+        }
+        set_country_flag = BLA_church_reject_cooperation
+		name = BLA_pol.4.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#全罗西亚大会
+country_event = {
+    id = BLA_pol.5
+    title = BLA_pol.5.t
+	desc = BLA_pol.5.desc
+	#picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = BLA_pol.5.a
+        trigger = {
+            BLA = {check_variable = {BLA_support_for_reform > 4}}
+        }
+        add_political_power = -50
+        custom_effect_tooltip = BLA_can_reform_serfdom_desc
+        set_country_flag = BLA_can_reform_serfdom 
+		ai_chance = {
+			base = 10
+		}
+	}
+    option = {
+		name = BLA_pol.5.a
+        trigger = {
+            NOT = {
+                BLA = {check_variable = {BLA_support_for_reform > 4}}
+            }
+        }
+        add_political_power = -50
+        custom_effect_tooltip = BLA_reform_blocked_desc
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #宫廷密谋
 country_event = {
     id = BLA_pol.999
@@ -266,6 +330,11 @@ country_event = {
             add_country_leader_trait = TRAIT_BLA_WEAK_TSAR
         }
         set_country_flag = BLA_Siera_empowered
+        hidden_effect = {
+            set_country_leader_description = {
+                desc = "BLA_Siera_desc_2"
+            }
+        }
 		ai_chance = {
 			base = 10
 		}
@@ -442,6 +511,8 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.1.a
+        add_manpower = -14
+        custom_effect_tooltip = BLA_revolution_is_coming_desc
         hidden_effect = {
             country_event = {id = BLA_rev.2 days = 15}
         }
@@ -460,6 +531,7 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.2.a
+        add_stability = -0.05
         hidden_effect = {
             country_event = {id = BLA_rev.3 days = 5}
         }
@@ -478,8 +550,10 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.3.a
+        custom_effect_tooltip = BLA_revolution_is_coming_desc_2
         hidden_effect = {
             country_event = {id = BLA_rev.4 days = 2}
+            news_event = {id = BLA_news.3}
         }
 		ai_chance = {
 			base = 10
@@ -510,7 +584,7 @@ country_event = {
 		}
 	}
 }
-#死寂
+#预言成真
 country_event = {
     id = BLA_rev.5
     title = BLA_rev.5.t
@@ -520,6 +594,7 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.5.a
+        custom_effect_tooltip = BLA_revolution_is_coming_desc_3
         every_owned_state = {
             limit = {
                 has_state_flag = BLA_rev_target
@@ -601,7 +676,13 @@ country_event = {
             }
             BLA = {
                 set_variable = {BLA_REV_transfer_faction = 0.1}
-                add_to_variable = {BLA_REV_transfer_faction = communism}
+                add_to_variable = {BLA_REV_transfer_faction = BLA.communism}
+                if = {
+                    limit = {
+                        check_variable = {BLA_army_opinion < 25}
+                    }
+                    add_to_variable = {BLA_REV_transfer_faction = 0.05}
+                }
                 transfer_units_fraction= {
                     target = NAC
                     stockpile_ratio = var:BLA_REV_transfer_faction
@@ -684,6 +765,7 @@ country_event = {
             type = annex_everything
         }
         hidden_effect = {
+            news_event = {id = BLA_news.4}
             set_country_flag = BLA_REVOLUTION
             load_focus_tree = {
                 tree = BLA_Anna
@@ -733,6 +815,9 @@ country_event = {
         add_stability = 0.25
         add_political_power = 200
         set_country_flag = BLA_revolution_triggered
+        hidden_effect = {
+            set_variable = {BLA_communism_drift = 0}
+        }
 	}
 }
 #罗西亚想加入我们
@@ -843,5 +928,71 @@ news_event = {
             tag = NAC
         }
 		name = BLA_news.2.b
+	}
+}
+#炮击罗西亚港
+news_event = {
+	id = BLA_news.3
+	title = BLA_news.3.t
+	desc = BLA_news.3.desc
+	#picture = GFX_STG_news_3
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+        trigger = {
+            NOT = {
+                tag = NAC
+                tag = BLA
+            }
+        }
+		name = BLA_news.3.a
+	}
+    option = {
+        trigger = {
+            tag = NAC
+        }
+		name = BLA_news.3.b
+	}
+    option = {
+        trigger = {
+            tag = BLA
+        }
+		name = BLA_news.3.c
+	}
+}
+#第二次罗西亚革命
+news_event = {
+	id = BLA_news.4
+	title = BLA_news.4.t
+	desc = BLA_news.4.desc
+	#picture = GFX_STG_news_3
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+        trigger = {
+            NOT = {
+                tag = NAC
+                tag = BLA
+            }
+        }
+		name = BLA_news.4.a
+	}
+    option = {
+        trigger = {
+            tag = NAC
+        }
+		name = BLA_news.4.b
+	}
+    option = {
+        trigger = {
+            tag = BLA
+        }
+		name = BLA_news.4.c
 	}
 }
