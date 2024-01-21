@@ -1,11 +1,11 @@
 on_actions = {
 	on_startup = {
 		effect = {
-			#STG = {set_country_flag = STG_enable_parliament_events}
+			STG = {set_country_flag = STG_conservative_controls_par}
 			STG = {country_event = {id = STG_intro.1 days = 2}}
 			STG = {country_event = {id = STG_general.3 days = 10}}
 			STG = {country_event = {id = STG_general.5 days = 150}}
-			STG = {country_event = {id = STG_general.6 days = 200}}
+			STG = {country_event = {id = STG_general.6 days = 250}}
 			STG = {country_event = {id = STG_general.7 days = 30}}
 			STG = {country_event = {id = STG_general.15 days = 20}}
 			#政府稳定初始化
@@ -21,10 +21,10 @@ on_actions = {
 			#通过法案需求初始化
 			STG = { set_variable = { STG_supporter_needed = 20 } }
 			#军队不满初始化
-			STG = { set_variable = { STG_army_discontent = 50 } }
+			STG = { set_variable = { STG_army_discontent = 40 } }
 		}
 	}
-	on_weekly = {
+	on_weekly_STG = {
 		#造核
 		effect = {
 			if = {
@@ -64,7 +64,7 @@ on_actions = {
 			}
 		}
 	}
-	on_weekly = { 
+	on_weekly_STG = { 
 		effect = {
 			if = {
 				limit = {
@@ -118,12 +118,30 @@ on_actions = {
 				#政府稳定度变化
 				if ={
 					limit = {
+						stability > 0.99
+				    }
+				    add_to_variable = {STG_global_unrest = -0.5}
+				}
+				if ={
+					limit = {
+						stability > 0.89
+				    }
+				    add_to_variable = {STG_global_unrest = -0.25}
+				}
+				if ={
+					limit = {
+						stability > 0.79
+				    }
+				    add_to_variable = {STG_global_unrest = -0.25}
+				}
+				if ={
+					limit = {
 						has_war = no
 					    NOT = {
 							has_stability = 0.50
 						}
 				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
+				    add_to_variable = {STG_global_unrest = 0.25}
 				}
 				if ={
 					limit = {
@@ -132,7 +150,7 @@ on_actions = {
 							has_stability = 0.40
 						}
 				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
+				    add_to_variable = {STG_global_unrest = 0.25}
 				}
 				if ={
 					limit = {
@@ -141,7 +159,7 @@ on_actions = {
 							has_stability = 0.30
 						}
 				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
+				    add_to_variable = {STG_global_unrest = 0.25}
 				}
 				if ={
 					limit = {
@@ -150,7 +168,7 @@ on_actions = {
 							has_stability = 0.20
 						}
 				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
+				    add_to_variable = {STG_global_unrest = 0.25}
 				}
 			    if = {
 				    limit = {
@@ -162,13 +180,13 @@ on_actions = {
 				    limit = {
 					    has_idea = STG_usr_discontent_middle
 				    }
-				    add_to_variable = {STG_global_unrest = 1}
+				    add_to_variable = {STG_global_unrest = 0.5}
 			    }    
 			    if = {
 				    limit = {
 					    has_idea = STG_usr_discontent_high
 				    }
-				    add_to_variable = {STG_global_unrest = 1.5}
+				    add_to_variable = {STG_global_unrest = 1}
 			    }
 			    if = {
 				    limit = {
@@ -186,13 +204,13 @@ on_actions = {
 				    limit = {
 					    has_idea = STG_cam_discontent_middle
 				    }
-				    add_to_variable = {STG_global_unrest = 1}
+				    add_to_variable = {STG_global_unrest = 0.5}
 			    }
 			    if = {
 				    limit = {
 						has_idea = STG_cam_discontent_high
 				    }
-				    add_to_variable = {STG_global_unrest = 1.5}
+				    add_to_variable = {STG_global_unrest = 1}
 			    }
 			    if = {
 				    limit = {
@@ -202,20 +220,36 @@ on_actions = {
 			    }
 				if = {
 					limit = {
-					    has_idea = STG_usr_unrest_end
-				    }
-				    add_to_variable = {STG_global_unrest = -3}
-				}
-			    else = {
-				    add_to_variable = {STG_global_unrest = -2}
-			    }				
+						has_idea = STG_investigation
+					}
+					add_to_variable = {STG_global_unrest = 0.5}
+				}	
+				if = {
+					limit = {
+						has_country_flag = STG_cam_curshed
+					}
+					add_to_variable = {STG_global_unrest = -0.25}
+				}		
+				if = {
+					limit = {
+						has_country_flag = STG_usr_curshed
+					}
+					add_to_variable = {STG_global_unrest = -0.25}
+				}	
 			}
 			STG = {
-				STG_check_unrest = yes
-				STG_check_cam_unrest = yes
-				STG_check_usr_unrest = yes
-				STG_check_supporters = yes
-				STG_check_army_discontent = yes
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = STG_is_usr_puppet
+						}
+					}
+					STG_check_unrest = yes
+					STG_check_cam_unrest = yes
+					STG_check_usr_unrest = yes
+					STG_check_supporters = yes
+					STG_check_army_discontent = yes
+				}
 			}
 		}
 	}
@@ -230,6 +264,12 @@ on_actions = {
 					}
 					NOT = {
 						STG = { has_war_with = UNG }
+					}
+					NOT = {
+						STG = {is_puppet_of = UNG}
+					}
+					NOT = {
+						STG = {is_in_faction_with = UNG}
 					}
 				}
 				UNG = {
@@ -251,6 +291,12 @@ on_actions = {
 					}
 					NOT = {
 						STG = { has_war_with = USR}
+					}
+					NOT = {
+						STG = {is_puppet_of = USR}
+					}
+					NOT = {
+						STG = {is_in_faction_with = USR}
 					}
 				}
 				USR = {

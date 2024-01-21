@@ -233,7 +233,7 @@ PixelShader =
 			float vOpacity = 1 - cam_distance( ICE_CAM_MIN, ICE_CAM_MAX );
 			vIceFade *= vOpacity;
 
-			// Code below will remove ice from certain parts of the world
+			// Code below will remove CID from certain parts of the world
 			float vMapLimitFade = saturate( saturate( (vPos.y/MAP_SIZE_Y) - 0.74f )*800.0f );
 			vIceFade *= vMapLimitFade;
 			
