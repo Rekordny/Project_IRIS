@@ -1,7 +1,14 @@
 on_actions = {
 	on_startup = {
-		effect = {#动态战争修正
+		effect = {
+            every_state = {
+				    limit = {
+					is_core_of = DOC
+				    }
+				    add_state_claim = OCE
+			        }
             every_country = {
+                #动态战争修正
                 #p社沙比，运算只可以一个一个算，还计算报错
                 set_variable = { OCE_morale = 67 } 
                 set_variable = { OCE_stability_factor = 0.001 } #稳定度
@@ -30,14 +37,37 @@ on_actions = {
                 OCE = {
                     add_dynamic_modifier = { modifier = OCE_morale_modifier }#战争动态修正
                 }
-            }
-        }
-    }
-    on_weely = {#每周意志减少
-        effect = {
-            every_country = {
-            add_to_variable = {OCE_morale = -1.63}
-            force_opdate_dynamic_modifier = YES
+                set_variable = { OCE_gross_domestic_product = 0 } #生产总值初始
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@oil }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@aluminium }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@rubber }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@tungsten }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@steel }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@chromium }
+                
+                set_temp_variable = { OCE_factory = ROOT.num_of_naval_factories } 
+                add_to_variable = { OCE_factory = ROOT.num_of_civilian_factories } 
+                add_to_variable = { OCE_factory = ROOT.num_of_military_factories } 
+                multiply_variable = { OCE_factory = 10 } 
+                add_to_variable = { OCE_gross_domestic_product = OCE_factory }
+
+                set_variable = { OCE_gross_domestic_product_additional = 0 } #额外生产总值
+                add_to_variable = { OCE_gross_domestic_product = OCE_gross_domestic_product_additional }#生产总值
+
+                set_variable = { OCE_army_production = 145 } #陆军装备生产总值
+                set_variable = { OCE_navy_production = 132 } #海军装备生产总值
+                set_variable = { OCE_air_force_production = 45 } #空军装备生产总值
+                set_variable = { OCE_life_consumption = 344 } #生活消费
+                set_variable = { OCE_scientific_expenses = 34 } #研究开支
+                set_variable = { OCE_total = 0 } #以上开支
+                add_to_variable = { OCE_total = OCE_army_production } #以上开支计算
+                add_to_variable = { OCE_total = OCE_navy_production } #以上开支计算
+                add_to_variable = { OCE_total = OCE_air_force_production } #以上开支计算
+                add_to_variable = { OCE_total = OCE_life_consumption } #以上开支计算
+                add_to_variable = { OCE_total = OCE_scientific_expenses } #以上开支计算
+                set_variable = { OCE_other_expenses = 0 } #其他开支
+                add_to_variable = { OCE_other_expenses = OCE_gross_domestic_product } #其他开支
+                subtract_from_variable = { OCE_other_expenses = OCE_total } #其他开支计算
             }
         }
     }
