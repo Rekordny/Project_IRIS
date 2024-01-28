@@ -1,0 +1,1754 @@
+focus_tree = {
+	id = OCE_focus_tree
+	country = {
+		factor = 0
+		modifier = {
+			TAG = OCE
+			add = 10
+		}
+	}
+	default = no
+	continuous_focus_position = {
+		x = 1700
+		y = 2600
+	}
+    focus = { #特兰西瓦正统
+		id = OCE_Transylvanian_orthodoxy
+		cost = 1
+		x = 34
+		y = 0
+		ai_will_do = { factor = 10 } #ai点国策的倾向，数字越高几率越大，上限为100
+		mutually_exclusive = {
+		focus = OCE_I_am_barbarian
+		}
+		available = {
+			always = no
+		}
+		bypass = {
+		}
+		completion_reward = {
+			add_power_balance_value = {
+			id = OCE_stable_value 
+			value = 0.1
+			}
+	    }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+    focus = { #特兰西瓦的惨败
+		id = OCE_I_am_barbarian
+		cost = 1
+		relative_position_id = OCE_Transylvanian_orthodoxy
+		x = -2
+		y = 0
+		ai_will_do = { factor = 10 }
+		mutually_exclusive = {
+		focus = OCE_Transylvanian_orthodoxy
+		}
+		available = {
+			always = no
+		}
+		bypass = {
+		}
+		completion_reward = {
+			add_power_balance_value = {
+			id = OCE_stable_value 
+			value = -0.5
+			}
+			add_power_balance_modifier = {
+			id = OCE_stable_value
+			modifier = OCE_stable_value_weekly
+			} 
+	    }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+
+
+
+
+
+    #奥西娅线路
+    focus = { #派遣思想警察
+	id = OCE_Dispatch_ideological_police
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Transylvanian_orthodoxy
+	x = -1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_I_am_barbarian focus = OCE_Transylvanian_orthodoxy }
+	mutually_exclusive = {
+	}
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+        if = {
+            limit = {
+                has_completed_focus = OCE_I_am_barbarian
+            }
+            custom_effect_tooltip = OCE_Destruction_of_rebel_organization_areas.TXT
+            hidden_effect = {
+			random_list = {
+            33 = {
+                add_to_variable = { OCE_East_Island_Alliance_Forces_variable = -1 }
+            }
+            33 = {
+                add_to_variable = { OCE_Oceanic_Federation_Forces_variable = -1 }
+            }
+            34 = {
+                add_to_variable = { OCE_Indigenous_peoples_Forces_variable = -1 }
+            }
+		}
+		}
+        }
+		if = {
+            limit = { has_intelligence_agency = yes } 
+                gain_random_agency_upgrade = yes 
+                gain_random_agency_upgrade = yes 
+                }
+		else = { 
+            create_intelligence_agency = yes 
+            }
+		add_stability = 0.05
+	}
+	available = {
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #奥西娅至上
+	id = OCE_Osia_is_supreme
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Dispatch_ideological_police
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Dispatch_ideological_police }
+	mutually_exclusive = {
+	}
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+        add_stability = 0.05
+        add_power_balance_value = {
+			id = OCE_stable_value 
+			value = 0.15
+		}
+	}
+	available={  
+		has_country_leader = {
+			character = OCE_osia
+			ruling_only = yes
+		}
+	}
+	bypass = {
+		NOT = {
+            has_country_leader = {
+			character = OCE_osia
+			ruling_only = yes
+		    }
+        }
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #特兰西瓦文化部
+	id = OCE_Transylvanian_Ministry
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Osia_is_supreme
+	x = -5
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Osia_is_supreme }
+	mutually_exclusive = {
+        focus = OCE_Stabilizing_domestic_situation
+	}
+	completion_reward = {
+        TFD = {
+            add_state_core = 85
+            add_state_core = 60
+        }
+	}
+	available = {
+        country_exists = TFD
+	}
+    bypass = {
+        NOT = {
+            country_exists = TFD
+        }
+        has_completed_focus = OCE_Transylvanian_orthodoxy
+    }
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #修复威明格
+	id = OCE_Fix_Weimingge
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Transylvanian_Ministry
+	x = 0
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Transylvanian_Ministry }
+	mutually_exclusive = {
+
+	}
+	completion_reward = {
+        60 = {
+		add_extra_state_shared_building_slots = 5
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		    add_building_construction = {
+			type = arms_factory
+			level = 4
+			instant_build = yes
+			}
+		}
+	}
+	available = {
+        OR = {
+            OCE = {
+                controls_state = 60
+            }
+            TFD = {
+                controls_state = 60
+            }
+        }
+	}
+    bypass = {
+        NOT = {
+            OCE = {
+                controls_state = 60
+            }
+            TFD = {
+                controls_state = 60
+            }
+        }
+    }
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #开放边境
+	id = OCE_Open_borders
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Fix_Weimingge
+	x = -1
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Fix_Weimingge }
+	mutually_exclusive = {
+        focus = OCE_Regional_blockades
+	}
+	completion_reward = {
+        TFD = {
+            add_ideas = OCE_idea_Open_borders
+        }
+	}
+	available = {
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #地区封锁
+	id = OCE_Regional_blockades
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Fix_Weimingge
+	x = 1
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Fix_Weimingge }
+	mutually_exclusive = {
+        focus = OCE_Open_borders
+	}
+	completion_reward = {
+        TFD = {
+            add_ideas = OCE_idea_Regional_blockades
+        }
+	}
+	available = {
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #稳定国内局势
+	id = OCE_Stabilizing_domestic_situation
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Osia_is_supreme
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Osia_is_supreme }
+	mutually_exclusive = {
+        focus = OCE_Transylvanian_Ministry
+	}
+	available={  
+		has_completed_focus = OCE_I_am_barbarian
+	}
+	completion_reward = {
+        custom_effect_tooltip = OCE_Investigating_underground_rebel_organizations.TXT
+		add_stability = 0.05
+        add_to_variable = { OCE_East_Island_Alliance_Forces_variable = -1 }
+        add_to_variable = { OCE_Oceanic_Federation_Forces_variable = -1 }
+        add_to_variable = { OCE_Indigenous_peoples_Forces_variable = -1 }
+	}
+	bypass = {
+		OR = {
+			has_global_flag = OCE_civil_war
+			has_global_flag = OCE_civil_war_OVER
+		}
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #战争即和平
+	id = OCE_War_is_peace
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Osia_is_supreme
+	x = 5
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Osia_is_supreme }
+	mutually_exclusive = {
+	}
+	completion_reward = {
+        
+	}
+	available = {
+		OR = {
+			has_global_flag = OCE_civil_war_OVER
+			has_completed_focus = OCE_Transylvanian_orthodoxy
+		}
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+	focus = { #来点大的
+	id = OCE_Have_some_larger_ones
+	icon = GFX_goal_generic_demand_territory
+	relative_position_id = OCE_War_is_peace
+	cost = 20
+	x = -1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_War_is_peace }
+	available = {
+		has_completed_focus = OCE_Pay_attention_to_overseas_supply
+	}
+	completion_reward = {
+		create_equipment_variant = {
+				name = "Osia"
+				type = ship_hull_super_heavy_1
+				name_group = Osia
+				parent_version = 0
+				allow_without_tech = yes 
+				modules = {
+					fixed_ship_battery_slot = ship_super_heavy_battery_1
+				fixed_ship_anti_air_slot = ship_anti_air
+				fixed_ship_fire_control_system_slot = ship_fire_control_system_2
+				fixed_ship_radar_slot = ship_radar_2
+				fixed_ship_engine_slot = heavy_ship_engine_2
+				fixed_ship_secondaries_slot = ship_secondaries
+				fixed_ship_armor_slot = ship_armor_shbb
+				front_1_custom_slot = ship_anti_air
+				front_2_custom_slot = ship_super_heavy_battery_1
+				mid_1_custom_slot = ship_secondaries_2
+				mid_2_custom_slot = ship_dp_secondaries
+				mid_3_custom_slot = ship_secondaries
+				rear_1_custom_slot = ship_super_heavy_battery_1
+				rear_2_custom_slot = ship_airplane_launcher
+				}
+			}
+			add_equipment_production = {
+				equipment = {
+					type = ship_hull_super_heavy_1
+					creator = "OCE"
+					version_name = "Osia"
+				}
+				name = "OCE_Osia_Kradas"
+				requested_factories = 5
+				progress = 0.99
+				amount = 1
+			}
+			add_equipment_production = {
+				equipment = {
+					type = ship_hull_super_heavy_1
+					creator = "OCE"
+					version_name = "Osia"
+				}
+				name = "OCE_Osia_Transylvania"
+				requested_factories = 5
+				progress = 0.99
+				amount = 1
+			}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #小英雄
+	id = OCE_Little_hero
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_War_is_peace
+	x = -2
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_War_is_peace}
+	mutually_exclusive = {
+	}
+	completion_reward = {
+		add_power_balance_value = {
+			id = OCE_stable_value 
+			value = 0.05
+		}
+		add_stability = 0.05
+		add_war_support = 0.1
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+	search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+    }
+
+    focus = { #扩充思想警察
+	id = OCE_Expand_ideological_police
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_War_is_peace
+	x = -2
+	y =3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_War_is_peace}
+	mutually_exclusive = {
+	}
+	completion_reward = {
+		add_power_balance_value = {
+			id = OCE_stable_value 
+			value = 0.05
+		}
+        add_ideas = OCE_idea_Expand_ideological_police
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #来自工厂的报告
+	id = OCE_Reports_from_factory
+	icon = GFX_goal_generic_demand_territory
+	cost = 1
+	relative_position_id = OCE_War_is_peace
+	x = 1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_War_is_peace}
+	mutually_exclusive = {
+	}
+	completion_reward = {
+		
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+	search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+    }
+
+    focus = { #都去给我工作
+	id = OCE_Everyone_go_work_for_me
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_War_is_peace
+	x = 0
+	y = 3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Reports_from_factory}
+	mutually_exclusive = {
+		focus = OCE_Maintain_status_quo
+	}
+	completion_reward = {
+		add_ideas = OCE_idea_Everyone_go_work_for_me
+		add_stability = -0.1
+		add_power_balance_value = {
+			id = OCE_stable_value 
+			value = -0.15
+		}
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+	focus = { #保持现状
+	id = OCE_Maintain_status_quo
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_War_is_peace
+	x = 2
+	y = 3
+	ai_will_do = { factor = 0 }
+	prerequisite = {focus = OCE_Reports_from_factory}
+	mutually_exclusive = {
+		focus = OCE_Everyone_go_work_for_me
+	}
+	completion_reward = {
+		add_ideas = OCE_idea_Maintain_status_quo
+		add_war_support = -0.1
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+    focus = { #虚假的战争
+	id = OCE_False_wars
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_War_is_peace
+	x =0
+	y = 4
+	ai_will_do = { factor = 0 }
+	prerequisite = {focus = OCE_Expand_ideological_police}
+    prerequisite = {focus = OCE_Maintain_status_quo focus = OCE_Everyone_go_work_for_me}
+	completion_reward = {
+		add_power_balance_value = {
+			id = OCE_stable_value 
+			value = 0.05
+		}
+		add_stability = 0.05
+        add_war_support = 0.15
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+	search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+    }
+
+    focus = { #铁腕镇压
+	id = OCE_Iron_fisted_repression
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Stabilizing_domestic_situation
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Stabilizing_domestic_situation }
+	mutually_exclusive = {
+	}
+	completion_reward = {
+        custom_effect_tooltip = OCE_Dispatch_ideological_police.TXT
+		add_stability = 0.05
+        add_to_variable = { OCE_East_Island_Alliance_Forces_variable = -2 }
+        add_to_variable = { OCE_Oceanic_Federation_Forces_variable = -2 }
+        add_to_variable = { OCE_Indigenous_peoples_Forces_variable = -2 }
+	}
+	bypass = {
+		OR = {
+			has_global_flag = OCE_civil_war
+			has_global_flag = OCE_civil_war_OVER
+		}
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #一个不留
+	id = OCE_Not_a_single_one_is_left
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Iron_fisted_repression
+	x = -1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Iron_fisted_repression }
+	mutually_exclusive = {
+        focus = OCE_Purify_them
+	}
+	completion_reward = {
+        add_ideas = OCE_idea_OCE_Kill_them
+	}
+	bypass = {
+		OR = {
+			has_global_flag = OCE_civil_war
+			has_global_flag = OCE_civil_war_OVER
+		}
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #净化他们
+	id = OCE_Purify_them
+	icon = GFX_goal_generic_demand_territory
+	cost = 4.3
+	relative_position_id = OCE_Iron_fisted_repression
+	x = 1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Iron_fisted_repression }
+	mutually_exclusive = {
+        focus = OCE_Not_a_single_one_is_left
+	}
+	completion_reward = {
+        custom_effect_tooltip = OCE_Dispatch_ideological_police.TXT
+		add_stability = 0.05
+        add_to_variable = { OCE_East_Island_Alliance_Forces_variable = -2 }
+        add_to_variable = { OCE_Oceanic_Federation_Forces_variable = -2 }
+        add_to_variable = { OCE_Indigenous_peoples_Forces_variable = -2 }
+	}
+	bypass = {
+		OR = {
+			has_global_flag = OCE_civil_war
+			has_global_flag = OCE_civil_war_OVER
+		}
+	}
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+    focus = { #清除有关人员
+	id = OCE_Kill_relevant_personnel
+	icon = GFX_goal_generic_demand_territory
+	cost = 1
+	relative_position_id = OCE_Iron_fisted_repression
+	x = 0
+	y = 2
+	ai_will_do = { factor = 20 }
+	prerequisite = {focus = OCE_Purify_them focus = OCE_Not_a_single_one_is_left}
+	completion_reward = {
+		add_manpower = -10293
+		add_popularity = { ideology = communism popularity = -1 }
+		add_popularity = { ideology = democratic popularity = -1 }
+		set_party_name = {
+    			ideology = communism
+    			long_name = OCE_Abolish_political_parties
+    			name = OCE_Abolish_political_parties
+			}
+		set_party_name = {
+    			ideology = democratic
+    			long_name = OCE_Abolish_political_parties
+    			name = OCE_Abolish_political_parties
+			}
+		every_state = {
+				limit = {
+					is_core_of = OCE
+				}
+				set_demilitarized_zone = no
+				}
+		add_power_balance_value = {
+			id = OCE_stable_value 
+			value = 1.3
+			}
+	}
+	available = {
+		OR = {
+			has_global_flag = OCE_civil_war_OVER
+		}
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+    focus = { #东边的盟友
+	id = OCE_Our_allies_bla
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Kill_relevant_personnel
+	x = 0
+	y = 1
+	available={  
+		BLA = {
+			has_war_with = NAC
+		}
+        OR = {
+			has_global_flag = OCE_civil_war_OVER
+		}
+	}
+	bypass = {
+		OR = {
+			has_war_with = BLA
+			NOT = { country_exists = BLA }
+			NOT = { country_exists = NAC }
+		}
+	}
+	ai_will_do = { factor = 10 }
+	prerequisite = { focus = OCE_Kill_relevant_personnel }
+	completion_reward = {
+		BLA = {
+			country_event = { id = OCE_expansion.3 days = 1 }
+		}
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+    focus = { #第四个三年计划
+	id = OCE_Central_industrial_construction
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Kill_relevant_personnel
+	x = -2
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Kill_relevant_personnel focus = OCE_Fix_Weimingge}
+    available = {
+        has_war = no
+    }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+        if = {
+            limit = {
+                country_exists = TFD
+            }
+            add_timed_idea = { idea = OCE_idea_fourth_three_year_plan days = 1095 }
+        }
+        add_timed_idea = { idea = OCE_idea_fourth_three_year_plan days = 1095 }
+		if = {
+			limit = {
+				controls_state = 115
+			}
+			115 = {
+			add_extra_state_shared_building_slots = 2
+			add_building_construction = {
+			type = arms_factory
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+
+		if = {
+			limit = {
+				controls_state = 135
+			}
+			135 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 137
+			}
+			137 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+    focus = { #唯一的奥西娅
+	id = OCE_The_only_Osias
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Kill_relevant_personnel
+	x = 0
+	y = 2
+	available={  
+		has_country_leader = {
+			character = OCE_osia
+			ruling_only = yes
+		}
+	}
+	bypass = {
+		NOT = {
+            has_country_leader = {
+			character = OCE_osia
+			ruling_only = yes
+		    }
+        }
+	}
+	ai_will_do = { factor = 10 }
+	prerequisite = { focus = OCE_False_wars }
+    prerequisite = { focus = OCE_Central_industrial_construction focus = OCE_Open_borders focus = OCE_Regional_blockades focus = OCE_Our_allies_bla }
+	completion_reward = {
+		
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+    focus = { #东欧罗巴之主
+	id = OCE_Lord_of_Eastern_European_Loba
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Transylvanian_orthodoxy
+	x = -1
+	y = 10
+	available={  
+	}
+	bypass = {
+	}
+	ai_will_do = { factor = 10 }
+	prerequisite = { focus = OCE_The_only_Osias }
+	completion_reward = {
+		add_state_claim = 114
+		add_state_claim = 89
+		add_state_claim = 86
+		add_state_claim = 74
+		add_state_claim = 85
+		add_state_claim = 69
+		add_state_claim = 60
+		add_state_claim = 59
+		add_state_claim = 45
+        add_state_claim = 75
+        add_state_claim = 58
+        add_state_claim = 70
+        add_state_claim = 61
+        add_state_claim = 51
+        add_state_claim = 39
+        add_state_claim = 97
+        add_state_claim = 105
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+
+
+
+
+    #工业/军备
+    focus = { #投资本岛建设
+	id = OCE_Investing_in_local_military_industry
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Transylvanian_orthodoxy
+	x = 20
+	y = 0
+	ai_will_do = { factor = 10 }
+	available={  
+		OR = {
+			has_global_flag = OCE_civil_war_OVER
+			has_completed_focus = OCE_Transylvanian_orthodoxy
+		}
+	}
+	completion_reward = {
+		if = {
+			limit = {
+				controls_state = 115
+			}
+			115 = {
+		add_extra_state_shared_building_slots = 2
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 135
+			}
+			135 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 137
+			}
+			137 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+
+		if = {
+			limit = {
+				controls_state = 773
+			}
+			773 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 88
+			}
+			88 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+
+		if = {
+			limit = {
+				controls_state = 766
+			}
+			766 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 108
+			}
+			108 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+
+		if = {
+			limit = {
+				controls_state = 142
+			}
+			142 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 774
+			}
+			774 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 768
+			}
+			768 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 767
+			}
+			767 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 165
+			}
+			165 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = infrastructure
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+	focus = { #本岛军工建设
+	id = OCE_Military_industry_construction_island
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Investing_in_local_military_industry}
+	completion_reward = {
+		if = {
+			limit = {
+				controls_state = 137
+			}
+			137 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = arms_factory
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 115
+			}
+			115 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = arms_factory
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+	focus = { #本岛船坞建设
+	id = OCE_Construction_shipyard_this_island
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = -2
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Investing_in_local_military_industry}
+	completion_reward = {
+		if = {
+			limit = {
+				controls_state = 115
+			}
+			115 = {
+		add_extra_state_shared_building_slots = 2
+		add_building_construction = {
+			type = dockyard
+			level = 2
+			instant_build = yes
+			}
+		}
+		}
+		
+		if = {
+			limit = {
+				controls_state = 165
+			}
+			165 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = dockyard
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+	focus = { #本岛港口扩建
+	id = OCE_Island_Port_Expansion
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 2
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Investing_in_local_military_industry}
+	completion_reward = {
+		if = {
+			limit = {
+				controls_state = 768
+			}
+			768 = {
+			add_building_construction = {
+				type = naval_base
+				level = 2
+				instant_build = yes
+				province = 5015
+			}
+		}
+		}
+
+		if = {
+			limit = {
+				controls_state = 108
+			}
+			108 = {
+			add_building_construction = {
+				type = naval_base
+				level = 3
+				instant_build = yes
+				province = 4666
+			}
+		}
+		}
+		if = {
+			limit = {
+				controls_state = 165
+			}
+			165 = {
+			add_building_construction = {
+				type = naval_base
+				level = 3
+				instant_build = yes
+				province = 5478
+			}
+		}
+		}
+		
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+    focus = { #大洋海军翻新
+	id = OCE_Ocean_Navy_Refurbishment
+	icon = GFX_goal_generic_demand_territory
+	cost = 7
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 4
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Island_Port_Expansion}
+	completion_reward = {
+		add_ideas = OCE_idea_Ocean_Navy_Refurbishment
+		navy_experience = 15
+		if = {
+			limit = {
+				controls_state = 91
+			}
+			91 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = dockyard
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+		if = {
+			limit = {
+				controls_state = 766
+			}
+			766 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = dockyard
+			level = 1
+			instant_build = yes
+			}
+		}
+		}
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	search_filters = { FOCUS_FILTER_NAVY_XP }
+    }
+
+	focus = { #总结大战战海上经验
+	id = OCE_Summarizing_Maritime_Experience_of_World_War
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 5
+	y = 4
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Ocean_Navy_Refurbishment}
+	completion_reward = {
+		navy_experience = 50
+		add_tech_bonus = {
+		bonus = 0.50
+		uses = 2
+		category = naval_doctrine
+		}
+	}
+	search_filters = { FOCUS_FILTER_NAVY_XP }
+	
+    }
+
+	focus = { #远洋作战思想
+	id = OCE_Ocean_going_combat_ideology
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Summarizing_Maritime_Experience_of_World_War
+	x = -1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Summarizing_Maritime_Experience_of_World_War}
+	completion_reward = {
+		navy_experience = 10
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 1
+		category = bc_tech
+		}
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 1
+		category = ca_tech
+		}
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 1
+		category = bb_tech
+		}
+	}
+	search_filters = { FOCUS_FILTER_NAVY_XP }
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+	focus = { #近海作战思想
+	id = OCE_Offshore_combat_ideology
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Summarizing_Maritime_Experience_of_World_War
+	x = 1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Summarizing_Maritime_Experience_of_World_War}
+	completion_reward = {
+		navy_experience = 10
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 1
+		category = ss_tech
+		}
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 1
+		category = dd_tech
+		}
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 1
+		category = cl_tech
+		}
+	}
+	search_filters = { FOCUS_FILTER_NAVY_XP }
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+	focus = { #远洋补给枢纽
+	id = OCE_Pay_attention_to_overseas_supply
+	icon = GFX_goal_generic_demand_territory
+	cost = 7
+	relative_position_id = OCE_Offshore_combat_ideology
+	x = -3
+	y = 3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Ocean_going_combat_ideology}
+	prerequisite = {focus = OCE_Offshore_combat_ideology}
+	completion_reward = {
+		add_ideas = OCE_idea_Pay_attention_to_overseas_supply
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #大洋潜艇
+	id = OCE_Oceanic_submarines
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Offshore_combat_ideology
+	x = -1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Ocean_going_combat_ideology}
+	prerequisite = {focus = OCE_Offshore_combat_ideology}
+	completion_reward = {
+		create_equipment_variant = {
+					name = "Orlandocard submarine"
+					type = ship_hull_cruiser_submarine
+					allow_without_tech = yes
+					name_group = Orlandocard_submarine
+					parent_version = 0
+					allow_without_tech = yes
+					modules = {
+						fixed_ship_torpedo_slot = ship_torpedo_sub_1
+						fixed_ship_engine_slot = sub_ship_engine_2
+						front_1_custom_slot = ship_torpedo_sub_2
+						mid_1_custom_slot = empty
+						rear_1_custom_slot = ship_torpedo_sub_2
+					}
+				}
+				#Line Production
+				add_equipment_production = {
+					equipment = {
+						type = ship_hull_cruiser_submarine
+						creator = "OCE"
+						version_name = "Orlandocard submarine"
+					}
+					name = "Orlandocard submarine I"
+					requested_factories = 1
+					progress = 0.68
+					amount = 2
+				}
+				add_equipment_production = {
+					equipment = {
+						type = ship_hull_cruiser_submarine
+						creator = "OCE"
+						version_name = "Orlandocard submarine"
+					}
+					name = "Orlandocard submarine II"
+					requested_factories = 1
+					progress = 0.84
+					amount = 2
+				}
+				add_equipment_production = {
+					equipment = {
+						type = ship_hull_cruiser_submarine
+						creator = "OCE"
+						version_name = "Orlandocard submarine"
+					}
+					name = "Orlandocard submarine III"
+					requested_factories = 1
+					progress = 0.75
+					amount = 2
+				}
+	}
+	search_filters = { FOCUS_FILTER_NAVY_XP }
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #国有化产业
+	id = OCE_Nationalized_industries
+	icon = GFX_goal_generic_demand_territory
+	cost = 7
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 0
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Military_industry_construction_island}
+	prerequisite = {focus = OCE_Island_Port_Expansion}
+	prerequisite = {focus = OCE_Construction_shipyard_this_island}
+	completion_reward = {
+		add_stability = -0.15
+		115 = {
+		add_extra_state_shared_building_slots = 2
+		add_building_construction = {
+			type = arms_factory
+			level = 1
+			instant_build = yes
+			}
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		135 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		137 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = arms_factory
+			level = 1
+			instant_build = yes
+			}
+		}
+		773 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		88 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		766 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+		108 = {
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = industrial_complex
+			level = 1
+			instant_build = yes
+			}
+		}
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+    focus = { #国立学校
+	id = OCE_state_school
+	icon = GFX_goal_generic_demand_territory
+	cost = 8
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 2
+	y = 3
+	ai_will_do = { factor = 12 }
+	prerequisite = {focus = OCE_Nationalized_industries}
+	mutually_exclusive = {
+	}
+	completion_reward = {
+		add_research_slot = 1
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #克拉达斯工业基地
+	id = OCE_Kradas_Industrial_Base
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Investing_in_local_military_industry
+	x = 0
+	y = 3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Nationalized_industries }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+        if = {
+            limit = {
+                has_country_leader = {
+			        character = OCE_osia
+			        ruling_only = yes
+		        }
+            }
+            add_tech_bonus = {
+				bonus = 1.35
+				category = industry
+				uses = 2
+			}
+		    115 = {
+		        add_extra_state_shared_building_slots = 4
+		        add_building_construction = {
+		        	type = arms_factory
+		        	level = 4
+		        	instant_build = yes
+		    	}
+		    }
+        }
+	}
+	search_filters = { FOCUS_FILTER_INDUSTRY }
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+	focus = { #轻武器生产
+	id = OCE_Production_light_weapons
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Kradas_Industrial_Base
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Kradas_Industrial_Base }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		add_tech_bonus = {
+				bonus = 1
+				category = infantry_weapons
+				uses = 2
+			}
+		add_tech_bonus = {
+				bonus = 1
+				category = artillery
+				uses = 1
+			}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #建立ORR系统
+	id = OCE_Osia_radar
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Kradas_Industrial_Base
+	x = 2
+	y = 3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Production_light_weapons focus = OCE_fortress_battlefield focus = OCE_Offshore_combat_ideology focus = OCE_Ocean_going_combat_ideology }
+	completion_reward = {
+		add_tech_bonus = {
+		bonus = 1.0 
+		ahead_reduction = 1 
+		uses = 2
+		category = electronics
+		}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+	focus = { #提高武器杀伤
+	id = OCE_Increases_weapon_damage
+	icon = GFX_goal_generic_demand_territory
+	cost = 7
+	relative_position_id = OCE_Kradas_Industrial_Base
+	x = 0
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Production_light_weapons }
+	prerequisite = {focus = OCE_fortress_battlefield }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		add_ideas = OCE_idea_Increases_weapon_damage
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #战场上的堡垒
+	id = OCE_fortress_battlefield
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Kradas_Industrial_Base
+	x = 2
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Kradas_Industrial_Base }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		add_ideas = OCE_idea_fortress_battlefield
+		add_tech_bonus = {
+				bonus = 1
+				category = armor
+				uses = 2
+			}
+		add_tech_bonus = {
+				bonus = 1
+				category = cat_heavy_armor
+				uses = 1
+			}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #翻新武器生产系统
+	id = OCE_Refurbishment_of_weapons_production_systems
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Increases_weapon_damage
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Increases_weapon_damage }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		add_ideas = OCE_idea_Refurbishment_of_weapons_production_systems
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #后方补给
+	id = OCE_rear_supply
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Refurbishment_of_weapons_production_systems
+	x = 1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Refurbishment_of_weapons_production_systems }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		add_ideas = OCE_idea_rear_supply
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #飞行器投资
+	id = OCE_Aircraft_investment
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Kradas_Industrial_Base
+	x = -2
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Kradas_Industrial_Base }
+	completion_reward = {
+		air_experience = 20
+        OCE_pie_chart_type = yes
+	}
+	search_filters = { FOCUS_FILTER_AIR_XP }
+    }
+
+	focus = { #新型飞行器研究
+	id = OCE_Research_on_new_types_of_aircraft
+	icon = GFX_goal_generic_demand_territory
+	cost = 7
+	relative_position_id = OCE_Aircraft_investment
+	x = -1
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Aircraft_investment }
+	completion_reward = {
+		air_experience = 15
+		add_tech_bonus = {
+			ahead_reduction = 2.5
+			category = air_equipment
+			uses = 2
+			bonus = 1.25
+		}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	search_filters = { FOCUS_FILTER_AIR_XP }
+    }
+
+    focus = { #飞行器零部件研究
+	id = OCE_Research_on_aircraft_parts
+	icon = GFX_goal_generic_demand_territory
+	cost = 7
+	relative_position_id = OCE_Research_on_new_types_of_aircraft
+	x = 0
+	y = 1
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Research_on_new_types_of_aircraft }
+	completion_reward = {
+		add_tech_bonus = {
+			category = air_equipment
+			uses = 5
+			bonus = 0.5
+		}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #高空守卫者
+	id = OCE_High_Guardian
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Research_on_new_types_of_aircraft
+	x = -1
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Research_on_new_types_of_aircraft }
+	mutually_exclusive = {
+		focus = OCE_High_altitude_supporters
+	}
+	completion_reward = {
+		add_ideas = OCE_idea_High_Guardian
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+	focus = { #高空支援者
+	id = OCE_High_altitude_supporters
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Research_on_new_types_of_aircraft
+	x = 1
+	y = 2
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Research_on_new_types_of_aircraft }
+	mutually_exclusive = {
+		focus = OCE_High_Guardian
+	}
+	completion_reward = {
+		add_ideas = OCE_idea_High_altitude_supporters
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+    }
+
+    focus = { #我们的天空
+	id = OCE_Osias_Sky
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Research_on_new_types_of_aircraft
+	x = 0
+	y = 3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_High_Guardian focus = OCE_High_altitude_supporters }
+	completion_reward = {
+		air_experience = 100
+		add_tech_bonus = {
+			bonus = 0.5 
+			uses = 4
+			category = air_doctrine
+		}
+	}
+	search_filters = { FOCUS_FILTER_RESEARCH }
+	search_filters = { FOCUS_FILTER_AIR_XP }
+    }
+
+    focus = { #联邦军官学院
+	id = OCE_Federal_Military_Academy
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Increases_weapon_damage
+	x = 0
+	y = 3
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Refurbishment_of_weapons_production_systems }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		army_experience = 100
+		add_tech_bonus = {
+		bonus = 0.5
+		uses = 3
+		category = land_doctrine
+	}
+		add_ideas = OCE_idea_Federal_Military_Academy
+	}
+	search_filters = { FOCUS_FILTER_ARMY_XP }
+    }
+
+    focus = { #大洋上的联邦
+	id = OCE_Federation_Ocean
+	icon = GFX_goal_generic_demand_territory
+	cost = 10
+	relative_position_id = OCE_Increases_weapon_damage
+	x = 0
+	y = 4
+	ai_will_do = { factor = 10 }
+	prerequisite = {focus = OCE_Osias_Sky }
+	prerequisite = {focus = OCE_Federal_Military_Academy }
+	prerequisite = {focus = OCE_Pay_attention_to_overseas_supply }
+	completion_reward = {
+        custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
+		add_ideas = OCE_idea_Federation_Ocean
+	}
+	search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+}
