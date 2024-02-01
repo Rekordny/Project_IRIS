@@ -50,7 +50,14 @@ OCE_Emergency_decision_category = {
                 NOT = { controls_state = 114 }
              }
         }
-        available = { controls_state = 114 }
+        available = { 
+            OR = {
+                controls_state = 114 
+                NOT = {
+                    has_war_with = DOC
+                    }
+                }
+            }
         is_good = no
         days_mission_timeout = 120
         timeout_effect = { 
@@ -104,7 +111,14 @@ OCE_Emergency_decision_category = {
                 NOT = { controls_state = 69 }
              }
         }
-        available = { controls_state = 69 }
+        available = { 
+            OR = {
+                controls_state = 69 
+                NOT = {
+                    has_war_with = DOC
+                }
+            }
+        }
         is_good = no
         days_mission_timeout = 120
         timeout_effect = { 
@@ -550,7 +564,7 @@ OCE_Internal_Warfare_Forces_in_the_Ocean = {
             set_country_flag = OCE_investigating_flag
         }
 		remove_effect = {
-            add_to_variable = { OCE_East_Island_Alliance_Forces_variable = -1 }
+            add_to_variable = { OCE_East_Island_Alliance_Forces_variable = -2 }
             clr_country_flag = OCE_investigating_flag
         }
     }
@@ -616,7 +630,7 @@ OCE_Internal_Warfare_Forces_in_the_Ocean = {
         days_remove = 10
 		fire_only_once = no
 		remove_effect = {
-            add_to_variable = { OCE_Oceanic_Federation_Forces_variable = -1 }
+            add_to_variable = { OCE_Oceanic_Federation_Forces_variable = -2 }
             clr_country_flag = OCE_investigating_flag
         }
     }
@@ -680,7 +694,7 @@ OCE_Internal_Warfare_Forces_in_the_Ocean = {
             set_country_flag = OCE_investigating_flag
         }
 		remove_effect = {
-            add_to_variable = { OCE_Indigenous_peoples_Forces_variable = -1 }
+            add_to_variable = { OCE_Indigenous_peoples_Forces_variable = -2 }
             clr_country_flag = OCE_investigating_flag
         }
     }
@@ -762,17 +776,17 @@ OCE_Internal_Warfare_Forces_in_the_Ocean = {
                 add_to_variable = { OCE_Indigenous_peoples_Forces_variable = 1 }
             }
             10 = {
-                add_to_variable = { OCE_East_Island_Alliance_Forces_variable = 1 }
-                add_to_variable = { OCE_Oceanic_Federation_Forces_variable = 1 }
-                add_to_variable = { OCE_Indigenous_peoples_Forces_variable = 1 }
+                add_to_variable = { OCE_East_Island_Alliance_Forces_variable = 2 }
+                add_to_variable = { OCE_Oceanic_Federation_Forces_variable = 2 }
+                add_to_variable = { OCE_Indigenous_peoples_Forces_variable = 2 }
             }
             }
 				activate_mission = OCE_Convene_a_rally
                 random_list = {
-                    30 = {
-                        activate_mission = OCE_Planning_an_explosion_case
+                    50 = {
+                        country_event = { id = OCE.70 days = 2 }
                     }
-                    70 = {}
+                    50 = {}
                 }
 			}
 		}
@@ -896,3 +910,126 @@ OCE_Lord_of_Eastern_European_Loba_categories = {
         }
     }
 }
+
+
+OCE_paranoia_system = {
+    OCE_forge_production_reports = {
+		priority = 310
+
+		icon = GFX_decision_eng_trade_unions_support
+
+		ai_will_do = {
+			base = 5
+		}
+
+		allowed = {
+			original_tag = OCE
+		}
+
+		available = {
+            has_completed_focus = OCE_Reports_from_factory
+            has_country_flag = OCE_Start_cleaning
+            NOT = {
+                has_country_flag = OCE_Political_paranoia_is_over
+            }
+		}
+
+		visible = {
+		}
+
+		cost = OCE_paranoia_calm_down_stalin_decision_cost
+
+		days_re_enable = OCE_paranoia_calm_down_stalin_re_enable_days
+
+		days_remove = 45
+
+		modifier = {
+			consumer_goods_factor = 0.15
+            line_change_production_efficiency_factor = -0.05
+	        industrial_capacity_factory = -0.1
+	        industrial_capacity_dockyard = -0.1
+		}
+
+		complete_effect = {
+			OCE_paranoia_medium_decrease_effect = yes
+
+			custom_effect_tooltip = OCE_paranoia_calm_down_stalin_cd_tt
+		}
+	}
+
+    OCE_inspection_in_the_army = { #Repeatable decision to reduce Paranoia // Target Army
+		priority = 308
+
+		icon = GFX_decision_generic_political_discourse
+
+        activation = {
+            NOT = {
+                has_country_flag = OCE_Political_paranoia_is_over
+            }
+			has_country_flag = OCE_Start_cleaning
+        }
+        is_good = no
+		days_mission_timeout = 15
+
+		allowed = {
+			original_tag = OCE
+		}
+
+		available = {
+            has_country_flag = OCE_Political_paranoia_is_over
+		}
+
+		visible = {
+			NOT = {
+                has_country_flag = OCE_Political_paranoia_is_over
+            }
+		}
+
+		timeout_effect = {
+            hidden_effect = {
+                activate_mission = OCE_inspection_in_the_army
+                OCE_regular_purge_general_accused_effect = yes
+            }
+            custom_effect_tooltip = OCE_inspection_in_the_army_tt
+		}
+	}
+
+    	OCE_inspection_in_the_navy = { #Repeatable decision to reduce Paranoia // Target Navy
+		priority = 307
+
+		icon = GFX_decision_generic_political_discourse
+
+		activation = {
+            NOT = {
+                has_country_flag = OCE_Political_paranoia_is_over
+            }
+			has_country_flag = OCE_Start_cleaning
+        }
+        is_good = no
+		days_mission_timeout = 30
+
+		allowed = {
+			original_tag = OCE
+		}
+
+		available = {
+            has_country_flag = OCE_Political_paranoia_is_over
+		}
+
+		visible = {
+			NOT = {
+                has_country_flag = OCE_Political_paranoia_is_over
+            }
+		}
+
+		timeout_effect = {
+			hidden_effect = {
+                activate_mission = OCE_inspection_in_the_navy
+                OCE_trigger_regular_purge_admiral_accused_effect = yes
+            }
+
+			custom_effect_tooltip = OCE_paranoia_inspection_cd_tt
+		}
+	}
+}
+
