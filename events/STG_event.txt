@@ -421,6 +421,105 @@ country_event = {
 		}
 	}
 }
+#和解的契机？
+country_event = {
+    id = STG_general.17
+    title = STG_general.17.t
+	desc = STG_general.17.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = STG
+		has_global_flag = UNG_CivilWar_over
+		country_exists = FNG
+		has_completed_focus = STG_UNG_civ_war_reaction_2
+		NOT = {
+			is_puppet = yes
+		}
+		NOT = {
+			country_exists = UNG
+		}
+		NOT = {
+			country_exists = MSA
+		}
+	}
+	mean_time_to_happen = {
+		days = 5
+	}
+	option = {
+		name = STG_general.17.a
+		FNG = {
+			country_event = {id = STG_general.18 days = 5}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#圣葛罗莉安娜的橄榄枝
+country_event = {
+    id = STG_general.18
+    title = STG_general.18.t
+	desc = STG_general.18.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.18.a
+		every_state = {
+			limit = {
+				is_core_of = STG
+				is_claimed_by = FNG
+			}
+			remove_claim_by = FNG
+		}
+		give_guarantee = STG
+		add_opinion_modifier = {
+			target = STG
+			modifier = Anglia_Reconcilation
+		}
+		STG = {
+			give_guarantee = FNG
+			add_opinion_modifier = {
+				target = FNG
+				modifier = Anglia_Reconcilation
+			}
+		}
+		hidden_effect = {
+			set_global_flag = Anglia_Reconcilation_flag
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = STG_general.18.b
+		add_stability = -0.10
+		add_war_support = -0.10
+		STG = {
+			country_event = {id = STG_general.19}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#圣葛罗莉安娜的橄榄枝
+country_event = {
+    id = STG_general.19
+    title = STG_general.19.t
+	desc = STG_general.19.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.19.b
+		add_political_power = -100
+		ai_chance = {
+			base = 1
+		}
+	}
+}
 #梦醒时分
 country_event = {
     id = STG_general.999
@@ -2585,6 +2684,43 @@ country_event = {
 			}
 			add_ideas = MSA_war_for_ang
 		}
+		if = {
+			limit = {
+				tag = FNG
+				NOT = {has_idea = FNG_war_for_ang}
+			}
+			add_ideas = FNG_war_for_ang
+		}
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#昂格利亚的战火
+country_event = {
+    id = STG_war.5
+    title = STG_war.5.t
+	desc = STG_war.5.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+		tag = STG
+		NOT = {is_puppet = yes}
+		has_global_flag = UNG_CivilWar_begun
+	}
+	mean_time_to_happen = {
+		days = 3
+	}
+	option = {
+		name = STG_war.5.a
+		custom_effect_tooltip = STG_unlock_a_new_branch_desc
+		hidden_effect = {
+			load_focus_tree = {
+				tree = STG
+				keep_completed = yes
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
 		ai_chance = {
 			base = 5
 		}
@@ -3401,6 +3537,12 @@ news_event = {
 			}
 			STG = {has_war_with = UNG}
 		}
+		else_if = {
+			limit = {
+				country_exists = FNG
+			}
+			STG = {has_war_with = FNG}
+		}
 		else = {
 			STG = {has_war_with = MSA}
 		}
@@ -3408,9 +3550,13 @@ news_event = {
 			STG = {is_puppet = yes}
 			UNG = {is_puppet = yes}
 			MSA = {is_puppet = yes}
+			FNG = {is_puppet = yes}
 		}
 		NOT = {
 			has_global_flag = WAR_FOR_ANGLIA
+		}
+		NOT = {
+			has_global_flag = UNG_CivilWar_begun
 		}
 	}
 	mean_time_to_happen = {
@@ -3423,41 +3569,44 @@ news_event = {
 			if = {
 				limit = {
 					country_exists = UNG
+					NOT = {
+						country_exists = MSA
+					}
+					NOT = {
+						country_exists = FNG
+					}
 					STG = {has_war_with = UNG}
 				}
-				if = {
-					limit = {
-						tag = STG
-					}
-					STG = {country_event = {id = STG_war.4}}
-				}
-				if = {
-					limit = {
-						tag = UNG
-					}
-					UNG = {country_event = {id = STG_war.4}}
-				}
+				STG = {country_event = {id = STG_war.4}}
+				UNG = {country_event = {id = STG_war.4}}
 			}
-			if = {
+			else_if = {
 				limit = {
 					country_exists = MSA
 					NOT = {
 						country_exists = UNG
 					}
+					NOT = {
+						country_exists = FNG
+					}
 					STG = {has_war_with = MSA}
 				}
-				if = {
-					limit = {
-						tag = STG
+				STG = {country_event = {id = STG_war.4}}
+				NSA = {country_event = {id = STG_war.4}}
+			}
+			else_if = {
+				limit = {
+					country_exists = FNG
+					NOT = {
+						country_exists = UNG
 					}
-					STG = {country_event = {id = STG_war.4}}
-				}
-				if = {
-					limit = {
-						tag = MSA
+					NOT = {
+						country_exists = MSA
 					}
-					MSA = {country_event = {id = STG_war.4}}
+					STG = {has_war_with = FNG}
 				}
+				STG = {country_event = {id = STG_war.4}}
+				FNG = {country_event = {id = STG_war.4}}
 			}
 		}
 	}
