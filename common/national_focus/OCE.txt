@@ -3,7 +3,12 @@ focus_tree = {
 	country = {
 		factor = 0
 		modifier = {
-			TAG = OCE
+			OR = {
+				TAG = OCE
+				TAG = OCF
+				TAG = EIA
+				TAG = INP
+			}
 			add = 10
 		}
 	}
@@ -426,6 +431,15 @@ focus_tree = {
 	mutually_exclusive = {
 	}
 	completion_reward = {
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = OCE_Start_cleaning
+				}
+			}
+			custom_effect_tooltip = OCE_Start_cleaning_tt
+			set_country_flag = OCE_Start_cleaning
+		}
 		add_power_balance_value = {
 			id = OCE_stable_value 
 			value = 0.05
@@ -606,7 +620,16 @@ focus_tree = {
 	ai_will_do = { factor = 20 }
 	prerequisite = {focus = OCE_Purify_them focus = OCE_Not_a_single_one_is_left}
 	completion_reward = {
-		add_manpower = -10293
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = OCE_Start_cleaning
+				}
+			}
+			custom_effect_tooltip = OCE_Start_cleaning_tt
+			set_country_flag = OCE_Start_cleaning
+		}
+		add_manpower = -30293
 		add_popularity = { ideology = communism popularity = -1 }
 		add_popularity = { ideology = democratic popularity = -1 }
 		set_party_name = {
@@ -768,7 +791,21 @@ focus_tree = {
 	prerequisite = { focus = OCE_False_wars }
     prerequisite = { focus = OCE_Central_industrial_construction focus = OCE_Open_borders focus = OCE_Regional_blockades focus = OCE_Our_allies_bla }
 	completion_reward = {
-		
+		if = {
+			limit = {
+				NOT = {
+					has_country_flag = OCE_Political_paranoia_is_over
+				}
+			}
+			custom_effect_tooltip = OCE_Political_paranoia_is_over_tt
+			set_country_flag = OCE_Political_paranoia_is_over
+		}
+		every_army_leader = {
+			limit = {
+                has_trait = OCE_fear_osia
+			}
+			remove_unit_leader_trait = OCE_fear_osia
+		}
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -813,7 +850,7 @@ focus_tree = {
 
 
     #工业/军备
-    focus = { #投资本岛建设
+    focus = { #投资建设
 	id = OCE_Investing_in_local_military_industry
 	icon = GFX_goal_generic_demand_territory
 	cost = 10
@@ -822,13 +859,31 @@ focus_tree = {
 	y = 0
 	ai_will_do = { factor = 10 }
 	available={  
-		OR = {
-			has_global_flag = OCE_civil_war_OVER
-			has_completed_focus = OCE_Transylvanian_orthodoxy
+		NOT = {
+			has_war_with = DOC
 		}
 	}
 	completion_reward = {
 		if = {
+			limit = {
+				OR = {
+					tag = INP
+					tag = EIA
+				}
+			}
+			every_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+				type = infrastructure
+				level = 1
+				instant_build = yes
+				}
+			}
+		}else = {
+			if = {
 			limit = {
 				controls_state = 115
 			}
@@ -995,6 +1050,7 @@ focus_tree = {
 			}
 		}
 		}
+		}
 		
 	}
 	search_filters = { FOCUS_FILTER_INDUSTRY }
@@ -1010,33 +1066,28 @@ focus_tree = {
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Investing_in_local_military_industry}
 	completion_reward = {
-		if = {
-			limit = {
-				controls_state = 137
+		random_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+				type = arms_factory
+				level = 1
+				instant_build = yes
+				}
 			}
-			137 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = arms_factory
-			level = 1
-			instant_build = yes
+		random_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+				type = arms_factory
+				level = 2
+				instant_build = yes
+				}
 			}
-		}
-		}
-		
-		if = {
-			limit = {
-				controls_state = 115
-			}
-			115 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = arms_factory
-			level = 1
-			instant_build = yes
-			}
-		}
-		}
 		
 	}
 	search_filters = { FOCUS_FILTER_INDUSTRY }
@@ -1052,33 +1103,28 @@ focus_tree = {
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Investing_in_local_military_industry}
 	completion_reward = {
-		if = {
-			limit = {
-				controls_state = 115
+		random_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+				type = dockyard
+				level = 1
+				instant_build = yes
+				}
 			}
-			115 = {
-		add_extra_state_shared_building_slots = 2
-		add_building_construction = {
-			type = dockyard
-			level = 2
-			instant_build = yes
+		random_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+				type = dockyard
+				level = 2
+				instant_build = yes
+				}
 			}
-		}
-		}
-		
-		if = {
-			limit = {
-				controls_state = 165
-			}
-			165 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = dockyard
-			level = 1
-			instant_build = yes
-			}
-		}
-		}
 		
 	}
 	search_filters = { FOCUS_FILTER_INDUSTRY }
@@ -1151,32 +1197,7 @@ focus_tree = {
 	completion_reward = {
 		add_ideas = OCE_idea_Ocean_Navy_Refurbishment
 		navy_experience = 15
-		if = {
-			limit = {
-				controls_state = 91
-			}
-			91 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = dockyard
-			level = 1
-			instant_build = yes
-			}
-		}
-		}
-		if = {
-			limit = {
-				controls_state = 766
-			}
-			766 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = dockyard
-			level = 1
-			instant_build = yes
-			}
-		}
-		}
+		add_offsite_building = { type = dockyard level = 3 }
 	}
 	search_filters = { FOCUS_FILTER_INDUSTRY }
 	search_filters = { FOCUS_FILTER_NAVY_XP }
@@ -1363,67 +1384,8 @@ focus_tree = {
 	prerequisite = {focus = OCE_Military_industry_construction_island focus = OCE_Construction_shipyard_this_island focus = OCE_Island_Port_Expansion}
 	completion_reward = {
 		add_stability = -0.15
-		115 = {
-		add_extra_state_shared_building_slots = 2
-		add_building_construction = {
-			type = arms_factory
-			level = 1
-			instant_build = yes
-			}
-		add_building_construction = {
-			type = industrial_complex
-			level = 1
-			instant_build = yes
-			}
-		}
-		135 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = industrial_complex
-			level = 1
-			instant_build = yes
-			}
-		}
-		137 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = arms_factory
-			level = 1
-			instant_build = yes
-			}
-		}
-		773 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = industrial_complex
-			level = 1
-			instant_build = yes
-			}
-		}
-		88 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = industrial_complex
-			level = 1
-			instant_build = yes
-			}
-		}
-		766 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = industrial_complex
-			level = 1
-			instant_build = yes
-			}
-		}
-		108 = {
-		add_extra_state_shared_building_slots = 1
-		add_building_construction = {
-			type = industrial_complex
-			level = 1
-			instant_build = yes
-			}
-		}
+		add_offsite_building = { type = arms_factory level = 2 }
+		add_offsite_building = { type = industrial_complex level = 6 }
 	}
 	search_filters = { FOCUS_FILTER_INDUSTRY }
     }
@@ -1453,6 +1415,9 @@ focus_tree = {
 	x = 0
 	y = 3
 	ai_will_do = { factor = 10 }
+	available = {
+		has_full_control_of_state = 115
+	}
 	prerequisite = {focus = OCE_Nationalized_industries }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
