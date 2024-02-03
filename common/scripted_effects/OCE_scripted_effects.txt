@@ -58,3 +58,65 @@ OCE_pie_chart_type = {
 	round_variable = OCE_scientific_expenses_pie
   add_to_variable = { OCE_scientific_expenses_pie = OCE_other_expenses_pie }
 }
+
+OCE_Extreme = {
+	add_to_variable = { OCE_paranoia_main_paranoiameter = 3 } 
+	OCE_Extreme_100_0 = yes
+}
+OCE_Extreme_100_0 = {
+	if = {
+        limit = {
+            check_variable = {OCE_paranoia_main_paranoiameter < 0}
+        }
+        set_variable = {OCE_paranoia_main_paranoiameter = 0}
+    }
+    if = {
+        limit = {
+            check_variable = {OCE_paranoia_main_paranoiameter > 100}
+        }
+       set_variable = {OCE_paranoia_main_paranoiameter = 100}
+    }
+}
+
+OCE_purge_character_effect = { #Expected to be called in the character scope
+	PREV = { retire_character = PREV }
+	OCE_paranoia_medium_decrease_effect = yes
+}
+
+OCE_trigger_regular_purge_admiral_accused_effect = {
+	random_navy_leader = {
+		limit = {
+			NOT = {
+				has_character_flag = OCE_targeted_for_purge_flag
+			}
+		}
+		set_character_flag = OCE_targeted_for_purge_flag
+		ROOT = { set_variable = { OCE_purged_character_for_loc = PREV } }	
+	}
+	
+	var:OCE_purged_character_for_loc = { unit_leader_event = OCE_paranoia_system_events.31 } # TRIGGER EVENT
+}
+
+OCE_regular_purge_general_accused_effect = {
+	
+	random_army_leader = {
+		limit = {
+			NOT = {
+				has_trait = OCE_fear_osia
+				has_character_flag = OCE_targeted_for_purge_flag
+				has_character_flag = OCE_targeted_for_purge_flag_no
+			}
+		}
+		set_character_flag = OCE_targeted_for_purge_flag
+
+		ROOT = { set_variable = { OCE_purged_character_for_loc = PREV } }
+		ROOT = { log = "This is [THIS.GetName] // PREV is [PREV.GetName] // ROOT is [ROOT.GetName] // VAR is [?ROOT.OCE_purged_character_for_loc.GetName]" }
+	}
+
+	var:OCE_purged_character_for_loc = { unit_leader_event = OCE_paranoia_system_events.21 } # TRIGGER EVENT
+}
+
+OCE_paranoia_medium_decrease_effect = {
+	add_to_variable = { OCE_paranoia_main_paranoiameter = -8 } 
+	OCE_Extreme_100_0 = yes
+}
