@@ -47,6 +47,27 @@ country_event = {
 		name = STG_civ_war.2.a
         hidden_effect = {
             remove_ideas = STG_voice_of_rebellion
+            if = {
+                limit = {
+                    STG = {controls_state = 238}
+                }
+                if = {
+                    limit = {
+                        country_exists = FNG
+                    }
+                    FNG = {
+                        transfer_state = 238
+                    }
+                }
+                else_if = {
+                    limit = {
+                        country_exists = UNG
+                    }
+                    UNG = {
+                        transfer_state = 238
+                    }
+                }
+            }
             STR = {
                 transfer_state = 222
                 transfer_state = 717
@@ -142,8 +163,27 @@ country_event = {
                     owner = STR
                 }
 		    }
-            UNG = {
-                country_event = {id = STG_civ_war.4 days = 3}
+            if = {
+                limit = {
+                    has_global_flag = UNG_CivilWar_over
+                    country_exists = UNG
+                    NOT = {country_exists = MSA}
+                    NOT = {country_exists = FNG}
+                }
+                UNG = {
+                    country_event = {id = STG_civ_war.4 days = 3}
+                }
+            }
+            else_if = {
+                limit = {
+                    has_global_flag = UNG_CivilWar_over
+                    country_exists = FNG
+                    NOT = {country_exists = MSA}
+                    NOT = {country_exists = UNG}
+                }
+                FNG = {
+                    country_event = {id = STG_civ_war.4 days = 3}
+                }
             }
             USR = {
                 country_event = {id = STG_civ_war.5 days = 3}
@@ -171,7 +211,7 @@ country_event = {
 		}
 	}
 }
-#UNG得知STG崩溃
+#UNG/FNG得知STG崩溃
 country_event = {
     id = STG_civ_war.4
     title = STG_civ_war.3.t
@@ -181,15 +221,13 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = STG_civ_war.3.a
-        UNG = {
-            give_guarantee = STR
-            give_military_access = STR
-        }
+        give_guarantee = STR
+        give_military_access = STR
         STR = {
-            give_military_access = UNG
+            give_military_access = ROOT
         }
         hidden_effect = {
-            UNG = { 
+            ROOT = { 
                 add_ai_strategy = {
                     type = alliance
                     id = STR
@@ -241,7 +279,13 @@ country_event = {
             }
         }
         USR = {
-            USR_remove_treaty_clemen = yes
+            if = {
+                limit = {
+                    has_global_flag = UNG_CivilWar_over
+                    NOT = {country_exists = MSA}
+                }
+                USR_remove_treaty_clemen = yes
+            }
             add_stability = -0.10
         }
         set_global_flag = STG_civ_war_started
@@ -274,11 +318,28 @@ country_event = {
 	}
     option = {
 		name = STG_civ_war.5.b
+        trigger = {
+            has_global_flag = UNG_CivilWar_over
+            OR = {
+                country_exists = UNG
+                country_exists = FNG
+            }
+        }
         add_stability = -0.10
         custom_effect_tooltip = STR_became_UNG_puppet_desc
         hidden_effect = {
-            UNG = {
-                country_event = {id = STG_civ_war.6}
+            if = {
+                limit = {
+                    country_exists = UNG
+                }
+                UNG = {
+                    country_event = {id = STG_civ_war.6}
+                }
+            }
+            else = {
+                FNG = {
+                    country_event = {id = STG_civ_war.6}
+                }
             }
         }
 		ai_chance = {
@@ -286,7 +347,7 @@ country_event = {
 		}
 	}
 }
-#UNG傀儡STR
+#傀儡STR
 country_event = {
     id = STG_civ_war.6
     title = STG_civ_war.6.t
@@ -297,7 +358,7 @@ country_event = {
 	option = {
 		name = STG_civ_war.6.a
         add_political_power = 50
-        UNG = {
+        ROOT = {
             set_autonomy = {
                 target = STR
                 autonomy_state = autonomy_dominion
@@ -313,7 +374,7 @@ country_event = {
         }
         custom_effect_tooltip = UNG_gain_STG_tank_division_desc
         hidden_effect = {
-            UNG = {
+            ROOT = {
                 division_template = {
                     name = "St. Gloriana Tank Division"
                     is_locked = yes
@@ -335,7 +396,7 @@ country_event = {
                 }
                 create_equipment_variant = {
                     name = "“布尔”式巡洋坦克"
-                    type = medium_tank_chassis_0
+                    type = medium_tank_chassis_1
                     parent_version = 0
                     modules = {
                         main_armament_slot = tank_close_support_gun
@@ -357,7 +418,7 @@ country_event = {
             222 = {
                 create_unit = {
                     division = "name = \"St. Gloriana Tank Division\" division_template = \"St. Gloriana Tank Division\" start_experience_factor = 0.75"
-                    owner = UNG
+                    owner = ROOT
                 }
             }
         }
@@ -394,16 +455,41 @@ country_event = {
                 transfer_state = 717
                 annex_country = {target = STR transfer_troops = no}
 		    }
-            USR = {
-                white_peace = {
-				tag = UNG
-			    }
+            if = {
+                limit = {
+                    USR = {
+                        has_war_with = UNG
+                    }
+                }
+                STG = {
+                    white_peace = {
+                        tag = UNG
+                        message = STG_CIV_ENDED_STG
+                    }
+                }
+                USR = {
+                    white_peace = {
+                        tag = UNG
+                    }
+                }
             }
-            STG = {
-                white_peace = {
-				tag = UNG
-				message = STG_CIV_ENDED_STG
-			    }
+            if = {
+                limit = {
+                    USR = {
+                        has_war_with = FNG
+                    }
+                }
+                STG = {
+                    white_peace = {
+                        tag = FNG
+                        message = STG_CIV_ENDED_STG
+                    }
+                }
+                USR = {
+                    white_peace = {
+                        tag = FNG
+                    }
+                }
             }
             STG = {
                 remove_ideas = STG_hell_march
@@ -432,7 +518,10 @@ country_event = {
 	picture = GFX_ungevent_1
 	fire_only_once = yes
     trigger = {
-        tag = UNG
+        OR = {
+            tag = UNG
+            tag = FNG
+        }
         has_global_flag = STG_civ_war_started
         NOT = {
             230 = {is_controlled_by = STG}
@@ -463,11 +552,35 @@ country_event = {
                 remove_ideas = STR_for_the_death_2
                 remove_ideas = STR_for_the_death_3
             }
-            USR = {
-                white_peace = {
-				    tag = UNG
-			    }
-                country_event = {id = STG_civ_war.6}
+            if = {
+                limit = {
+                    USR = {
+                        has_war_with = UNG
+                    }
+                }
+                USR = {
+                    white_peace = {
+                        tag = UNG
+                    }
+                }
+                UNG = {
+                    country_event = {id = STG_civ_war.6}
+                }
+            }
+            else_if = {
+                limit = {
+                    USR = {
+                        has_war_with = FNG
+                    }
+                }
+                USR = {
+                    white_peace = {
+                        tag = FNG
+                    }
+                }
+                FNG = {
+                    country_event = {id = STG_civ_war.6}
+                }
             }
         }
 		ai_chance = {
@@ -489,13 +602,20 @@ country_event = {
 	picture = GFX_ungevent_1
 	fire_only_once = yes
     trigger = {
-        tag = UNG
+        OR = {
+            tag = UNG
+            tag = FNG
+        }
         has_global_flag = STG_civ_war_started
         NOT = {
             230 = {is_controlled_by = STG}
             231 = {is_controlled_by = STG}
         }
         USR = {
+            OR = {
+                has_war_with = UNG
+                has_war_with = FNG
+            }
             surrender_progress > 0.1
         }
     }
@@ -528,15 +648,37 @@ country_event = {
 				message = STG_CIV_ENDED_STR_2
 			    }
             }
-            USR = {
-                white_peace = {
-				tag = UNG
-			    }
+            if = {
+                limit = {
+                    USR = {
+                        has_war_with = UNG
+                    }
+                }
+                USR = {
+                    white_peace = {
+                        tag = UNG
+                    }
+                }
+                UNG = {
+                    country_event = {id = STG_civ_war.6}
+                }
+            }
+            else_if = {
+                limit = {
+                    USR = {
+                        has_war_with = FNG
+                    }
+                }
+                USR = {
+                    white_peace = {
+                        tag = FNG
+                    }
+                }
+                FNG = {
+                    country_event = {id = STG_civ_war.6}
+                }
             }
 		    news_event = { id = STG_civ_war_news.4 }
-            UNG = {
-                country_event = {id = STG_civ_war.6}
-            }
         }
 		ai_chance = {
 			base = 5
