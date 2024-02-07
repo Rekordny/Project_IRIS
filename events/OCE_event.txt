@@ -39,6 +39,10 @@ country_event =  {
 		}
 		OCE = { complete_national_focus = OCE_I_am_barbarian }
 		news_event = { id = ocenews.1 }
+		DOC = {
+			add_ideas = DOC_osia_Blatant_bombing
+			add_ideas = DOC_osia_naval_blockade
+		}
 	}
 	mean_time_to_happen = {
 		days = 2
@@ -64,6 +68,7 @@ country_event =  {
 	fire_only_once = yes
 	immediate = {
 		hidden_effect = {
+
 			set_global_flag = OCE_The_situation_is_turbulent
 			766 = { set_demilitarized_zone = yes }
 			add_stability = -0.1
@@ -516,14 +521,45 @@ country_event =  {
 				
 
 			OCE = {
+				set_technology = {
+				gwtank_chassis = 1
+				basic_light_tank_chassis = 1
+				basic_medium_tank_chassis = 1
+				engine_tech_1 = 1
+				armor_tech_1 = 1
+			}
+		create_equipment_variant = {
+			name = "“克拉达斯”式反叛坦克"
+			type = medium_tank_chassis_1
+			parent_version = 0
+			modules = {
+			main_armament_slot = tank_close_support_gun
+			turret_type_slot = tank_medium_three_man_tank_turret
+			suspension_type_slot = tank_bogie_suspension
+			armor_type_slot = tank_riveted_armor
+			engine_type_slot = tank_gasoline_engine
+			special_type_slot_1 = tank_radio_1
+			special_type_slot_2 = secondary_turret_hmg
+			}
+			upgrades = {
+				tank_nsb_armor_upgrade = 4
+				tank_nsb_engine_upgrade = 5
+				}
+			}
+			add_equipment_to_stockpile = {
+		        type = medium_tank_chassis_1
+                variant_name = "“克拉达斯”式反叛坦克"
+		        amount = 450
+		        producer = OCE
+	        }
 			division_template = {
 				name = "秘密警察"
 				regiments = {
 				infantry = { x = 0 y = 0 }
 				infantry = { x = 0 y = 1 }
 				infantry = { x = 0 y = 2 }
-				infantry = { x = 0 y = 3 }
 				infantry = { x = 1 y = 0 }
+				artillery_brigade = { x = 2 y = 1 }
 			    	}
 				}
 			every_controlled_state = {
@@ -531,10 +567,55 @@ country_event =  {
 					is_owned_by = OCE
 				}
 			create_unit = {
-				division = "name = \"秘密警察\" division_template = \"秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 0.7 "
+				division = "name = \"秘密警察\" division_template = \"秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
 				owner = OCE
 					}
 				}
+				division_template = {
+			name = "联邦装甲部队"
+			regiments = {
+				medium_armor = { x = 0 y = 0 }
+				medium_armor = { x = 0 y = 1 }
+				medium_armor = { x = 0 y = 2 }
+				medium_armor = { x = 0 y = 3 }
+				medium_armor = { x = 1 y = 0 }
+				medium_armor = { x = 1 y = 1 }
+				medium_armor = { x = 1 y = 2 }
+				medium_armor = { x = 1 y = 3 }
+				motorized = { x = 2 y = 0 }
+				motorized = { x = 2 y = 1 }
+				motorized = { x = 2 y = 2 }
+				motorized = { x = 2 y = 3 }
+				motorized = { x = 3 y = 0 }
+				motorized = { x = 3 y = 1 }
+				motorized = { x = 3 y = 2 }
+				motorized = { x = 3 y = 3 }
+			    }
+
+				support = {
+					engineer = { x = 0 y = 0 }
+					recon = { x = 0 y = 1 }
+					signal_company ={ x =0 y = 2}
+					maintenance_company ={ x = 0 y = 3}
+				}
+		}
+		115 = {
+			limit = {
+			is_owned_and_controlled_by = OCE }
+
+			create_unit = {
+				division = "name = \"联邦装甲部队1师\" division_template = \"联邦装甲部队\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+				owner = OCE
+			}
+			create_unit = {
+				division = "name = \"联邦装甲部队2师\" division_template = \"联邦装甲部队\" start_experience_factor = 0.2 start_equipment_factor = 1 "
+				owner = OCE
+			}
+			create_unit = {
+				division = "name = \"联邦装甲部队3师\" division_template = \"联邦装甲部队\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+				owner = OCE
+			}
+		}
 			}
 		}
 	}			
@@ -745,7 +826,7 @@ country_event =  {
 		tag = OCE
 		
 		115 = { is_owned_by = OCE }
-
+		country_lock_all_division_template = no
 		NOT = {
 			773 = { is_controlled_by = OCE }
 			766 = { is_controlled_by = OCE }
@@ -826,6 +907,7 @@ country_event =  {
 		add_timed_idea = { idea = OCE_idea_The_aftermath_of_civil_war days = 180 }
 		hidden_effect = {
 			country_event = { id = OCE.5 days = 100 }
+			OCE = { country_lock_all_division_template = no }
 		}
 	}
 }
@@ -1096,25 +1178,70 @@ country_event =  {
 	}	
 	option = {
 		name = OCE.72.a
-		hidden_effect = {
-			country_event = { id = OCE.73 }
-			add_to_variable = { OCE_East_Island_Alliance_Forces_variable = 2 }
-            add_to_variable = { OCE_Oceanic_Federation_Forces_variable = 2 }
-            add_to_variable = { OCE_Indigenous_peoples_Forces_variable = 2 }
-		}
-		115 = {
-			damage_building = {
-				type = infrastructure
-				damage  = 2
+			random_list = {
+				50 = {
+					hidden_effect = {
+					add_country_leader_trait = TRAIT_OCE_eraser
+					remove_country_leader_trait = TRAIT_OCE_duyiwuerdeaoxiya
+					remove_country_leader_trait = TRAIT_OCE_chouhenyizhi
+					set_country_leader_portrait = {
+					ideology = fascism
+					portrait = GFX_Osia_screen
+					}	
+					set_country_leader_portrait = {
+						ideology = reactionism
+						portrait = GFX_Osia_screen
+					}
+					set_country_leader_portrait = {
+						ideology = neutrality
+						portrait = GFX_Osia_screen
+					}
+					set_country_leader_name = {
+						ideology = fascism
+						name = Osia_screen
+					}
+					set_country_leader_name = {
+						ideology = reactionism
+						name = Osia_screen
+					}
+						set_country_leader_name = {
+						ideology = neutrality
+						name = Osia_screen
+					}
+				}
+				115 = {
+					damage_building = {
+						type = infrastructure
+						damage  = 2
+					}
+					damage_building = {
+						type = industrial_complex
+						damage  = 1
+					}
+					add_manpower = -209
+					}
+				add_popularity = { ideology = reactionism popularity = 0.5 }
 			}
-			damage_building = {
-				type = industrial_complex
-				damage  = 1
+			50 = {
+				add_popularity = { ideology = fascism popularity = 0.15 }
+				115 = {
+					damage_building = {
+					type = infrastructure
+					damage  = 2
+					}
+					damage_building = {
+					type = industrial_complex
+					damage  = 1
+					}
+					add_manpower = -208
+				}
 			}
-			add_manpower = -208
 		}
-		add_popularity = { ideology = fascism popularity = 0.1 }
-		custom_effect_tooltip = OCE.72.tt
+	country_event = { id = OCE.73 }
+	add_to_variable = { OCE_East_Island_Alliance_Forces_variable = 2 }
+    add_to_variable = { OCE_Oceanic_Federation_Forces_variable = 2 }
+    add_to_variable = { OCE_Indigenous_peoples_Forces_variable = 2 }
+	custom_effect_tooltip = OCE.72.tt
 	}
 }
 
