@@ -439,7 +439,7 @@ UNG_debug = {
 		
 	}
 	#*MSA控制海军
-	UNG_MSA_GETNAVAL = {
+	UNG_MSA_GETNAVAL_debug = {
 		icon = GFX_decision_eng_trade_unions_support
 		visible = {
 			is_debug = yes
@@ -1607,7 +1607,7 @@ UNG_Round_Table_Game = {
 			TAG = UNG
 		}
 		fire_only_once = yes
-		days_mission_timeout = 10
+		days_mission_timeout = 300
 		timeout_effect = {
 			custom_effect_tooltip = UNG_CivilWar_TXT
 			hidden_effect ={
@@ -1955,6 +1955,9 @@ UNG_Round_Table_Game = {
 					if = {
 						limit = {
 							any_country = {
+								NOT = {
+									tag = UNG
+								}
 								has_country_flag = UNG_civilwar_navalget
 							}
 						}
@@ -1995,6 +1998,9 @@ UNG_Round_Table_Game = {
 						}
 						random_country = {
 							limit = {
+								NOT = {
+									tag = UNG
+								}
 								has_country_flag = UNG_civilwar_navalget
 							}
 							load_oob = "UNG_naval_civiwar_2"
@@ -2027,6 +2033,178 @@ UNG_Round_Table_Game = {
 				}
 				set_global_flag = UNG_CivilWar_begun
 			}
+		}
+	}
+	#*莫德雷德派正在渗透我们的海军···
+	UNG_MSA_GETNAVAL= {
+		icon = GFX_decision_eng_trade_unions_support
+		is_good = no
+		available = {
+			has_global_flag = UNG_CivilWar_begun
+		}
+		activation = {
+			TAG = UNG			
+			NOT = { has_global_flag = UNG_CivilWar_begun }
+			NOT = {
+				any_country = {
+					has_country_flag = UNG_civilwar_navalget
+				}
+			}
+		}
+		days_mission_timeout = 280
+		timeout_effect = {
+			custom_effect_tooltip = UNG_MSA_GETNAVAL_TXT
+			MSA = {
+				set_country_flag = UNG_civilwar_navalget
+			}
+		}
+	}
+	#*自由昂格利亚正在渗透我们的海军···
+	UNG_FNG_GETNAVAL= {
+		icon = GFX_decision_eng_trade_unions_support
+		is_good = no
+		available = {
+			has_global_flag = UNG_CivilWar_begun
+		}
+		activation = {
+			TAG = UNG			
+			NOT = { has_global_flag = UNG_CivilWar_begun }
+			NOT = {
+				any_country = {
+					has_country_flag = UNG_civilwar_navalget
+				}
+			}
+		}
+		days_mission_timeout = 200
+		timeout_effect = {
+			custom_effect_tooltip = UNG_FNG_GETNAVAL_TXT
+			FNG = {
+				set_country_flag = UNG_civilwar_navalget
+			}
+		}
+	}
+	#*加强对海军的控制
+	UNG_UNG_GETNAVAL = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {
+			tag = UNG
+			NOT = { has_global_flag = UNG_CivilWar_begun }
+			NOT = {
+				any_country = {
+					has_country_flag = UNG_civilwar_navalget
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+		available = {
+			TAG = UNG			
+			NOT = { has_global_flag = UNG_CivilWar_begun }
+			NOT = {
+				any_country = {
+					has_country_flag = UNG_civilwar_navalget
+				}
+			}
+		}
+		days_remove = 120
+		modifier = {
+		 	political_power_factor = -0.1
+		}
+		complete_effect = {
+			
+		}
+		remove_effect = {
+			custom_effect_tooltip = UNG_UNG_GETNAVAL_debug_TXT
+			set_country_flag = UNG_civilwar_navalget
+		}
+	}
+	#*谨防魔女阴谋
+	UNG_Jinfangmonvyinmou = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {
+			NOT = { has_global_flag = UNG_CivilWar_begun }
+			tag = UNG
+			has_completed_focus = UNG_Yinnizhexingdong
+		}
+		ai_will_do = {
+			factor = 10
+		}
+		available = {
+			TAG = UNG
+		}
+		cost = 30
+		days_remove = 70
+		modifier = {
+		 	stability_weekly_factor = 0.01
+		}
+		complete_effect = {
+			
+		}
+		remove_effect = {
+			custom_effect_tooltip = remove_MSA_touzi_max_1_TXT
+			add_to_variable = { global.MSA_touzi_max = -1 }
+		}
+	}
+	#*骑士王的巡礼
+	UNG_Qishiwangdexunli_decision = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {
+			NOT = { has_global_flag = UNG_CivilWar_begun }
+			tag = UNG
+			has_completed_focus = UNG_Qishiwangdexunli
+		}
+		ai_will_do = {
+			factor = 10
+		}
+		available = {
+			TAG = UNG
+		}
+		cost = 30
+		days_remove = 60
+		modifier = {
+		 	stability_weekly_factor = 0.01
+		}
+		complete_effect = {
+			country_event = {
+				days = 10
+				id = UNG.103
+			}
+		}
+		remove_effect = {
+			add_stability = 0.05
+		}
+	}
+	#*强有力突袭
+	UNG_Qiangyoulituxi_decision = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = {
+			NOT = { has_global_flag = UNG_CivilWar_over }
+			tag = UNG
+			has_completed_focus = UNG_Qiangyoulituxi
+		}
+		ai_will_do = {
+			factor = 10
+		}
+		available = {
+			TAG = UNG
+		}
+		custom_cost_trigger = {
+            has_command_power > 29
+        }
+        custom_cost_text = decision_cost_CP_30
+		days_remove = 120
+		modifier = {
+		 	army_core_attack_factor = 0.25
+			army_speed_factor = 0.2
+		}
+		complete_effect = {
+			hidden_effect = {
+                add_command_power = -30
+            }
+		}
+		remove_effect = {
+			
 		}
 	}
 }
