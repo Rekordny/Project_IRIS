@@ -137,7 +137,7 @@ DOC_Emergency_decision_category = {
 		activation = {
             AND = {
                 has_war_with = OCE
-				NOT = {has_global_flag = OCE_DOC_WAR_OVER}
+				NOT = {has_global_flag = OCE_DOC_WAR_OVER has_country_flag = DOC_Flag_The_undefeated_rose_of_permafrost }
              }
         }
 		available = {
@@ -160,7 +160,8 @@ DOC_Emergency_decision_category = {
 		}
 		
 		complete_effect = {
-			set_country_flag =  DOC_Flag_The_undefeated_rose_of_permafrost
+			set_country_flag = DOC_Flag_The_undefeated_rose_of_permafrost
+			news_event = { id = docnews.01 days = 5 }
 		}
 
 
@@ -744,6 +745,11 @@ DOC_Portal_Summoning = {
 			modifier = {	
 			}
 		}
+		visible = {
+			FROM = {
+				is_core_of = ROOT
+			}
+		}
 		allowed = {
 			original_tag = DOC
 		}
@@ -759,12 +765,12 @@ DOC_Portal_Summoning = {
 			has_country_flag = DOC_IRIS_World_Distribution_of_Qinglan_Knights_Academy_flag
 		}
 		available = {
-			has_political_power > 99
-			check_variable = { army_experience > 10}
+			#has_political_power > 99
+			#check_variable = { army_experience > 10}
 			has_completed_focus = DOC_IRIS_World_Distribution_of_Qinglan_Knights_Academy
 		}
 		remove_effect = {
-			army_experience = -10
+			#army_experience = -10
 			FROM = {
 			limit = {
 			is_owned_and_controlled_by = DOC }
@@ -835,39 +841,47 @@ DOC_Portal_Summoning = {
 }	
 
 #制造核心
-#DOC_Manufacturing_Core = {
-#	DOC_Core = {
-#		fire_only_once = yes
-#		cost = 35
-#		ai_will_do = {
-#			factor = 100
-#			modifier = {	
-#			}
-#		}
-#		allowed = {
-#			original_tag = DOC
-#		}
-#		available = {
-#			FROM = {
-#				compliance > 50
-#				NOT = {
-#					is_core_of = ROOT
-#				}
-#				is_controlled_by = ROOT
-#			}
-#		}
-#		days_remove = 60
-#		state_target = yes
-#		on_map_mode = map_only
-#		target_array = controlled_states
-#		remove_effect = {
-#			FROM = {
-#				add_core_of = ROOT
-#			}
-#			transfer_state = FROM
-#		}
-#	}
-#}
+DOC_Manufacturing_Core = {
+	DOC_Core = {
+		fire_only_once = yes
+		cost = 35
+		ai_will_do = {
+			factor = 100
+			modifier = {	
+			}
+		}
+		allowed = {
+			original_tag = DOC
+		}
+		visible = {
+			FROM = {
+				NOT = {
+					is_core_of = ROOT
+				}
+			}
+		}
+		available = {
+			FROM = {
+				compliance > 20
+				NOT = {
+					is_core_of = ROOT
+				}
+				is_controlled_by = ROOT
+			}
+		}
+		days_remove = 60
+		state_target = yes
+		on_map_mode = map_only
+		target_array = controlled_states
+		remove_effect = {
+			FROM = {
+				add_manpower = -209181
+				add_core_of = ROOT
+			}
+			transfer_state = FROM
+		}
+	}
+}
 
 
 #基特港海军兵学校
@@ -1539,6 +1553,53 @@ DOC_process_of_democratization = {
 			hidden_effect = {
 				add_ideas = DOC_Teiira_Schnee_idea
 			}
+		}
+	}
+}
+
+DOC_repair_portal = {
+	DOC_repair_mana_formation = {
+		ai_will_do = { factor = 100 }
+		cost = 100
+		available = {
+			has_war = no
+			DOC = {
+			owns_state = 105
+			owns_state = 97
+			owns_state = 39
+			owns_state = 51
+			owns_state = 75
+			owns_state = 70
+			owns_state = 61
+			owns_state = 58
+			}
+			OR = {
+				AND = {
+					has_completed_focus = DOC_Expand_training_scale
+					has_completed_focus = DOC_Ground_vein_cultivation_plan
+					has_completed_focus = DOC_Innovate_Mana_Guide
+				}
+				has_completed_focus = DOC_NF_Modern_military
+			}
+			has_completed_focus = DOC_NF_NA2_Vulture_in_Blue_Sky
+			OR = {
+				has_completed_focus = DOC_NF_Naval_08_1_PLAN_SCH_Urgent
+				has_completed_focus = DOC_NF_Naval_EX01_Codename_Pheromerinue
+				has_completed_focus = DOC_NF_Naval_08_PLAN_SCH_III
+			}
+		}
+		fire_only_once = yes
+		days_remove = 20
+		remove_effect = {
+			if = {
+				limit = { DOC = { is_puppet = yes } }
+				every_other_country = {
+					limit = { has_subject = ROOT }
+					end_puppet = ROOT
+				}
+			}
+			custom_effect_tooltip = DOC_NF_F_P01_The_Mana_Circle_in_Garniwinburg.TXT
+    		DOC = {country_event = DOC.9 }
 		}
 	}
 }
