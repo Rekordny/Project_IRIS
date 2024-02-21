@@ -350,13 +350,12 @@ focus_tree = {
 	mutually_exclusive = {
 	}
 	completion_reward = {
-        TFD = {
-            add_state_core = 85
-            add_state_core = 60
-			add_state_core = 69
-			add_state_core = 59
-			add_state_core = 114
-        }
+        every_state = {
+			limit = {
+				is_controlled_by = TFD
+			}
+			add_core_of = TFD
+		}
 	}
 	available = {
         country_exists = TFD
@@ -516,6 +515,58 @@ focus_tree = {
             country_exists = TFD
         }
     }
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+	focus = { #吞并TFD
+	id = OCE_annex_TFD
+	icon = GFX_goal_generic_demand_territory
+	cost = 3
+	relative_position_id = OCE_Regional_blockades
+	x = -1
+	y = 1
+	ai_will_do = { factor = 50 }
+	prerequisite = {focus = OCE_Regional_blockades focus = OCE_Open_borders }
+	mutually_exclusive = {
+	}
+	completion_reward = {
+        every_state = {
+				limit = {
+					is_controlled_by = TFD
+				}
+				add_core_of = OCE
+			}
+        annex_country = { target = TFD transfer_troops = yes }
+	}
+	available = {
+        country_exists = TFD
+		has_completed_focus = OCE_The_only_Osias
+	}
+    bypass = {
+		has_country_flag = TFD_existed_flag
+        NOT = {
+            country_exists = TFD
+        }
+    }
+	search_filters = { FOCUS_FILTER_STABILITY }
+    }
+
+	focus = { #建立联邦管区
+	id = OCE_establish_federal_jurisdiction
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_Regional_blockades
+	x = 1
+	y = 1
+	ai_will_do = { factor = 50 }
+	prerequisite = {focus = OCE_Regional_blockades focus = OCE_Open_borders }
+	mutually_exclusive = {
+	}
+	completion_reward = {
+        custom_effect_tooltip = OCE_Establish_federal_jurisdiction.TXT
+	}
+	available = {
+	}
 	search_filters = { FOCUS_FILTER_STABILITY }
     }
 
@@ -1045,6 +1096,94 @@ focus_tree = {
 			}
 			remove_unit_leader_trait = OCE_fear_osia
 		}
+		if = {
+			limit = {
+				has_idea = civilian_economy
+			}
+			swap_ideas = {
+				remove_idea = civilian_economy
+				add_idea = war_economy
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = low_economic_mobilisation
+			}
+			swap_ideas = {
+				remove_idea = low_economic_mobilisation
+				add_idea = war_economy
+			}
+		}
+		else_if = {
+			limit = {
+				has_idea = partial_economic_mobilisation
+			}
+			swap_ideas = {
+				remove_idea = partial_economic_mobilisation
+				add_idea = war_economy
+			}
+		}
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+	focus = { #西进
+	id = OCE_march_westward
+	icon = GFX_goal_generic_demand_territory
+	cost = 2
+	relative_position_id = OCE_The_only_Osias
+	x = -3
+	y = 1
+	available={  
+	}
+	prerequisite = { focus = OCE_The_only_Osias }
+	bypass = {
+	}
+	ai_will_do = { factor = 10 }
+
+	available={  
+		has_army_manpower = { size > 600000 }
+	}
+	completion_reward = {
+		every_other_country = {
+			limit = {
+				OR = {
+					controls_state = 114
+					controls_state = 89
+					controls_state = 86
+					controls_state = 74
+					controls_state = 85
+					controls_state = 69
+					controls_state = 60
+					controls_state = 59
+					controls_state = 45
+        			controls_state = 75
+        			controls_state = 58
+        			controls_state = 70
+        			controls_state = 61
+        			controls_state = 51
+        			controls_state = 39
+        			controls_state = 97
+        			controls_state = 105
+					controls_state = 81
+					controls_state = 50
+					controls_state = 141
+					controls_state = 140
+					controls_state = 132
+					controls_state = 770
+					controls_state = 769
+					controls_state = 216
+					controls_state = 228
+					controls_state = 246
+					controls_state = 253
+					controls_state = 249
+					controls_state = 15
+				}
+				NOT = { is_in_faction_with = OCE has_war_with = OCE }
+			}
+			country_event = { id = OCE_expansion.4 days = 3 }
+		}
+		news_event = { id = ocenews.5 }
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -1052,17 +1191,17 @@ focus_tree = {
     focus = { #东欧罗巴之主
 	id = OCE_Lord_of_Eastern_European_Loba
 	icon = GFX_goal_generic_demand_territory
-	cost = 10
-	relative_position_id = OCE_Transylvanian_orthodoxy
-	x = -1
-	y = 10
+	cost = 3
+	relative_position_id = OCE_march_westward
+	x = 0
+	y = 1
 	available={  
 		has_army_manpower = { size > 700000 }
 	}
 	bypass = {
 	}
 	ai_will_do = { factor = 10 }
-	prerequisite = { focus = OCE_The_only_Osias }
+	prerequisite = { focus = OCE_march_westward }
 	completion_reward = {
 		add_state_claim = 114
 		add_state_claim = 89
@@ -1081,6 +1220,29 @@ focus_tree = {
         add_state_claim = 39
         add_state_claim = 97
         add_state_claim = 105
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+	focus = { #发动第二次特兰西瓦战争
+	id = OCE_declare_war_DOC
+	icon = GFX_goal_generic_demand_territory
+	cost = 5
+	relative_position_id = OCE_Lord_of_Eastern_European_Loba
+	x = 0
+	y = 1
+	available={  
+	}
+	bypass = {
+		OR = {
+			NOT = { country_exists = DOC }
+			has_war_with = DOC
+		}
+	}
+	ai_will_do = { factor = 10 }
+	prerequisite = { focus = OCE_Lord_of_Eastern_European_Loba }
+	completion_reward = {
+		declare_war_on = { target = DOC type = annex_everything }
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
