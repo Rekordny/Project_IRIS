@@ -1,9 +1,63 @@
 on_actions = {
 	on_startup = {
-		effect = {#动态战争修正
+		effect = {
             every_country = {
+                #动态战争修正
                 #p社沙比，运算只可以一个一个算，还计算报错
-                set_variable = { OCE_morale = 67 } 
+                if = {
+                    limit = {
+                        OCE = { is_ai = yes }
+                        DOC = { is_ai = yes }
+                        OR = {
+                            has_game_rule = {
+				                rule = OCE_ai_behavior
+				                option = DEFAULT
+			                }
+                            has_game_rule = {
+				                rule = OCE_ai_behavior
+				                option = OCE_democratic_preservation_TT
+			                }
+                            has_game_rule = {
+				                rule = OCE_platinum_legion_TT
+				                option = DEFAULT
+			                }
+                            has_game_rule = {
+				                rule = OCE_ai_behavior
+				                option = OCE_victory_party_2_TT
+			                }
+                            has_game_rule = {
+				                rule = OCE_ai_behavior
+				                option = OCE_socialist_league_TT
+			                }
+                            has_game_rule = {
+				                rule = OCE_ai_behavior
+				                option = OCE_socialist_league_2_TT
+			                }
+                        }
+                    }
+                    set_variable = { OCE_morale = 21 } 
+                }
+                if = {
+                    limit = {
+                        OCE = { is_ai = yes }
+                        DOC = { is_ai = no }
+                    }
+                    set_variable = { OCE_morale = 49 } 
+                }
+                if = {
+                    limit = {
+                        OCE = { is_ai = no }
+                        DOC = { is_ai = yes }
+                    }
+                    set_variable = { OCE_morale = 19 } 
+                }
+                if = {
+                    limit = {
+                        OCE = { is_ai = no }
+                        DOC = { is_ai = no }
+                    }
+                    set_variable = { OCE_morale = 37 } 
+                }
                 set_variable = { OCE_stability_factor = 0.001 } #稳定度
                 set_variable = { OCE_war_support_factor = 0.001 } #战争支持度
                 set_variable = { OCE_land_reinforce_rate = 0.001 } #增援率
@@ -29,15 +83,230 @@ on_actions = {
                 multiply_variable = { OCE_army_org_factorN = OCE_morale }
                 OCE = {
                     add_dynamic_modifier = { modifier = OCE_morale_modifier }#战争动态修正
+
+                    set_variable = { OCE_East_Island_Alliance_Forces_variable = 14 } 
+                    set_variable = { OCE_Oceanic_Federation_Forces_variable = 15 }
+                    set_variable = { OCE_Indigenous_peoples_Forces_variable = 6 }
+                    
+                }
+                set_variable = { OCE_paranoia_main_paranoiameter = 21 }
+                set_variable = { OCE_gross_domestic_product = 0 } #生产总值初始
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@oil }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@aluminium }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@rubber }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@tungsten }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@steel }
+	            add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@chromium }
+                
+                set_temp_variable = { OCE_factory = ROOT.num_of_naval_factories } 
+                add_to_variable = { OCE_factory = ROOT.num_of_civilian_factories } 
+                add_to_variable = { OCE_factory = ROOT.num_of_military_factories } 
+                multiply_variable = { OCE_factory = 10 } 
+                add_to_variable = { OCE_gross_domestic_product = OCE_factory }
+
+                set_variable = { OCE_gross_domestic_product_additional = 0 } #额外生产总值
+                add_to_variable = { OCE_gross_domestic_product = OCE_gross_domestic_product_additional }#生产总值
+
+                set_variable = { OCE_army_production = 145 } #陆军装备生产总值
+                set_variable = { OCE_navy_production = 132 } #海军装备生产总值
+                set_variable = { OCE_air_force_production = 45 } #空军装备生产总值
+                set_variable = { OCE_life_consumption = 344 } #生活消费
+                set_variable = { OCE_scientific_expenses = 34 } #研究开支
+                set_variable = { OCE_total = 0 } #以上开支
+                add_to_variable = { OCE_total = OCE_army_production } #以上开支计算
+                add_to_variable = { OCE_total = OCE_navy_production } #以上开支计算
+                add_to_variable = { OCE_total = OCE_air_force_production } #以上开支计算
+                add_to_variable = { OCE_total = OCE_life_consumption } #以上开支计算
+                add_to_variable = { OCE_total = OCE_scientific_expenses } #以上开支计算
+                set_variable = { OCE_other_expenses = 0 } #其他开支
+                add_to_variable = { OCE_other_expenses = OCE_gross_domestic_product } #其他开支
+                subtract_from_variable = { OCE_other_expenses = OCE_total } #其他开支计算
+            }
+        }
+    }
+
+    on_weekly_OCE = {
+        effect = {
+            OCE = {
+                if = {
+                    limit = {
+                        has_country_flag = OCE_Start_cleaning
+                        NOT = {
+                            has_country_flag = OCE_Political_paranoia_is_over
+                        }
+                    }
+                    OCE_Extreme = yes
+                }
+                if = {
+					limit = {
+						check_variable = {OCE_paranoia_main_paranoiameter > 85}
+                            NOT = {
+                            has_country_flag = OCE_Political_paranoia_is_over
+                        }
+					}
+                    set_country_flag = OCE_Political_paranoia_is_over
+					country_event = {id = OCE_paranoia_system_events.29}
+				}
+            }
+        }
+    }
+    on_daily_OCE = {
+        effect = {
+            #奥西娅联邦宣布投降废弃
+           if = {
+            limit = {
+                115 = { is_owned_by = OCE }
+	            NOT = {
+		            773 = { is_controlled_by = OCE }
+		            766 = { is_controlled_by = OCE }
+		            88 = { is_controlled_by = OCE }
+		            115 = { is_controlled_by = OCE }
+		            108 = { is_controlled_by = OCE }
+	        	    142 = { is_controlled_by = OCE }
+	        	    137 = { is_controlled_by = OCE }
+	        	    774 = { is_controlled_by = OCE }
+	        	    135 = { is_controlled_by = OCE }
+	        	    768 = { is_controlled_by = OCE }
+	        	    767 = { is_controlled_by = OCE }
+	        	    165 = { is_controlled_by = OCE }
+	            }
+	            OR = {
+		            OCE = { has_war_with = OCF }
+		            OCE = { has_war_with = EIA }
+		            OCE = { has_war_with = INP }
+	                }
+                }
+                if = {
+                    limit = {
+                        OCF = {
+                            controls_state = 115
+                            has_war_with = OCE
+                        }
+                    }
+                    OCE = { transfer_navy = { target = OCF } }
+                    OCF = {
+					    white_peace = {
+					    	tag = OCE
+					    	message = OCF_WIN_OCE_TT
+					    }
+                    }
+                    OCF = { annex_country = { target = OCE transfer_troops = no } }
                 }
             }
         }
     }
-    on_weekly = {#每周意志减少
+    on_capitulation_immediate = {
         effect = {
-            every_country = {
-            add_to_variable = {OCE_morale = -1.63}
-            force_update_dynamic_modifier = yes
+            #奥西娅联邦宣布投降废弃
+            if = {
+                limit = {
+                    ROOT = {
+			    		original_tag = OCE
+			    	}
+                }
+                if = {
+				    limit = {
+				    	FROM = {
+				    		original_tag = OCF
+				    	}
+				    }
+				    ROOT = {
+				    	transfer_navy = {
+				    		target = FROM
+				    	}
+				    }
+		    	    FROM = {
+                        white_peace  = {
+				    		tag = ROOT
+				    		message = OCF_WIN_OCE_TT
+				    	}
+				    	annex_country = { target = ROOT transfer_troops = no }
+				    }
+			    }
+            }
+
+            #大洋联邦宣布投降废弃
+            if = {
+                limit = {
+                    ROOT = {
+			    		original_tag = OCF
+			    	}
+                }
+                if = {
+				    limit = {
+				    	FROM = {
+				    		original_tag = OCE
+				    	}
+				    }
+				    ROOT = {
+				    	transfer_navy = {
+				    		target = FROM
+				    	}
+				    }
+		    	    FROM = {
+                        white_peace  = {
+				    		tag = ROOT
+				    		message = OCE_WIN_OCF_TT
+				    	}
+				    	annex_country = { target = ROOT transfer_troops = no }
+				    }
+			    }
+            }
+
+            #东岛联盟宣布投降废弃
+            if = {
+                limit = {
+                    ROOT = {
+			    		original_tag = EIA
+			    	}
+                }
+                if = {
+				    limit = {
+				    	FROM = {
+				    		original_tag = OCE
+				    	}
+				    }
+				    ROOT = {
+				    	transfer_navy = {
+				    		target = FROM
+				    	}
+				    }
+		    	    FROM = {
+                        white_peace  = {
+				    		tag = ROOT
+				    		message = OCE_WIN_EIA_TT
+				    	}
+				    	annex_country = { target = ROOT transfer_troops = no }
+				    }
+			    }
+            }
+
+            #原住民宣布投降废弃
+            if = {
+                limit = {
+                    ROOT = {
+			    		original_tag = INP
+			    	}
+                }
+                if = {
+				    limit = {
+				    	FROM = {
+				    		original_tag = OCE
+				    	}
+				    }
+				    ROOT = {
+				    	transfer_navy = {
+				    		target = FROM
+				    	}
+				    }
+		    	    FROM = {
+                        white_peace  = {
+				    		tag = ROOT
+				    		message = OCE_WIN_INP_TT
+				    	}
+				    	annex_country = { target = ROOT transfer_troops = no }
+				    }
+			    }
             }
         }
     }

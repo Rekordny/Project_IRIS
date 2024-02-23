@@ -1,0 +1,1068 @@
+UNG_count_dominant_point = {
+	#计算僵局地区
+	set_variable = { global.none_Adv_regions = 0 }
+	every_state = {
+		limit = {
+			check_variable = { THIS.UNG_DP = 1 }
+			check_variable = { THIS.MSA_DP = 1 }
+			check_variable = { THIS.FNG_DP = 1 }
+		}				
+		add_to_variable = { global.none_Adv_regions = 1 }
+	}
+  #计算牢不可破的地区
+  set_variable = { global.UNG_Sec_regions = 0 }
+  every_state = {
+	  limit = {
+		  has_state_flag = RTG_3HT
+	  }				
+	  add_to_variable = { global.UNG_Sec_regions = 1 }
+  }
+  set_variable = { global.MSA_Sec_regions = 0 }
+  every_state = {
+	  limit = {
+		  has_state_flag = RTG_3RT
+	  }				
+	  add_to_variable = { global.MSA_Sec_regions = 1 }
+  }
+  set_variable = { global.FNG_Sec_regions = 0 }
+  every_state = {
+	  limit = {
+		  has_state_flag = RTG_3LT
+	  }				
+	  add_to_variable = { global.FNG_Sec_regions = 1 }
+  }
+
+  #计算优势地区
+  set_variable = { global.UNG_Adv_regions = 0 }
+  every_state = {
+	  limit = {
+		  check_variable = { THIS.UNG_DP > 1 }
+	  }				
+	  add_to_variable = { global.UNG_Adv_regions = 1 }
+  }
+  set_variable = { global.MSA_Adv_regions = 0 }
+  every_state = {
+	  limit = {
+		  check_variable = { THIS.MSA_DP > 1 }
+	  }				
+	  add_to_variable = { global.MSA_Adv_regions = 1 }
+  }
+  set_variable = { global.FNG_Adv_regions = 0 }
+  every_state = {
+	  limit = {
+		  check_variable = { THIS.FNG_DP > 1 }
+	  }				
+	  add_to_variable = { global.FNG_Adv_regions = 1 }
+  }
+
+  #计算总控制点数
+  set_variable = { global.UNG_total_DP = 0 }
+  every_state = {
+	  limit = {
+		  check_variable = { THIS.UNG_DP > 0 }
+	  }				
+	  add_to_variable = { global.UNG_total_DP = THIS.UNG_DP }
+  }
+  set_variable = { global.MSA_total_DP = 0 }
+  every_state = {
+	  limit = {
+		  check_variable = { THIS.MSA_DP > 0 }
+	  }				
+	  add_to_variable = { global.MSA_total_DP = THIS.MSA_DP }
+  }
+  set_variable = { global.FNG_total_DP = 0 }
+  every_state = {
+	  limit = {
+		  check_variable = { THIS.FNG_DP > 0 }
+	  }				
+	  add_to_variable = { global.FNG_total_DP = THIS.FNG_DP }
+  }
+  set_variable = { global.UNG_total_DP_pie = 100 }
+  set_variable = { global.MSA_total_DP_pie = 0 }
+  set_variable = { global.every_total_DP = 0 }
+  add_to_variable = { global.every_total_DP = global.UNG_total_DP }
+  add_to_variable = { global.every_total_DP = global.MSA_total_DP }
+  add_to_variable = { global.every_total_DP = global.FNG_total_DP }
+
+  set_variable = { global.FNG_total_DP_pie = global.FNG_total_DP }
+  divide_variable = { global.FNG_total_DP_pie = global.every_total_DP }
+  multiply_variable = { global.FNG_total_DP_pie = 100 }
+  round_variable = global.FNG_total_DP_pie
+
+  set_variable = { global.MSA_total_DP_pie = global.MSA_total_DP }
+  add_to_variable = { global.MSA_total_DP_pie = global.FNG_total_DP }
+  divide_variable = { global.MSA_total_DP_pie = global.every_total_DP }
+  multiply_variable = { global.MSA_total_DP_pie = 100 }
+  round_variable = global.MSA_total_DP_pie
+
+  #计算支配点数量百分比
+  set_variable = { global.per_UNG_DP = global.UNG_total_DP }
+  divide_variable = { global.per_UNG_DP = global.every_total_DP }
+
+  set_variable = { global.per_MSA_DP = global.MSA_total_DP }
+  divide_variable = { global.per_MSA_DP = global.every_total_DP }
+
+  set_variable = { global.per_FNG_DP = global.FNG_total_DP }
+  divide_variable = { global.per_FNG_DP = global.every_total_DP }
+}
+#投骰子
+UNG_Roll_dice = {
+	# set_variable_to_random = {
+	# 	var = global.UNG_touzi
+	# 	min = global.UNG_touzi_min
+	# 	max = global.UNG_touzi_max
+	# 	integer = yes
+	# }
+	# set_variable_to_random = {
+	# 	var = global.MSA_touzi
+	# 	min = global.MSA_touzi_min
+	# 	max = global.MSA_touzi_max
+	# 	integer = yes
+	# }
+	# set_variable_to_random = {
+	# 	var = global.FNG_touzi
+	# 	min = global.FNG_touzi_min
+	# 	max = global.FNG_touzi_max
+	# 	integer = yes
+	# }
+
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 1}
+			check_variable = {	global.UNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 2}
+			check_variable = {	global.UNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 3}
+			check_variable = {	global.UNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 4}
+			check_variable = {	global.UNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 5}
+			check_variable = {	global.UNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 6}
+			check_variable = {	global.UNG_touzi_max = 6}
+		}
+		set_variable = { global.UNG_touzi = 6 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 1}
+			check_variable = {	global.UNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 1}
+			check_variable = {	global.UNG_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 1}
+			check_variable = {	global.UNG_touzi_max = 3}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 1}
+			check_variable = {	global.UNG_touzi_max = 2}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 1}
+			check_variable = {	global.UNG_touzi_max = 1}
+		}
+		set_variable = { global.UNG_touzi = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 2}
+			check_variable = {	global.UNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 2}
+			check_variable = {	global.UNG_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 2}
+			check_variable = {	global.UNG_touzi_max = 3}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 2}
+			check_variable = {	global.UNG_touzi_max = 2}
+		}
+		set_variable = { global.UNG_touzi = 2 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 3}
+			check_variable = {	global.UNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 3}
+			check_variable = {	global.UNG_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 3}
+			check_variable = {	global.UNG_touzi_max = 3}
+		}
+		set_variable = { global.UNG_touzi = 3 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 4}
+			check_variable = {	global.UNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.UNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.UNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 4}
+			check_variable = {	global.UNG_touzi_max = 4}
+		}
+		set_variable = { global.UNG_touzi = 4 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.UNG_touzi_min = 5}
+			check_variable = {	global.UNG_touzi_max = 5}
+		}
+		set_variable = { global.UNG_touzi = 5 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 1}
+			check_variable = {	global.MSA_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 2}
+			check_variable = {	global.MSA_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 3}
+			check_variable = {	global.MSA_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 4}
+			check_variable = {	global.MSA_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 5}
+			check_variable = {	global.MSA_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 6}
+			check_variable = {	global.MSA_touzi_max = 6}
+		}
+		set_variable = { global.MSA_touzi = 6 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 1}
+			check_variable = {	global.MSA_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 1}
+			check_variable = {	global.MSA_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 1}
+			check_variable = {	global.MSA_touzi_max = 3}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 1}
+			check_variable = {	global.MSA_touzi_max = 2}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 1}
+			check_variable = {	global.MSA_touzi_max = 1}
+		}
+		set_variable = { global.MSA_touzi = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 2}
+			check_variable = {	global.MSA_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 2}
+			check_variable = {	global.MSA_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 2}
+			check_variable = {	global.MSA_touzi_max = 3}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 2}
+			check_variable = {	global.MSA_touzi_max = 2}
+		}
+		set_variable = { global.MSA_touzi = 2 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 3}
+			check_variable = {	global.MSA_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 3}
+			check_variable = {	global.MSA_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 3}
+			check_variable = {	global.MSA_touzi_max = 3}
+		}
+		set_variable = { global.MSA_touzi = 3 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 4}
+			check_variable = {	global.MSA_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.MSA_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.MSA_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 4}
+			check_variable = {	global.MSA_touzi_max = 4}
+		}
+		set_variable = { global.MSA_touzi = 4 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.MSA_touzi_min = 5}
+			check_variable = {	global.MSA_touzi_max = 5}
+		}
+		set_variable = { global.MSA_touzi = 5 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 1}
+			check_variable = {	global.FNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 2}
+			check_variable = {	global.FNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 3}
+			check_variable = {	global.FNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 4}
+			check_variable = {	global.FNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 5}
+			check_variable = {	global.FNG_touzi_max = 6}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 6 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 6}
+			check_variable = {	global.FNG_touzi_max = 6}
+		}
+		set_variable = { global.FNG_touzi = 6 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 1}
+			check_variable = {	global.FNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 1}
+			check_variable = {	global.FNG_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 1}
+			check_variable = {	global.FNG_touzi_max = 3}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 1}
+			check_variable = {	global.FNG_touzi_max = 2}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 1 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 1}
+			check_variable = {	global.FNG_touzi_max = 1}
+		}
+		set_variable = { global.FNG_touzi = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 2}
+			check_variable = {	global.FNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 2}
+			check_variable = {	global.FNG_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 2}
+			check_variable = {	global.FNG_touzi_max = 3}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 2 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 2}
+			check_variable = {	global.FNG_touzi_max = 2}
+		}
+		set_variable = { global.FNG_touzi = 2 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 3}
+			check_variable = {	global.FNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 3}
+			check_variable = {	global.FNG_touzi_max = 4}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 3 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 3}
+			check_variable = {	global.FNG_touzi_max = 3}
+		}
+		set_variable = { global.FNG_touzi = 3 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 4}
+			check_variable = {	global.FNG_touzi_max = 5}
+		}
+		random_list = {
+			1 = {
+				set_variable = { global.FNG_touzi = 4 }
+			}
+			1 = {
+				set_variable = { global.FNG_touzi = 5 }
+			}
+		}
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 4}
+			check_variable = {	global.FNG_touzi_max = 4}
+		}
+		set_variable = { global.FNG_touzi = 4 }
+	}
+	if = {
+		limit = {
+			check_variable = {	global.FNG_touzi_min = 5}
+			check_variable = {	global.FNG_touzi_max = 5}
+		}
+		set_variable = { global.FNG_touzi = 5 }
+	}
+	set_variable = { global.UNG_DP = global.UNG_touzi }
+	set_variable = { global.MSA_DP = global.MSA_touzi }
+	set_variable = { global.FNG_DP = global.FNG_touzi }
+}

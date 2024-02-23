@@ -56,12 +56,18 @@ country_event = {
 		name = STG_general.1.a
         set_country_flag = STG_monarchy_abolished
 		ai_chance = {
-			base = 0 #30 版本特色，不得不尝
+			base = 30
 			modifier = {
 				factor = 0
 				OR = {
-					has_country_flag = STG_debug_go_focus_ilya
-					has_country_flag = STG_debug_go_focus_grey
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_ilya_route_TT
+					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_grey_route_TT
+					}
 				}
 			}
 		}
@@ -74,14 +80,34 @@ country_event = {
 			country_event = {id = STG_grey.1 days = 3}
 		}
 		ai_chance = {
-			base = 10
+			base = 5 #10
+			#modifier = {
+			#	add = 20
+			#	USR = { is_ai = no }
+			#}
 			modifier = {
-				add = 20
-				USR = { is_ai = no }
+				factor = 0
+				AND = {
+					USR = { is_ai = no }
+					#difficulty < 3
+				}
 			}
 			modifier = {
 				factor = 0
-				has_country_flag = STG_debug_go_focus_parliament
+				OR = {
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_conservative_route_TT
+					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_syndicalist_route_TT
+					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_syndicalist_social_democrat_route_TT
+					}
+				}
 			}
 		}
 	}
@@ -102,10 +128,13 @@ country_event = {
         set_country_flag = STG_ilya_elected
 		STG_reduce_usr_unrest = yes
 		ai_chance = {
-			base = 100
+			base = 10
 			modifier = {
-				factor = 0
-				has_country_flag = STG_debug_go_focus_grey
+				factor = 1000
+				has_game_rule = {
+					rule = STG_ai_behavior
+					option = STG_ilya_route_TT
+				}
 			}
 		}
 	}
@@ -116,8 +145,11 @@ country_event = {
 		ai_chance = {
 			base = 0 # 尚未完成
 			modifier = {
-				add = 10
-				has_country_flag = STG_debug_go_focus_grey
+				add = 1000
+				has_game_rule = {
+					rule = STG_ai_behavior
+					option = STG_grey_route_TT
+				}
 			}
 		}
 	}
@@ -421,6 +453,151 @@ country_event = {
 		}
 	}
 }
+#和解的契机？
+country_event = {
+    id = STG_general.17
+    title = STG_general.17.t
+	desc = STG_general.17.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = STG
+		has_global_flag = UNG_CivilWar_over
+		country_exists = FNG
+		has_completed_focus = STG_UNG_civ_war_reaction_2
+		NOT = {
+			is_puppet = yes
+		}
+		NOT = {
+			country_exists = UNG
+		}
+		NOT = {
+			country_exists = MSA
+		}
+	}
+	mean_time_to_happen = {
+		days = 5
+	}
+	option = {
+		name = STG_general.17.a
+		FNG = {
+			country_event = {id = STG_general.18 days = 5}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#圣葛罗莉安娜的橄榄枝
+country_event = {
+    id = STG_general.18
+    title = STG_general.18.t
+	desc = STG_general.18.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.18.a
+		every_state = {
+			limit = {
+				is_core_of = STG
+				is_claimed_by = FNG
+			}
+			remove_claim_by = FNG
+		}
+		give_guarantee = STG
+		add_opinion_modifier = {
+			target = STG
+			modifier = Anglia_Reconcilation
+		}
+		STG = {
+			give_guarantee = FNG
+			add_opinion_modifier = {
+				target = FNG
+				modifier = Anglia_Reconcilation
+			}
+		}
+		hidden_effect = {
+			set_global_flag = Anglia_Reconcilation_flag
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = STG_general.18.b
+		add_stability = -0.10
+		add_war_support = -0.10
+		STG = {
+			country_event = {id = STG_general.19}
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#圣葛罗莉安娜的橄榄枝
+country_event = {
+    id = STG_general.19
+    title = STG_general.19.t
+	desc = STG_general.19.desc
+	picture = GFX_ungevent_1
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = STG_general.19.b
+		add_political_power = -100
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+#梦醒时分
+country_event = {
+    id = STG_general.999
+    title = STG_general.999.t
+	desc = STG_general.999.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = STG
+		NOT = {
+			has_country_flag = STG_cam_crushed
+		}
+		NOT = {
+			country_exists = UNG
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = STG_general.999.a
+		add_popularity = {
+			ideology = reactionism
+			popularity = -0.5
+		}
+		if = {
+            limit = {
+                has_idea = STG_paradox
+            }
+            swap_ideas = {
+                remove_idea = STG_paradox
+                add_idea = STG_paradox_2
+            }
+		}
+        custom_effect_tooltip = STG_cam_crushed_desc
+        hidden_effect = {
+            set_country_flag = STG_cam_crushed
+            STG = {
+                set_variable = {STG_cam_unrest = 0}
+            }
+        }
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #北方来客
 country_event = {
     id = STG_ilya.1
@@ -524,6 +701,10 @@ country_event = {
 	
 	trigger = {
 		tag = STG
+		has_country_leader = {
+			character = STG_ilya
+			ruling_only = yes
+		}
 		controls_state = 149
 	}
 	mean_time_to_happen = {
@@ -760,49 +941,60 @@ country_event = {
 	picture = GFX_ungevent_1
 	
 	is_triggered_only = yes
-	fire_only_once = yes
+	fire_only_once = yess
 				
 	option = {
 		name = STG_ilya.16.a
 		hidden_effect = {
-			random_list = {
-				60 = {
-					modifier = {
-						factor = 1.1
-						STG = {check_variable = {STG_army_discontent < 50}}
+			if = {
+				limit = {
+					has_game_rule = {
+						rule = STG_cheat_ilya
+						option = STG_cheat_ilya_TT
 					}
-					modifier = {
-						factor = 3
-						STG = {check_variable = {STG_army_discontent < 30}}
-					}
-					modifier = {
-						factor = 10
-						STG = {check_variable = {STG_army_discontent < 20}}
-					}
-					modifier = {
-						factor = 1000
-						STG = {check_variable = {STG_army_discontent < 10}}
-					}
-					country_event = {id = STG_ilya.18 days = 3}
 				}
-				40 = {
-					modifier = {
-						factor = 1.1
-						STG = {check_variable = {STG_army_discontent > 50}}
+				country_event = {id = STG_ilya.18 days = 3}
+			}
+			else = {
+				random_list = {
+					60 = {
+						modifier = {
+							factor = 1.1
+							STG = {check_variable = {STG_army_discontent < 50}}
+						}
+						modifier = {
+							factor = 3
+							STG = {check_variable = {STG_army_discontent < 30}}
+						}
+						modifier = {
+							factor = 10
+							STG = {check_variable = {STG_army_discontent < 20}}
+						}
+						modifier = {
+							factor = 1000
+							STG = {check_variable = {STG_army_discontent < 10}}
+						}
+						country_event = {id = STG_ilya.18 days = 3}
 					}
-					modifier = {
-						factor = 1.5
-						STG = {check_variable = {STG_army_discontent > 60}}
+					40 = {
+						modifier = {
+							factor = 1.1
+							STG = {check_variable = {STG_army_discontent > 50}}
+						}
+						modifier = {
+							factor = 1.5
+							STG = {check_variable = {STG_army_discontent > 60}}
+						}
+						modifier = {
+							factor = 2
+							STG = {check_variable = {STG_army_discontent > 70}}
+						}
+						modifier = {
+							factor = 1000
+							STG = {check_variable = {STG_army_discontent > 80}}
+						}
+						country_event = {id = STG_ilya.19 days = 3}
 					}
-					modifier = {
-						factor = 2
-						STG = {check_variable = {STG_army_discontent > 70}}
-					}
-					modifier = {
-						factor = 1000
-						STG = {check_variable = {STG_army_discontent > 80}}
-					}
-					country_event = {id = STG_ilya.19 days = 3}
 				}
 			}
 		}
@@ -1257,6 +1449,63 @@ country_event = {
 		}
 	}
 }
+#爱因兹贝伦的新一天（其一）
+country_event = {
+    id = STG_ilya.33
+    title = STG_ilya.33.t
+	desc = STG_ilya.33.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_ilya.33.a
+		hidden_effect = {
+			country_event = {id = STG_ilya.34 days = 90}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#爱因兹贝伦的新一天（其二）
+country_event = {
+    id = STG_ilya.34
+    title = STG_ilya.34.t
+	desc = STG_ilya.34.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_ilya.34.a
+		hidden_effect = {
+			country_event = {id = STG_ilya.35 days = 90}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#爱因兹贝伦的新一天（其三）
+country_event = {
+    id = STG_ilya.35
+    title = STG_ilya.35.t
+	desc = STG_ilya.35.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_ilya.35.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #万众期待的候选人
 country_event = {
     id = STG_grey.1
@@ -1647,6 +1896,105 @@ country_event = {
 		}
 	}
 }
+#比赛的尾声
+country_event = {
+    id = STG_grey.21
+    title = STG_grey.21.t
+	desc = STG_grey.21.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_grey.21.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#校园一日
+country_event = {
+    id = STG_grey.22
+    title = STG_grey.22.t
+	desc = STG_grey.22.desc
+	picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_grey.22.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#战云翻涌
+country_event = {
+    id = STG_grey.23
+    title = STG_grey.23.t
+	desc = STG_grey.23.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = STG
+		has_country_leader = {
+			character = STG_grey
+			ruling_only = yes
+		}
+		has_war_with = UNG
+	}
+	mean_time_to_happen = {
+		days = 3
+	}
+	option = {
+		name = STG_grey.23.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#柏霖陷落
+country_event = {
+    id = STG_grey.24
+    title = STG_grey.24.t
+	desc = STG_grey.24.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = STG
+		has_country_leader = {
+			character = STG_grey
+			ruling_only = yes
+		}
+		controls_state = 149
+	}
+	mean_time_to_happen = {
+		days = 3
+	}
+	option = {
+		name = STG_grey.24.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#格雷盛世
+country_event = {
+    id = STG_grey.25
+    title = STG_grey.25.t
+	desc = STG_grey.25.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = STG_grey.25.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #与社民党合作？
 country_event = {
     id = STG_com.1
@@ -1659,6 +2007,13 @@ country_event = {
 		name = STG_com.1.a
 		ai_chance = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = STG_ai_behavior
+					option = STG_syndicalist_social_democrat_route_TT
+				}
+			}
 		}
 	}
 	option = {
@@ -1667,6 +2022,13 @@ country_event = {
 		set_country_flag = STG_syn_cooperates_with_sd
 		ai_chance = {
 			base = 5
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = STG_ai_behavior
+					option = STG_syndicalist_route_TT
+				}
+			}
 		}
 	}
 }
@@ -2378,6 +2740,43 @@ country_event = {
 				NOT = {has_idea = MSA_war_for_ang}
 			}
 			add_ideas = MSA_war_for_ang
+		}
+		if = {
+			limit = {
+				tag = FNG
+				NOT = {has_idea = FNG_war_for_ang}
+			}
+			add_ideas = FNG_war_for_ang
+		}
+		ai_chance = {
+			base = 5
+		}
+	}
+}
+#昂格利亚的战火
+country_event = {
+    id = STG_war.5
+    title = STG_war.5.t
+	desc = STG_war.5.desc
+	picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+		tag = STG
+		NOT = {is_puppet = yes}
+		has_global_flag = UNG_CivilWar_begun
+	}
+	mean_time_to_happen = {
+		days = 3
+	}
+	option = {
+		name = STG_war.5.a
+		custom_effect_tooltip = STG_unlock_a_new_branch_desc
+		hidden_effect = {
+			load_focus_tree = {
+				tree = STG
+				keep_completed = yes
+			}
+			mark_focus_tree_layout_dirty = yes
 		}
 		ai_chance = {
 			base = 5
@@ -3195,6 +3594,12 @@ news_event = {
 			}
 			STG = {has_war_with = UNG}
 		}
+		else_if = {
+			limit = {
+				country_exists = FNG
+			}
+			STG = {has_war_with = FNG}
+		}
 		else = {
 			STG = {has_war_with = MSA}
 		}
@@ -3202,9 +3607,13 @@ news_event = {
 			STG = {is_puppet = yes}
 			UNG = {is_puppet = yes}
 			MSA = {is_puppet = yes}
+			FNG = {is_puppet = yes}
 		}
 		NOT = {
 			has_global_flag = WAR_FOR_ANGLIA
+		}
+		NOT = {
+			has_global_flag = UNG_CivilWar_begun
 		}
 	}
 	mean_time_to_happen = {
@@ -3217,41 +3626,44 @@ news_event = {
 			if = {
 				limit = {
 					country_exists = UNG
+					NOT = {
+						country_exists = MSA
+					}
+					NOT = {
+						country_exists = FNG
+					}
 					STG = {has_war_with = UNG}
 				}
-				if = {
-					limit = {
-						tag = STG
-					}
-					STG = {country_event = {id = STG_war.4}}
-				}
-				if = {
-					limit = {
-						tag = UNG
-					}
-					UNG = {country_event = {id = STG_war.4}}
-				}
+				STG = {country_event = {id = STG_war.4}}
+				UNG = {country_event = {id = STG_war.4}}
 			}
-			if = {
+			else_if = {
 				limit = {
 					country_exists = MSA
 					NOT = {
 						country_exists = UNG
 					}
+					NOT = {
+						country_exists = FNG
+					}
 					STG = {has_war_with = MSA}
 				}
-				if = {
-					limit = {
-						tag = STG
+				STG = {country_event = {id = STG_war.4}}
+				NSA = {country_event = {id = STG_war.4}}
+			}
+			else_if = {
+				limit = {
+					country_exists = FNG
+					NOT = {
+						country_exists = UNG
 					}
-					STG = {country_event = {id = STG_war.4}}
-				}
-				if = {
-					limit = {
-						tag = MSA
+					NOT = {
+						country_exists = MSA
 					}
-					MSA = {country_event = {id = STG_war.4}}
+					STG = {has_war_with = FNG}
 				}
+				STG = {country_event = {id = STG_war.4}}
+				FNG = {country_event = {id = STG_war.4}}
 			}
 		}
 	}
