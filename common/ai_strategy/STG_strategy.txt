@@ -107,7 +107,13 @@ STG_template_design = {
 	ai_strategy = {
 		type = template_prio
 		id = infantry
-		value = 200
+		value = 500
+	}
+
+	ai_strategy = {
+		type = template_prio
+		id = mountaineers
+		value = -500
 	}
 }
 
@@ -134,7 +140,7 @@ STG_hold_frontline_until_ELN_war_with_USR = {
 		original_tag = STG
 	}
 	enable = {
-		has_war_with = USR
+		always = yes
 	}
 	abort = {
 		OR = {
@@ -160,12 +166,14 @@ STG_hold_frontline_until_ELN_war_with_USR_2 = {
 		original_tag = STG
 	}
 	enable = {
-		has_war_with = USR
 		OR = {
 			has_country_flag = STG_einzbern_storm_strategy_1
 			USR = {
 				has_war_with = ELN
 			}
+		}
+		USR = {
+			surrender_progress < 0.5
 		}
 	}
 	abort_when_not_enabled = yes
@@ -233,5 +241,129 @@ STG_peace_with_ELN_if_we_run_out_of_manpower = {
 		type = antagonize
 		id = MDS
 		value = -1000
+	}
+}
+
+STG_Illya_attack_USR_if_ELN_didnt_annex_USR = {
+	allowed = {
+		original_tag = STG
+	}
+	enable = {
+		has_country_leader = {
+			character = STG_ilya
+			ruling_only = yes
+		}
+		has_war = no
+		USR = {
+			exists = yes
+			NOT = {
+				is_puppet_of = ELN
+				is_in_faction_with = ELN
+				is_guaranteed_by = ELN
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = antagonize
+		id = USR
+		value = 9999
+	}
+
+	ai_strategy = {
+		type = conquer
+		id = USR
+		value = 9999
+	}
+}
+STG_support_FNG_in_civ_war = {
+	allowed = {
+		original_tag = STG
+	}
+	enable = {
+		OR = {
+			has_idea = STG_support_FNG
+			has_idea = STG_support_FNG_2
+		}
+		has_global_flag = UNG_CivilWar_begun
+		has_war = no
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+        type = send_volunteers_desire
+        id = FNG
+        value = 9999
+    }
+	ai_strategy = {
+		type = front_unit_request
+		id = UNG
+		value = 100
+	}
+	ai_strategy = {
+		type = front_armor_score
+		id = UNG
+		value = 100
+	}
+	ai_strategy = {
+		type = front_unit_request
+		id = MSA
+		value = 100
+	}
+	ai_strategy = {
+		type = front_armor_score
+		id = MSA
+		value = 100
+	}
+}
+
+STG_only_help_FNG = {
+	allowed = {
+        NOT = { original_tag = STG }
+    }
+    enable = {
+        NOT = { original_tag = FNG }
+    }
+    enable_reverse = {
+        tag = STG
+    }
+    reversed = yes
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = STG
+        value = -1000
+    }
+}
+
+STG_attack_MSA_if_it_won_civwar = {
+	allowed = {
+		original_tag = STG
+	}
+	enable = {
+		has_war = no
+		has_global_flag = UNG_CivilWar_over
+		has_completed_focus = STG_UNG_civ_war_reaction_8
+		MSA = {
+			exists = yes
+			NOT = {
+				is_puppet_of = STG
+				is_in_faction_with = STG
+				is_guaranteed_by = STG
+			}
+		}
+	}
+	abort_when_not_enabled = yes
+
+	ai_strategy = {
+		type = antagonize
+		id = MSA
+		value = 9999
+	}
+	ai_strategy = {
+		type = conquer
+		id = MSA
+		value = 9999
 	}
 }

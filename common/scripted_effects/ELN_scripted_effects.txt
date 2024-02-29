@@ -5,7 +5,7 @@ ELN_remove_all_character_ideas = {
 			ELN_Nouzenkazura_idea
 			ELN_Elise_Morel_idea
 			ELN_Clorinde_idea
-			SWE_Lynette_idea
+			ELN_Lynette_idea
 			ELN_Marguerite_Dupont_idea
 			ELN_Vladilena_Milize_idea
 			ELN_Joan_of_Arc_idea
@@ -15,6 +15,8 @@ ELN_remove_all_character_ideas = {
 			ELN_Manon_Laurent_idea
 			ELN_Richelieu_idea
 			ELN_Furina_idea
+			ELN_Philippe_Petain
+			ELN_Central_Committee_idea
 		}
 	}
 }
@@ -218,3 +220,136 @@ ELN_unlock_one_propaganda_slot = {
 		}
 	}
 }
+
+#载入红色议会
+ELN_Load_Workers_Council = {
+	set_variable = { ELN_power_of_SDL = 37 }
+	set_variable = { ELN_power_of_NFWE = 30 }
+	set_variable = { ELN_power_of_Jac = 22 }
+	set_variable = { ELN_power_of_CPE = 27 }
+	Red_ELN_compute_power = yes
+}
+
+#禁运红色爱丽诺
+send_embargo_to_commuist_elnor = {
+	if = {
+		limit = {
+			ELN_Have_a_left_wing_government = no
+			is_major = yes
+		}
+		send_embargo = ELN
+	}
+}
+
+#计算红爱丽诺势力
+Red_ELN_compute_power = {
+	set_variable = { ELN_total_power = 0 }
+	add_to_variable = { ELN_total_power = ELN_power_of_SDL }
+	add_to_variable = { ELN_total_power = ELN_power_of_NFWE }
+	add_to_variable = { ELN_total_power = ELN_power_of_Jac }
+	add_to_variable = { ELN_total_power = ELN_power_of_CPE }
+	divide_variable = { ELN_power_of_SDL = ELN_total_power }
+	multiply_variable = { ELN_power_of_SDL = 100 }
+	divide_variable = { ELN_power_of_NFWE = ELN_total_power }
+	multiply_variable = { ELN_power_of_NFWE = 100 }
+	divide_variable = { ELN_power_of_Jac = ELN_total_power }
+	multiply_variable = { ELN_power_of_Jac = 100 }
+	divide_variable = { ELN_power_of_CPE = ELN_total_power }
+	multiply_variable = { ELN_power_of_CPE = 100 }
+	set_variable = { ELN_left_party_CPE_pie_var = ELN_power_of_CPE }
+	set_variable = { ELN_left_party_Jac_pie_var = ELN_left_party_CPE_pie_var }
+	add_to_variable = { ELN_left_party_Jac_pie_var = ELN_power_of_Jac }
+	set_variable = { ELN_left_party_NFWE_pie_var = ELN_left_party_Jac_pie_var }
+	add_to_variable = { ELN_left_party_NFWE_pie_var = ELN_power_of_NFWE }
+}
+
+#刷新伟大社会
+ELN_flushed_Great_Society = {
+	clamp_variable = {
+		var = ELN_Great_Society_Freedom_Var
+		min = 0
+		max = 100
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_Equal_Var
+		min = 0
+		max = 100
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_Fraternity_Var
+		min = 0
+		max = 100
+	}
+	#自由
+	set_variable = { ELN_Great_Society_modifier_var_01 = ELN_Great_Society_Freedom_Var }
+	subtract_from_variable = { ELN_Great_Society_modifier_var_01 = 50 }
+	divide_variable = { ELN_Great_Society_modifier_var_01 = 200 }
+	set_variable = { ELN_Great_Society_modifier_var_02 = ELN_Great_Society_modifier_var_01 }
+	multiply_variable = { ELN_Great_Society_modifier_var_02 = -1 }
+	set_variable = { ELN_Great_Society_modifier_var_03 = ELN_Great_Society_modifier_var_01 }
+	set_variable = { ELN_Great_Society_modifier_var_04 = ELN_Great_Society_modifier_var_03 }
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_01
+		min = -0.15
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_02
+		max = 0
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_03
+		min = 0
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_04
+		min = 0
+	}
+	#平等
+	set_variable = { ELN_Great_Society_modifier_var_05 = ELN_Great_Society_Equal_Var }
+	subtract_from_variable = { ELN_Great_Society_modifier_var_05 = 30 }
+	divide_variable = { ELN_Great_Society_modifier_var_05 = -100 }
+	set_variable = { ELN_Great_Society_modifier_var_06 = ELN_Great_Society_modifier_var_05 }
+	multiply_variable = { ELN_Great_Society_modifier_var_06 = -1 }
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_05
+		min = -0.5
+		max = 0.15
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_06
+		min = -0.1
+	}
+	#博爱
+	set_variable = { ELN_Great_Society_modifier_var_07 = ELN_Great_Society_Fraternity_Var }
+	subtract_from_variable = { ELN_Great_Society_modifier_var_07 = 50 }
+	divide_variable = { ELN_Great_Society_modifier_var_07 = 200 }
+	set_variable = { ELN_Great_Society_modifier_var_08 = ELN_Great_Society_modifier_var_07 }
+	multiply_variable = { ELN_Great_Society_modifier_var_08 = -1 }
+	set_variable = { ELN_Great_Society_modifier_var_09 = ELN_Great_Society_modifier_var_08 }
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_07
+		min = -0.2
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_08
+		max = 0
+	}
+	clamp_variable = {
+		var = ELN_Great_Society_modifier_var_09
+		max = 0
+	}
+	#GUI
+	if = {
+		limit = { check_variable = { ELN_Great_Society_Window_Var = 0 } }
+		set_variable = { ELN_Great_Society_power_balance_blue_Var = ELN_Great_Society_Freedom_Var }
+	}
+	if = {
+		limit = { check_variable = { ELN_Great_Society_Window_Var = 1 } }
+		set_variable = { ELN_Great_Society_power_balance_blue_Var = ELN_Great_Society_Equal_Var }
+	}
+	if = {
+		limit = { check_variable = { ELN_Great_Society_Window_Var = 2 } }
+		set_variable = { ELN_Great_Society_power_balance_blue_Var = ELN_Great_Society_Fraternity_Var }
+	}
+}
+

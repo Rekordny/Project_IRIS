@@ -1,0 +1,758 @@
+OCE_Federal_collapse_trigger = {
+    news_event = { id = OCE.10 days = 0 }
+}
+OCE_pie_chart_type = {
+  clear_variable = OCE_factory
+  set_variable = { OCE_gross_domestic_product = 0 } #生产总值初始
+	add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@oil }
+	add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@aluminium }
+	add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@rubber }
+	add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@tungsten }
+	add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@steel }
+	add_to_variable = { OCE_gross_domestic_product = ROOT.resource_produced@chromium }
+    
+  add_to_variable = { OCE_factory = ROOT.num_of_naval_factories } 
+  add_to_variable = { OCE_factory = ROOT.num_of_civilian_factories } 
+  add_to_variable = { OCE_factory = ROOT.num_of_military_factories } 
+  multiply_variable = { OCE_factory = 10 } 
+  add_to_variable = { OCE_gross_domestic_product = OCE_factory }
+  add_to_variable = { OCE_gross_domestic_product = OCE_gross_domestic_product_additional }#生产总值
+  
+
+  clear_variable = total_resource
+  add_to_variable = { total_resource = OCE_gross_domestic_product }
+  
+
+  set_variable = { OCE_air_force_production_pie = OCE_air_force_production }
+	divide_variable = { OCE_air_force_production_pie = total_resource }
+	multiply_variable = { OCE_air_force_production_pie = 100 }
+	round_variable = OCE_air_force_production_pie
+
+  set_variable = { OCE_army_production_pie = OCE_army_production }
+	divide_variable = { OCE_army_production_pie = total_resource }
+	multiply_variable = { OCE_army_production_pie = 100 }
+	round_variable = OCE_army_production_pie
+  add_to_variable = { OCE_army_production_pie = OCE_air_force_production_pie }
+
+  set_variable = { OCE_life_consumption_pie = OCE_life_consumption }
+	divide_variable = { OCE_life_consumption_pie = total_resource }
+	multiply_variable = { OCE_life_consumption_pie = 100 }
+	round_variable = OCE_life_consumption_pie
+  add_to_variable = { OCE_life_consumption_pie = OCE_army_production_pie }
+
+  set_variable = { OCE_navy_production_pie = OCE_navy_production }
+	divide_variable = { OCE_navy_production_pie = total_resource }
+	multiply_variable = { OCE_navy_production_pie = 100 }
+	round_variable = OCE_navy_production_pie
+  add_to_variable = { OCE_navy_production_pie = OCE_life_consumption_pie }
+
+  set_variable = { OCE_other_expenses_pie = OCE_other_expenses }
+	divide_variable = { OCE_other_expenses_pie = total_resource }
+	multiply_variable = { OCE_other_expenses_pie = 100 }
+	round_variable = OCE_other_expenses_pie
+  add_to_variable = { OCE_other_expenses_pie = OCE_navy_production_pie }
+
+  set_variable = { OCE_scientific_expenses_pie = OCE_scientific_expenses }
+	divide_variable = { OCE_scientific_expenses_pie = total_resource }
+	multiply_variable = { OCE_scientific_expenses_pie = 100 }
+	round_variable = OCE_scientific_expenses_pie
+  add_to_variable = { OCE_scientific_expenses_pie = OCE_other_expenses_pie }
+}
+
+OCE_Extreme = {
+	add_to_variable = { OCE_paranoia_main_paranoiameter = 3 } 
+	OCE_Extreme_100_0 = yes
+}
+OCE_Extreme_100_0 = {
+	if = {
+        limit = {
+            check_variable = {OCE_paranoia_main_paranoiameter < 0}
+        }
+        set_variable = {OCE_paranoia_main_paranoiameter = 0}
+    }
+    if = {
+        limit = {
+            check_variable = {OCE_paranoia_main_paranoiameter > 100}
+        }
+       set_variable = {OCE_paranoia_main_paranoiameter = 100}
+    }
+}
+
+OCE_purge_character_effect = { #Expected to be called in the character scope
+	PREV = { retire_character = PREV }
+	OCE_paranoia_medium_decrease_effect = yes
+}
+
+OCE_trigger_regular_purge_admiral_accused_effect = {
+	random_navy_leader = {
+		limit = {
+			NOT = {
+				has_character_flag = OCE_targeted_for_purge_flag
+			}
+		}
+		set_character_flag = OCE_targeted_for_purge_flag
+		ROOT = { set_variable = { OCE_purged_character_for_loc = PREV } }	
+	}
+	
+	var:OCE_purged_character_for_loc = { unit_leader_event = OCE_paranoia_system_events.31 } # TRIGGER EVENT
+}
+
+OCE_regular_purge_general_accused_effect = {
+	
+	random_army_leader = {
+		limit = {
+			NOT = {
+				has_trait = OCE_fear_osia
+				has_character_flag = OCE_targeted_for_purge_flag
+				has_character_flag = OCE_targeted_for_purge_flag_no
+			}
+		}
+		set_character_flag = OCE_targeted_for_purge_flag
+
+		ROOT = { set_variable = { OCE_purged_character_for_loc = PREV } }
+		ROOT = { log = "This is [THIS.GetName] // PREV is [PREV.GetName] // ROOT is [ROOT.GetName] // VAR is [?ROOT.OCE_purged_character_for_loc.GetName]" }
+	}
+
+	var:OCE_purged_character_for_loc = { unit_leader_event = OCE_paranoia_system_events.21 } # TRIGGER EVENT
+}
+
+OCE_paranoia_medium_decrease_effect = {
+	add_to_variable = { OCE_paranoia_main_paranoiameter = -8 } 
+	OCE_Extreme_100_0 = yes
+}
+
+TFD_farm_soldiers = {
+	TFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_owned_by = TFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = TFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = TFD
+			}
+		}
+	}
+}
+VFD_farm_soldiers = {
+	VFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = VFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = VFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = VFD
+			}
+		}
+	}
+}
+UFD_farm_soldiers = {
+	UFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = UFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = UFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = UFD
+			}
+		}
+	}
+}
+KFD_farm_soldiers = {
+	KFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = KFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = KFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = KFD
+			}
+		}
+	}
+}
+VID_farm_soldiers = {
+	VID = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = VID
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = VID
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = VID
+			}
+		}
+	}
+}
+VAD_farm_soldiers = {
+	VAD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = VAD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = VAD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = VAD
+			}
+		}
+	}
+}
+AFD_farm_soldiers = {
+	AFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = AFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = AFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = AFD
+			}
+		}
+	}
+}
+ALD_farm_soldiers = {
+	ALD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = ALD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = ALD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = ALD
+			}
+		}
+	}
+}
+RFD_farm_soldiers = {
+	RFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = RFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = RFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = RFD
+			}
+		}
+	}
+}
+BFD_farm_soldiers = {
+	BFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = BFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = BFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = BFD
+			}
+		}
+	}
+}
+BAD_farm_soldiers = {
+	BAD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = BAD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = BAD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = BAD
+			}
+		}
+	}
+}
+LFD_farm_soldiers = {
+	LFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = LFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = LFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = LFD
+			}
+		}
+	}
+}
+RED_farm_soldiers = {
+	RED = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = RED
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = RED
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = RED
+			}
+		}
+	}
+}
+AGD_farm_soldiers = {
+	AGD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = AGD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = AGD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = AGD
+			}
+		}
+	}
+}
+CFD_farm_soldiers = {
+	CFD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = CFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = CFD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = CFD
+			}
+		}
+	}
+}
+AAD_farm_soldiers = {
+	AAD = {
+		division_template = {
+			name = "地方秘密警察"
+			regiments = {
+			infantry = { x = 0 y = 0 }
+			infantry = { x = 0 y = 1 }
+			infantry = { x = 0 y = 2 }
+			infantry = { x = 0 y = 3 }
+		    }
+		}
+		every_controlled_state = {
+			limit = {
+				is_controlled_by = AAD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+			owner = AAD
+			}
+		create_unit = {
+			division = "name = \"秘密警察\" division_template = \"地方秘密警察\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+			owner = AAD
+			}
+		}
+	}
+}
+OCE_farm_soldiers = {
+	set_country_flag = OCE_First_time_given
+	set_technology = {
+				gwtank_chassis = 1
+				basic_light_tank_chassis = 1
+				basic_medium_tank_chassis = 1
+				engine_tech_1 = 1
+				armor_tech_1 = 1
+			}
+	create_equipment_variant = {
+			name = "“克拉达斯”式反叛坦克"
+			type = medium_tank_chassis_1
+			parent_version = 0
+			modules = {
+			main_armament_slot = tank_medium_cannon_2
+			turret_type_slot = tank_medium_three_man_tank_turret
+			suspension_type_slot = tank_bogie_suspension
+			armor_type_slot = tank_riveted_armor
+			engine_type_slot = tank_gasoline_engine
+			special_type_slot_1 = tank_radio_1
+			special_type_slot_2 = secondary_turret_hmg
+			}
+			upgrades = {
+				tank_nsb_armor_upgrade = 4
+				tank_nsb_engine_upgrade = 5
+				}
+			}
+			add_equipment_to_stockpile = {
+		        type = medium_tank_chassis_1
+                variant_name = "“克拉达斯”式反叛坦克"
+		        amount = 450
+		        producer = OCE
+	        }
+	division_template = {
+			name = "联邦装甲部队"
+			regiments = {
+				medium_armor = { x = 0 y = 0 }
+				medium_armor = { x = 0 y = 1 }
+				medium_armor = { x = 0 y = 2 }
+				medium_armor = { x = 0 y = 3 }
+				medium_armor = { x = 1 y = 0 }
+				medium_armor = { x = 1 y = 1 }
+				medium_armor = { x = 1 y = 2 }
+				medium_armor = { x = 1 y = 3 }
+				motorized = { x = 2 y = 0 }
+				motorized = { x = 2 y = 1 }
+				motorized = { x = 2 y = 2 }
+				motorized = { x = 2 y = 3 }
+				motorized = { x = 3 y = 0 }
+				motorized = { x = 3 y = 1 }
+				motorized = { x = 3 y = 2 }
+				motorized = { x = 3 y = 3 }
+			    }
+
+				support = {
+					engineer = { x = 0 y = 0 }
+					recon = { x = 0 y = 1 }
+					signal_company ={ x =0 y = 2}
+					maintenance_company ={ x = 0 y = 3}
+				}
+		}
+		
+}
+OCE_farm_soldiers_1 = {
+	add_equipment_to_stockpile = {
+		        type = medium_tank_chassis_1
+                variant_name = "“克拉达斯”式反叛坦克"
+		        amount = 450
+		        producer = OCE
+	        }
+			add_equipment_to_stockpile = {
+		        type = motorized_equipment
+		        amount = 200
+		        producer = OCE
+	        }
+	115 = {
+			limit = {
+			is_owned_and_controlled_by = OCE }
+
+			create_unit = {
+				division = "name = \"联邦装甲部队\" division_template = \"联邦装甲部队\" start_experience_factor = 1 start_equipment_factor = 1 "
+				owner = OCE
+			}
+			create_unit = {
+				division = "name = \"联邦装甲部队\" division_template = \"联邦装甲部队\" start_experience_factor = 1 start_equipment_factor = 1 "
+				owner = OCE
+			}
+			create_unit = {
+				division = "name = \"联邦装甲部队\" division_template = \"联邦装甲部队\" start_experience_factor = 1 start_equipment_factor = 1 "
+				owner = OCE
+			}
+		}
+}
+OCE_farm_soldiers_2 = {
+	add_equipment_to_stockpile = {
+		        type = medium_tank_chassis_1
+                variant_name = "“克拉达斯”式反叛坦克"
+		        amount = 450
+		        producer = OCE
+	        }
+			add_equipment_to_stockpile = {
+		        type = motorized_equipment
+		        amount = 200
+		        producer = OCE
+	        }
+	115 = {
+			limit = {
+			is_owned_and_controlled_by = OCE }
+
+			create_unit = {
+				division = "name = \"联邦装甲部队\" division_template = \"联邦装甲部队\" start_experience_factor = 1 start_equipment_factor = 1 "
+				owner = OCE
+			}
+		}
+}
+
+OCE_refresh_seat = {
+	#奥西娅胜利党-中央派
+	set_temp_variable = { OCE_central_faction_total = OCE_central_faction }
+	multiply_temp_variable = { OCE_central_faction_total = 1 }
+	round_temp_variable = OCE_central_faction_total
+	#奥西娅胜利党-共冕团
+	set_temp_variable = { OCE_crowning_group_total = OCE_crowning_group }
+	multiply_temp_variable = { OCE_crowning_group_total = 1 }
+	round_temp_variable = OCE_crowning_group_total
+	#改组派民主保全会
+	set_temp_variable = { OCE_democratic_security_council_total = OCE_democratic_security_council }
+	multiply_temp_variable = { OCE_democratic_security_council_total = 1 }
+	round_temp_variable = OCE_democratic_security_council_total
+	#大洋联邦同盟党
+	set_temp_variable = { OCE_confederate_party_total = OCE_confederate_party }
+	multiply_temp_variable = { OCE_confederate_party_total = 1 }
+	round_temp_variable = OCE_confederate_party_total
+	#大洋社会主义同盟
+	set_temp_variable = { OCE_socialist_league_total = OCE_socialist_league }
+	multiply_temp_variable = { OCE_socialist_league_total = 1 }
+	round_temp_variable = OCE_socialist_league_total
+	#大洋联邦社会联盟党
+	set_temp_variable = { OCE_socialist_union_party_total = OCE_socialist_union_party }
+	multiply_temp_variable = { OCE_socialist_union_party_total = 1 }
+	round_temp_variable = OCE_socialist_union_party_total
+	#玛娜维护协会
+	set_temp_variable = { OCE_manna_maintenance_society_total = OCE_manna_maintenance_society }
+	multiply_temp_variable = { OCE_manna_maintenance_society_total = 1 }
+	round_temp_variable = OCE_manna_maintenance_society_total
+	#缺席
+	set_temp_variable = { absent_total = 1 }
+	subtract_from_variable = { absent_total = OCE_central_faction_total }
+	subtract_from_variable = { absent_total = OCE_crowning_group_total }
+	subtract_from_variable = { absent_total = OCE_democratic_security_council_total }
+	subtract_from_variable = { absent_total = OCE_confederate_party_total }
+	subtract_from_variable = { absent_total = OCE_socialist_league_total }
+	subtract_from_variable = { absent_total = OCE_socialist_union_party_total }
+	subtract_from_variable = { absent_total = OCE_manna_maintenance_society_total }
+	#奥西娅胜利党-中央派
+	set_temp_variable = {OCE_central_faction_total_end = OCE_central_faction_total }
+	#奥西娅胜利党-共冕团
+	set_temp_variable = { OCE_crowning_group_total_end = OCE_central_faction_total }
+	add_to_temp_variable = { OCE_crowning_group_total_end = OCE_crowning_group_total }
+	#改组派民主保全会
+	set_temp_variable = { OCE_democratic_security_council_total_end = OCE_crowning_group_total_end }
+	add_to_temp_variable = { OCE_democratic_security_council_total_end = OCE_democratic_security_council_total }
+	#大洋联邦同盟党
+	set_temp_variable = { OCE_confederate_party_total_end = OCE_democratic_security_council_total_end }
+	add_to_temp_variable = { OCE_confederate_party_total_end = OCE_confederate_party_total }
+	#大洋社会主义同盟
+	set_temp_variable = { OCE_socialist_league_total_end = OCE_confederate_party_total_end }
+	add_to_temp_variable = { OCE_socialist_league_total_end = OCE_socialist_league_total }
+	#大洋联邦社会联盟党
+	set_temp_variable = { OCE_socialist_union_party_total_end = OCE_socialist_league_total_end }
+	add_to_temp_variable = { OCE_socialist_union_party_total_end = OCE_socialist_union_party_total }
+	#玛娜维护协会
+	set_temp_variable = { OCE_manna_maintenance_society_total_end = OCE_socialist_union_party_total_end }
+	add_to_temp_variable = { OCE_manna_maintenance_society_total_end = OCE_manna_maintenance_society_total }
+
+	clear_array = ROOT.OCE_gridbox_seat_array
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 1
+		size = OCE_central_faction_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 2
+		size = OCE_crowning_group_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 3
+		size = OCE_democratic_security_council_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 4
+		size = OCE_confederate_party_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 5
+		size = OCE_socialist_league_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 6
+		size = OCE_socialist_union_party_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 7
+		size = OCE_manna_maintenance_society_total_end
+	}
+	resize_array = {
+		array = OCE_gridbox_seat_array
+		value = 8
+		size = 594
+	}
+	
+
+}
