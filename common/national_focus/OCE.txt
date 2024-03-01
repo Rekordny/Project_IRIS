@@ -539,6 +539,7 @@ focus_tree = {
         annex_country = { target = TFD transfer_troops = yes }
 	}
 	available = {
+		date > 3095.1.1
         country_exists = TFD
 		has_completed_focus = OCE_The_only_Osias
 	}
@@ -908,7 +909,7 @@ focus_tree = {
 	x = 0
 	y = 2
 	ai_will_do = { factor = 30 }
-	prerequisite = {focus = OCE_Purify_them focus = OCE_Not_a_single_one_is_left}
+	
 	completion_reward = {
 		if = {
 			limit = {
@@ -937,21 +938,20 @@ focus_tree = {
 					is_core_of = OCE
 				}
 				set_demilitarized_zone = no
-				}
+			}
+			set_power_balance = {
+    			id = OCE_stable_value_2
+				left_side = OCE_Federal_collapse
+    			right_side = OCE_Osia_supreme
+    			set_default = yes
+			}
 		remove_power_balance_modifier = {
 			id = OCE_stable_value
 			modifier = OCE_stable_value_weekly
 			}
-		add_power_balance_value = {
-			id = OCE_stable_value 
-			value = 1.1
-			}
+		
 	}
-	available = {
-		OR = {
-			has_global_flag = OCE_civil_war_OVER
-		}
-	}
+	
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
 
@@ -970,10 +970,12 @@ focus_tree = {
 		}
 	}
 	available = {
+		date > 3092.1.1
+		has_war = no
 		USR = { is_faction_leader = yes }
 	}
 	bypass = {
-		has_war = no
+		date > 3094.5.1
 		OR = {
 			USR = { is_faction_leader = no }
 			USR = { is_puppet = yes }
@@ -1239,6 +1241,10 @@ focus_tree = {
 	y = 1
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = OCE_go_south}
+	available={  
+		has_army_manpower = { size > 850000 }
+		num_of_factories > 100
+	}
 	bypass = {
 		has_full_control_of_state = 226
 	}
@@ -1256,15 +1262,48 @@ focus_tree = {
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
 
-	focus = { #介入美乐蒂
+	focus = { #半岛计划
 	id = OCE_Intervention_in_Melody
-	
+	icon = GFX_focus_OCE_Intervention_in_Melody
 	cost = 5
 	relative_position_id = OCE_Requesting_Svolosco_Island
 	x = 0
 	y = 1
+	available={  
+		date > 3095.1.1
+		has_army_manpower = { size > 900000 }
+	}
 	ai_will_do = { factor = 100 }
 	prerequisite = {focus = OCE_Requesting_Svolosco_Island}
+	bypass = {
+		OR = {
+			NOT = { country_exists = NEV }
+			has_war_with = NEV
+			NEV = { is_in_faction_with = OCE }
+		}
+	}
+	completion_reward = {
+		declare_war_on = { target = NEV type = annex_everything }
+		every_state = {
+			limit = { is_core_of = NEV }
+			add_state_claim = PREV
+		}
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+	focus = { #落后的理事会
+	id = OCE_war_PCC
+	icon = GFX_focus_OCE_war_PCC
+	cost = 5
+	relative_position_id = OCE_Intervention_in_Melody
+	x = -1
+	y = 1
+	ai_will_do = { factor = 100 }
+	prerequisite = {focus = OCE_Intervention_in_Melody}
+	available={  
+		has_army_manpower = { size > 1000000 }
+	}
 	bypass = {
 		OR = {
 			NOT = { country_exists = PCC }
@@ -1274,7 +1313,6 @@ focus_tree = {
 	}
 	completion_reward = {
 		declare_war_on = { target = PCC type = annex_everything }
-		create_wargoal = { target = NEV type = annex_everything }
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -1328,65 +1366,29 @@ focus_tree = {
 				}
 				NOT = { is_in_faction_with = OCE has_war_with = OCE }
 			}
-			if = {
+			country_event = { id = OCE_expansion.4 days = 3 }
+		}
+		if = {
 				limit = { country_exists = DOC }
 				news_event = { id = ocenews.5 }
 			}else = {
 				news_event = { id = ocenews.6 }
-			}
-			country_event = { id = OCE_expansion.4 days = 3 }
 		}
-		
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
-
-    focus = { #东欧罗巴之主
-	id = OCE_Lord_of_Eastern_European_Loba
-	
-	cost = 3
-	relative_position_id = OCE_march_westward
-	x = 0
-	y = 1
-	available={  
-		has_army_manpower = { size > 800000 }
-	}
-	bypass = {
-	}
-	ai_will_do = { factor = 80 }
-	prerequisite = { focus = OCE_march_westward }
-	completion_reward = {
-		add_state_claim = 114
-		add_state_claim = 89
-		add_state_claim = 86
-		add_state_claim = 74
-		add_state_claim = 85
-		add_state_claim = 69
-		add_state_claim = 60
-		add_state_claim = 59
-		add_state_claim = 45
-        add_state_claim = 75
-        add_state_claim = 58
-        add_state_claim = 70
-        add_state_claim = 61
-        add_state_claim = 51
-        add_state_claim = 39
-        add_state_claim = 97
-        add_state_claim = 105
-	}
-	search_filters = { FOCUS_FILTER_ANNEXATION }
-    }
-
 	focus = { #发动第二次特兰西瓦战争
 	id = OCE_declare_war_DOC
 	icon = GFX_focus_OCE_declare_war_DOC
 	cost = 5
-	relative_position_id = OCE_Lord_of_Eastern_European_Loba
+	relative_position_id = OCE_march_westward
 	x = 0
 	y = 1
 	available={  
+		date > 3093.8.1
 	}
 	bypass = {
+		date > 3093.8.1
 		OR = {
 			NOT = { country_exists = DOC }
 			has_war_with = DOC
@@ -1396,9 +1398,46 @@ focus_tree = {
 		}
 	}
 	ai_will_do = { factor = 80 }
-	prerequisite = { focus = OCE_Lord_of_Eastern_European_Loba }
+	prerequisite = { focus = OCE_march_westward }
 	completion_reward = {
 		declare_war_on = { target = DOC type = annex_everything }
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+	focus = { #东欧罗巴之主
+	id = OCE_Lord_of_Eastern_European_Loba
+	
+	cost = 3
+	relative_position_id = OCE_declare_war_DOC
+	x = 0
+	y = 1
+	available={  
+		has_army_manpower = { size > 1000000 }
+	}
+	bypass = {
+	}
+	ai_will_do = { factor = 80 }
+	prerequisite = { focus = OCE_declare_war_DOC }
+	completion_reward = {
+		every_state = {
+			limit = { 
+				OR = {
+					is_core_of = DOC 
+					is_core_of = URU
+					is_core_of = PLP
+					is_core_of = DOC 
+					is_core_of = CTC
+					is_core_of = AED
+					is_core_of = CTC
+					is_core_of = NGW
+					is_core_of = DYM
+				} 
+			}
+			OCE = {
+				add_state_claim = PREV
+			}
+		}
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -1407,12 +1446,15 @@ focus_tree = {
 	id = OCE_From_unfair_justice
 	icon = GFX_focus_OCE_From_unfair_justice
 	cost = 5
-	relative_position_id = OCE_declare_war_DOC
+	relative_position_id = OCE_Lord_of_Eastern_European_Loba
 	x = 0
 	y = 1
 	available={  
+		date > 3094.3.1
+		has_army_manpower = { size > 1100000 }
 	}
 	bypass = {
+		date > 3092.3.1
 		OR = {
 			NOT = { country_exists = ELN }
 			has_war_with = ELN
@@ -1422,7 +1464,7 @@ focus_tree = {
 		}
 	}
 	ai_will_do = { factor = 10 }
-	prerequisite = { focus = OCE_declare_war_DOC }
+	prerequisite = { focus = OCE_Lord_of_Eastern_European_Loba }
 	completion_reward = {
 		declare_war_on = { target = ELN type = annex_everything }
 	}
@@ -1784,6 +1826,9 @@ focus_tree = {
 	y = 2
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Island_Port_Expansion}
+	available={  
+		dockyard > 22
+	}
 	completion_reward = {
 		add_political_power = -100
 		add_ideas = OCE_idea_Ocean_Navy_Refurbishment
@@ -2192,6 +2237,10 @@ focus_tree = {
 	y = 1
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Increases_weapon_damage }
+	available={  
+		arms_factory > 34
+	}
+	
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		add_ideas = OCE_idea_Refurbishment_of_weapons_production_systems
@@ -2383,7 +2432,10 @@ focus_tree = {
 	y = 1
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Federation_Ocean }
-	
+	available={  
+		date > 3094.3.1
+		num_of_factories > 110
+	}
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		add_ideas = OCE_idea_V_plan
@@ -2693,6 +2745,9 @@ focus_tree = {
 			category = naval_doctrine
 		}
 	}
+	available={  
+		dockyard > 39
+	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
 
@@ -2833,7 +2888,7 @@ focus_tree = {
 	focus = { #彼岸花洋防卫区
 	id = OCE_Bianan_Huayang_Defense_Zone
 	
-	cost = 5
+	cost = 10
 	relative_position_id = OCE_Expanded_Marine_Corps
 	x = -1
 	y = 1
@@ -3132,7 +3187,7 @@ focus_tree = {
 	relative_position_id = OCE_V_plan
 	x = -3
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_V_plan }
 	completion_reward = {
         army_experience = 25
@@ -3152,7 +3207,7 @@ focus_tree = {
 	relative_position_id = OCE_Dreaming_back_to_Western_Europe
 	x = -1
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Dreaming_back_to_Western_Europe }
 	completion_reward = {
 		custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -3174,7 +3229,7 @@ focus_tree = {
 	relative_position_id = OCE_Trench_breakthrough_methods
 	x = -1
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Trench_breakthrough_methods }
 	completion_reward = {
         custom_effect_tooltip = ITA_battaglioni_d_assalto_tt
@@ -3197,7 +3252,7 @@ focus_tree = {
 	relative_position_id = OCE_Federal_Death_Squad
 	x = 0
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Federal_Death_Squad }
 	completion_reward = {
         add_ideas = OCE_idea_Federal_Reconnaissance_Squad
@@ -3212,7 +3267,7 @@ focus_tree = {
 	relative_position_id = OCE_Trench_breakthrough_methods
 	x = 0
 	y = 3
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Trench_breakthrough_methods }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -3258,7 +3313,7 @@ focus_tree = {
 	relative_position_id = OCE_Dreaming_back_to_Western_Europe
 	x = 1
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Dreaming_back_to_Western_Europe }
 	completion_reward = {
 		custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -3280,7 +3335,7 @@ focus_tree = {
 	relative_position_id = OCE_Dreaming_back_to_Western_Europe
 	x = 0
 	y = 2
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Mobile_raid focus = OCE_Trench_breakthrough_methods }
 	completion_reward = {
 		army_experience = 25
@@ -3300,7 +3355,7 @@ focus_tree = {
 	relative_position_id = OCE_Form_acombat_team
 	x = 0
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Form_acombat_team }
 	completion_reward = {
 		custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -3322,7 +3377,7 @@ focus_tree = {
 	relative_position_id = OCE_Mobile_raid
 	x = 0
 	y = 3
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Mobile_raid }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -3359,7 +3414,7 @@ focus_tree = {
 	relative_position_id = OCE_Quick_breakout
 	x = 0
 	y = 1
-	ai_will_do = { factor = 10 }
+	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Quick_breakout }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
