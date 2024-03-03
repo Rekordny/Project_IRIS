@@ -2613,19 +2613,12 @@ country_event = {
 			if = {
 				limit = {
 					USR = {
+						has_government = fascism
 						is_faction_leader = yes
 					}
 				}
 				USR = {
 					dismantle_faction = yes
-				}
-			}
-			if = {
-				limit = {
-					USR = {
-						has_government = fascism
-						is_faction_leader = yes
-					}
 				}
 				news_event = {id = STG_news.4}
 			}
@@ -2678,26 +2671,83 @@ country_event = {
 	fire_only_once = yes
     trigger = {
         tag = STG
-		STG = {has_war_with = UNG}
-		OR = {
-			STG = {
-				has_completed_focus = STG_dar_war_1
-				has_completed_focus = STG_dar_war_2
+		STG = {
+			OR = {
+				has_war_with = UNG
+				has_war_with = FNG
+				has_war_with = MSA
 			}
 		}
-        UNG = {
-			NOT = {
-				any_enemy_country = {
-					NOT = {
-						OR = {
-							tag = STG
-							is_puppet_of = STG
+		NOT = {
+			has_global_flag = UNG_CivilWar_begun
+		}
+
+		STG = {
+			has_country_leader = {
+				character = STG_darjeeling
+				ruling_only = yes
+			}
+		}
+		if = {
+			limit = {
+				STG = {
+					has_war_with = UNG
+				}
+			}
+			UNG = {
+				NOT = {
+					any_enemy_country = {
+						NOT = {
+							OR = {
+								tag = STG
+								is_puppet_of = STG
+							}
 						}
 					}
 				}
+				surrender_progress > 0.90
 			}
-            surrender_progress > 0.90
-        }
+		}
+        if = {
+			limit = {
+				STG = {
+					has_war_with = FNG
+				}
+			}
+			FNG = {
+				NOT = {
+					any_enemy_country = {
+						NOT = {
+							OR = {
+								tag = STG
+								is_puppet_of = STG
+							}
+						}
+					}
+				}
+				surrender_progress > 0.90
+			}
+		}
+		if = {
+			limit = {
+				STG = {
+					has_war_with = MSA
+				}
+			}
+			MSA = {
+				NOT = {
+					any_enemy_country = {
+						NOT = {
+							OR = {
+								tag = STG
+								is_puppet_of = STG
+							}
+						}
+					}
+				}
+				surrender_progress > 0.90
+			}
+		}
     }
 	mean_time_to_happen = {
 		days = 1
@@ -2706,15 +2756,63 @@ country_event = {
 		name = STG_war.3.a
 		custom_effect_tooltip = STG_dar_successful_reclaimation_desc
         hidden_effect = {
-			STG = {
-                white_peace = {
-					tag = UNG
-					message = STG_UNG_WAR_ENDED
-			    }
-            }
-		    STG = {
-                annex_country = {target = UNG transfer_troops = no}
-		    }
+			if = {
+				limit = {
+					STG = {
+						has_war_with = UNG
+					}
+				}
+				UNG = {
+					transfer_navy = {
+						target = STG
+					}
+				}
+				STG = {
+					white_peace = {
+						tag = UNG
+						message = STG_Defeated_UNG
+					}
+					annex_country = {target = UNG transfer_troops = no}
+				}
+			}
+			if = {
+				limit = {
+					STG = {
+						has_war_with = FNG
+					}
+				}
+				FNG = {
+					transfer_navy = {
+						target = STG
+					}
+				}
+				STG = {
+					white_peace = {
+						tag = FNG
+						message = STG_Defeated_FNG
+					}
+					annex_country = {target = FNG transfer_troops = no}
+				}
+			}
+			if = {
+				limit = {
+					STG = {
+						has_war_with = MSA
+					}
+				}
+				MSA = {
+					transfer_navy = {
+						target = STG
+					}
+				}
+				STG = {
+					white_peace = {
+						tag = MSA
+						message = STG_Defeated_MSA
+					}
+					annex_country = {target = MSA transfer_troops = no}
+				}
+			}
         }
 		ai_chance = {
 			base = 5
