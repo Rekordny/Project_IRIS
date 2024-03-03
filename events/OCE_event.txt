@@ -4,6 +4,26 @@
 add_namespace = OCE
 add_namespace = OCE_expansion
 add_namespace = OCE_paranoia_system_events
+add_namespace = OCE_bop
+#奥西娅联邦路线指南
+country_event = {
+	id = OCE.0
+	title = OCE.0.title
+	desc = OCE.0.desc
+	is_triggered_only = yes
+	#fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+			tag = OCF
+			tag = EIA
+			tag = INP
+		}
+	}
+	option = {
+		name = OCE.0.a
+	}
+}
 #奥西娅联邦宣布暂时性撤出大陆
 country_event =  {
 	id = OCE.1
@@ -61,7 +81,7 @@ country_event =  {
 	id = OCE.10
 	title = OCE.10.t
 	desc = OCE.10.desc
-	picture = GFX_ungevent_1
+	picture = GFX_OCE_10
 	trigger = {
 	}
 	is_triggered_only = yes
@@ -157,7 +177,7 @@ country_event =  {
 	id = OCE.11
 	title = OCE.11.t
 	desc = OCE.11.desc
-	picture = GFX_ungevent_1
+	picture = GFX_OCE_10
 	is_triggered_only = yes
 	fire_only_once = yes
 	trigger = {
@@ -253,7 +273,7 @@ country_event =  {
 	id = OCE.12
 	title = OCE.12.t
 	desc = OCE.12.desc
-	picture = GFX_ungevent_1
+	picture = GFX_OCE_10
 	is_triggered_only = yes
 	fire_only_once = yes
 	trigger = {
@@ -391,7 +411,7 @@ country_event =  {
 	id = OCE.2
 	title = OCE.2.t
 	desc = OCE.2.desc
-	picture = GFX_ungevent_1
+	picture = GFX_OCE_2
 	is_triggered_only = yes
 	fire_only_once = yes
 	trigger = {
@@ -457,18 +477,10 @@ country_event =  {
 				division = "name = \"地方警卫队\" division_template = \"地方警卫队\" start_experience_factor = 0.1 start_equipment_factor = 0.7 "
 				owner = OCF
 				}
-				create_unit = {
-				division = "name = \"联邦总队\" division_template = \"联邦总队\" start_experience_factor = 0.3 start_equipment_factor = 0.8 "
-				owner = OCF
-			}
 			create_unit = {
 				division = "name = \"地方警卫队\" division_template = \"地方警卫队\" start_experience_factor = 0.1 start_equipment_factor = 0.7 "
 				owner = OCF
 				}
-				create_unit = {
-				division = "name = \"联邦总队\" division_template = \"联邦总队\" start_experience_factor = 0.3 start_equipment_factor = 0.8 "
-				owner = OCF
-						}
 					}
 				}
 
@@ -520,10 +532,6 @@ country_event =  {
 				division = "name = \"地下反抗军\" division_template = \"地下反抗军\" start_experience_factor = 0.3 start_equipment_factor = 0.8 "
 				owner = EIA
 			}
-			create_unit = {
-				division = "name = \"地下反抗军\" division_template = \"地下反抗军\" start_experience_factor = 0.1 start_equipment_factor = 0.7 "
-				owner = EIA
-					}
 				}
 			}
 				
@@ -536,8 +544,13 @@ country_event =  {
 				infantry = { x = 0 y = 1 }
 				infantry = { x = 0 y = 2 }
 				infantry = { x = 1 y = 0 }
-				artillery_brigade = { x = 2 y = 1 }
+				infantry = { x = 1 y = 1 }
+				infantry = { x = 1 y = 2 }
+				artillery_brigade = { x = 2 y = 0 }
 			    	}
+					support = {
+        				military_police = { x = 0 y = 0 }
+					}
 				}
 			every_controlled_state = {
 				limit = {
@@ -549,6 +562,7 @@ country_event =  {
 					}
 				}
 				OCE_farm_soldiers = yes
+				OCE_farm_soldiers_1 = yes
 				OCE_farm_soldiers_1 = yes
 			}
 		}
@@ -657,10 +671,10 @@ country_event =  {
 		clr_global_flag = OCE_Domestic_turbulence
 		#clr_global_flag = OCE_DOC_WAR_OVER_OCE_FAIL
 		set_country_flag = OCE_CID_war
-		declare_war_on = { target = CID type = annex_everything }
 		add_timed_idea = { idea = OCE_idea_The_aftermath_of_civil_war days = 180 }
 		hidden_effect = {
 			country_event = { id = OCE.5 days = 100 }
+			OCE = { declare_war_on = { target = CID type = annex_everything } }
 			OCE = { country_lock_all_division_template = no }
 		}
 	}
@@ -1327,6 +1341,10 @@ country_event =  {
 	option = {
 		name = OCE_expansion.43.a
 		create_wargoal = { target = OHR type = annex_everything }
+		add_state_claim = 216
+		add_state_claim = 236
+		add_state_claim = 228
+		add_state_claim = 246
 		set_autonomy = {
 		target = FROM
 		autonomy_state = Federal_District
@@ -1510,6 +1528,21 @@ country_event = {
 		}
 
 		clear_variable = SOV_purged_character_for_loc
+		
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = 0.1
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = 0.1
+			}
+		}
 	}
 
 	option = { #PURGE MODE OFF
@@ -1538,6 +1571,20 @@ country_event = {
 		#CLEAN EVERYTHING THANKS
 		SOV_clean_purge_targets_effect = yes
 		clear_variable = SOV_purged_character_for_loc
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = -0.05
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = -0.05
+			}
+		}
 	}
 }
 
@@ -1581,6 +1628,20 @@ country_event = {
 			}
 			custom_effect_tooltip = SOV_purge_event_not_enough_pp_to_avoid_regular_tt
 		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = 0.1
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = 0.1
+			}
+		}
 	}
 
 	option = {
@@ -1606,6 +1667,20 @@ country_event = {
 
 		#PARANOIA increases
 		OCE_paranoia_low_increase_effect = yes
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = -0.05
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = -0.05
+			}
+		}
 	}
 }
 
@@ -1650,6 +1725,20 @@ country_event = {
 		OCE_paranoia_high_decrease_effect = yes
 
 		custom_effect_tooltip = SOV_purge_event_not_enough_pp_to_avoid_regular_tt
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = 0.1
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = 0.1
+			}
+		}
 	}
 
 	option = {
@@ -1674,6 +1763,20 @@ country_event = {
 
 		#PARANOIA increases
 		OCE_paranoia_low_increase_effect = yes
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = -0.05
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = -0.05
+			}
+		}
 	}
 }
 unit_leader_event = {
@@ -1707,6 +1810,20 @@ unit_leader_event = {
 		hidden_effect = {
 			OCE_paranoia_update_portraits_ui = yes
 		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = 0.1
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = 0.1
+			}
+		}
 
 	}
 
@@ -1727,6 +1844,20 @@ unit_leader_event = {
                 has_character_flag = OCE_targeted_for_purge_flag
 			}
 			clr_character_flag = OCE_targeted_for_purge_flag
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = -0.05
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = -0.05
+			}
 		}
 	}
 }
@@ -1753,6 +1884,20 @@ country_event = {
 			OCE_purge_character_effect = YES
 		}
 		custom_effect_tooltip = OCE_paranoia_system_events.29.tt
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = 0.25
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = 0.25
+			}
+		}
 	}
 }
 unit_leader_event = {
@@ -1781,6 +1926,20 @@ unit_leader_event = {
 			}
 			OCE_purge_character_effect = YES
 		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = 0.1
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = 0.1
+			}
+		}
 	}
 
 	option = { #NO WAIT! Let's Think about it
@@ -1793,6 +1952,187 @@ unit_leader_event = {
                 has_character_flag = OCE_targeted_for_purge_flag
 			}
 			clr_character_flag = OCE_targeted_for_purge_flag
-		}	
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value } }
+			add_power_balance_value = {
+				id = OCE_stable_value 
+				value = -0.05
+			}
+		}
+		if = {
+			limit = { has_power_balance = { id = OCE_stable_value_2 } }
+			add_power_balance_value = {
+				id = OCE_stable_value_2 
+				value = -0.05
+			}
+		}
+	}
+}
+
+country_event = {
+	id = OCE_bop.0
+	title = OCE_bop.0.title
+	desc = OCE_bop.0.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	hidden = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	immediate = {
+		OCE = {
+			country_event = { id = OCE_bop.1 days = 5 }
+			country_event = { id = OCE_bop.2 days = 35 }
+			country_event = { id = OCE_bop.3 days = 50 }
+			country_event = { id = OCE_bop.4 days = 255 }
+			country_event = { id = OCE_bop.5 days = 130 }
+			country_event = { id = OCE_bop.6 days = 365 }
+			country_event = { id = OCE_bop.7 days = 400 }
+			country_event = { id = OCE_bop.8 days = 250 }
+		}
+	}
+	option = {
+		name = OCE.0.a
+	}
+}
+#奥西娅要求扩大海军规模
+country_event = {
+	id = OCE_bop.1
+	title = OCE_bop.1.title
+	desc = OCE_bop.1.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Expanding_size_navy
+	}
+}
+#胜利党要求发展空军
+country_event = {
+	id = OCE_bop.2
+	title = OCE_bop.2.title
+	desc = OCE_bop.2.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Developing_Air_Force
+	}
+}
+#和平部要求拿下格里克岛
+country_event = {
+	id = OCE_bop.3
+	title = OCE_bop.3.title
+	desc = OCE_bop.3.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Take_Grick_Island
+	}
+}
+#奥西娅要求扩大陆军规模
+country_event = {
+	id = OCE_bop.4
+	title = OCE_bop.4.title
+	desc = OCE_bop.4.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Continental_Army
+	}
+}
+#和平部要求研究毒气
+country_event = {
+	id = OCE_bop.5
+	title = OCE_bop.5.title
+	desc = OCE_bop.5.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Research_toxic_gases
+	}
+}
+#富裕部要求工业化
+country_event = {
+	id = OCE_bop.6
+	title = OCE_bop.6.title
+	desc = OCE_bop.6.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Require_industrialization
+	}
+}
+#奥西娅要求击败诗旎公国
+country_event = {
+	id = OCE_bop.7
+	title = OCE_bop.7.title
+	desc = OCE_bop.7.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+		country_exists = DOC
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_annex_DOC_BOP
+	}
+}
+#奥西娅要求收回斯沃洛斯科岛
+country_event = {
+	id = OCE_bop.8
+	title = OCE_bop.8.title
+	desc = OCE_bop.8.desc
+	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		OR = {
+			tag = OCE
+		}
+		country_exists = DOC
+	}
+	option = {
+		name = OCE.0.a
+		activate_mission = OCE_Retrieve_Svolosco_Island
 	}
 }

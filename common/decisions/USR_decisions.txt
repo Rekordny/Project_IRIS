@@ -358,6 +358,101 @@ USR_republic_congress_decisions = {
 
 #推进工业化
 USR_industrialization = {
+	USR_reindustrialization_of_military = {
+		icon = generic_tank
+		visible = {
+			TAG = USR
+			OR = { USR = { has_completed_focus = USR_the_indstrial_heritage_of_the_empire } is_testing = yes }
+		}
+		cost = 100
+		complete_effect = {
+			army_experience = 30
+			air_experience = 30
+			navy_experience = 30
+			unlock_decision_tooltip = USR_invest_hartman
+			set_country_flag = USR_HARTMAN
+			set_variable = {
+				USR.hartman_timer = 60
+			}
+			set_variable = {
+				USR.hartman_completed = 0
+			}
+			USR_Ursula = {
+				remove_advisor_role = {
+					slot = political_advisor
+				}
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	#投资哈特曼设计局
+	USR_invest_hartman = {
+		icon = generic_tank
+		visible = {
+			TAG = USR
+			OR = { has_country_flag = USR_HARTMAN is_testing = yes }
+		}
+		custom_cost_text = USR_tooltip18
+		custom_cost_trigger = {
+			command_power > 20
+		}
+		allowed = {
+			original_tag = USR
+		}
+		days_remove = USR.hartman_timer
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+				add_to_variable = {
+					USR.hartman_timer = 30
+				}
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = USR_tooltip19
+			hidden_effect = {
+				country_event = { id = usr.6 }
+			}
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	#整合哈特曼设计局
+	USR_merge_hartman = {
+		icon = generic_research
+		visible = {
+			TAG = USR
+			OR = { has_country_flag = USR_HARTMAN is_testing = yes }
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USR_tooltip20
+				check_variable = {
+					hartman_completed > 4
+				}
+			}
+		}
+		cost = 100
+		allowed = {
+			original_tag = USR
+		}
+		complete_effect = {
+			add_research_slot = 1
+			custom_effect_tooltip = USR_tooltip21
+			clr_country_flag = USR_HARTMAN
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			base = 100
+		}
+	}
+
 	#将mana转化为cic
 	USR_use_mana_as_fuel = {
 		icon = generic_construction
@@ -391,7 +486,7 @@ USR_industrialization = {
 			
 		}
 		ai_will_do = {
-			base = 30
+			base = 100
 		}
 	}
 	USR_concession_of_mineral_rights_1 = {
@@ -497,7 +592,33 @@ USR_industrialization = {
 }
 
 
+#黑森峰最高指挥
 USR_high_command_kuromorimine = {
+	#战车道学院人才培养计划
+	USR_general_promotion_project = {
+		visible = {
+			TAG = USR
+			has_completed_focus = USR_build_senshado_school
+		}
+		days_remove = 50
+		modifier = {
+			political_power_factor = -0.15
+		}
+		remove_effect = {
+			random_army_leader = {
+				limit = {
+					NOT = { has_trait = USR_senshado_graduate }
+				}
+				add_trait = {
+					trait = usr_senshado_graduate
+				}
+				add_skill_level = 1
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
 	#打捞并翻新艾沙茨·沃尔特号
 	USR_salvage_and_renovate_battleship = {
 		visible = {
@@ -610,7 +731,7 @@ USR_ai_decisions = {
 	invite_YMD = {
 		available = {
 			is_faction_leader = yes
-			YMD = { has_same_ideology = yes }
+			YMD = { has_same_ideology = yes is_in_faction = no }
 		}
 		complete_effect = {
 			add_to_faction = YMD
@@ -622,7 +743,7 @@ USR_ai_decisions = {
 	invite_TAU = {
 		available = {
 			is_faction_leader = yes
-			TAU = { has_same_ideology = yes }
+			TAU = { has_same_ideology = yes is_in_faction = no }
 		}
 		complete_effect = {
 			add_to_faction = YMD
