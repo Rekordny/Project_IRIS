@@ -189,6 +189,7 @@ focus_tree = {
 					has_completed_focus = ELN_Breaking_promises
 				}
 			}
+			always = no
 		}
 		cost = 4
 		allow_branch = {
@@ -224,6 +225,7 @@ focus_tree = {
 					has_completed_focus = ELN_Breaking_promises
 				}
 			}
+			always = no
 		}
 		cost = 4
 		allow_branch = {
@@ -507,6 +509,7 @@ focus_tree = {
 					has_completed_focus = ELN_Breaking_promises
 				}
 			}
+			always = no
 		}
 		cost = 4
 		allow_branch = {
@@ -709,6 +712,7 @@ focus_tree = {
 					has_completed_focus = ELN_Breaking_promises
 				}
 			}
+			always = no
 		}
 		cost = 4
 		allow_branch = {
@@ -960,6 +964,7 @@ focus_tree = {
 					has_completed_focus = ELN_Breaking_promises
 				}
 			}
+			always = no
 		}
 		cost = 4
 		allow_branch = {
@@ -3454,6 +3459,7 @@ focus_tree = {
 		y = 1
 		cost = 4
 		allow_branch = {
+			always = no
 		}
 		ai_will_do = {
 			base = 10
@@ -3557,6 +3563,7 @@ focus_tree = {
 		y = 1
 		cost = 4
 		allow_branch = {
+			always = no
 		}
 		ai_will_do = {
 			base = 10
@@ -3688,6 +3695,7 @@ focus_tree = {
 		y = 1
 		cost = 4
 		allow_branch = {
+			always = no
 		}
 		ai_will_do = {
 			base = 10
@@ -4187,17 +4195,41 @@ focus_tree = {
 		allow_branch = {
 		}
 		ai_will_do = {
-			base = 10
+			base = 2
 		}
 		available = {
 			is_subject = no
 			is_faction_leader = yes
+			or = {
+				DOC = { has_added_tension_amount > 20 }
+				OCE = { has_added_tension_amount > 20 }
+			}
 		}
 		bypass = {
 		}
 		available_if_capitulated = no
 		cancel_if_invalid = yes
 		completion_reward = {
+			if = {
+				limit = { DOC = { has_added_tension_amount > 20 } }
+				activate_targeted_decision = {
+					target = DOC
+					decision = ELN_attck_FROM
+				}
+				DOC = {
+					set_country_flag = can_be_attack_by_ELN
+				}
+			}
+			if = {
+				limit = { OCE = { has_added_tension_amount > 20 } }
+				activate_targeted_decision = {
+					target = OCE
+					decision = ELN_attck_FROM
+				}
+				OCE = {
+					set_country_flag = can_be_attack_by_ELN
+				}
+			}
 		}
 	}
 	#睦邻政策
@@ -4434,12 +4466,18 @@ focus_tree = {
 		available = {
 			is_subject = no
 			is_faction_leader = yes
+			USR = {
+				not = { has_government = ROOT }
+			}
 		}
 		bypass = {
 		}
 		available_if_capitulated = no
 		cancel_if_invalid = yes
 		completion_reward = {
+			country_event = {
+				id = elino.34
+			}
 		}
 	}
 	#支援自由昂格利亚
@@ -4461,12 +4499,42 @@ focus_tree = {
 		available = {
 			is_subject = no
 			is_faction_leader = yes
+			FNG = {
+				exists = yes
+				has_government = democratic
+				is_subject = no
+				has_war = yes
+			}
 		}
 		bypass = {
 		}
 		available_if_capitulated = no
 		cancel_if_invalid = yes
 		completion_reward = {
+			add_ideas = ELN_Interventionist_diplomacy
+			FNG = {
+				country_event = {
+					id = elino.35
+				}
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = SUPPORT_US_iN_WAR
+				}
+				add_manpower = 10000
+			}
+			add_manpower = -10000
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 2000
+				}
+				send_equipment = {
+					equipment = infantry_equipment
+					amount = 2000
+					target = FNG
+				}
+			}
+			custom_effect_tooltip = ELN_Support_FNG_tt
 		}
 	}
 	#欧罗巴经济共同体
@@ -5934,6 +6002,7 @@ focus_tree = {
 		available_if_capitulated = no
 		cancel_if_invalid = yes
 		completion_reward = {
+			add_ideas = ELN_Strengthen_discipline_in_Army_idea
 		}
 	}
 	focus = {
@@ -5959,6 +6028,7 @@ focus_tree = {
 		available_if_capitulated = no
 		cancel_if_invalid = yes
 		completion_reward = {
+			add_ideas = ELN_Mass_conscription_idea
 		}
 	}
 	focus = {
