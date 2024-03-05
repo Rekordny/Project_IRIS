@@ -69,30 +69,6 @@ on_actions = {
 			if = {
 				limit = {
 					tag = STG
-					has_country_flag = STG_is_usr_puppet
-				}
-				remove_ideas = STG_unrest_1
-                remove_ideas = STG_unrest_2
-                remove_ideas = STG_unrest_3
-                remove_ideas = STG_unrest_4
-                remove_ideas = STG_unrest_5
-                remove_ideas = STG_unrest_6
-				remove_ideas = STG_usr_discontent_low
-                remove_ideas = STG_usr_discontent_middle
-                remove_ideas = STG_usr_discontent_high
-                remove_ideas = STG_usr_discontent_very_high
-                remove_ideas = STG_usr_unrest_end
-                remove_ideas = STG_cam_discontent_low
-                remove_ideas = STG_cam_discontent_middle
-                remove_ideas = STG_cam_discontent_high
-                remove_ideas = STG_cam_discontent_very_high
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = {
-					tag = STG
 					NOT = {
 						has_country_flag = STG_is_usr_puppet
 					}
@@ -239,19 +215,6 @@ on_actions = {
 					}	
 				}
 			}
-			if = {
-				limit = {
-					NOT = {
-						country_exists = FNG
-					}
-					OR = {
-						has_idea = STG_support_FNG
-						has_idea = STG_support_FNG_2
-					}
-				}
-				remove_ideas = STG_support_FNG
-				remove_ideas = STG_support_FNG_2
-			}
 			STG = {
 				if = {
 					limit = {
@@ -322,6 +285,80 @@ on_actions = {
 			    }
 				STG = {
 					set_country_flag = STG_usr_got_cb
+				}
+			}
+		}
+	}
+	#战败CG
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						tag = STG
+						OR = {
+							has_war_with = UNG
+							has_war_with = FNG
+							has_war_with = MSA
+						}
+						has_global_flag = WAR_FOR_ANGLIA
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							OR = {
+								tag = UNG
+								tag = MSA
+								tag = FNG
+							}
+							is_puppet = no
+						}
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					if = {
+						limit = {
+							FROM = {
+								tag = UNG
+							}
+						}
+						white_peace  = {
+							tag = FROM
+							message = UNG_Defeated_STG
+						}
+					}
+					if = {
+						limit = {
+							FROM = {
+								tag = MSA
+							}
+						}
+						white_peace  = {
+							tag = FROM
+							message = MSA_Defeated_STG
+						}
+					}
+					if = {
+						limit = {
+							FROM = {
+								tag = FNG
+							}
+						}
+						white_peace  = {
+							tag = FROM
+							message = FNG_Defeated_STG
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
 				}
 			}
 		}
