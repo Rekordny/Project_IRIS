@@ -24,6 +24,11 @@ belief_value_convert_lottery_points = {
 	clear_variable = belief_value
 	set_variable = { belief_value = 0 }
 }
+#清空信仰值
+belief_value_del = {
+	clear_variable = belief_value
+	set_variable = { belief_value = 0 }
+}
 #减少点数
 lottery_points_del = {
 	add_to_variable = { lottery_points = -35 } 
@@ -32,6 +37,17 @@ lottery_points_del = {
 belief_value_add = {
 	add_to_variable = { belief_value = 1 } 
 }
+#启动
+IRIS_role_firing_icon_click_firing = {
+	if = {
+		limit = { has_country_flag = IRIS_role_firing_icon_click_firing_flag }
+		clr_country_flag = IRIS_role_firing_icon_click_firing_flag
+	}
+	else = {
+		set_country_flag = IRIS_role_firing_icon_click_firing_flag
+	}
+}
+
 #启动商店
 start_store = {
 	if = {
@@ -267,11 +283,52 @@ IRIS_start_extracting = {
 	lottery_points_del = yes
 	belief_value_add = yes
 	clear_variable = IRIS_start_extracting_variable#显示抽奖角色变量去除
-	random_list = {
+	if = {
+		limit = { check_variable = { belief_value > 99 } }
+		if = {
+			limit = {
+				has_country_flag = IRIS_role_pool_specific_vocaloid_1
+			}
+			if = {
+				limit = { NOT = { has_country_flag = has_miku_flag } }
+				add_role_miku = yes
+				}
+			else = {
+				starlight_add_1 = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = IRIS_role_pool_specific_jiuweixumei
+			}
+			if = {
+				limit = { NOT = { has_country_flag = has_miku_flag } }
+				add_role_miku = yes
+				}
+			else = {
+				starlight_add_1 = yes
+			}
+		}
+		if = {
+			limit = {
+				has_country_flag = IRIS_role_pool_specific_icey
+			}
+			if = {
+				limit = { NOT = { has_country_flag = has_icey_flag } }
+				add_ICEY = yes
+			}
+			else = {
+				starlight_add_1 = yes
+			}
+		}
+		belief_value_del = yes
+	}
+	else={
+		random_list = {
 		5 = {
 			if = {
 				limit = {
-					has_global_flag = IRIS_role_pool_specific_vocaloid_1
+					has_country_flag = IRIS_role_pool_specific_vocaloid_1
 				}
 				random_list = {
 					10 = {	
@@ -314,7 +371,7 @@ IRIS_start_extracting = {
 			}
 			if = {
 				limit = {
-					has_global_flag = IRIS_role_pool_specific_jiuweixumei
+					has_country_flag = IRIS_role_pool_specific_jiuweixumei
 				}
 				random_list = {
 					10 = {
@@ -357,7 +414,7 @@ IRIS_start_extracting = {
 			}
 			if = {
 				limit = {
-					has_global_flag = IRIS_role_pool_specific_icey
+					has_country_flag = IRIS_role_pool_specific_icey
 				}
 				if = {
 					limit = { NOT = { has_country_flag = has_icey_flag } }
@@ -709,6 +766,7 @@ IRIS_start_extracting = {
 			}
 		}
 	}
+	}
 	set_country_flag = IRIS_Obtain_items_flag
 }
 
@@ -841,17 +899,30 @@ add_minowa_gin = {
 	set_variable = { IRIS_start_extracting_variable = 9 } 
 	set_country_flag = has_minowa_gin_flag
 }
+#这里是诗旎专属
 add_ogrich = {
-	create_field_marshal = {
-		name = "ogrich"
-		traits = {  }
-		portrait_path = "gfx/leaders/role_pool_specific/诺格丽希·诗旎.dds"
-		skill = 6
-		attack_skill = 8
-		defense_skill = 8
-		planning_skill = 8
-		logistics_skill = 8
+	add_field_marshal_role = {
+    	Character = DOC_ogrich
+    	traits={ winter_specialist Mana_leader DOC_Unstable_Heroes DOC_executioner_misfortune }
+		desc = DOC_ogrich_desc
+		skill=6
+		attack_skill=8
+		defense_skill=8
+		planning_skill=8
+		logistics_skill=8
 	}
+	add_advisor_role = {
+    		character = DOC_ogrich
+    		advisor = {
+        		slot = political_advisor
+        		cost = 75
+				desc =   DOC_ogrich_desc
+        		idea_token = DOC_ogrich
+        		traits = {
+            		DOC_first_ancestor
+        		}
+    		}
+		}
 	set_variable = { IRIS_start_extracting_variable = 10 } 
 	set_country_flag = has_ogrich_flag
 }
@@ -1258,12 +1329,12 @@ add_Tatsumi_Kotarou = {
 
 #刷新奖池
 Replace_card_pool_randomly = {
-	clr_global_flag = IRIS_role_pool_specific_vocaloid_1
-	clr_global_flag = IRIS_role_pool_specific_icey
-	clr_global_flag = IRIS_role_pool_specific_jiuweixumei
+	clr_country_flag = IRIS_role_pool_specific_vocaloid_1
+	clr_country_flag = IRIS_role_pool_specific_icey
+	clr_country_flag = IRIS_role_pool_specific_jiuweixumei
 	random_list = {
-		10 = { set_global_flag = IRIS_role_pool_specific_vocaloid_1 }
-		10 = { set_global_flag = IRIS_role_pool_specific_icey }
-		10 = { set_global_flag = IRIS_role_pool_specific_jiuweixumei }
+		10 = { set_country_flag = IRIS_role_pool_specific_vocaloid_1 }
+		10 = { set_country_flag = IRIS_role_pool_specific_icey }
+		10 = { set_country_flag = IRIS_role_pool_specific_jiuweixumei }
 	}
 }
