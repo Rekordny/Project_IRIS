@@ -476,6 +476,7 @@ focus_tree = {
         TFD = {
             add_ideas = OCE_idea_Open_borders
         }
+		news_event = { id = ocenews.11 }
 	}
 	available = {
         country_exists = TFD
@@ -504,7 +505,16 @@ focus_tree = {
 	completion_reward = {
         TFD = {
             add_ideas = OCE_idea_Regional_blockades
+			if = {
+            limit = { has_intelligence_agency = yes } 
+                gain_random_agency_upgrade = yes 
+                gain_random_agency_upgrade = yes 
+                }
+		else = { 
+            create_intelligence_agency = yes 
+            }
         }
+		news_event = { id = ocenews.12 }
 	}
 	available = {
         country_exists = TFD
@@ -780,7 +790,7 @@ focus_tree = {
 	mutually_exclusive = {
 	}
 	completion_reward = {
-		
+		country_event = { id = OCE.8 }
 	}
 	search_filters = { FOCUS_FILTER_STABILITY }
 	search_filters = { FOCUS_FILTER_WAR_SUPPORT }
@@ -1270,6 +1280,29 @@ focus_tree = {
 				add_idea = service_by_requirement
 			}
 		}
+	}
+	search_filters = { FOCUS_FILTER_ANNEXATION }
+    }
+
+	focus = { #绝望措施
+	id = OCE_Desperate_measures
+	
+	cost = 0.5
+	relative_position_id = OCE_The_only_Osias
+	x = 0
+	y = 1
+	available={  
+	}
+	prerequisite = { focus = OCE_The_only_Osias }
+	bypass = {
+	}
+	ai_will_do = { factor = 100 }
+
+	available={  
+		surrender_progress > 0.2
+	}
+	completion_reward = {
+		add_timed_idea = { idea = OCE_idea_Desperate_measures days = 180 }
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -1927,7 +1960,10 @@ focus_tree = {
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Island_Port_Expansion}
 	available={  
-		dockyard > 22
+		if = {
+			limit = { is_ai = no }
+			dockyard > 24
+		}
 	}
 	completion_reward = {
 		add_political_power = -100
@@ -2033,7 +2069,10 @@ focus_tree = {
 	prerequisite = {focus = OCE_Ocean_going_combat_ideology}
 	prerequisite = {focus = OCE_Offshore_combat_ideology}
 	completion_reward = {
-		add_ideas = OCE_idea_Pay_attention_to_overseas_supply
+		swap_ideas = {
+			remove_idea = OCE_idea_Ocean_Navy_Refurbishment
+			add_idea = OCE_idea_Pay_attention_to_overseas_supply			
+		}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -2293,7 +2332,21 @@ focus_tree = {
 	prerequisite = {focus = OCE_fortress_battlefield }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
-		add_ideas = OCE_idea_Increases_weapon_damage
+		if = {
+			limit = { tag = OCE }
+			custom_effect_tooltip = OCE_Increases_weapon_damage_tt
+			add_to_variable = { OCE_idea_ministry_of_peace_army_infantry_attack_factor = 0.05 }#步兵攻击
+			add_to_variable = { OCE_idea_ministry_of_peace_army_infantry_defence_factor = 0.075 }#步兵防御
+			add_to_variable = { OCE_idea_ministry_of_peace_army_artillery_attack_factor = 0.05 }#炮兵攻击
+			add_to_variable = { OCE_idea_ministry_of_peace_army_artillery_defence_factor = 0.075 }#炮兵防御
+			swap_ideas = {
+			remove_idea = OCE_idea_fortress_battlefield
+			add_idea = OCE_idea_Increases_weapon_damage	
+		}
+		}else={
+			add_ideas = OCE_idea_Increases_weapon_damage_2
+		}
+		
 	}
 	search_filters = { FOCUS_FILTER_RESEARCH }
     }
@@ -2338,12 +2391,18 @@ focus_tree = {
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Increases_weapon_damage }
 	available={  
-		arms_factory > 34
+		if = {
+			limit = { is_ai = no }
+			arms_factory > 34
+		}
 	}
 	
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
-		add_ideas = OCE_idea_Refurbishment_of_weapons_production_systems
+		swap_ideas = {
+			remove_idea = OCE_idea_Increases_weapon_damage
+			add_idea = OCE_idea_Refurbishment_of_weapons_production_systems	
+		}		
 	}
 	search_filters = { FOCUS_FILTER_RESEARCH }
     }
@@ -2356,6 +2415,12 @@ focus_tree = {
 	x = 1
 	y = 1
 	ai_will_do = { factor = 10 }
+	available={  
+		if = {
+			limit = { is_ai = no }
+			arms_factory > 39
+		}
+	}
 	prerequisite = {focus = OCE_Refurbishment_of_weapons_production_systems }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -2500,7 +2565,25 @@ focus_tree = {
 			add_planning = 1
 		} 
 	}
+	if = {
+		limit = { tag = OCE }
+		custom_effect_tooltip = OCE_Federal_Military_Academy_tt
+		add_to_variable = { OCE_idea_ministry_of_peace_political_power_gain = -0.35 }
+		add_to_variable = { OCE_idea_ministry_of_peace_military_leader_cost_factor = -0.5 }
+		add_to_variable = { OCE_idea_ministry_of_peace_army_leader_start_level = 1 }
+		add_to_variable = { OCE_idea_ministry_of_peace_command_power_gain_mult = 0.2 }
+		add_to_variable = { OCE_idea_ministry_of_peace_max_command_power_mult = 0.15 }
+		add_to_variable = { OCE_idea_ministry_of_peace_land_reinforce_rate = 0.015 }
+		add_to_variable = { OCE_idea_ministry_of_peace_army_org_factor = 0.1 }
+		add_to_variable = { OCE_idea_ministry_of_peace_training_time_army_factor = -0.1 }
+		add_to_variable = { OCE_idea_ministry_of_peace_army_attack_factor = 0.05 }
+		add_to_variable = { OCE_idea_ministry_of_peace_army_defence_factor = 0.07 }
+		add_to_variable = { OCE_idea_ministry_of_peace_experience_loss_factor = -0.1 }
+		add_to_variable = { OCE_idea_ministry_of_peace_experience_gain_army_factor = 0.2 }
+	} else = {
 		add_ideas = OCE_idea_Federal_Military_Academy
+	}
+		
 	}
 	search_filters = { FOCUS_FILTER_ARMY_XP }
     }
@@ -2846,7 +2929,13 @@ focus_tree = {
 		}
 	}
 	available={  
-		dockyard > 24
+		available={  
+		if = {
+			limit = { is_ai = no }
+			dockyard > 34
+		}
+	}
+		
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -3173,7 +3262,10 @@ focus_tree = {
 
 	}
 	completion_reward = {
-        add_ideas = OCE_idea_Naval_Postgraduate_School
+		swap_ideas = {
+			remove_idea = OCE_idea_Pay_attention_to_overseas_supply_2
+			add_idea = 	OCE_idea_Naval_Postgraduate_School
+		}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -3486,6 +3578,12 @@ focus_tree = {
 	y = 3
 	ai_will_do = { factor = 30 }
 	prerequisite = {focus = OCE_Mobile_raid }
+	available={  
+		if = {
+			limit = { is_ai = no }
+			arms_factory > 44
+		}
+	}
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		if = { 
@@ -3527,7 +3625,17 @@ focus_tree = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		if = { 
 			limit = { has_idea = industrial_priority }
-			add_ideas = OCE_idea_Armor_assembly_line_1
+			if = { 
+				limit = { tag = OCE }
+
+				swap_ideas = {
+					remove_idea = OCE_idea_Refurbishment_of_weapons_production_systems
+					add_idea = OCE_idea_Armor_assembly_line_1			
+				}
+				
+			}else = {
+				add_ideas = OCE_idea_Armor_assembly_line_2
+			}
 		}
 		if = {
 			limit = { has_idea = mana_priority }
