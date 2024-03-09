@@ -40,9 +40,9 @@ country_event = { #崭新的世界
 		name = MAG_A.3.1
 		add_stability = 0.05
 		hidden_effect = {
-			MAG = {
-                clear_variable = another_country_leader_group
-            }
+			#MAG = {
+            #    clear_variable = another_country_leader_group
+            #}
 		}
 	}
 }
@@ -300,7 +300,7 @@ country_event = { #丘比灭绝运动
 			popularity = -0.05
 		}
 		ai_chance = {
-			factor = 0
+			factor = 0.1
 		}
 		set_country_flag = ANazzfdqb
 	}
@@ -1460,6 +1460,9 @@ country_event = { #圆环之理教会的来信
 	}
 	option = {
 		name = MAG_A.47.2
+		ai_chance = {
+			factor = 0.1
+		}
 	}
 }
 
@@ -1539,6 +1542,9 @@ country_event = { #圆环之理教会的来信
 	}
 	option = {
 		name = MAG_A.48.2
+		ai_chance = {
+			factor = 0.1
+		}
 	}
 	option = {
 		name = MAG_A.48.3
@@ -1551,6 +1557,9 @@ country_event = { #圆环之理教会的来信
 				target = MAG
 				type = annex_everything 
 			}
+		}
+		ai_chance = {
+			factor = 0.1
 		}
 	}
 }
@@ -1570,8 +1579,10 @@ news_event = { #博闻被瓜分
 		name = MAG_A.49.1
 		trigger = {
 			NOT = {
-				tag = MAG
-				tag = PCC
+				or = {
+					tag = MAG
+					tag = PCC
+				}
 			}
 		}
 	}
@@ -1681,7 +1692,14 @@ country_event = { #圆环之理教会的来信
 				MAG = {
 					has_army_manpower = { size > 800000 }
 				}
-				factor = 0
+				factor = 0.1
+			}
+			modifier = {
+				or = {
+					has_government = communism
+					has_government = fascism
+				}
+				factor = 50
 			}
 		}
 	}
@@ -1714,18 +1732,45 @@ country_event = { #圆环之理教会的来信
 	option = {
 		name = MAG_A.52.2
 		add_war_support = 0.1
-		MAG = {
-			create_wargoal = { 
-				target = ROOT
-				type = annex_everything 
+		if = {
+			limit = {
+				PCC = {
+					is_in_faction_with = MAG
+				}
+				or = {
+					tag = LZH
+					tag = NEV
+				}
+			}
+			PCC = {
+				create_wargoal = { 
+					target = ROOT
+					type = annex_everything 
+				}
+			}
+			every_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				PCC = {
+					add_state_claim = PREV
+				}
 			}
 		}
-		every_state = {
-			limit = {
-				is_controlled_by = ROOT
-			}
+		else = {
 			MAG = {
-				add_state_claim = PREV
+				create_wargoal = { 
+					target = ROOT
+					type = annex_everything 
+				}
+			}
+			every_state = {
+				limit = {
+					is_controlled_by = ROOT
+				}
+				MAG = {
+					add_state_claim = PREV
+				}
 			}
 		}
 		ai_chance = {
@@ -1734,7 +1779,7 @@ country_event = { #圆环之理教会的来信
 				MAG = {
 					has_army_manpower = { size > 1000000 }
 				}
-				factor = 0
+				factor = 0.1
 			}
 		}
 	}
@@ -1772,3 +1817,114 @@ news_event = { #美乐蒂大陆统一联盟
 	}
 }
 
+
+country_event = { #圆环之理教会邀请我们加入互保协定
+	id = MAG_A.55
+    #picture = GFX_MAG_A51
+    title = MAG_A.55.t
+    desc = MAG_A.55.d
+
+    is_triggered_only = yes
+	
+	option = { 
+		name = MAG_A.55.1
+		add_stability = 0.1
+		MAG = {
+			add_to_faction = ROOT
+		}
+		hidden_effect = {
+			ROOT = {
+				ai_strategy = {
+					type = alliance #联盟(可用于防止不同意识形态ai退出阵营)
+					id = "MAG"
+					value = 50
+				}
+			}
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				ROOT = {
+					has_government = democratic
+				}
+				factor = 10
+			}
+		}
+	}
+	option = { 
+		name = MAG_A.55.2
+		add_stability = 0.05
+		diplomatic_relation = {
+			country = MAG
+			relation = non_aggression_pact #互不侵犯
+			active = yes
+		}
+		ai_chance = {
+			factor = 10
+			modifier = {
+				ROOT = {
+					has_government = neutrality
+				}
+				factor = 5
+			}
+		}
+	}
+	option = { 
+		name = MAG_A.55.3
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
+country_event = { #圆环之理教会的来信
+	id = MAG_A.56
+    #picture = GFX_MAG_A51
+    title = MAG_A.56.t
+    desc = MAG_A.56.d
+
+    is_triggered_only = yes
+	
+	option = { 
+		name = MAG_A.56.1
+		add_stability = 0.1
+		diplomatic_relation = {
+			country = MAG
+			relation = non_aggression_pact #互不侵犯
+			active = yes
+		}
+		give_guarantee = MAG
+		give_military_access = MAG
+		give_market_access = MAG
+		MAG = {
+			give_guarantee = ELN
+			give_military_access = ELN
+			give_market_access = ELN
+		}
+		ai_chance = {
+			factor = 30
+		}
+	}
+	option = { 
+		name = MAG_A.56.2
+		add_stability = 0.05
+		diplomatic_relation = {
+			country = MAG
+			relation = non_aggression_pact #互不侵犯
+			active = yes
+		}
+		give_market_access = MAG
+		MAG = {
+			give_market_access = ELN
+		}
+		ai_chance = {
+			factor = 20
+		}
+	}
+	option = { 
+		name = MAG_A.56.3
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
