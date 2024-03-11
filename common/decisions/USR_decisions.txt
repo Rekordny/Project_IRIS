@@ -1,6 +1,7 @@
 #民生救济补贴
 USR_livelihood_relief_subsidies = {
 	USR_livelihood_relief_subsidies_counting = {
+		icon = generic_welfare
 		activation = { 
 			has_idea = USR_who_owns_the_republic
 		}
@@ -46,6 +47,7 @@ USR_livelihood_relief_subsidies = {
 USR_republic_congress_decisions = {
 	#共和国议会议程:去工业化
 	USR_deindustrialization = {
+		icon = decision_generic_wreckers
 		activation = { 
 			OR = { 
 				check_variable = { usr_congress = 1 } 
@@ -87,6 +89,7 @@ USR_republic_congress_decisions = {
 	}
 	#共和国议会议程:削减军费
 	USR_reduce_military_expenditure = {
+		icon = decision_generic_wreckers
 		activation = { 
 			OR = { 
 				check_variable = { usr_congress = 2 } 
@@ -152,6 +155,7 @@ USR_republic_congress_decisions = {
 	}
 	#共和国议会议程:改革民主教育
 	USR_democratic_education = {
+		icon = SWI_swiss_democratic_tradition_campaign
 		activation = {
 			OR = {
 				check_variable = { usr_congress = 4 } 
@@ -189,6 +193,7 @@ USR_republic_congress_decisions = {
 	}
 	#共和国外交:向卡美洛提供装备
 	USR_provide_equipments_UNG = {
+		icon = generic_industry
 		visible = {
 			has_completed_focus = USR_limited_interference_with_UNG
 			UNG = { has_war_with = MSA }
@@ -226,6 +231,7 @@ USR_republic_congress_decisions = {
 	}
 	#共和国外交:向莫德雷德提供装备
 	USR_provide_equipments_MSA = {
+		icon = generic_industry
 		visible = {
 			has_completed_focus = USR_limited_interference_with_UNG
 			UNG = { has_war_with = MSA }
@@ -263,6 +269,7 @@ USR_republic_congress_decisions = {
 	}
 	#共和国外交:发送志愿军
 	USR_provide_volunteer = {
+		icon = generic_military
 		visible = {
 			has_completed_focus = USR_limited_interference_with_UNG
 			UNG = { has_war_with = MSA }
@@ -285,6 +292,7 @@ USR_republic_congress_decisions = {
 	}
 	#共和国外交:保护盎格利亚政要与难民
 	USR_protect_refugee = {
+		icon = hol_war_on_pacifism
 		visible = {
 			has_completed_focus = USR_limited_interference_with_UNG
 			UNG = { has_war_with = MSA }
@@ -305,61 +313,335 @@ USR_republic_congress_decisions = {
 			}
 		}
 	}
-	#将皇帝财产充公
-	# USR_confiscate_the_emperor_property = {
-	# 	visible = { }
-	# 	available = {
-	# 		has_government = democratic
-	# 	}
-	# 	ai_will_do = {
-	# 		base = 0
-	# 		modifier = {
-	# 			has_completed_focus = USR_perpetrate_a_fraud
-	# 			add = 10
-	# 		}
-	# 	}
-	# 	fire_only_once = yes
-	# 	days_remove = 100
-	# 	remove_effect = {
-	# 		add_stability = -0.1
-	# 		add_popularity = {
-	# 			ideology = neutrality
-	# 			popularity = -0.1
-	# 		}
-	# 		if ={  
-	# 			limit = { has_idea = USR_the_clemen_treaty }
-	# 			swap_ideas = {
-	# 				remove_idea = USR_the_clemen_treaty
-	# 				add_idea = USR_the_clemen_treaty_1
-	# 			}
-	# 		}
-	# 		else_if ={  
-	# 			limit = { has_idea = USR_the_clemen_treaty_1 }
-	# 			swap_ideas = {
-	# 				remove_idea = USR_the_clemen_treaty_1
-	# 				add_idea = USR_the_clemen_treaty_2
-	# 			}
-	# 		}
-	# 		else_if ={  
-	# 			limit = { has_idea = USR_the_clemen_treaty_2 }
-	# 			swap_ideas = {
-	# 				remove_idea = USR_the_clemen_treaty_2
-	# 				add_idea = USR_the_clemen_treaty_3
-	# 			}
-	# 		}
-	# 		else = {
-	# 			remove_ideas = USR_the_clemen_treaty_3
-	# 		}
-	# 	}
-	# }
+}
 
+#全面推进私有化
+USR_privatization_priority_order = {
+	#乌斯拉尔最终国营私有化
+	USR_finalize_privatization = {
+		icon = gre_investment_decisions
+		visible = {
+			TAG = USR
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USR_tooltip37
+				USR = {
+					check_variable = {
+						usr_privatization_progress > 99
+					}
+				}
+			}
+		}
+		complete_effect = {
+			add_ideas = USR_entrepreneurship
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+	#福利机构私有化
+	USR_privatize_welfare = {
+		icon = generic_political_rally
+		visible = {
+			TAG = USR
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USR_tooltip39
+				USR = {
+					check_variable = {
+						usr_privatization_progress < 100
+					}
+				}
+			}
+		}
+		days_remove = 130
+		modifier = {
+			consumer_goods_expected_value = 0.15
+			political_power_factor = -0.1
+		}
+		remove_effect = {
+			add_stability = 0.05
+			custom_effect_tooltip = USR_tooltip36
+			add_to_variable = {
+				usr_privatization_progress = 10
+			}
+			clamp_variable = {
+				var = usr_privatization_progress
+				min = 0
+				max = 100
+			}
+			if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 20
+				} }
+				country_event = { id = usr.71 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 40
+				} }
+				country_event = { id = usr.72 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 70
+				} }
+				country_event = { id = usr.73 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 100
+				} }
+				country_event = { id = usr.74 } 
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	#保护民族产业
+	USR_protect_national_industries = {
+		icon = generic_independence
+		visible = {
+			TAG = USR
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USR_tooltip39
+				USR = {
+					check_variable = {
+						usr_privatization_progress < 100
+					}
+				}
+			}
+		}
+		modifier = {
+			trade_laws_cost_factor = 1
+			trade_opinion_factor = -1
+			research_speed_factor = -0.15
+			political_power_factor = -0.1
+		}
+		days_remove = 180
+		remove_effect = {
+			custom_effect_tooltip = USR_tooltip36
+			add_to_variable = {
+				usr_privatization_progress = 10
+			}
+			clamp_variable = {
+				var = usr_privatization_progress
+				min = 0
+				max = 100
+			}
+			if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 20
+				} }
+				country_event = { id = usr.71 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 40
+				} }
+				country_event = { id = usr.72 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 70
+				} }
+				country_event = { id = usr.73 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 100
+				} }
+				country_event = { id = usr.74 } 
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	#转让国有重工业
+	USR_transfer_heavy_industry = {
+		icon = generic_fundraising
+		visible = {
+			TAG = USR
+		}
+		days_remove = 200
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USR_tooltip39
+				USR = {
+					check_variable = {
+						usr_privatization_progress < 100
+					}
+				}
+			}
+			arms_factory > 3
+		}
+		modifier = {
+			consumer_goods_factor = 0.2
+			production_factory_max_efficiency_factor = -0.15
+			political_power_factor = -0.1
+		}
+
+		remove_effect = {
+			random_core_state = {
+				limit = { arms_factory > 0 }
+				remove_building = {
+					type = arms_factory
+					level = 1
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_core_state = {
+				limit = { arms_factory > 0 }
+				remove_building = {
+					type = arms_factory
+					level = 1
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_core_state = {
+				limit = { arms_factory > 0 }
+				remove_building = {
+					type = arms_factory
+					level = 1
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			random_core_state = {
+				limit = { arms_factory > 0 }
+				remove_building = {
+					type = arms_factory
+					level = 1
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+				}
+			}
+			custom_effect_tooltip = USR_tooltip36
+			add_to_variable = {
+				usr_privatization_progress = 10
+			}
+			clamp_variable = {
+				var = usr_privatization_progress
+				min = 0
+				max = 100
+			}
+			if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 20
+				} }
+				country_event = { id = usr.71 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 40
+				} }
+				country_event = { id = usr.72 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 70
+				} }
+				country_event = { id = usr.73 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 100
+				} }
+				country_event = { id = usr.74 } 
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	#烟酒执照认证系统
+	USR_alcohol_and_tobacco_certification = {
+		icon = generic_scorched_earth
+		visible = {
+			TAG = USR
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USR_tooltip39
+				USR = {
+					check_variable = {
+						usr_privatization_progress < 100
+					}
+				}
+			}
+		}
+		days_remove = 80
+		modifier = {
+			political_power_factor = -0.1
+		}
+
+		remove_effect = {
+			add_stability = -0.05
+			custom_effect_tooltip = USR_tooltip36
+			add_to_variable = {
+				usr_privatization_progress = 10
+			}
+			clamp_variable = {
+				var = usr_privatization_progress
+				min = 0
+				max = 100
+			}
+			if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 20
+				} }
+				country_event = { id = usr.71 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 40
+				} }
+				country_event = { id = usr.72 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 70
+				} }
+				country_event = { id = usr.73 } 
+			}
+			else_if = {
+				limit = { check_variable = {
+					USR.usr_privatization_progress = 100
+				} }
+				country_event = { id = usr.74 } 
+			}
+		}
+		ai_will_do = {
+			base = 0
+		}
+	}
+}
+
+#大乌斯拉尔方案
+USR_panuslarism = {
 	
 }
 
 #推进工业化
 USR_industrialization = {
 	USR_reindustrialization_of_military = {
-		icon = generic_tank
+		icon = generic_merge_plant_tank
 		visible = {
 			TAG = USR
 			OR = { USR = { has_completed_focus = USR_the_indstrial_heritage_of_the_empire } is_testing = yes }
@@ -391,7 +673,7 @@ USR_industrialization = {
 
 	#投资哈特曼设计局
 	USR_invest_hartman = {
-		icon = generic_tank
+		icon = generic_welfare
 		visible = {
 			TAG = USR
 			OR = { has_country_flag = USR_HARTMAN is_testing = yes }
@@ -455,7 +737,7 @@ USR_industrialization = {
 
 	#将mana转化为cic
 	USR_use_mana_as_fuel = {
-		icon = generic_construction
+		icon = generic_merge_plant_materiel
 		target_trigger = {
 			FROM = {
 				raw_mana > 0
@@ -490,6 +772,7 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_1 = {
+		icon = hol_attract_foreign_investors
 		state_target = yes
 		on_map_mode = map_and_decisions_view
 		target_trigger = {
@@ -515,6 +798,7 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_2 = {
+		icon = hol_attract_foreign_investors
 		state_target = yes
 		on_map_mode = map_and_decisions_view
 		target_trigger = {
@@ -540,6 +824,7 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_3 = {
+		icon = hol_attract_foreign_investors
 		state_target = yes
 		on_map_mode = map_and_decisions_view
 		target_trigger = {
@@ -565,6 +850,7 @@ USR_industrialization = {
 		}
 	}
 	USR_concession_of_mineral_rights_4 = {
+		icon = hol_attract_foreign_investors
 		state_target = yes
 		on_map_mode = map_and_decisions_view
 		target_trigger = {
@@ -594,15 +880,80 @@ USR_industrialization = {
 
 #黑森峰最高指挥
 USR_high_command_kuromorimine = {
+	#战术研究1
+	USR_tactic_research_1 = {
+		icon = generic_army_support
+		visible = {
+			TAG = USR
+			has_completed_focus = USR_the_offensive_of_deterrence
+		}
+		available = {
+			
+		}
+		custom_cost_text = USR_tooltip45
+		custom_cost_trigger = {
+			has_army_experience > 49.9
+		}
+		complete_effect = {
+			custom_effect_tooltip = USR_tooltip44
+			hidden_effect = {
+				set_technology = {
+					shocking_move = 1
+					popup = no 
+				}
+				army_experience = -50
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			base = 20
+		}
+	}
+	#战术研究2
+	USR_tactic_research_2 = {
+		icon = generic_army_support
+		visible = {
+			TAG = USR
+			has_completed_focus = USR_the_offensive_of_deterrence
+		}
+		available = {
+			
+		}
+		custom_cost_text = USR_tooltip45
+		custom_cost_trigger = {
+			has_army_experience > 49.9
+		}
+		complete_effect = {
+			custom_effect_tooltip = USR_tooltip43
+			hidden_effect = {
+				set_technology = {
+					kuromorimine_blitz = 1
+					popup = no 
+				}
+				army_experience = -50
+			}
+		}
+		fire_only_once = yes
+		ai_will_do = {
+			base = 20
+		}
+	}
 	#战车道学院人才培养计划
 	USR_general_promotion_project = {
+		icon = generic_army_support
 		visible = {
 			TAG = USR
 			has_completed_focus = USR_build_senshado_school
 		}
+		available = {
+			any_army_leader = {
+				NOT = { has_trait = USR_senshado_graduate }
+			}
+		}
 		days_remove = 50
 		modifier = {
-			political_power_factor = -0.15
+			political_power_factor = -0.1
+			command_power_gain = -0.1
 		}
 		remove_effect = {
 			random_army_leader = {
@@ -613,6 +964,7 @@ USR_high_command_kuromorimine = {
 					trait = usr_senshado_graduate
 				}
 				add_skill_level = 1
+				add_logistics = 1
 			}
 			if = {
 				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 8 } } }
@@ -626,6 +978,7 @@ USR_high_command_kuromorimine = {
 	}
 	#打捞并翻新艾沙茨·沃尔特号
 	USR_salvage_and_renovate_battleship = {
+		icon = generic_merge_plant_ship
 		visible = {
 			TAG = USR
 			has_completed_focus = USR_recall_prince_heinrich
@@ -642,6 +995,7 @@ USR_high_command_kuromorimine = {
 	}
 	#复职将领
 	USR_recall_unit_leaders = {
+		icon = generic_army_support
 		visible = {
 			TAG = USR
 			OR = { USR = { NOT = { has_idea = USR_the_republic_congress } } is_testing = yes }
@@ -677,6 +1031,7 @@ USR_high_command_kuromorimine = {
 	}
 	#移除缺少将领debuff
 	USR_upgrade_command_chain = {
+		icon = generic_army_support
 		visible = {
 			TAG = USR
 			OR = { USR = { NOT = { has_idea = USR_the_republic_congress } has_idea = USR_lacking_millitary_officer } is_testing = yes }
@@ -702,6 +1057,7 @@ USR_high_command_kuromorimine = {
 
 	#重整军备
 	USR_mission_aftermath = {
+		icon = ger_military_buildup
 		activation = { 
 			has_completed_focus = USR_the_indstrial_heritage_of_the_empire
 		}
