@@ -540,6 +540,9 @@ STG_internal_ememy = {
             NOT = {
                 has_country_flag = STG_usr_crushed
             }
+            NOT = {
+                has_country_flag = STG_disable_parliament_issues_decisions
+            }
             has_country_flag = STG_more_decision_against_usr
         }
         cost = 50
@@ -1827,6 +1830,11 @@ STG_the_sword_of_Damocles = {
                 set_country_flag = STG_army_takeover
                 clr_country_flag = STG_enable_parliament_events
                 set_country_flag = STG_disable_the_sword_of_Damocles_decisions
+                load_focus_tree = {
+                    tree = STG
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty
                 complete_national_focus = STG_dar_1
             }
         }
@@ -2800,6 +2808,12 @@ STG_explosion_investigation = {
         }
         visible = {
             has_country_flag = STG_investigated_arsenal
+            NOT = {
+                has_country_leader = {
+                    character = STG_darjeeling
+                    ruling_only = yes
+                }
+            }
         }
         cost = 10
         days_remove = 21
@@ -2826,6 +2840,12 @@ STG_explosion_investigation = {
         }
         visible = {
             has_country_flag = STG_investigated_army_logistics
+            NOT = {
+                has_country_leader = {
+                    character = STG_darjeeling
+                    ruling_only = yes
+                }
+            }
         }
         cost = 10
         days_remove = 7
@@ -2980,7 +3000,18 @@ STG_explosion_investigation = {
                     limit = {
                         STG = {check_variable = {STG_clue > 6}}
                     }
-                    country_event = {id = STG_investigation.10}
+                    if = {
+                        limit = {
+                            has_country_leader = {
+                                character = STG_darjeeling
+                                ruling_only = yes
+                            }
+                        }
+                        country_event = {id = STG_investigation.13}
+                    }
+                    else = {
+                        country_event = {id = STG_investigation.10}
+                    }
                 }
                 else_if = {
                     limit = {
@@ -3793,14 +3824,14 @@ STG_revolution = {
         }
         remove_effect = {
             STG_reduce_gov_strength_big = yes
-        }
-        modifier = {
-            industrial_capacity_factory = -0.15
-			industrial_capacity_dockyard = -0.15
             add_popularity = {
                 ideology = communism
                 popularity = 0.03
             }
+        }
+        modifier = {
+            industrial_capacity_factory = -0.15
+			industrial_capacity_dockyard = -0.15
         }
         ai_will_do = {
 			factor = 10
@@ -4016,9 +4047,12 @@ STG_syn_union = {
         }
         visible = {
             has_completed_focus = STG_com_30
+            NOT = {
+                has_global_flag = ANGLIA_UNITED_FLAG
+            }
         }
         cost = 100
-        days_remove = 70
+        days_remove = 40
         fire_only_once = yes
         complete_effect = {
         }
@@ -4050,7 +4084,7 @@ STG_syn_union = {
             has_completed_focus = STG_com_30
         }
         cost = 100
-        days_remove = 70
+        days_remove = 40
         fire_only_once = yes
         complete_effect = {
         }
@@ -4086,25 +4120,51 @@ Unite_Anglia = {
             has_global_flag = WAR_FOR_ANGLIA
         }
         cost = 150
-        days = 70
+        days_remove = 70
         fire_only_once = yes
         complete_effect = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
             hidden_effect = {
-                every_state = {
-                    if = {
-                        limit = {
-                            OR = {
-                                is_core_of = UNG
-                                is_core_of = MSA
+                set_global_flag = ANGLIA_UNITED_FLAG
+                if = { 
+                    limit = {
+                        OR = {
+                            has_completed_focus = STG_true_dar_1
+                            has_country_leader = {
+                                character = STG_grey
+                                ruling_only = yes
                             }
-                            }
-                        add_core_of = STG
-                        remove_core_of = UNG
-                        remove_core_of = MSA
+                        }
                     }
+                    add_ideas = STG_industralist_return_1
+                }
+                if = {
+                    limit = {
+                        OR = {
+                            has_completed_focus = STG_dar_1
+                            has_completed_focus = STG_parliament_1
+                        } 
+                    }
+                    add_timed_idea = {idea = STG_industralist_return_1 days = 270}
+                }
+                add_popularity = {
+                    ideology = reactionism
+                    popularity = 0.20
+                }
+                every_state = {
+                    limit = {
+                        OR = {
+                            is_core_of = UNG
+                            is_core_of = MSA
+                            is_core_of = FNG
+                        }                        
+                    }
+                    add_core_of = STG
+                    remove_core_of = UNG
+                    remove_core_of = MSA
+                    remove_core_of = FNG
                 }
                 remove_ideas = STG_war_for_ang
             }
@@ -4133,13 +4193,14 @@ Unite_Anglia = {
             has_global_flag = Anglia_Reconcilation_flag
         }
         cost = 300
-        days = 0
+        days_remove = 0
         fire_only_once = yes
         complete_effect = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
             hidden_effect = {
+                set_global_flag = ANGLIA_UNITED_FLAG
                 FNG = {
                     transfer_navy = {
                         target = STG
@@ -4147,19 +4208,17 @@ Unite_Anglia = {
                 }
                 annex_country = {target = FNG transfer_troops = yes}
                 every_state = {
-                    if = {
-                        limit = {
-                            OR = {
-                                is_core_of = UNG
-                                is_core_of = MSA
-                                is_core_of = FNG
-                            }
-                            }
-                        add_core_of = STG
-                        remove_core_of = UNG
-                        remove_core_of = MSA
-                        remove_core_of = FNG
+                    limit = {
+                        OR = {
+                            is_core_of = UNG
+                            is_core_of = MSA
+                            is_core_of = FNG
+                        } 
                     }
+                    add_core_of = STG
+                    remove_core_of = UNG
+                    remove_core_of = MSA
+                    remove_core_of = FNG
                 }
                 remove_ideas = STG_war_for_ang
             }
@@ -4178,13 +4237,14 @@ Unite_Anglia = {
             has_global_flag = WAR_FOR_ANGLIA
         }
         cost = 150
-        days = 70
+        days_remove = 70
         fire_only_once = yes
         complete_effect = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
             hidden_effect = {
+                set_global_flag = ANGLIA_UNITED_FLAG
                 230 = {
                     add_core_of = UNG
                     remove_core_of = STG
@@ -4230,13 +4290,14 @@ Unite_Anglia = {
             has_global_flag = WAR_FOR_ANGLIA
         }
         cost = 150
-        days = 70
+        days_remove = 70
         fire_only_once = yes
         complete_effect = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
             hidden_effect = {
+                set_global_flag = ANGLIA_UNITED_FLAG
                230 = {
                     add_core_of = MSA
                     remove_core_of = STG
@@ -4282,13 +4343,14 @@ Unite_Anglia = {
             has_global_flag = WAR_FOR_ANGLIA
         }
         cost = 150
-        days = 70
+        days_remove = 70
         fire_only_once = yes
         complete_effect = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
             hidden_effect = {
+                set_global_flag = ANGLIA_UNITED_FLAG
                 230 = {
                     add_core_of = FNG
                     remove_core_of = STG
@@ -4343,13 +4405,14 @@ Unite_Anglia = {
             has_global_flag = Anglia_Reconcilation_flag
         }
         cost = 100
-        days = 0
+        days_remove = 0
         fire_only_once = yes
         complete_effect = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
             hidden_effect = {
+                set_global_flag = ANGLIA_UNITED_FLAG
                 STG = {
                     transfer_navy = {
                         target = FNG
@@ -4391,6 +4454,475 @@ Unite_Anglia = {
         }
     }
 }
+#红茶与甜点的国度
+STG_tea_and_cake = {
+    #隐藏饮茶决议
+    STG_hide_tea_decisions = {
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        complete_effect = {
+            clr_country_flag = STG_show_tea_decisions_flag
+        }
+    }
+    #显示饮茶决议
+    STG_show_tea_decisions = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_show_tea_decisions_flag
+            }
+        }
+        complete_effect = {
+            set_country_flag = STG_show_tea_decisions_flag
+        }
+    }
+    #来一杯大吉岭红茶
+    STG_tea_darjeeling = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            political_power_gain = 0.4
+            neutrality_drift = 0.01
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #来一杯格雷伯爵茶
+    STG_tea_earl_grey = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            stability_weekly = 0.005
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #来一杯阿萨姆红茶
+    STG_tea_assam = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            war_support_weekly = 0.005
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #来一杯橙黄白毫茶
+    STG_tea_orange_pekoe = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            experience_gain_army = 0.3
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #来一杯蔷薇果茶
+    STG_tea_rosehip = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            experience_gain_navy = 0.3
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #来一杯鲁克莉莉茶
+    STG_tea_rukuriri = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            experience_gain_air = 0.3
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #来一杯罗西亚红茶
+    STG_tea_rossiya = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_12
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            supply_consumption_factor = -0.25
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    
+    #来一杯赛莲斯红茶
+    STG_tea_srs = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_tea
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_13
+            has_country_flag = STG_show_tea_decisions_flag
+        }
+        cost = var:STG_tea_cost
+        days_remove = var:STG_tea_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_tea
+        }
+        modifier = {
+            consumer_goods_factor = -0.50
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_tea
+        }
+    }
+    #隐藏茶点决议
+    STG_hide_cake_decisions = {
+        visible = {
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        complete_effect = {
+            clr_country_flag = STG_show_cake_decisions_flag
+        }
+    }
+    #显示茶点决议
+    STG_show_cake_decisions = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_show_cake_decisions_flag
+            }
+        }
+        complete_effect = {
+            set_country_flag = STG_show_cake_decisions_flag
+        }
+    }
+    #享用司康饼
+    STG_scones = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            research_speed_factor = 0.15
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用三明治
+    STG_sandwich = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            reactionism_drift = -0.01
+            fascism_drift = -0.01
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用曲奇
+    STG_cookie = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            production_speed_buildings_factor = 0.20
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用起司蛋糕
+    STG_cheese_cake = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            production_factory_efficiency_gain_factor = 0.33
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用巧克力蛋糕
+    STG_chocolate_cake = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            political_power_factor = 0.25
+            political_power_gain = 0.2
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用草莓蛋糕
+    STG_strawberry_cake = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_15
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            army_defence_factor = 0.10
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用蓝莓蛋糕
+    STG_blueberry_cake = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_15
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            army_attack_factor = 0.10
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用可颂面包
+    STG_croissant = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_15
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            breakthrough_factor = 0.10
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用马卡龙
+    STG_macaron = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_15
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            army_speed_factor = 0.10
+        }
+        remove_effect = {
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+    #享用黑森林蛋糕
+    STG_schwarzwder = {
+        available = {
+            NOT = {
+                has_country_flag = STG_is_enjoying_cake
+            }
+        }
+        visible = {
+            has_completed_focus = STG_true_dar_15
+            has_country_flag = STG_show_cake_decisions_flag
+        }
+        cost = var:STG_cake_cost
+        days_remove = var:STG_cake_time
+        days_re_enable = 1
+        complete_effect = {
+            set_country_flag = STG_is_enjoying_cake
+        }
+        modifier = {
+            fascism_drift = -0.04
+        }
+        remove_effect = {
+            STG_reduce_usr_unrest = yes
+            clr_country_flag = STG_is_enjoying_cake
+        }
+    }
+}
 ###debug国策路线 ##debug focus road
 IRIS_debug_decisions = {
     #测试战争结语
@@ -4421,8 +4953,8 @@ IRIS_debug_decisions = {
             }
         }
     }
-    #ai选择莉涅特·毕晓普线 ###ai choose Lynette Bishop
-    STG_debug_go_focus_parliament = {
+    #加载君主制国策
+    STG_debug_load_monarchy_focus = {
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4432,12 +4964,21 @@ IRIS_debug_decisions = {
 			factor = 0
 		}
         complete_effect = {
-			set_country_flag = STG_debug_go_focus_parliament
+			hidden_effect = {
+                set_country_flag = STG_monarchy_kept
+                clr_country_flag = STG_monarchy_abolished
+                clr_country_flag = STG_darjeeling_route
+                clr_country_flag = STG_army_takeover
+                load_focus_tree = {
+                    tree = STG
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
 		}
     }
-
-    #ai选择伊莉雅线 ##ai choose ilya
-    STG_debug_go_focus_ilya = {
+    #加载废除君主制国策
+    STG_debug_load_monarchy_abolished_focus = {
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4447,12 +4988,21 @@ IRIS_debug_decisions = {
 			factor = 0
 		}
         complete_effect = {
-			set_country_flag = STG_debug_go_focus_ilya
+			hidden_effect = {
+                set_country_flag = STG_monarchy_abolished
+                clr_country_flag = STG_monarchy_kept
+                clr_country_flag = STG_darjeeling_route
+                clr_country_flag = STG_army_takeover
+                load_focus_tree = {
+                    tree = STG
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
 		}
     }
-
-    #ai选择格雷线 ##ai choose grey
-    STG_debug_go_focus_grey = {
+    #加载政变国策
+    STG_debug_load_coup_focus = {
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4462,12 +5012,21 @@ IRIS_debug_decisions = {
 			factor = 0
 		}
         complete_effect = {
-			set_country_flag = STG_debug_go_focus_grey
+			hidden_effect = {
+                set_country_flag = STG_army_takeover
+                clr_country_flag = STG_monarchy_abolished
+                clr_country_flag = STG_monarchy_kept
+                clr_country_flag = STG_darjeeling_route
+                load_focus_tree = {
+                    tree = STG
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
 		}
     }
-
-    #ai选择大吉岭线 ##ai choose darjeeling
-    STG_debug_go_focus_dar = {
+    #加载真·大吉岭国策
+    STG_debug_load_true_darjeeling_focus = {
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4477,11 +5036,27 @@ IRIS_debug_decisions = {
 			factor = 0
 		}
         complete_effect = {
-			set_country_flag = STG_debug_go_focus_dar
+			hidden_effect = {
+                set_country_flag = STG_darjeeling_route
+                clr_country_flag = STG_army_takeover
+                clr_country_flag = STG_monarchy_abolished
+                clr_country_flag = STG_monarchy_kept
+                load_focus_tree = {
+                    tree = STG
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
 		}
     }
     #加载伊莉雅二阶段国策
     STG_debug_load_ilya_phase_2_focus = {
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only  = yes
+            }
+        }
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4503,6 +5078,12 @@ IRIS_debug_decisions = {
     }
     #加载魔法少女伊莉雅国策
     STG_debug_load_ilya_mahoushoujo_focus = {
+        available = {
+            has_country_leader = {
+                character = STG_ilya
+                ruling_only  = yes
+            }
+        }
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4525,6 +5106,12 @@ IRIS_debug_decisions = {
     }
     #加载格雷二阶段国策
     STG_debug_load_grey_phase_2_focus = {
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only  = yes
+            }
+        }
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4546,6 +5133,12 @@ IRIS_debug_decisions = {
     }
     #加载格雷二阶段国策
     STG_debug_load_grey_phase_2_communism_focus = {
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only  = yes
+            }
+        }
         visible = {
 			is_debug = yes
 			is_ai = no
@@ -4604,5 +5197,102 @@ IRIS_debug_decisions = {
         complete_effect = {
 			country_event = {id = STG_civ_war.1}
 		}
+    }
+}
+#爱里寿的衣柜
+STG_arisu_cloth = {
+    STG_arisu_cloth_1 = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_arisu_cloth_1
+            }
+        }
+        complete_effect = {
+            set_country_flag = STG_arisu_cloth_1
+            clr_country_flag = STG_arisu_cloth_2
+            hidden_effect = {
+                set_country_leader_portrait = {
+                    portrait = GFX_STG_shimada_arisu
+                }
+            }
+        }
+    }
+    STG_arisu_cloth_2 = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_arisu_cloth_2
+            }
+        }
+        complete_effect = {
+            set_country_flag = STG_arisu_cloth_2
+            clr_country_flag = STG_arisu_cloth_1
+            hidden_effect = {
+                set_country_leader_portrait = {
+                    portrait = GFX_STG_shimada_arisu_2
+                }
+            }
+        }
+    }
+}
+#我们的新都
+STG_capital = {
+    #新蒙巴萨
+    STG_stay = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_new_capital_selected
+            }
+        }
+        complete_effect = {
+            add_stability = 0.05
+            set_country_flag = STG_new_capital_selected
+        }
+    }
+    #弗格菲尔德
+    STG_capital_1 = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_new_capital_selected
+            }
+        }
+        complete_effect = {
+            add_political_power = 100
+            set_capital = {state = 222}
+            set_country_flag = STG_new_capital_selected
+        }
+    }
+    #卡美洛
+    STG_capital_2 = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_new_capital_selected
+            }
+        }
+        complete_effect = {
+            add_stability = -0.05
+            add_political_power = 200
+            set_capital = {state = 218}
+            add_popularity = {
+                ideology = fascism
+                popularity = 0.10
+            }
+            set_country_flag = STG_new_capital_selected
+        }
+    }
+    STG_capital_3 = {
+        visible = {
+            NOT = {
+                has_country_flag = STG_new_capital_selected
+            }
+        }
+        complete_effect = {
+            set_capital = {state = 182}
+            add_political_power = 100
+            add_popularity = {
+                ideology = reactionism
+                popularity = 0.10
+            }
+            set_country_flag = STG_new_capital_selected
+        }
     }
 }

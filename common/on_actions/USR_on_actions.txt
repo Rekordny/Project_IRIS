@@ -1,8 +1,12 @@
 on_actions = {
 	on_startup = {
 		effect = {
+			#邮票dm初始化
 			#共和议会进程初始化
 			USR = {
+				add_dynamic_modifier = {
+					modifier = USR_post_stamp_dynamic_modifier
+				}
 				set_variable = { usr_congress = 1 }
 				
 				#state modifier
@@ -34,6 +38,23 @@ on_actions = {
 			USR_refresh_SSD_alliance_members = yes
 		}
 	}
+	on_weekly_USR = {
+		effect = {
+			USR = {
+				if = {
+					limit = { 
+						OR = {
+							has_idea = USR_milestone_of_nation_and_will_1
+							has_idea = USR_milestone_of_nation_and_will_2
+							has_idea = USR_milestone_of_nation_and_will_3
+						}
+					}
+					USR_refresh_milestone = yes
+				}
+			}
+			
+		}
+	}
 	on_monthly_USR = {
 		effect = {
 			USR_refresh_faction_effect = yes
@@ -62,6 +83,56 @@ on_actions = {
 					has_war_with = BGT
 				}
 				country_event = { id = usr.38 }
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { state = 218 }
+				}
+				if =  {
+					limit = {
+						tag = USR
+					}
+					if = {
+						limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 10 } } }
+						add_to_array = { USR.Stamp_ID_list = 10 }
+						USR_add_stamp_utility = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM.FROM = { state = 127 }
+				}
+				if =  {
+					limit = {
+						tag = USR
+					}
+					if = {
+						limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 11 } } }
+						add_to_array = { USR.Stamp_ID_list = 11 }
+						USR_add_stamp_utility = yes
+					}
+				}
+			}
+		}
+	}
+	on_join_faction = {
+		effect = {
+			USR = {
+				if = {
+					limit = {
+						num_faction_members > 9
+					}
+					if = {
+						limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 12 } } }
+						add_to_array = { USR.Stamp_ID_list = 12 }
+						USR_add_stamp_utility = yes
+					}
+				}
 			}
 		}
 	}

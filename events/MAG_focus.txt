@@ -1,0 +1,6078 @@
+### search_filters = { FOCUS_FILTER_POLITICAL } 政治
+### search_filters = { FOCUS_FILTER_RESEARCH } 科研
+### search_filters = { FOCUS_FILTER_INDUSTRY } 工业
+### search_filters = { FOCUS_FILTER_STABILITY } 稳定度
+### search_filters = { FOCUS_FILTER_WAR_SUPPORT } 战争支持度
+### search_filters = { FOCUS_FILTER_MANPOWER } 人力
+### search_filters = { FOCUS_FILTER_ANNEXATION } 领土扩张
+### search_filters = { FOCUS_FILTER_ARMY_XP } 陆军经验
+### search_filters = { FOCUS_FILTER_NAVY_XP } 海军经验
+### search_filters = { FOCUS_FILTER_AIR_XP } 空军经验
+#allow_branch = { has_completed_focus = MAG_AD_zhdmn } #隐藏国策
+
+focus_tree = {
+	id = MAG
+	country = {
+		factor = 0 #不让其他国家用，设置倾向为0
+		modifier = { #修正倾向
+			add = 10 #add 是加，factor是乘
+			tag = MAG #条件满足当前国家tag时，提供上一行的修正
+		}
+		modifier = { #修正倾向
+			factor = 0
+			tag = MAG
+			has_war_with = MJS
+		}
+	}
+	default = no #是否是通用国策
+	reset_on_civil_war = yes #内战继承进度
+
+	continuous_focus_position = { x = 300 y = 150 } #持续性国策位置
+
+ ##########################################################
+	focus = { #最初的救赎
+		id = MAG_AA_zcdjs
+		icon = GFX_goal_generic_demand_territory #在.gfx文件里的图片名
+		cost = 5
+		x = 21
+		y = 0
+		ai_will_do = { factor = 50 }
+		available = {
+			# 国策可点的条件
+			#has_tech = temporal_curse
+		}
+		bypass = {
+			# 跳过国策的条件
+		}
+		mutually_exclusive = {
+			focus = MAG_BB_swsndyw
+		}
+		completion_reward = {
+			add_ideas = MAG_AA_mydcl
+	    }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #无休止的轮回
+		id = MAG_AA_wxzdlh
+		icon = GFX_goal_generic_demand_territory
+		cost = 15
+		relative_position_id = MAG_AA_zcdjs
+		x = 0
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AA_zcdjs 
+		}
+		completion_reward = {
+			add_political_power = 250
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #又一次的决战
+		id = MAG_AA_yycdjz
+		icon = GFX_goal_generic_demand_territory
+		cost = 5
+		relative_position_id = MAG_AA_wxzdlh
+		x = 0
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AA_wxzdlh
+		}
+		completion_reward = {
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			add_stability = -0.05
+			add_political_power = 50
+			country_event = { 
+				id = MAG_A.1
+				days = 1
+			}
+			news_event = {
+				id = MAG_A.2
+				days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #黎明前的黑暗
+		id = MAG_AA_lmqdha
+		icon = GFX_goal_generic_demand_territory
+		cost = 2
+		relative_position_id = MAG_AA_yycdjz
+		x = 0
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AA_yycdjz
+		}
+		completion_reward = {
+			add_stability = -0.1
+			add_war_support = -0.15
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.05
+			}
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+	}
+	
+	focus = { #平凡少女的宏愿
+		id = MAG_AA_pfsndhy
+		icon = GFX_MAG_AA_pfsndhy
+		cost = 2
+		relative_position_id = MAG_AA_lmqdha
+		x = 0
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AA_lmqdha
+		}
+		completion_reward = {
+			custom_effect_tooltip = MAG_AA_pfsndhy_tooltip
+			add_ideas = MAG_AA_yhzl1
+			add_stability = 0.1
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.1
+			}
+			remove_ideas = MAG_AA_mydcl
+			set_politics = { 
+				ruling_party = democratic 
+			}
+			remove_ideas = MAG_KJ_mfsndml
+			remove_ideas = MAG_KJ_xjdzf
+			remove_ideas = MAG_KJ_zwfbdgd
+			#swap_ideas = {
+			#	remove_idea = industrial_priority
+			#	add_idea = mana_priority
+			#}
+			country_event = { 
+				id = MAG_A.3
+				days = 1
+			}
+			set_capital = { state = 478 }
+			add_victory_points = {
+				province = 12726
+				value = 20
+			}
+			#add_corps_commander_role 成为将军
+			add_field_marshal_role= {
+				Character = MAG_xiaomeiyan
+				traits = {
+					aggressive_assaulter #凌厉的进攻者
+					offensive_doctrine #进攻大师
+					trait_SOV_determined #坚决
+	
+					lenjiao #冷娇
+					gupi #孤僻
+				}
+				skill = 4
+				attack_skill = 4
+				defense_skill = 4
+				planning_skill = 3
+				logistics_skill = 2
+			}
+			set_power_balance = {
+				id = MAG_AN_BOP_dyhzldxycd
+				left_side = MAG_AN_BOP_rmbzrm
+				right_side = MAG_AN_BOP_jgsrzl
+				set_default = yes
+			}
+			unlock_decision_category_tooltip = MAG_AN_DE_xcdyhzldxy
+			hidden_effect = {
+				retire_character = MAG_lumuyuan1 #删除鹿目圆
+				swap_ideas = {
+					remove_idea = MAG_yuweipaizuigaohuiyi
+					add_idea = MAG_AA_zhujiaoyihui
+				}
+				#MAG = {
+				#	clear_variable = another_country_leader_group
+				#}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_RESEARCH } #科研
+		search_filters = { FOCUS_FILTER_INDUSTRY } #工业
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+		search_filters = { FOCUS_FILTER_MANPOWER } #人力
+	}
+
+	#focus = { #崭新的世界
+	#	id = MAG_AA_zxdsj
+	#	icon = GFX_goal_generic_demand_territory
+	#	cost = 1
+	#	x = 22
+	#	y = 5
+	#	ai_will_do = { factor = 100 }
+	#	prerequisite = {
+	#		focus = MAG_AA_pfsndhy
+	#	}
+	#	completion_reward = {
+	#		retire_character = MAG_lumuyuan #删除鹿目圆
+	#		set_politics = { 
+	#			ruling_party = democratic 
+	#		}
+	#		add_popularity = {
+	#			ideology = democratic
+	#			popularity = 0.1
+	#		}
+	#		remove_ideas = MAG_KJ_mfsndml
+	#		remove_ideas = MAG_KJ_xjdzf
+	#		remove_ideas = MAG_KJ_zwfbdgd
+	#		#swap_ideas = {
+	#		#	remove_idea = industrial_priority
+	#		#	add_idea = mana_priority
+	#		#}
+	#		add_ideas = MAG_AA_yhzl1
+	#		country_event = { 
+	#			id = MAG_A.3
+	#			days = 1
+	#		}
+	#		set_capital = { state = 478 }
+	#		add_victory_points = {
+	#			province = 12726
+	#			value = 20
+	#		}
+	#		#add_corps_commander_role 成为将军
+	#		add_field_marshal_role= {
+	#			Character = MAG_xiaomeiyan
+	#			traits = {
+	#				aggressive_assaulter #凌厉的进攻者
+	#				offensive_doctrine #进攻大师
+	#				trait_SOV_determined #坚决
+	#
+	#				lenjiao #冷娇
+	#				gupi #孤僻
+	#			}
+	#			skill = 4
+	#			attack_skill = 4
+	#			defense_skill = 4
+	#			planning_skill = 3
+	#			logistics_skill = 2
+	#		}
+	#	}
+	#	search_filters = { FOCUS_FILTER_POLITICAL }
+	#	search_filters = { FOCUS_FILTER_RESEARCH } #科研
+	#	search_filters = { FOCUS_FILTER_INDUSTRY } #工业
+	#	search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+	#	search_filters = { FOCUS_FILTER_MANPOWER } #人力
+	#}
+
+ ##########################################################
+	focus = { #重修于好
+		id = MAG_AD_cxyh
+		icon = GFX_MAG_AD_cxyh
+		cost = 5
+		relative_position_id = MAG_AA_pfsndhy
+		x = -11
+		y = 1
+		ai_will_do = {
+			factor = 80
+			modifier = {
+				has_country_flag = MAG_AR_RTLB
+				factor = 0
+			}
+		}
+		prerequisite = {
+			focus = MAG_AA_pfsndhy
+		}
+		mutually_exclusive = { 
+			focus = MAG_AN_gjsj
+		}
+		completion_reward = {
+			add_stability = 0.1
+            add_popularity = {
+				ideology = democratic
+				popularity = 0.05
+			}
+			swap_ideas = {
+				remove_idea = industrial_priority
+				add_idea = mana_priority
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #派往邻国的使节
+		id = MAG_AD_pwlgdsj
+		icon = GFX_MAG_A_waijiao
+		cost = 5
+		relative_position_id = MAG_AD_cxyh
+		x = -5
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = {
+			add_political_power = 50
+			add_ideas = MAG_AD_yhdgd1
+			hidden_effect = {
+				if = {
+					limit = { 
+						NOT = {
+							has_war_with = BOW
+						}
+					}
+					BOW = { country_event = MAG_A.4 }
+				}
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = {
+							has_war_with = LAD
+						}
+					}
+					LAD = { country_event = MAG_A.5 }
+				}
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						NOT = {
+							has_war_with = YUZ
+						}
+					}
+					YUZ = { country_event = MAG_A.6 }
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #兴建圆环之理教堂
+		id = MAG_AD_xjyhzljt
+		icon = GFX_MAG_A_mingong
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = -5
+		y = 2
+		ai_will_do = { factor = 200 }
+		prerequisite = {
+			focus = MAG_AD_pwlgdsj
+		}
+		completion_reward = { 
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			521 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			#unlock_decision_category_tooltip = MAG_AN_DE_xcdyhzldxy
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #希望世界和平
+		id = MAG_AD_xwsjhp
+		icon = GFX_MAG_A_waijiao
+		cost = 4
+		relative_position_id = MAG_AD_cxyh
+		x = -5
+		y = 3
+		ai_will_do = { factor = 200 }
+    	prerequisite = {
+    		focus = MAG_AD_xjyhzljt
+    	}
+		completion_reward = {
+			set_rule = {
+				can_send_volunteers = yes
+				can_only_justify_war_on_threat_country = yes
+			}
+			swap_ideas = {
+				remove_idea = MAG_AD_yhdgd1
+				add_idea = MAG_AD_yhdgd2	
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #维护和平的军队
+	    id = MAG_AD_whhpdjd
+		icon = GFX_MAG_A_junshi2
+		cost = 7
+		relative_position_id = MAG_AD_cxyh
+		x = -5
+		y = 4
+		ai_will_do = { factor = 200 }
+		prerequisite = {
+			focus = MAG_AD_xwsjhp
+		}
+		completion_reward = { 
+			add_ideas = MAG_AD_whhpdjd
+		}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+	}
+
+	focus = { #更加便利的建设
+		id = MAG_AD_gjbldjs
+		icon = GFX_MAG_A_jijian
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = -3
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = {
+			478 =  {
+				add_extra_state_shared_building_slots = 1 #建筑槽
+				add_building_construction = {
+					type = infrastructure #基础设施
+					level = 1
+					instant_build = yes #立刻完成
+				}
+			}
+			519 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			509 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure 
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			547 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			510 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			492 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			555 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+		}
+		search_filters = {FOCUS_FILTER_INDUSTRY}
+	}
+
+	focus = { #将魔法变得普遍
+		id = MAG_AD_jmfbdpb
+		icon = GFX_MAG_A_gongye2
+		cost = 8.6
+		relative_position_id = MAG_AD_cxyh
+		x = -3
+		y = 2
+		ai_will_do = { factor = 80 }
+		prerequisite = {
+			focus = MAG_AD_gjbldjs
+		}
+		completion_reward = { 
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			547 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			456 = {
+				add_resource = {
+					type = raw_mana
+					amount = 5
+				}
+			}
+			514 = {
+				add_resource = {
+					type = raw_mana
+					amount = 5
+				}
+			}
+			510 = {
+				add_resource = {
+					type = raw_mana
+					amount = 5
+				}
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.01
+			}
+		}
+		search_filters = {FOCUS_FILTER_INDUSTRY}
+	}
+
+	focus = { #让魔法走进生活
+		id = MAG_AD_rmfzjsh
+		icon = GFX_MAG_A_jijian
+		cost = 8.6
+		relative_position_id = MAG_AD_cxyh
+		x = -3
+		y = 3
+		ai_will_do = { factor = 80 }
+		prerequisite = {
+			focus = MAG_AD_jmfbdpb
+		}
+		#available = {
+			#has_idea = MAG_AD_mflyyndx2
+		#}
+		completion_reward = {
+			add_tech_bonus = {
+				name = "让魔法走进生活"
+				bonus = 1
+				uses = 1
+				category = construction_tech
+			}
+			add_tech_bonus = {
+				name = "让魔法走进生活"
+				bonus = 1
+				uses = 1
+				category = electronics
+			}
+			#478 510
+			454 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			526 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.02
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #使用魔法的工业
+		id = MAG_AD_symfdgy
+		icon = GFX_MAG_A_gongye3
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = -3
+		y = 4
+		ai_will_do = { factor = 40 }
+		prerequisite = {
+			focus = MAG_AD_rmfzjsh
+	    }
+		prerequisite = {
+			focus = MAG_AD_yjmfdkj
+	    }
+		completion_reward = {
+			add_tech_bonus = {
+				name = "使用魔法的工业"
+				bonus = 1
+				uses = 1
+				category = industry
+			}
+			add_tech_bonus = {
+				name = "使用魔法的工业"
+				bonus = 1
+				uses = 1
+				category = excavation_tech
+			}
+			519 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			510 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY } 
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #魔法来源于你的心
+		id = MAG_AD_mflyyndx
+		icon = GFX_MAG_A_keyan1
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = -1
+		y = 1
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = { 
+			add_ideas = MAG_AD_mflyyndx1
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		search_filters = { FOCUS_FILTER_RESEARCH } 
+	}
+
+    focus = { #研究魔法的科技
+		id = MAG_AD_yjmfdkj
+		icon = GFX_MAG_A_keyan2
+		cost = 10
+		relative_position_id = MAG_AD_cxyh
+		x = -1
+		y = 3
+		ai_will_do = { factor = 80 }
+		prerequisite = {
+			focus = MAG_AD_mflyyndx
+		}
+		completion_reward = { 
+			add_tech_bonus = {
+				name = "研究魔法的科技"
+				bonus = 1
+				uses = 2
+				category = electronics
+			}
+			add_tech_bonus = {
+				name = "研究魔法的科技"
+				bonus = 1
+				uses = 2
+				category = mana_tech
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #见泷原魔法大学
+		id = MAG_AD_sbmfdx
+		icon = GFX_MAG_A_keyan3
+		cost = 10
+		relative_position_id = MAG_AD_cxyh
+		x = -1
+		y = 4
+		ai_will_do = { factor = 200 }
+		prerequisite = {
+			focus = MAG_AD_rmfzjsh
+	    }
+		prerequisite = {
+			focus = MAG_AD_yjmfdkj
+	    }
+		completion_reward = {
+			add_research_slot = 1
+			add_tech_bonus = {
+				name = "见泷原魔法大学"
+				bonus = 1
+				uses = 1
+				category = nuclear
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #魔法少男计划
+		id = MAG_AD_mfsnjh
+		icon = GFX_MAG_A_junshi2
+		cost = 6
+		relative_position_id = MAG_AD_cxyh
+		x = 5
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = { 
+			unlock_decision_category_tooltip = MAG_AD_ID_mfsnjh
+			add_ideas = MAG_AD_mfsnjh0
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_STABILITY } 
+	}
+	
+
+	focus = { #加大研究投入
+		id = MAG_AD_jdyjtr
+		icon = GFX_MAG_A_junshi2
+		cost = 5
+		relative_position_id = MAG_AD_cxyh
+		x = 4
+		y = 2
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_jqgfjs
+		}
+		prerequisite = {
+			focus = MAG_AD_mfsnjh
+		}
+		completion_reward = { 
+			add_political_power = 75
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #魔法少女军事化
+		id = MAG_AD_mfsnjsh
+		icon = GFX_MAG_A_junshi2
+		cost = 10
+		relative_position_id = MAG_AD_cxyh
+		x = 0
+		y = 2
+		ai_will_do = { factor = 40 }
+		prerequisite = {
+			focus = MAG_AD_mflyyndx
+		}
+		prerequisite = {
+			focus = MAG_AD_jmfdjjd
+		}
+		completion_reward = { 
+			army_experience = 50
+			swap_ideas = {
+			    remove_idea = MAG_AD_mfjd1
+			    add_idea = MAG_AD_mfjd2
+			}
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+	}
+
+	focus = { #更先进的武器
+		id = MAG_AD_gxjdwq
+		icon = GFX_goal_generic_build_tank
+		cost = 9
+		relative_position_id = MAG_AD_cxyh
+		x = 1
+		y = 3
+		ai_will_do = { factor = 40 }
+		prerequisite = {
+			focus = MAG_AD_mfsnjsh
+		}
+		completion_reward = { 
+			add_tech_bonus = {
+				name = "更先进的武器"
+				bonus = 1
+				uses = 1
+				category = infantry_weapons
+			}
+			add_tech_bonus = {
+				name = "更先进的武器"
+				bonus = 1
+				uses = 1
+				category = artillery
+			}
+			add_tech_bonus = {
+				name = "更先进的武器"
+				bonus = 1
+				uses = 1
+				category = cat_mana_infantry
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #普通军人的魔法化
+		id = MAG_AD_ptjrdmfh
+		icon = GFX_goal_generic_allies_build_infantry
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = 1
+		y = 4
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_gxjdwq
+		}
+		available = {
+			or = {
+				has_idea = MAG_AD_mfsnjh22
+				has_idea = MAG_AD_mfsnjh33
+			}
+		}
+		completion_reward = { 
+			swap_ideas = {
+				remove_idea = MAG_AD_mflyyndx1
+				add_idea = MAG_AD_mflyyndx2
+			}
+			army_experience = 50
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+	}
+
+	focus = { #与众不同的军事
+		id = MAG_AD_yzbtdjs
+		icon = GFX_goal_generic_army_doctrines
+		cost = 9
+		relative_position_id = MAG_AD_cxyh
+		x = 2
+		y = 5
+		ai_will_do = { factor = 70 }
+		prerequisite = {
+			focus = MAG_AD_zsmfsndjd
+		}
+		prerequisite = {
+			focus = MAG_AD_ptjrdmfh
+		}
+		#available = {
+		#	has_completed_focus = MAG_AD_mfkj
+		#}
+		#available = {
+		#	has_completed_focus = MAG_AD_mfhj
+		#}
+		completion_reward = { 
+			swap_ideas = {
+				remove_idea = MAG_AD_mfjd2
+				add_idea = MAG_AD_mfjd3
+			}
+		}
+		search_filters = {FOCUS_FILTER_MANPOWER}
+	}
+
+	focus = { #将魔法带进军队
+		id = MAG_AD_jmfdjjd
+		icon = GFX_MAG_A_junshi2
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = 1
+		y = 1
+		ai_will_do = { factor = 30 }
+		prerequisite = {
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = { 
+			add_ideas = MAG_AD_mfjd1
+			army_experience = 25
+		}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+	}
+
+	focus = { #加强国防建设
+		id = MAG_AD_jqgfjs
+		icon = GFX_MAG_A_jungong
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = 3
+		y = 1
+		ai_will_do = { factor = 40 }
+		prerequisite = {
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = {
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			510 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			492 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #见泷原兵工厂
+		id = MAG_AD_jlybgc
+		icon = GFX_MAG_A_xiaomeiyan2
+		cost = 8
+		relative_position_id = MAG_AD_cxyh
+		x = 3
+		y = 3
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_jqgfjs
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1.0 
+				ahead_reduction = 1 
+				uses = 1
+				category = infantry_weapons
+			}
+			478 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = { #资深魔法少女的教导
+		id = MAG_AD_zsmfsndjd
+		icon = GFX_MAG_A_bamamei2
+		cost = 9.5
+		relative_position_id = MAG_AD_cxyh
+		x = 3
+		y = 4
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_jlybgc
+		}
+		completion_reward = {
+			activate_advisor = MAG_bamamei
+			add_tech_bonus = {
+				bonus = 1.0 
+				ahead_reduction = 1 
+				uses = 1
+				category = cat_mana_infantry
+			}
+			army_experience = 50
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.03
+			}
+		}
+	}
+
+	#focus = { #联合作战的技巧
+	#	id = MAG_AD_lhzzdjq
+	#	icon = GFX_MAG_A_meishushayexiang1
+	#	cost = 5.8
+	#	relative_position_id = MAG_AD_cxyh
+	#	x = 3
+	#	y = 4
+	#	ai_will_do = { factor = 50 }
+	#	prerequisite = {
+	#		focus = MAG_AD_zsmfsndjd
+	#	}
+	#	completion_reward = {
+	#		activate_advisor = MAG_meishushayexiang
+	#		478 = {
+	#			add_extra_state_shared_building_slots = 3
+	#			add_building_construction = {
+	#				type = dockyard
+	#				level = 3
+	#				instant_build = yes
+	#			}
+	#		}
+	#	}
+	#}
+
+	focus = { #重视空军建设
+		id = MAG_AD_zskjjs
+		icon = GFX_goal_generic_build_airforce
+		cost = 8
+		x = 17
+		y = 12
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_zsmfdsj
+			focus = MAG_AN_jsgg
+		}
+		completion_reward = {
+			478 = {
+				add_building_construction = {
+					type = air_base
+					level = 4
+					instant_build = yes
+				}
+			}
+			521 = {
+				add_building_construction = {
+					type = air_base
+					level = 4
+					instant_build = yes
+				}
+			}
+			456 = {
+				add_building_construction = {
+					type = air_base
+					level = 4
+					instant_build = yes
+				}
+			}
+			548 = {
+				add_building_construction = {
+					type = air_base
+					level = 4
+					instant_build = yes
+				}
+			}	
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #魔法少女与空军
+		id = MAG_AD_mfsnykj
+		icon = GFX_goal_generic_build_airforce
+		cost = 8
+		relative_position_id = MAG_AD_zskjjs
+		x = 0
+		y = 1
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_zskjjs
+		}
+		completion_reward = { 
+			add_ideas = MAG_AD_mfkj1
+			air_experience = 50
+		}
+		search_filters = { FOCUS_FILTER_AIR_XP }
+	}
+
+	focus = { #更先进的飞机
+		id = MAG_AD_gxjdfj
+		icon = GFX_goal_generic_build_airforce
+		cost = 8
+		relative_position_id = MAG_AD_zskjjs
+		x = 0
+		y = 2
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_mfsnykj
+		}
+		completion_reward = { 
+			add_tech_bonus = {
+				name = "更先进的飞机"
+				bonus = 0.75
+				uses = 1
+				category = air_doctrine
+			}
+			add_tech_bonus = {
+				name = "更先进的飞机"
+				bonus = 0.75
+				uses = 1
+				category = light_fighter
+			}
+			add_tech_bonus = {
+				name = "更先进的飞机"
+				bonus = 0.75
+				uses = 1
+				category = cat_heavy_fighter
+			}
+			add_tech_bonus = {
+				name = "更先进的飞机"
+				bonus = 0.75
+				uses = 1
+				category = cas_bomber
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #鹰击于长空
+		id = MAG_AD_mfkj
+		icon = GFX_goal_generic_build_airforce
+		cost = 9
+		relative_position_id = MAG_AD_zskjjs
+		x = 0
+		y = 3
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_gxjdfj
+		}
+		completion_reward = { 
+			swap_ideas = {
+				remove_idea = MAG_AD_mfkj1
+				add_idea = MAG_AD_mfkj2
+			}
+			air_experience = 50
+		}
+		search_filters = { FOCUS_FILTER_AIR_XP }
+	}
+
+	focus = { #重视海军建设
+		id = MAG_AD_zshjjs
+		icon = GFX_goal_generic_build_navy
+		cost = 8
+		x = 19
+		y = 12
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_zsmfdsj
+			focus = MAG_AN_jsgg
+		}
+		completion_reward = {
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+			555 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+			548 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+			553 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #魔法少女与海军
+		id = MAG_AD_mfsnyhj
+		icon = GFX_goal_generic_build_navy
+		cost = 8
+		relative_position_id = MAG_AD_zshjjs
+		x = 0
+		y = 1
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_zshjjs
+		}
+		completion_reward = { 
+			add_ideas = MAG_AD_mfhj1
+			navy_experience = 50
+		}
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+	}
+
+	focus = { #更先进的战舰
+		id = MAG_AD_gxjdjc
+		icon = GFX_goal_generic_build_navy
+		cost = 8
+		relative_position_id = MAG_AD_zshjjs
+		x = 0
+		y = 2
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_mfsnyhj
+		}
+		completion_reward = { 
+			add_tech_bonus = {
+				name = "更先进的战舰"
+				bonus = 0.75
+				uses = 1
+				category = naval_doctrine
+			}
+			add_tech_bonus = {
+				name = "更先进的战舰"
+				bonus = 0.75
+				uses = 1
+				category = dd_tech
+			}
+			add_tech_bonus = {
+				name = "更先进的战舰"
+				bonus = 0.75
+				uses = 1
+				category = ca_tech
+			}
+			add_tech_bonus = {
+				name = "更先进的战舰"
+				bonus = 0.75
+				uses = 1
+				category = cv_tech
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #称霸于海洋
+		id = MAG_AD_mfhj
+		icon = GFX_goal_generic_build_navy
+		cost = 9
+		relative_position_id = MAG_AD_zshjjs
+		x = 0
+		y = 3
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_gxjdjc
+		}
+		completion_reward = { 
+			swap_ideas = {
+				remove_idea = MAG_AD_mfhj1
+				add_idea = MAG_AD_mfhj2
+			}
+			navy_experience = 50
+		}
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+	}
+
+	focus = { #天空也要被征服
+		id = MAG_AD_tkyybzf
+		icon = GFX_goal_generic_air_doctrine
+		cost = 10
+		relative_position_id = MAG_AD_zskjjs
+		x = 0
+		y = 4
+		ai_will_do = { factor = 20 }
+		prerequisite = {
+			focus = MAG_AD_mfkj
+		}
+		available = {
+			#has_completed_focus = MAG_AD_zsmfdsj
+			has_deployed_air_force_size = { size > 799 }
+		}
+		completion_reward = {
+			add_ideas = MAG_AD_tkzz
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+	}
+
+	focus = { #让海军再次辉煌
+		id = MAG_AD_rhjzchh
+		icon = GFX_goal_generic_navy_doctrines_tactics
+		cost = 10
+		relative_position_id = MAG_AD_zshjjs
+		x = 0
+		y = 4
+		ai_will_do = { factor = 20 }
+		prerequisite = {
+			focus = MAG_AD_mfhj
+		}
+		available = {
+			#has_completed_focus = MAG_AD_zsmfdsj
+			dockyard > 39
+		}
+		completion_reward = { 
+			add_ideas = MAG_AD_hyzw
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+    }
+
+	focus = { #繁荣的魔法工业
+		id = MAG_AD_frdmfgy
+		icon = GFX_MAG_A_mingong
+		cost = 7
+		relative_position_id = MAG_AD_cxyh
+		x = -2
+		y = 5
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_sbmfdx
+		}
+		prerequisite = {
+			focus = MAG_AD_symfdgy
+		}
+		completion_reward = {
+			555 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			514 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			492 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.02
+			}
+		}
+		search_filters = {FOCUS_FILTER_INDUSTRY}
+	}
+
+	focus = { #这是魔法的世界
+	    id = MAG_AD_zsmfdsj
+    	icon = GFX_goal_generic_political_pressure
+    	cost = 15
+		relative_position_id = MAG_AD_cxyh
+		x = 0
+		y = 6
+    	ai_will_do = { factor = 200 }
+    	prerequisite = {
+    		focus = MAG_AD_frdmfgy
+    	}
+    	prerequisite = {
+    		focus = MAG_AD_yzbtdjs
+    	}
+    	completion_reward = {
+			add_political_power = 100
+			swap_ideas = {
+				remove_idea = MAG_AD_mflyyndx2
+				add_idea = MAG_AD_zsmfdsj
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+    }
+
+	focus = { #鼓励国内建设
+		id = MAG_AD_glgnjs
+		icon = GFX_MAG_A_mingong
+		cost = 8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 2
+		y = 1
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_zsmfdsj
+		}
+		completion_reward = {
+			454 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			456 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			492 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = {FOCUS_FILTER_INDUSTRY}
+	}
+
+	focus = { #种植原始玛纳
+		id = MAG_AD_zzysmn
+		icon = GFX_MAG_A_gongye4
+		cost = 8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 2
+		y = 2
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_glgnjs
+		}
+		completion_reward = {
+			478 = {
+				add_resource = {
+					type = raw_mana
+					amount = 10
+				}
+			}
+			492 = {
+				add_resource = {
+					type = raw_mana
+					amount = 10
+				}
+			}
+			510 = {
+				add_resource = {
+					type = raw_mana
+					amount = 10
+				}
+			}
+		}
+	}
+
+	focus = { #风见野市的矿场
+		id = MAG_AD_fjysdkc
+		icon = GFX_focus_generic_steel
+		cost = 8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 2
+		y = 3
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_zzysmn
+		}
+		completion_reward = {
+			558 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			454 = {
+				add_resource = {
+					type = steel
+					amount = 30
+				}
+			}
+			456 = {
+				add_resource = {
+					type = steel
+					amount = 10
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #扶持偏远地区
+		id = MAG_AD_fcpydq
+		icon = GFX_focus_generic_industry_1
+		cost = 8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 4
+		y = 1
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_zsmfdsj
+		}
+		completion_reward = {
+			558 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			499 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			514 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			548 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #加速贫富差距缩减
+		id = MAG_AD_jspfcjsj
+		icon = GFX_focus_generic_industry_2
+		cost = 8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 4
+		y = 2
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_fcpydq
+		}
+		completion_reward = {
+			558 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			526 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			553 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			491 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #鼓励军工企业
+		id = MAG_AD_gljgqy
+		icon = GFX_MAG_A_jungong
+		cost = 8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 4
+		y = 3
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AD_jspfcjsj
+		}
+		completion_reward = {
+			558 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			526 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			553 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			514 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #步入发达国家
+		id = MAG_AD_brfdgj
+		icon = GFX_focus_generic_industry_3
+		cost = 14.8
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 3
+		y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_fjysdkc
+		}
+		prerequisite = {
+			focus = MAG_AD_gljgqy
+		}
+		available = {
+			num_of_factories > 200
+		}
+		completion_reward = {
+			add_research_slot = 1
+			swap_ideas = {
+				remove_idea = MAG_AD_zsmfdsj
+				add_idea = MAG_AD_zsmfdsj2
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #为之骄傲的人民
+	    id = MAG_AD_wzjadrm
+		icon = GFX_goal_support_democracy
+		cost = 4
+		relative_position_id = MAG_AD_zsmfdsj
+		x = -5
+		y = 1
+		ai_will_do = { factor = 100 }
+    	prerequisite = {
+    		focus = MAG_AD_zsmfdsj
+    	}
+		prerequisite = {
+			focus = MAG_AD_whhpdjd
+		}
+		available = {
+			is_subject = no
+		}
+		completion_reward = {
+			add_stability = 0.06
+			add_war_support = 0.03
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #光明将至美乐蒂
+	    id = MAG_AD_gmjzmld
+		icon = GFX_goal_support_democracy
+		cost = 2
+		relative_position_id = MAG_AD_wzjadrm
+	    x = 0
+	    y = 1
+		ai_will_do = { factor = 100 }
+    	prerequisite = {
+    		focus = MAG_AD_wzjadrm
+    	}
+		available = {
+			is_in_faction = no #是否有阵营
+			is_subject = no
+		}
+		completion_reward = {
+			add_political_power = 20
+			set_rule = { can_create_factions = yes }
+			create_faction = "美乐蒂大陆互保协定"
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #与博闻冰释前嫌
+	    id = MAG_AD_ybwbsqx
+		icon = GFX_goal_support_democracy
+		cost = 5
+		relative_position_id = MAG_AD_gmjzmld
+		x = -1
+		y = 1
+		ai_will_do = { factor = 10 }
+		available = {
+		#	or = {
+		#		NOT = {
+		#			has_completed_focus = MAG_AD_lhjblsh
+		#		}
+				BOW = {
+					is_in_faction = no
+					NOT = {
+						has_government = communism
+						has_government = fascism
+						has_government = reactionism
+					}
+				}
+		#	}
+		}
+		prerequisite = {
+			focus = MAG_AD_gmjzmld
+		}
+		mutually_exclusive = { 
+			focus = MAG_AD_lhjblsh
+		}
+		completion_reward = {
+			BOW = {
+				country_event = {
+					id = MAG_A.41
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	#focus = { #试探进步理事会
+	#   id = MAG_AD_stjblsj
+	#	icon = GFX_goal_support_democracy
+	#	cost = 4
+	#	x = 0
+	#	y = 16
+	#	ai_will_do = { factor = 10 }
+	#	prerequisite = {
+	#		focus = MAG_AD_ybwbsqx
+	#	}
+	#	completion_reward = {
+	#	}
+	#	search_filters = { FOCUS_FILTER_POLITICAL }
+	#	search_filters = { FOCUS_FILTER_ANNEXATION }
+	#}
+
+	focus = { #联合进步理事会
+	    id = MAG_AD_lhjblsh
+		icon = GFX_goal_support_democracy
+		cost = 5
+		relative_position_id = MAG_AD_gmjzmld
+		x = 1
+		y = 1
+		ai_will_do = { factor = 30 }
+		available = {
+			PCC = {
+				is_in_faction = no
+				NOT = {
+					has_government = communism
+					has_government = fascism
+					has_government = reactionism
+				}
+			}
+		}
+		prerequisite = {
+			focus = MAG_AD_gmjzmld
+		}
+		mutually_exclusive = { 
+			focus = MAG_AD_ybwbsqx
+		}
+		completion_reward = {
+			PCC = {
+				country_event = {
+					id = MAG_A.46
+					days = 1
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+	}
+
+	#focus = { #让老对头屈服
+	#   id = MAG_AD_rldtqf
+	#	icon = GFX_goal_support_democracy
+	#	cost = 4
+	#	x = 2
+	#	y = 16
+	#	ai_will_do = { factor = 10 }
+	#	prerequisite = {
+	#		focus = MAG_AD_lhjblsh
+	#	}
+	#	completion_reward = {
+	#	}
+	#	search_filters = { FOCUS_FILTER_POLITICAL }
+	#	search_filters = { FOCUS_FILTER_ANNEXATION }
+	#}
+
+	focus = { #拉拢兰德索尔
+	    id = MAG_AD_llldse
+		icon = GFX_goal_support_democracy
+		cost = 5
+		relative_position_id = MAG_AD_gmjzmld
+		x = -2
+		y = 2
+		ai_will_do = { factor = 40 }
+		prerequisite = {
+			focus = MAG_AD_ybwbsqx
+			focus = MAG_AD_lhjblsh
+		}
+		available = {
+			LAD = {
+				is_in_faction = no
+				NOT = {
+			#		has_government = communism
+			#		has_government = fascism
+					has_government = reactionism
+				}
+			}
+		}
+		bypass = {
+			has_completed_focus = MAG_AD_lllsxg
+		}
+		completion_reward = {
+			custom_effect_tooltip = MAG_AD_llldse_tooltip
+			hidden_effect = {
+				if = {
+					limit = {
+						PCC = {
+							is_in_faction_with = MAG
+						}
+					}
+					LAD = {
+						country_event = {
+							id = MAG_A.47
+							days = 1
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						BOW = {
+							is_in_faction_with = MAG
+						}
+					}
+					LAD = {
+						country_event = {
+							id = MAG_A.48
+							days = 1
+						}
+					}
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+	}
+
+	focus = { #拉拢特雷森
+	    id = MAG_AD_lltls
+		icon = GFX_goal_support_democracy
+		cost = 3
+		relative_position_id = MAG_AD_gmjzmld
+		x = 0
+		y = 2
+		ai_will_do = { factor = 30 }
+		prerequisite = {
+			focus = MAG_AD_ybwbsqx
+			focus = MAG_AD_lhjblsh
+		}
+		available = {
+			TAU = {
+				is_in_faction = no
+				NOT = {
+			#		has_government = communism
+			#		has_government = fascism
+					has_government = reactionism
+				}
+			}
+		}
+		bypass = {
+			has_completed_focus = MAG_AD_lllsxg
+		}
+		completion_reward = {
+			TAU = {
+				country_event = {
+					id = MAG_A.51
+					days = 1
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #“拉拢”零散小国
+	    id = MAG_AD_lllsxg
+		icon = GFX_MAG_AD_lllsxg
+		cost = 4
+		relative_position_id = MAG_AD_gmjzmld
+		x = 2
+		y = 2
+		ai_will_do = { factor = 5 }
+		prerequisite = {
+			focus = MAG_AD_ybwbsqx
+			focus = MAG_AD_lhjblsh
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					is_IRIS_melody_country = yes
+					NOT = {
+						is_in_faction_with = MAG
+					}
+					NOT = { tag = MAG }
+					NOT = { tag = BOW }
+					NOT = { tag = PCC }
+			#		NOT = { tag = LAD }
+			#		NOT = { tag = TAU }
+				}
+				country_event = {
+					id = MAG_A.52
+					days = 1
+				}
+			}
+			#KIV = {
+			#	country_event = {
+			#		id = MAG_A.52
+			#		days = 1
+			#	}
+			#}
+			#NEV
+			#LZH
+			#YUZ
+			#OCO
+			#FGT
+			#ASR
+			#LAC
+			#GLA
+			#MLS
+			#TSK
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #团结整个美乐蒂
+	    id = MAG_AD_tjzgmld
+		icon = GFX_goal_support_democracy
+		cost = 1
+		relative_position_id = MAG_AD_gmjzmld
+		x = 0
+		y = 3
+		ai_will_do = { factor = 200 }
+		prerequisite = {
+			focus = MAG_AD_llldse
+		}
+		prerequisite = {
+			focus = MAG_AD_lltls
+		}
+		prerequisite = {
+			focus = MAG_AD_lllsxg
+		}
+		available = {
+			has_war = NO
+			is_subject = no
+			custom_trigger_tooltip = {
+				tooltip = MAG_AD_hmldbl_available_t00ltip
+				all_country = {
+					if = {
+						limit = {
+							is_IRIS_melody_country = yes
+						}
+						is_in_faction_with = MAG
+					}
+				}
+			}
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					is_IRIS_melody_country = yes
+					is_in_faction_with = MAG
+				}
+				country_event = {
+					id = MAG_A.53
+					days = 1
+				}
+			}
+			#add_ideas = MAG_AD_mlddlx
+			news_event = {
+				id = MAG_A.54
+				days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #美乐蒂联合作战指挥部
+	    id = MAG_AD_mldlhzzzhb
+		icon = GFX_goal_support_democracy
+		cost = 11.5
+		relative_position_id = MAG_AD_gmjzmld
+		x = -2
+		y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_tjzgmld
+		}
+		available = {
+			is_subject = no
+			is_major = yes
+			custom_trigger_tooltip = {
+				tooltip = MAG_AD_hmldbl_available_t00ltip
+				all_country = {
+					if = {
+						limit = {
+							is_IRIS_melody_country = yes
+						}
+						is_in_faction_with = MAG
+					}
+				}
+			}
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					is_IRIS_melody_country = yes
+					is_in_faction_with = MAG
+				}
+				add_ideas = MAG_AD_mldlhzzzhb
+			}
+		}
+	}
+
+	focus = { #美乐蒂联合军事学院
+	    id = MAG_AD_mldlhjsxy
+		icon = GFX_goal_support_democracy
+		cost = 11.5
+		relative_position_id = MAG_AD_gmjzmld
+		x = 0
+		y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_tjzgmld
+		}
+		available = {
+			is_subject = no
+			is_major = yes
+			custom_trigger_tooltip = {
+				tooltip = MAG_AD_hmldbl_available_t00ltip
+				all_country = {
+					if = {
+						limit = {
+							is_IRIS_melody_country = yes
+						}
+						is_in_faction_with = MAG
+					}
+				}
+			}
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					is_IRIS_melody_country = yes
+					is_in_faction_with = MAG
+				}
+				add_ideas = MAG_AD_mldlhjsxy
+			}
+		}
+	}
+
+	focus = { #环美乐蒂壁垒
+	    id = MAG_AD_hmldbl
+		icon = GFX_goal_support_democracy
+		cost = 17.2
+		relative_position_id = MAG_AD_gmjzmld
+		x = -1
+		y = 5
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AD_mldlhzzzhb
+		}
+		prerequisite = {
+			focus = MAG_AD_mldlhjsxy
+		}
+		available = {
+			#all_country = {
+			#	or = {
+			#		is_IRIS_melody_country = no
+			#		is_in_faction_with = MAG
+			#	}
+			#}
+			custom_trigger_tooltip = {
+				tooltip = MAG_AD_hmldbl_available_t00ltip
+				all_country = {
+					if = {
+						limit = {
+							is_IRIS_melody_country = yes
+						}
+						is_in_faction_with = MAG
+					}
+				}
+			}
+		}
+		completion_reward = {
+			every_state = {
+				limit = {
+					is_IRIS_melody_state = yes
+				}
+				add_building_construction = {
+					type = coastal_bunker
+					province = {
+						all_provinces = yes
+						limit_to_coastal = yes
+					}
+					level = 3
+					instant_build = yes
+				}
+			}
+			every_state = {
+				limit = {
+					is_IRIS_melody_state = yes
+				}
+				add_building_construction = {
+					type = coastal_bunker
+					province = {
+						all_provinces = yes
+						limit_to_naval_base = yes
+					}
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = { #美乐蒂经济联合体
+	    id = MAG_AD_mldjjlht
+		icon = GFX_goal_support_democracy
+		cost = 11.5
+		relative_position_id = MAG_AD_gmjzmld
+		x = 2
+		y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_tjzgmld
+		}
+		available = {
+			is_subject = no
+			is_major = yes
+			custom_trigger_tooltip = {
+				tooltip = MAG_AD_hmldbl_available_t00ltip
+				all_country = {
+					if = {
+						limit = {
+							is_IRIS_melody_country = yes
+						}
+						is_in_faction_with = MAG
+					}
+				}
+			}
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					is_IRIS_melody_country = yes
+					is_in_faction_with = MAG
+				}
+				add_ideas = MAG_AD_mldjjlht
+			}
+		}
+	}
+
+	focus = { #从美乐蒂到IRIS
+	    id = MAG_AD_cmlddiris
+		icon = GFX_goal_support_democracy
+		cost = 1
+		relative_position_id = MAG_AD_gmjzmld
+		x = 1
+		y = 5
+		ai_will_do = { factor = 20 }
+		prerequisite = {
+			focus = MAG_AD_tjzgmld
+		}
+		available = {
+			has_war = NO
+			is_subject = no
+			is_major = yes
+		}
+		completion_reward = {
+			set_faction_name = "IRIS世界互保协定"
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #干涉欧罗巴局势
+	    id = MAG_AD_gsolbjss
+		icon = GFX_goal_support_democracy
+		cost = 5
+		relative_position_id = MAG_AD_gmjzmld
+		x = 0
+		y = 6
+		ai_will_do = { factor = 10 }
+		prerequisite = {
+			focus = MAG_AD_cmlddiris
+		}
+		available = {
+			has_war = NO
+			is_subject = no
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					is_IRIS_eu_country = yes
+					is_in_faction = no
+					or = {
+						has_government = democratic
+						has_government = neutrality
+					}
+				}
+				country_event = {
+					id = MAG_A.55
+					days = 1
+				}
+			}
+			if = {
+				limit = {
+					tag = ELN
+					has_government = democratic
+					is_in_faction = yes
+				}
+				country_event = {
+					id = MAG_A.56
+					days = 1
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #试探圣铃兰
+	    id = MAG_AD_stsll
+		icon = GFX_goal_support_democracy
+		cost = 5
+		relative_position_id = MAG_AD_gmjzmld
+		x = 2
+		y = 6
+		ai_will_do = { factor = 1 }
+		prerequisite = {
+			focus = MAG_AD_cmlddiris
+		}
+		available = {
+			has_war = NO
+			is_subject = no
+		}
+		completion_reward = {
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #对丘比的诉说
+		id = MAG_AD_dqbdss
+		icon = GFX_goal_generic_secret_weapon
+		cost = 1
+		relative_position_id = MAG_AD_zsmfdsj
+		x = 0
+		y = 4
+		ai_will_do = {
+			factor = 1
+			modifier = {
+				has_war = yes
+				factor = 10
+			}
+		}
+    	prerequisite = {
+    		focus = MAG_AD_zsmfdsj
+    	}
+		completion_reward = { 
+			add_political_power = 20
+			add_stability = -0.05
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = -0.04
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #最后的魔女
+	    id = MAG_AD_zhdmn
+	    icon = GFX_focus_CZE_german_puppet
+	    cost = 1.5
+		relative_position_id = MAG_AD_dqbdss
+	    x = 0
+	    y = 1
+	    ai_will_do = { factor = 100 }
+	    prerequisite = {
+	    	focus = MAG_AD_dqbdss
+	    }
+	    available = {
+	    	surrender_progress > 0.49
+	    }
+	    completion_reward = {
+			country_event = { 
+				id = MAG_A.8
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = -0.12
+			}
+	    }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #虚实之间
+	    id = MAG_AD_xszj
+	    icon = GFX_focus_spr_torchbearers_of_tomorrow
+	    cost = 1.5
+		relative_position_id = MAG_AD_dqbdss
+	    x = 0
+	    y = 2
+	    ai_will_do = { factor = 100 }
+	    prerequisite = {
+	    	focus = MAG_AD_zhdmn
+	    }
+	    completion_reward = { 
+			country_event = { 
+				id = MAG_A.9
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = -0.06
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+    }
+
+	focus = { #圆环的指引
+		id = MAG_AD_yhdzy
+		icon = GFX_focus_generic_pope
+		cost = 1.5
+		relative_position_id = MAG_AD_dqbdss
+	    x = 0
+	    y = 3
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_xszj
+		}
+		completion_reward = { 
+			country_event = { 
+				id = MAG_A.10
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #再也不必感到绝望！
+		id = MAG_AD_zybbgdjw
+		icon = GFX_focus_generic_catholic_dominion
+		cost = 14.8
+		relative_position_id = MAG_AD_dqbdss
+	    x = 0
+	    y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AD_yhdzy
+		}
+		completion_reward = {
+			custom_effect_tooltip = MAG_AD_zybbgdjw_tooltip
+			news_event = {
+				id = MAG_A.11
+				days = 1
+			}
+			country_event = {
+				id = MAG_A.12
+			}
+			remove_ideas = MAG_AD_jwzk2
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.5
+			}
+			hidden_effect = {
+				swap_ideas = {
+					remove_idea = MAG_AA_zhujiaoyihui
+					add_idea = MAG_AD_yuanhuanzhili
+				}
+				add_field_marshal_role = { #圆神成为元帅
+					character = MAG_yuanhuanzhili
+					traits = {
+						logistics_wizard #后勤专家
+						defensive_doctrine #防御专家
+						organisational_leader #组织至上
+						inspirational_leader #魅力非凡
+					}
+					skill = 6
+					attack_skill = 6
+					defense_skill = 6
+					planning_skill = 3
+					logistics_skill = 4
+				}
+				load_oob = "MAG" #载入军队文件
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = {FOCUS_FILTER_MANPOWER}
+	}
+
+ ##########################################################
+	focus = { #赶尽杀绝
+		id = MAG_AN_gjsj
+		icon = GFX_MAG_AN_gjsj
+		cost = 5
+		relative_position_id = MAG_AA_pfsndhy
+		x = 11
+		y = 1
+		ai_will_do = {
+			factor = 20
+			modifier = {
+				has_country_flag = MAG_AR_JZCX
+				factor = 0
+			}
+			modifier = {
+				has_country_flag = MAG_AR_RTLB
+				factor = 100
+			}
+		}
+		prerequisite = {
+			focus = MAG_AA_pfsndhy
+		}
+		mutually_exclusive = { 
+			focus = MAG_AD_cxyh
+		}
+		completion_reward = {
+			country_event = {
+				id = MAG_A.13
+				days = 1
+			}
+			add_stability = -0.2
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.5
+			}
+			remove_trait = {
+				character = MAG_qiubi
+				slot = political_advisor
+				trait = MAG_TR_anyuxianzhuangzhe
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = -0.05
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #安抚民众
+		id = MAG_AN_afmz
+		icon = GFX_goal_generic_propaganda
+		cost = 6
+		relative_position_id = MAG_AN_gjsj
+		x = 0
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AN_gjsj
+		}
+		completion_reward = {
+			country_event = {
+				id = MAG_A.14
+				days = 1
+			}
+			add_stability = 0.1
+			add_political_power = -50
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.02
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #建立教皇卫队
+		id = MAG_AN_jljhwd
+		icon = GFX_goal_generic_political_pressure
+		cost = 8
+		relative_position_id = MAG_AN_gjsj
+		x = 0
+		y = 2
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AN_afmz
+		}
+		completion_reward = { 
+			add_ideas = MAG_AN_jhwd
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = 0.03
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #别有用心的工业
+		id = MAG_AN_byyxdgy
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 8
+		relative_position_id = MAG_AN_gjsj
+		x = -2
+		y = 3
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AN_jljhwd
+		}
+		completion_reward = {
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			547 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			521 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #别有用心的军事
+		id = MAG_AN_byyxdjs
+		icon = GFX_goal_generic_construct_mil_factory
+		cost = 8
+		relative_position_id = MAG_AN_gjsj
+		x = 0
+		y = 3
+		ai_will_do = { factor = 60 }
+		prerequisite = {
+			focus = MAG_AN_jljhwd
+		}
+		completion_reward = {
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			510 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			526 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			553 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #向全球派遣使节
+		id = MAG_AN_xqqpqsj
+		icon = GFX_goal_anschluss
+		cost = 2
+		relative_position_id = MAG_AN_gjsj
+		x = 2
+		y = 3
+		ai_will_do = { factor = 30 }
+		prerequisite = {
+			focus = MAG_AN_jljhwd
+		}
+		completion_reward = { 
+			every_other_country = {
+				country_event = {
+				    id = MAG_A.15 
+				    days = 1
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #举国之力的科研
+		id = MAG_AN_jgzldky
+		icon = GFX_focus_research
+		cost = 8
+		relative_position_id = MAG_AN_gjsj
+		x = -2
+		y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AN_byyxdgy
+		}
+		completion_reward = {
+			add_research_slot = 1
+			add_tech_bonus = {
+				name = "举国之力的科研"
+				bonus = 1
+				uses = 1
+				category = electronics
+			}
+			add_tech_bonus = {
+				name = "举国之力的科研"
+				bonus = 1
+				uses = 1
+				category = artillery
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+	}
+
+	focus = { #只在乎答案
+		id = MAG_AN_zzhda
+		icon = GFX_goal_generic_alliance
+		cost = 9
+		relative_position_id = MAG_AN_gjsj
+		x = 0
+		y = 4
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AN_byyxdjs
+		}
+		prerequisite = {
+			focus = MAG_AN_xqqpqsj
+		}
+		prerequisite = {
+			focus = MAG_AN_byyxdgy
+		}
+		completion_reward = { 
+			add_ideas = MAG_AN_fkdgd
+			set_party_name = {
+				ideology = neutrality
+				long_name = "圆环之理教会——激进派 在阅读圣典后狂热的信仰圆环之理者，在晓美焰的洗脑下完全忠于晓美焰者，她们做事激进且容易不计代价，并且都是晓美焰的忠实下属。"
+				name = "圆环之理神权主义"
+			}
+			set_party_name = {
+				ideology = democratic
+				long_name = "圆环之理教会——保守派 虽然信仰着圆环之理，虽然阅读了圣典，但是依然仍为教会甚至国家大权不应该集中于一人之手，在教会与民众的利益相冲突时，会坚定的站在民众一边。"
+				name = "圆环之理神权主义"
+			}
+			set_politics = { 
+				ruling_party = neutrality
+			}
+			add_country_leader_role = {
+				character = MAG_xiaomeiyan
+				promote_leader = yes
+				country_leader = {
+					ideology = sub_Theocracy
+					expire = "3200.1.7.1"
+					traits = { 
+						MAG_TR_shenmidemofashaonv
+						supreme_representative_of_god_on_earth
+						MAG_TR_jiaohuangzhiwei
+					}
+				}
+			}
+			remove_trait = {
+				character = MAG_xiaomeiyan
+				slot = political_advisor
+				trait = MAG_TR_shenmideshaonv
+			}
+			add_power_balance_value = {
+    			id = MAG_AN_BOP_dyhzldxycd
+			    value = -0.05
+			}
+			hidden_effect = {
+				country_event = { 
+					id = MAG_A.16
+					#days = 1
+				}
+				add_popularity = {
+					ideology = neutrality
+					popularity = 0.3
+				}
+				add_popularity = {
+					ideology = democratic
+					popularity = -0.3
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+ ##########################################################
+	focus = { #民众也该被救赎
+		id = MAG_AN_mzygbjs
+		icon = GFX_focus_generic_home_defense
+		cost = 4
+		relative_position_id = MAG_AN_zzhda
+		x = -6
+		y = 1
+		ai_will_do = { factor = 0 }
+		prerequisite = {
+			focus = MAG_AN_zzhda
+		}
+		mutually_exclusive = { 
+			focus = MAG_AR_yqwlys
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ANmzygbjs
+				has_country_flag = ANmzygbjs
+			}
+		}
+		select_effect = {
+			country_event = { 
+				id = MAG_A.18
+				days = 1
+			}
+		}
+		completion_reward = {
+			add_stability = 0.1
+			if = {
+				limit = {
+					has_idea = mana_priority
+				}
+				swap_ideas = {
+					remove_idea = mana_priority
+					add_idea = industrial_priority
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #工业改革
+		id = MAG_AN_gygg
+		icon = GFX_goal_generic_construct_infrastructure
+		cost = 8
+		relative_position_id = MAG_AN_mzygbjs
+		x = 3
+		y = 1
+		prerequisite = {
+			focus = MAG_AN_mzygbjs
+		}
+		completion_reward = {
+			add_timed_idea = {
+				idea = MAG_AN_gygg
+				days = 548
+			}
+		}
+	}
+
+	focus = { #属于众生的神明
+		id = MAG_AN_syzsdsm
+		icon = GFX_focus_generic_home_defense
+		cost = 8
+		relative_position_id = MAG_AN_mzygbjs
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_AN_mzygbjs
+		}
+		completion_reward = {
+			add_political_power = 120
+			#unlock_decision_category_tooltip = MAG_AN_DE_xcdyhzldxy
+		}
+	}
+
+	focus = { #军事改革
+		id = MAG_AN_jsgg
+		icon = GFX_goal_generic_political_pressure
+		cost = 8
+		relative_position_id = MAG_AN_mzygbjs
+		x = -3
+		y = 1
+		prerequisite = {
+			focus = MAG_AN_mzygbjs
+		}
+		completion_reward = {
+			add_timed_idea = {
+				idea = MAG_AN_jsgg
+				days = 548
+			}
+		}
+	}
+
+	focus = { #保障民众生活
+		id = MAG_AN_bzmzsh
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 8
+		relative_position_id = MAG_AN_mzygbjs
+		x = 4
+		y = 2
+		prerequisite = {
+			focus = MAG_AN_gygg
+		}
+		prerequisite = {
+			focus = MAG_AN_syzsdsm
+		}
+		completion_reward = {
+			478 =  {
+				add_extra_state_shared_building_slots = 1 #建筑槽
+				add_building_construction = {
+					type = infrastructure #基础设施
+					level = 1
+					instant_build = yes #立刻完成
+				}
+			}
+			519 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
+			509 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure 
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			547 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			510 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			492 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+			555 =  {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes 
+				}
+			}
+		}
+	}
+
+	focus = { #科学改变生活
+		id = MAG_AN_kxgbsh
+		icon = GFX_goal_generic_construct_infrastructure
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 2
+		y = 2
+		prerequisite = {
+			focus = MAG_AN_gygg
+		}
+		prerequisite = {
+			focus = MAG_AN_syzsdsm
+		}
+		completion_reward = { }
+	}
+
+	focus = { #神明亦是囚徒
+		id = MAG_AN_smysqt
+		icon = GFX_focus_generic_home_defense
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 0
+		y = 2
+		prerequisite = {
+			focus = MAG_AN_syzsdsm
+		}
+		completion_reward = { }
+	}
+
+	focus = { #有信仰的军队
+		id = MAG_AN_yxydjd
+		icon = GFX_goal_generic_political_pressure
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -2
+		y = 2
+		prerequisite = {
+			focus = MAG_AN_syzsdsm
+		}
+		prerequisite = {
+			focus = MAG_AN_jsgg
+		}
+		completion_reward = { }
+	}
+
+	focus = { #发展军工企业
+		id = MAG_AN_fzjgqy
+		icon = GFX_goal_generic_construct_mil_factory
+		cost = 12
+		relative_position_id = MAG_AN_mzygbjs
+		x = -4
+		y = 2
+		prerequisite = {
+			focus = MAG_AN_jsgg
+		}
+		completion_reward = {
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			510 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			492 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			526 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			553 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = { #领先在火炮
+		id = MAG_AN_lxzhp
+		icon = GFX_goal_generic_army_artillery2
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -4
+		y = 3
+		prerequisite = {
+			focus = MAG_AN_yxydjd
+		}
+		prerequisite = {
+			focus = MAG_AN_fzjgqy
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = "领先在火炮"
+				bonus = 1
+				uses = 1
+				category = artillery
+				technology = artillery
+			}
+			add_tech_bonus = {
+				bonus = 1.0 
+				ahead_reduction = 1 
+				uses = 1
+				category = artillery
+			}
+		}
+	}
+
+    focus = { #增加工业产出
+		id = MAG_AN_zjgycc
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 8
+		relative_position_id = MAG_AN_mzygbjs
+		x = 4
+		y = 3
+		prerequisite = {
+			focus = MAG_AN_bzmzsh
+		}
+		completion_reward = {
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			514 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			555 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			547 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	focus = { #全民重视科学
+		id = MAG_AN_qmzskx
+		icon = GFX_goal_generic_construct_infrastructure
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 2
+		y = 3
+		prerequisite = {
+			focus = MAG_AN_kxgbsh
+		}
+		completion_reward = { }
+	}
+
+	focus = { #传播我们的信仰
+		id = MAG_AN_cbwmdxy
+		icon = GFX_focus_generic_home_defense
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 0
+		y = 3
+		prerequisite = {
+			focus = MAG_AN_smysqt
+		}
+		completion_reward = { }
+	}
+
+	focus = { #领先在武器
+		id = MAG_AN_lxzwq
+		icon = GFX_goal_generic_build_tank
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -2
+		y = 3
+		prerequisite = {
+			focus = MAG_AN_yxydjd
+		}
+		prerequisite = {
+			focus = MAG_AN_fzjgqy
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				name = "领先在武器"
+				bonus = 0.75
+				uses = 1
+				category = infantry_weapons
+				technology = infantry_weapons
+			}
+			add_tech_bonus = {
+				bonus = 1.0 
+				ahead_reduction = 1 
+				uses = 1
+				category = infantry_weapons
+			}
+		}
+	}
+
+	focus = { #基础的娱乐保障
+	    id = MAG_AN_jcdylbz
+	    icon = GFX_goal_generic_construct_civ_factory
+	    cost = 10
+	    x = 26
+	    y = 15
+	    prerequisite = {
+	    	focus = MAG_AN_zjgycc
+	    }
+	    completion_reward = { }
+    }
+
+    focus = { #增设科研基地
+	    id = MAG_AN_zskyjd
+    	icon = GFX_goal_generic_construct_civ_factory
+	    cost = 10
+	    x = 26
+	    y = 15
+	    prerequisite = {
+	    	focus = MAG_AN_qmzskx
+	    }
+	    completion_reward = { }
+    }
+
+    focus = { #全世界的教众
+	    id = MAG_AN_qsjdjz
+	    icon = GFX_focus_generic_home_defense
+	    cost = 10
+	    x = 26
+    	y = 15
+    	prerequisite = {
+	    	focus = MAG_AN_cbwmdxy
+	    }
+    	completion_reward = { }
+    }
+
+    focus = { #魔法少女的加持
+    	id = MAG_AN_mfsndjc
+	    icon = GFX_goal_generic_build_tank
+	    cost = 10
+	    x = 24
+	    y = 15
+	    prerequisite = {
+	    	focus = MAG_AN_lxzwq
+	    }
+    	completion_reward = { }
+    }
+
+    focus = { #赶超于装甲
+	    id = MAG_AN_gcyzj
+	    icon = GFX_goal_generic_army_artillery2
+	    cost = 10
+	    x = 22
+	    y = 15
+	    prerequisite = {
+	    	focus = MAG_AN_lxzhp
+	    }
+	     completion_reward = { }
+    }
+	
+	focus = { #基础的娱乐保障
+	    id = MAG_AN_jcdylbz
+	    icon = GFX_goal_generic_construct_civ_factory
+	    cost = 8
+		relative_position_id = MAG_AN_mzygbjs
+		x = 4
+		y = 4
+	    prerequisite = {
+	    	focus = MAG_AN_zjgycc
+	    }
+	    completion_reward = {
+			add_stability = 0.1
+			509 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			521 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			519 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+    }
+
+    focus = { #增设科研基地
+	    id = MAG_AN_zskyjd
+    	icon = GFX_focus_research
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 2
+		y = 4
+	    prerequisite = {
+	    	focus = MAG_AN_qmzskx
+	    }
+	    completion_reward = {
+			add_research_slot = 1
+		}
+    }
+
+    focus = { #全世界的教众
+	    id = MAG_AN_qsjdjz
+	    icon = GFX_focus_generic_home_defense
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 0
+		y = 4
+    	prerequisite = {
+	    	focus = MAG_AN_cbwmdxy
+	    }
+    	completion_reward = { }
+    }
+
+    focus = { #魔法少女的加持
+    	id = MAG_AN_mfsndjc
+	    icon = GFX_goal_generic_allies_build_infantry
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -2
+		y = 4
+	    prerequisite = {
+	    	focus = MAG_AN_lxzwq
+	    }
+    	completion_reward = { }
+    }
+
+    focus = { #赶超于装甲
+	    id = MAG_AN_gcyzj
+	    icon = GFX_goal_generic_army_tanks
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -4
+		y = 4
+	    prerequisite = {
+	    	focus = MAG_AN_lxzhp
+	    }
+	     completion_reward = {
+			add_tech_bonus = {
+				name = "赶超于装甲"
+				bonus = 1
+				uses = 1
+				category = armor
+				technology = armor
+			}
+			add_tech_bonus = {
+				bonus = 1.0 
+				ahead_reduction = 1 
+				uses = 1
+				category = armor
+			}
+		}
+    }
+
+	focus = { #教皇的安抚
+	    id = MAG_AN_jhdaf
+	    icon = GFX_focus_generic_home_defense
+	    cost = 1
+		relative_position_id = MAG_AN_mzygbjs
+		x = 4
+		y = 5
+	    prerequisite = {
+	    	focus = MAG_AN_jcdylbz
+	    }
+	    completion_reward = { }
+    }
+
+    focus = { #科教兴国
+	    id = MAG_AN_kjxg
+    	icon = GFX_focus_research2
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 2
+		y = 5
+		prerequisite = {
+			focus = MAG_AN_zskyjd
+		}
+	    completion_reward = { }
+    }
+
+    focus = { #大胆猜测小心求证
+	    id = MAG_AN_ddccxxqz
+    	icon = GFX_focus_research2
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 2
+		y = 8
+		prerequisite = {
+			focus = MAG_AN_kjxg
+		}
+	    completion_reward = { }
+    }
+
+    focus = { #同心协力
+	    id = MAG_AN_txxl
+	    icon = GFX_focus_generic_home_defense
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 0
+		y = 5
+    	prerequisite = {
+	    	focus = MAG_AN_qsjdjz
+	    }
+    	completion_reward = { }
+    }
+
+    focus = { #神明护佑的军队
+    	id = MAG_AN_smhydjd
+	    icon = GFX_focus_generic_manpower
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -2
+		y = 5
+	    prerequisite = {
+	    	focus = MAG_AN_mfsndjc
+	    }
+    	completion_reward = { }
+    }
+
+    focus = { #合理的组织
+	    id = MAG_AN_hldzz
+	    icon = GFX_goal_generic_army_doctrines
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -4
+		y = 5
+	    prerequisite = {
+	    	focus = MAG_AN_gcyzj
+	    }
+	     completion_reward = { }
+    }
+
+    focus = { #向往于宇宙
+	    id = MAG_AN_xwyyz
+	    icon = GFX_goal_generic_air_doctrine
+	    cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = -4
+		y = 6
+		prerequisite = {
+			focus = MAG_AN_smhydjd
+		}
+	    prerequisite = {
+		    focus = MAG_AD_mfkj
+	    }
+	    completion_reward = { }
+    }
+
+	focus = { #合存逆亡
+		id = MAG_AN_hclw
+		icon = GFX_goal_generic_military_deal
+		cost = 10
+		relative_position_id = MAG_AN_mzygbjs
+		x = 0
+		y = 6
+		prerequisite = {
+			focus = MAG_AN_txxl
+		}
+		completion_reward = { }
+	}
+
+	focus = { #无可匹敌的军队
+		id = MAG_AN_wkpddjd
+		icon = GFX_goal_generic_political_pressure
+		cost = 15
+		relative_position_id = MAG_AN_mzygbjs
+		x = -2
+		y = 6
+		prerequisite = {
+			focus = MAG_AN_smhydjd
+		}
+		prerequisite = {
+			focus = MAG_AN_hldzz
+		}
+	    prerequisite = {
+		    focus = MAG_AD_mfkj
+	    }
+	    prerequisite = {
+		    focus = MAG_AD_mfhj
+	    }
+		completion_reward = { }
+	}
+
+	focus = { #观测这世界
+		id = MAG_AN_gczsj
+		icon = GFX_focus_generic_secret_service_agency
+		cost = 15
+		relative_position_id = MAG_AN_mzygbjs
+		x = -4
+		y = 8
+		prerequisite = {
+			focus = MAG_AN_xwyyz
+		}
+		completion_reward = { }
+	}
+
+	focus = { #宏大的目标
+		id = MAG_AN_hddmb
+		icon = GFX_goal_generic_military_deal
+		cost = 5
+		relative_position_id = MAG_AN_mzygbjs
+		x = -1
+		y = 7
+		prerequisite = {
+			focus = MAG_AN_hclw
+		}
+		prerequisite = {
+			focus = MAG_AN_wkpddjd
+		}
+		completion_reward = { }
+	}
+
+	focus = { #这亦是圣战
+		id = MAG_AN_zyssz
+		icon = GFX_goal_generic_major_war
+		cost = 5
+		relative_position_id = MAG_AN_mzygbjs
+		x = -1
+		y = 8
+		prerequisite = {
+			focus = MAG_AN_hddmb
+		}
+		completion_reward = { }
+	}
+
+	focus = { #尝试观测神明
+		id = MAG_AN_csgcsm
+		icon = GFX_focus_TUR_the_sun_language_theory
+		cost = 15
+		relative_position_id = MAG_AN_mzygbjs
+		x = -1
+		y = 9
+		prerequisite = {
+			focus = MAG_AN_gczsj
+		}
+		prerequisite = {
+			focus = MAG_AN_ddccxxqz
+		}
+		completion_reward = { }
+	}
+
+		
+ ##########################################################	
+	focus = { #一切为了圆神
+		id = MAG_AR_yqwlys
+		icon = GFX_goal_generic_attack_allies
+		cost = 4
+		relative_position_id = MAG_AN_zzhda
+		x = 6
+		y = 1
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AN_zzhda
+		}
+		mutually_exclusive = { 
+			focus = MAG_AN_mzygbjs
+		}
+		available = { #国策可点的条件
+			custom_trigger_tooltip = {
+				tooltip = ARyqwlys
+				has_country_flag = ARyqwlys
+			}
+		}
+		select_effect = {
+			country_event = { 
+				id = MAG_A.17
+				days = 1
+			}
+		}
+		completion_reward = {
+			country_event = { 
+				id = MAG_A.19
+				days = 1
+			}
+			remove_power_balance = {
+				id = MAG_AN_BOP_dyhzldxycd
+			}
+			if = {
+				limit = {
+					has_idea = industrial_priority
+				}
+				swap_ideas = {
+					remove_idea = industrial_priority
+					add_idea = mana_priority
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_STABILITY }
+		search_filters = { FOCUS_FILTER_ARMY_XP } #陆军经验
+		search_filters = { FOCUS_FILTER_NAVY_XP } #海军经验
+		search_filters = { FOCUS_FILTER_AIR_XP } #空军经验
+	}
+
+	focus = { #一意孤行者的末路
+		id = MAG_AR_yygxzdml
+		icon = GFX_focus_CZE_german_puppet
+		cost = 2
+		relative_position_id = MAG_AR_yqwlys
+		x = 0
+		y = 1
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_yqwlys
+		}
+		completion_reward = { 
+			country_event = { 
+				id = MAG_A.20
+				days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #卷土重来的失败者
+		id = MAG_AR_jtcldsbz
+		icon = GFX_focus_CZE_german_puppet
+		cost = 2
+		relative_position_id = MAG_AR_yqwlys
+		x = 0
+		y = 2
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_yygxzdml
+		}
+		completion_reward = { 
+			country_event = { 
+				id = MAG_A.21
+				days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #与你在此重逢
+		id = MAG_AR_ynzccf
+		icon = GFX_focus_spr_torchbearers_of_tomorrow
+		cost = 1
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 1
+		ai_will_do = { factor = 90 }
+		prerequisite = {
+			focus = MAG_AR_jtcldsbz
+		}
+		mutually_exclusive = { 
+			focus = MAG_AQ_qbcsjsz
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ARynzccf
+				NOT = {
+					has_country_flag = ARynzccf
+				}
+			}
+		}
+		completion_reward = { 
+			country_event = {
+				id = MAG_A.31
+				#days = 1
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						is_ai = yes
+					}
+					country_lock_all_division_template = yes #锁定所有编制
+					division_template = {
+						name = "步兵师72"
+						priority = 1
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 0 y = 3 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							artillery_brigade = { x = 2 y = 0 }
+							artillery_brigade = { x = 2 y = 1 }
+						}
+						support = {
+							engineer= { x = 0 y = 0 }
+							mot_recon = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+						}
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "步兵师72"
+					}
+					clear_division_template_cap = { 
+						division_template = "步兵师72"
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "步兵师2型"
+					}
+					clear_division_template_cap = { 
+						division_template = "步兵师2型"
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "卫戍师"
+					}
+					clear_division_template_cap = { 
+						division_template = "卫戍师"
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "骑兵师2型"
+					}
+					clear_division_template_cap = { 
+						division_template = "骑兵师2型"
+					}
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #再次编织的麻花辫
+		id = MAG_AR_zcbzdmhb
+		icon = GFX_MAG_A_xiaomeiyan3
+		cost = 1
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 2
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_ynzccf
+		}
+		completion_reward = { 
+			country_event = {
+				id = MAG_A.32
+				#days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #最虔诚的亵渎者
+		id = MAG_AR_zqcdxdz
+		icon = GFX_goal_generic_attack_allies
+		cost = 1
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 3
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_zcbzdmhb
+		}
+		completion_reward = { 
+			country_event = {
+				id = MAG_A.33
+				#days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #恶魔的诞生
+		id = MAG_AR_emdds
+		icon = GFX_MAG_A_xiaomeiyan1
+		cost = 1
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 4
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_zqcdxdz
+		}
+		completion_reward = { 
+			country_event = {
+				id = MAG_A.35
+				#days = 1
+			}
+			remove_ideas = MAG_AA_yhzl1
+			add_stability = 0.1
+			set_politics = { 
+				ruling_party = reactionism
+			}
+			add_popularity = {
+				ideology = reactionism
+				popularity = 0.2
+			}
+			add_ideas = closed_economy
+			if = {
+				limit = {
+					has_war = no
+				}
+				add_ideas = partial_economic_mobilisation
+			}
+			set_rule = { can_not_declare_war = yes }
+			custom_effect_tooltip = MAG_AR_emdds_tooltip
+			hidden_effect = {
+				set_cosmetic_tag = MAG_reactionism
+				retire_character = MAG_xiaomeiyan #删除晓美焰
+				add_field_marshal_role = {
+					character = MAG_emoxiaomeiyan
+					traits = {
+						aggressive_assaulter #凌厉的进攻者
+						trait_SOV_determined #坚决
+						adaptable #强于适应
+						bingjiao #病娇
+					}
+			   		skill = 6
+					attack_skill = 6
+			    	defense_skill = 6
+			    	planning_skill = 3
+			    	logistics_skill = 4
+				}
+				add_advisor_role = {
+					character = MAG_lumuyuan2
+					activate = yes
+					advisor = {
+						slot = political_advisor
+						idea_token = MAG_lumuyuan2
+						cost = 100
+						traits = { MAG_TR_yintingzhixin }
+						cost = 150
+						ai_will_do = { factor = 10 }
+					}
+				}
+				add_corps_commander_role = {
+					Character = MAG_lumuyuan2
+					traits = {
+						infantry_officer #步兵军官
+						yuanqi #元气
+					}
+					skill = 4
+					attack_skill = 4
+					defense_skill = 5
+					planning_skill = 4
+					logistics_skill = 3
+				}
+				add_victory_points = {
+					province = 12726
+					value = 10
+				}
+				swap_ideas = {
+					remove_idea = MAG_AA_zhujiaoyihui
+					add_idea = MAG_AR_lumuyuan
+				}
+				if = {
+					limit = {
+						is_ai = yes
+					}
+					add_stability = 0.1
+					add_war_support = 0.1
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL } #政治
+		search_filters = { FOCUS_FILTER_RESEARCH } #科研
+		search_filters = { FOCUS_FILTER_INDUSTRY } #工业
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT } #战争支持度
+		search_filters = { FOCUS_FILTER_MANPOWER } #人力
+	}
+
+	focus = { #恶魔的国度
+		id = MAG_AR_emdgd
+		icon = GFX_goal_generic_attack_allies
+		cost = 5
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 5
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_emdds
+		}
+		completion_reward = {
+			add_political_power = 50
+			add_stability = 0.1
+			every_army_leader = {
+				add_attack = 1		
+			}
+			every_other_country = {
+				country_event = {
+				    id = MAG_A.37
+				    days = 1
+				}
+			}
+			set_rule = { can_create_factions = no }
+			set_rule = { can_guarantee_other_ideologies = no }
+			set_rule = { can_join_factions = no }
+			set_rule = { can_send_volunteers = no }
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #伪街的孩子
+		id = MAG_AR_wjdhz
+		icon = GFX_focus_generic_annex_country
+		cost = 15
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -5
+		y = 6
+		ai_will_do = { factor = 40 }
+		prerequisite = {
+			focus = MAG_AR_emdgd
+		}
+		available = {
+			has_tech = mana_infantry_weapons_0_tech
+			has_tech = magic_shield_0
+			has_tech = magic_armor_piercing_equipment_1
+			has_tech = tech_engineers
+			has_tech = tech_recon
+			has_tech = tech_logistics_company
+			has_tech = tech_signal_company
+		}
+		completion_reward = {
+			custom_effect_tooltip = MAG_AR_wjdhz_tooltip
+			add_political_power = 100
+			hidden_effect = {
+				load_oob = "MAG_AR_wjdhz" #载入军队文件
+				set_division_template_lock = {
+					division_template = "使魔"
+					is_locked = yes
+				}
+				set_division_force_allow_recruiting = {
+					division_template = "使魔"
+				}
+				clear_division_template_cap = { 
+					division_template = "使魔"
+				}
+				if = {
+					limit = {
+						is_ai = yes
+					}
+					division_template = {
+						name = "步兵师1052"
+						priority = 2
+						regiments = {
+							infantry = { x = 0 y = 0 }
+							infantry = { x = 0 y = 1 }
+							infantry = { x = 0 y = 2 }
+							infantry = { x = 0 y = 3 }
+							infantry = { x = 0 y = 4 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							infantry = { x = 1 y = 2 }
+							infantry = { x = 1 y = 3 }
+							infantry = { x = 1 y = 4 }
+							infantry = { x = 2 y = 0 }
+							infantry = { x = 2 y = 1 }
+							infantry = { x = 2 y = 2 }
+							infantry = { x = 2 y = 3 }
+							infantry = { x = 2 y = 4 }
+							artillery_brigade = { x = 3 y = 0 }
+							artillery_brigade = { x = 3 y = 1 }
+							artillery_brigade = { x = 3 y = 2 }
+							artillery_brigade = { x = 3 y = 3 }
+							artillery_brigade = { x = 3 y = 4 }
+							Heavy_Magic_Guide_Battle_Battalion = { x = 4 y = 0 }
+							Heavy_Magic_Guide_Battle_Battalion = { x = 4 y = 1 }
+						}
+						support = {
+							engineer= { x = 0 y = 0 }
+							mot_recon = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+							logistics_company = { x = 0 y = 3 }
+							signal_company = { x = 0 y = 4 }
+						}
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "步兵师1052"
+					}
+					clear_division_template_cap = { 
+						division_template = "步兵师1052"
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "此岸魔女的手下"
+					}
+					clear_division_template_cap = { 
+						division_template = "此岸魔女的手下"
+					}
+					set_division_force_allow_recruiting = {
+						division_template = "胡桃夹子魔女的手下"
+					}
+					clear_division_template_cap = { 
+						division_template = "胡桃夹子魔女的手下"
+					}
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER }
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+	}
+
+	focus = { #疯魔的女王
+		id = MAG_AR_fmdnw
+		icon = GFX_focus_spr_crush_the_revolution
+		cost = 15
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 6
+		ai_will_do = { factor = 20 }
+		prerequisite = {
+			focus = MAG_AR_emdgd
+		}
+		completion_reward = {
+			air_experience = 50
+			navy_experience = 50
+			558 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			454 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			510 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			492 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			509 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			519 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			547 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			555 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #蜥蜴女孩的故事
+		id = MAG_AR_xynhdgs
+		icon = GFX_goal_tfv_generic_tech_sharing
+		cost = 15
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -1
+		y = 6
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = MAG_AR_emdgd
+		}
+		completion_reward = { 
+			add_research_slot = 1
+			#set_technology = { mana_infantry_weapons_0_tech = 1 }
+			#set_technology = { magic_shield_0 = 1 }
+			#set_technology = { magic_armor_piercing_equipment_1 = 1 }
+			build_railway = {
+				level = 3
+				path = { 12726 12706 5051 8671 12620 1699 329 44 12593 12586 7760 1752 }
+			}
+			build_railway = {
+				level = 3
+				path = { 1332 12806 12777 4472 12688 3039 6115 12593 }
+			}
+			build_railway = {
+				level = 3
+				path = { 1332 6485 4423 777 4757 4193 7878 1752 }
+			}
+			build_railway = {
+				level = 3
+				path = { 1332 637 6938 12825 3159 12805 7423 8075 12706 12726 }
+			}
+			478 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			521 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			492 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_tech_bonus = {
+				bonus = 1
+				ahead_reduction = 1
+				uses = 1
+				category = infantry_weapons
+			}
+			add_tech_bonus = {
+				bonus = 1
+				ahead_reduction = 1
+				uses = 1
+				category = cat_mana_infantry
+			}
+			add_tech_bonus = {
+				bonus = 1
+				ahead_reduction = 1
+				uses = 1
+				category = medium_air
+			}
+			add_tech_bonus = {
+				bonus = 1
+				ahead_reduction = 1
+				uses = 1
+				category = cas_bomber
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						is_ai = yes
+					}
+					set_technology = { mana_infantry_weapons_0_tech = 1 }
+					set_technology = { magic_shield_0 = 1 }
+					set_technology = { magic_armor_piercing_equipment_1 = 1 }
+					set_technology = { tech_engineers = 1 }
+					set_technology = { tech_recon = 1 }
+					set_technology = { tech_logistics_company = 1 }
+					set_technology = { tech_signal_company = 1 }
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_RESEARCH }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #黑暗降临
+		id = MAG_AR_hajl
+		icon = GFX_focus_ITA_moschettieri_del_duce
+		cost = 20
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 7
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = MAG_AR_wjdhz
+		}
+		prerequisite = {
+			focus = MAG_AR_fmdnw
+		}
+		prerequisite = {
+			focus = MAG_AR_xynhdgs
+		}
+		completion_reward = {
+			add_political_power = 150
+			unlock_decision_category_tooltip = MAG_AR_DE_ysjdzz
+			add_ideas = service_by_requirement #all_adults_serve
+			add_ideas = tot_economic_mobilisation
+			add_offsite_building = { type = industrial_complex level = 4 }
+			add_offsite_building = { type = arms_factory level = 8 }
+			set_rule = { can_not_declare_war = no }
+			#custom_effect_tooltip = MAG_AR_hajl_tooltip
+			declare_war_on = { 
+				target = BOW
+				type = annex_everything 
+			}
+			declare_war_on = {
+				target = TAU
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = KIV
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = LAD
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = PCC
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = NEV
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = LZH
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = YUZ
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = OCO
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = FGT
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = ASR
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = LAC
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = GLA
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = MLS
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = TSK
+				type = annex_everything
+			}
+			news_event = {
+				id = MAG_A.38
+			}
+			hidden_effect = {
+				#every_country = {
+				#	limit = { 
+				#		NOT = {
+				#			tag = ROOT
+				#		}
+				#	}
+				#	ROOT = { 
+				#		create_wargoal = {
+				#			target = PREV
+				#			type = annex_everything 
+				#		}
+				#	}
+				#}
+				add_state_claim = 426
+				add_state_claim = 442
+				add_state_claim = 413
+				add_state_claim = 396
+				add_state_claim = 405
+				add_state_claim = 389
+				add_state_claim = 392
+				add_state_claim = 394
+				add_state_claim = 409
+				add_state_claim = 390
+				add_state_claim = 347
+				add_state_claim = 313
+				add_state_claim = 322
+				add_state_claim = 351
+				add_state_claim = 366
+				add_state_claim = 365
+				add_state_claim = 346
+				add_state_claim = 339
+				add_state_claim = 336
+				add_state_claim = 340
+				add_state_claim = 348
+				add_state_claim = 359
+				add_state_claim = 368
+				add_state_claim = 371
+				
+				add_state_claim = 418
+				add_state_claim = 391
+				add_state_claim = 414
+				add_state_claim = 427
+					
+				add_state_claim = 275
+				add_state_claim = 714
+				add_state_claim = 288
+				add_state_claim = 715
+				add_state_claim = 678
+				add_state_claim = 679
+				add_state_claim = 716
+				add_state_claim = 680
+				add_state_claim = 312
+				add_state_claim = 713
+				add_state_claim = 681
+				add_state_claim = 295
+			
+				add_state_claim = 338
+				add_state_claim = 353
+				add_state_claim = 361
+				add_state_claim = 384
+				add_state_claim = 385
+			
+				add_state_claim = 428
+				add_state_claim = 429
+				add_state_claim = 458
+				add_state_claim = 669
+				add_state_claim = 670
+				add_state_claim = 466
+				add_state_claim = 457
+				add_state_claim = 474
+				add_state_claim = 463
+				add_state_claim = 508
+				add_state_claim = 517
+				add_state_claim = 493
+				add_state_claim = 502
+				add_state_claim = 506
+			
+				add_state_claim = 318
+				add_state_claim = 319
+				add_state_claim = 343
+				add_state_claim = 344
+				add_state_claim = 345
+				add_state_claim = 349
+				add_state_claim = 358
+				add_state_claim = 374
+				add_state_claim = 362
+				add_state_claim = 363
+				add_state_claim = 364
+				add_state_claim = 386
+				add_state_claim = 387
+				add_state_claim = 399
+				add_state_claim = 400
+				add_state_claim = 401
+				add_state_claim = 402
+				add_state_claim = 417
+				add_state_claim = 419
+				add_state_claim = 420
+				add_state_claim = 421
+				add_state_claim = 422
+				add_state_claim = 423
+				add_state_claim = 424
+			
+				add_state_claim = 307
+				add_state_claim = 305
+				add_state_claim = 324
+				add_state_claim = 325
+				add_state_claim = 326
+				add_state_claim = 328
+				add_state_claim = 341
+				add_state_claim = 342
+			
+				add_state_claim = 441
+				add_state_claim = 444
+				add_state_claim = 430
+				add_state_claim = 447
+			
+				add_state_claim = 507
+				add_state_claim = 523
+				add_state_claim = 527
+				add_state_claim = 545
+				add_state_claim = 546
+				add_state_claim = 549
+				add_state_claim = 563
+				add_state_claim = 571
+			
+				add_state_claim = 528
+				add_state_claim = 535
+				add_state_claim = 536
+			
+				add_state_claim = 572
+				add_state_claim = 577
+				add_state_claim = 600
+			
+				add_state_claim = 567
+				add_state_claim = 569
+				add_state_claim = 724
+				add_state_claim = 725
+			
+				add_state_claim = 471
+				add_state_claim = 461
+				add_state_claim = 503
+				add_state_claim = 505
+				add_state_claim = 495
+				add_state_claim = 515
+				add_state_claim = 518
+				add_state_claim = 531
+				add_state_claim = 534
+			
+				add_state_claim = 559
+				add_state_claim = 568
+
+				add_state_claim = 583
+
+				add_state_claim = 591
+				add_state_claim = 607
+			}
+			mark_focus_tree_layout_dirty = yes #刷新国策树
+			#initial_show_position = { focus = MAG_AR_hajl } #点开国策树显示的位置
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+		search_filters = { FOCUS_FILTER_ANNEXATION }
+	}
+
+	focus = { #去他妈的的天理
+		id = MAG_AR_qtmdtl
+		icon = GFX_focus_CZE_german_puppet
+		cost = 12
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -6
+		y = 8
+		ai_will_do = { factor = 80 }
+		#allow_branch = { has_completed_focus = MAG_AR_hajl } #隐藏国策
+		prerequisite = {
+			focus = MAG_AR_hajl
+		}
+		available = {
+			has_government = reactionism
+		}
+		completion_reward = {
+			add_stability = 0.05
+			add_political_power = 50
+			add_ideas = MAG_AR_tlyrh
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER } #人力
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+	}
+
+	focus = { #强化陆地使魔
+		id = MAG_AR_qhldsm
+		icon = GFX_focus_CZE_german_puppet
+		cost = 11
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -4
+		y = 8
+		ai_will_do = { factor = 80 }
+		#allow_branch = { has_completed_focus = MAG_AR_hajl } #隐藏国策
+		prerequisite = {
+			focus = MAG_AR_hajl
+		}
+		available = {
+			has_government = reactionism
+		}
+		completion_reward = {
+			army_experience = 50 #陆军经验
+			add_ideas = MAG_AR_smjd
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER } #人力
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+	}
+
+	focus = { #培养渡海使魔
+		id = MAG_AR_pydhsm
+		icon = GFX_focus_CZE_german_puppet
+		cost = 10
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -2
+		y = 8
+		ai_will_do = { factor = 10 }
+		#allow_branch = { has_completed_focus = MAG_AR_hajl } #隐藏国策
+		prerequisite = {
+			focus = MAG_AR_hajl
+		}
+		available = {
+			has_government = reactionism
+		}
+		completion_reward = {
+			navy_experience = 50 #海军经验
+			add_ideas = MAG_AR_dhsm
+		}
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+	}
+
+	focus = { #培养空天使魔
+		id = MAG_AR_pyktsm
+		icon = GFX_focus_CZE_german_puppet
+		cost = 10
+		relative_position_id = MAG_AR_jtcldsbz
+		x = 0
+		y = 8
+		ai_will_do = { factor = 30 }
+		#allow_branch = { has_completed_focus = MAG_AR_hajl } #隐藏国策
+		prerequisite = {
+			focus = MAG_AR_hajl
+		}
+		available = {
+			has_government = reactionism
+		}
+		completion_reward = {
+			air_experience = 50 #空军经验
+			add_ideas = MAG_AR_ktsm
+		}
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+	}
+
+	focus = { #IRIS世界的灾难
+		id = MAG_AR_IRISsjdzn
+		icon = GFX_focus_ITA_moschettieri_del_duce
+		cost = 15
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 9
+		ai_will_do = { factor = 50 }
+		available_if_capitulated = no #投降后是否能点
+		prerequisite = {
+			focus = MAG_AR_qtmdtl
+		}
+		prerequisite = {
+			focus = MAG_AR_qhldsm
+		}
+		prerequisite = {
+			focus = MAG_AR_pydhsm
+		}
+		prerequisite = {
+			focus = MAG_AR_pyktsm
+		}
+		available = {
+			has_war = no
+			has_government = reactionism
+		}
+		completion_reward = { 
+			custom_effect_tooltip = MAG_AR_hajl_tooltip
+			add_stability = 0.15
+			add_war_support = 0.15
+			add_political_power = 200
+			army_experience = 50 #陆军经验
+			navy_experience = 100 #海军经验
+			air_experience = 100 #空军经验
+			#every_other_country = {
+			#	country_event = {
+			#	    id = MAG_A.38
+			#	    days = 1
+			#	}
+			#}
+			hidden_effect = {
+				every_country = {
+					limit = { 
+						NOT = {
+							tag = ROOT
+						}
+					}
+					ROOT = { 
+						create_wargoal = {
+							target = PREV
+							type = annex_everything 
+						}
+					}
+				}
+				MAG = {
+					ai_strategy = {
+						type = consider_weak #AI认为一个国家更弱，减少对宣战的犹豫或降低结盟的可能性
+						id = every_country
+						value = 75
+					}
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_ANNEXATION } #领土扩张
+		search_filters = { FOCUS_FILTER_ARMY_XP } #陆军经验
+		search_filters = { FOCUS_FILTER_NAVY_XP } #海军经验
+		search_filters = { FOCUS_FILTER_AIR_XP } #空军经验
+	}
+
+	focus = { #死亡与毁灭（吃吃吃吃吃吃吃
+		id = MAG_AR
+		icon = GFX_focus_ITA_moschettieri_del_duce
+		cost = 10
+		relative_position_id = MAG_AR_jtcldsbz
+		x = -3
+		y = 10
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				has_manpower < 100000
+				add = 50
+			}
+			modifier = {
+				surrender_progress > 0.69
+				add = 50
+			}
+		}
+		prerequisite = {
+			focus = MAG_AR_IRISsjdzn
+		}
+		available = {
+			has_government = reactionism
+		}
+		completion_reward = {
+			add_ideas = MAG_AR_swyhm
+		}
+		search_filters = { FOCUS_FILTER_MANPOWER } #人力
+		search_filters = { FOCUS_FILTER_STABILITY } #稳定度
+	}
+
+ #########################################################
+	focus = { #丘比才是救世主
+		id = MAG_AQ_qbcsjsz
+		icon = GFX_focus_CZE_german_puppet
+		cost = 2
+		relative_position_id = MAG_AR_jtcldsbz
+		x = 3
+		y = 1
+		prerequisite = {
+			focus = MAG_AR_jtcldsbz
+		}
+		mutually_exclusive = { 
+			focus = MAG_AR_ynzccf
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = AQqbcsjsz
+				has_country_flag = AQqbcsjsz
+			}
+		}
+		completion_reward = { 
+			add_ideas = MAG_yuweipaizuigaohuiyi
+			country_event = { 
+				id = MAG_A.29
+				days = 1
+			}
+			add_trait = {
+				character = MAG_qiubi
+				slot = political_advisor
+				trait = MAG_TR_anyuxianzhuangzhe
+			}
+			add_field_marshal_role= {
+				Character = MAG_qiubi
+				traits = {
+					brilliant_strategist #天才战略家
+					skilled_staffer #熟练参谋
+					organizer #组织者
+				}
+				skill = 3
+				attack_skill = 1
+				defense_skill = 4
+				planning_skill = 4
+				logistics_skill = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #预防博闻的进攻
+		id = MAG_AQ_yfbwdjg
+		icon = GFX_goal_generic_construct_military
+		cost = 5
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 2
+		y = 1
+		prerequisite = {
+			focus = MAG_AQ_qbcsjsz
+		}
+		completion_reward = {
+			add_war_support = 0.1
+			454 = {
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 769
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 1046
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 3003
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 12503
+				}
+			}
+			456 = {
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 12521
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 3420
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 3407
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_WAR_SUPPORT }
+	}
+
+	focus = { #对圆环之理教会的处罚
+		id = MAG_AQ_dyhzljhdcf
+		icon = GFX_focus_CZE_german_puppet
+		cost = 5
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = -1
+		y = 1
+		prerequisite = {
+			focus = MAG_AQ_qbcsjsz
+		}
+		completion_reward = { 
+			add_political_power = -50
+			add_stability = 0.1
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.1
+			}
+			add_popularity = {
+				ideology = democratic
+				popularity = -0.1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #重建国内工业
+		id = MAG_AQ_cjgngy
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 10
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 3
+		y = 2
+		prerequisite = {
+			focus = MAG_AQ_yfbwdjg
+		}
+		completion_reward = {
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			510 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			454 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			521 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #加强军备建设
+		id = MAG_AQ_jqjbjs
+		icon = GFX_goal_generic_construct_mil_factory
+		cost = 10
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 1
+		y = 2
+		prerequisite = {
+			focus = MAG_AQ_yfbwdjg
+		}
+		completion_reward = { 
+			521 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			497 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			509 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+			547 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = arms_factory
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #对魔法少女的解释
+		id = MAG_AQ_dmfsndjs
+		icon = GFX_focus_CZE_german_puppet
+		cost = 5
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = -1
+		y = 2
+		prerequisite = {
+			focus = MAG_AQ_dyhzljhdcf
+		}
+		completion_reward = { 
+			country_event = { 
+				id = MAG_A.30
+				days = 1
+			}
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+		search_filters = { FOCUS_FILTER_STABILITY }
+	}
+
+	focus = { #鼓励国内工业
+		id = MAG_AQ_glgngy
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 10
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 3
+		y = 3
+		prerequisite = {
+			focus = MAG_AQ_cjgngy
+		}
+		completion_reward = { 
+			456 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			491 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			514 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			555 = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #永不停歇的国防建设
+		id = MAG_AQ_ybtxdgfjs
+		icon = GFX_goal_generic_construct_mil_factory
+		cost = 10
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 1
+		y = 3
+		prerequisite = {
+			focus = MAG_AQ_jqjbjs
+		}
+		completion_reward = { 
+			add_ideas = MAG_AQ_ybtxdgfjs
+			454 = {
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 769
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 1046
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 3003
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 12503
+				}
+			}
+			456 = {
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 12521
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 3420
+				}
+				add_building_construction = {
+					type = bunker
+					level = 1
+					instant_build = yes 
+					province = 3407
+				}
+			}
+		}
+		search_filters = { FOCUS_FILTER_INDUSTRY }
+	}
+
+	focus = { #为了宇宙的延续
+		id = MAG_AQ_wlyzdyx
+		icon = GFX_focus_CZE_german_puppet
+		cost = 5
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = -1
+		y = 3
+		prerequisite = {
+			focus = MAG_AQ_dmfsndjs
+		}
+		completion_reward = { }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #我们屹立于此
+		id = MAG_AQ_wmylyc
+		icon = GFX_focus_CZE_german_puppet
+		cost = 5
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 2
+		y = 4
+		prerequisite = {
+			focus = MAG_AQ_glgngy
+		}
+		prerequisite = {
+			focus = MAG_AQ_ybtxdgfjs
+		}
+		completion_reward = { }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #为了我们的未来
+		id = MAG_AQ_wlwmdwl
+		icon = GFX_focus_CZE_german_puppet
+		cost = 5
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = -1
+		y = 4
+		prerequisite = {
+			focus = MAG_AQ_wlyzdyx
+		}
+		completion_reward = { }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #永不倒下！
+		id = MAG_AQ_ybdx
+		icon = GFX_focus_CZE_german_puppet
+		cost = 10
+		relative_position_id = MAG_AQ_qbcsjsz
+		x = 0
+		y = 5
+		prerequisite = {
+			focus = MAG_AQ_wmylyc
+		}
+		prerequisite = {
+			focus = MAG_AQ_wlwmdwl
+		}
+		completion_reward = { }
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+
+ #########################################################
+	focus = { #三位少女的愿望
+		id = MAG_BB_swsndyw
+		icon = GFX_goal_generic_demand_territory
+		cost = 5
+		x = 48
+		y = 0
+		ai_will_do = { factor = 0 }
+		mutually_exclusive = {
+			focus = MAG_AA_zcdjs
+		}
+		completion_reward = {
+			add_political_power = 50
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.05
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = 0.05
+			}
+			add_ideas = MAG_BB_smsndhh
+		}
+		search_filters = { FOCUS_FILTER_POLITICAL }
+	}
+
+	focus = { #玛吉斯之翼的建立
+		id = MAG_BB_mjszydjl
+		icon =  GFX_goal_generic_demand_territory
+		cost = 5
+		relative_position_id = MAG_BB_swsndyw
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_BB_swsndyw
+		}
+		completion_reward = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.1
+			}
+			add_ideas = MAG_BB_mjszydxq
+		}
+	}
+
+	focus = { #魔法少女的现世
+		id = MAG_BB_mfsndxs
+		icon = GFX_goal_generic_demand_territory
+		cost = 5
+		relative_position_id = MAG_BB_mjszydjl
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_BB_mjszydjl
+		}
+		completion_reward = {
+			country_event = {
+				id = MAG_B.7
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = -0.1
+			}
+		}
+	}
+
+ ##########################################################
+	focus = { #解放不可阻挡
+		id = MAG_BF_jfbkzd
+		icon = GFX_goal_support_fascism
+		cost = 10
+		relative_position_id = MAG_BB_mfsndxs
+		x = -8
+		y = 1
+		ai_will_do = { factor = 20 }
+		prerequisite = {
+			focus = MAG_BB_mfsndxs
+		}
+		mutually_exclusive = {
+			focus = MAG_BC_sryzdjt
+		}
+		completion_reward = {
+			add_popularity = {
+				ideology = fascism
+				popularity = 0.1
+			}
+			swap_ideas = {
+			    remove_idea = MAG_BB_mjszydxq
+			    add_idea = MAG_BF_mjszydxq
+			}
+		}
+	}
+
+	focus = { #为了解放
+		id = MAG_BF_wljf
+		icon = GFX_focus_spr_masters_of_our_own_fate
+		cost = 10
+		relative_position_id = MAG_BF_jfbkzd
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_BF_jfbkzd
+		}
+		completion_reward = {
+			custom_effect_tooltip = MAG_BF_wljf_tooltip
+			country_event = {
+				id = MAG_B.11
+			}
+			every_possible_country = { #转移将领
+				limit = { has_character = MAG_bamamei }
+				random_character = {
+					limit = { is_character = MAG_bamamei }
+					set_nationality = MJS
+				}
+			}
+			every_possible_country = {
+				limit = { has_character = MAG_zimeidong }
+				random_character = {
+					limit = { is_character = MAG_zimeidong }
+					set_nationality = MJS
+				}
+			}
+			every_possible_country = {
+				limit = { has_character = MAG_heijiang }
+				random_character = {
+					limit = { is_character = MAG_heijiang }
+					set_nationality = MJS
+				}
+			}
+			every_possible_country = {
+				limit = { has_character = MAG_tianyinyuexiao }
+				random_character = {
+					limit = { is_character = MAG_tianyinyuexiao }
+					set_nationality = MJS
+				}
+			}
+			every_possible_country = {
+				limit = { has_character = MAG_tianyinyueye }
+				random_character = {
+					limit = { is_character = MAG_tianyinyueye }
+					set_nationality = MJS
+				}
+			}
+			every_possible_country = {
+				limit = { has_character = MAG_youbihenai }
+				random_character = {
+					limit = { is_character = MAG_youbihenai }
+					set_nationality = MJS
+				}
+			}
+			hidden_effect = {
+				news_event = {
+					id = MAG_B.10
+					days = 1
+				}
+				add_popularity = {
+					ideology = fascism
+					popularity = -1
+				}
+				add_victory_points = {
+					province = 3524
+					value = 20
+				}
+				remove_ideas = MAG_BB_smsndhh
+				remove_ideas = MAG_BF_mjszydxq
+				MJS = {
+					transfer_state = 492 #要成为拥有者和控制者的省份代码
+					transfer_state = 491
+					transfer_state = 497
+					transfer_state = 499
+					transfer_state = 514
+					transfer_state = 521
+					add_state_core = 454 #添加核心地区
+					add_state_core = 456
+					add_state_core = 478
+					add_state_core = 492
+					add_state_core = 491
+					add_state_core = 558
+					add_state_core = 526
+					add_state_core = 553
+					add_state_core = 510
+					add_state_core = 509
+					add_state_core = 519
+					add_state_core = 521
+					add_state_core = 497
+					add_state_core = 547
+					add_state_core = 555
+					add_state_core = 499
+					add_state_core = 514
+					add_state_core = 548
+					declare_war_on = { target = MAG type = annex_everything } #宣战
+					inherit_technology = MAG #复制科技
+					add_political_power = 93
+					division_template = {
+						name = "白羽"
+						priority = 2
+						regiments = { 
+							Arcane_Battle_Camp = { x = 0 y = 0 }
+							Arcane_Battle_Camp = { x = 0 y = 1 }
+							Arcane_Battle_Camp = { x = 0 y = 2 }
+							Arcane_Battle_Camp = { x = 0 y = 3 }
+							Arcane_Battle_Camp = { x = 1 y = 0 }
+							Arcane_Battle_Camp = { x = 1 y = 1 }
+							Arcane_Battle_Camp = { x = 1 y = 2 }
+							Arcane_Battle_Camp = { x = 1 y = 3 }
+							Magic_Breakthrough_Camp = { x = 2 y = 0 }
+							Magic_Breakthrough_Camp = { x = 2 y = 1 }
+							artillery_brigade = { x = 3 y = 0 }
+						}
+						support = {
+							engineer = { x = 0 y = 0 }
+							mot_recon = { x = 0 y = 1 }
+							artillery = { x = 0 y = 2 }
+						}
+					}
+					division_template = {
+						name = "黑羽"
+						regiments = { 
+							Arcane_Battle_Camp = { x = 0 y = 0 }
+							Arcane_Battle_Camp = { x = 0 y = 1 }
+							Arcane_Battle_Camp = { x = 0 y = 2 }
+							Arcane_Battle_Camp = { x = 0 y = 3 }
+							infantry = { x = 1 y = 0 }
+							infantry = { x = 1 y = 1 }
+							artillery_brigade = { x = 2 y = 0 }
+						}
+						support = {
+							engineer = { x = 0 y = 0 }
+						}
+					}
+					every_controlled_state = {
+						limit = {
+							is_owned_by = MJS
+						}
+						#create_unit = {
+						#	division = "name = \"白羽精锐师\" division_template = \"白羽\" start_experience_factor = 0.8 start_equipment_factor = 1 "
+						#	owner = MJS
+						#}
+						create_unit = {
+							division = "name = \"白羽第一师\" division_template = \"白羽\" start_experience_factor = 0.7 start_equipment_factor = 0.9 "
+							owner = MJS
+						}
+						create_unit = {
+							division = "name = \"白羽第二师\" division_template = \"白羽\" start_experience_factor = 0.6 start_equipment_factor = 0.9 "
+							owner = MJS
+						}
+						create_unit = {
+							division = "name = \"黑羽精锐师\" division_template = \"黑羽\" start_experience_factor = 0.7 start_equipment_factor = 1 "
+							owner = MJS
+						}
+						create_unit = {
+							division = "name = \"黑羽第一师\" division_template = \"黑羽\" start_experience_factor = 0.6 start_equipment_factor = 1 "
+							owner = MJS
+						}
+						create_unit = {
+							division = "name = \"黑羽第二师\" division_template = \"黑羽\" start_experience_factor = 0.6 start_equipment_factor = 0.9 "
+							owner = MJS
+						}
+						create_unit = {
+							division = "name = \"黑羽第三师\" division_template = \"黑羽\" start_experience_factor = 0.6 start_equipment_factor = 0.9 "
+							owner = MJS
+						}
+					}
+					change_tag_from = MAG #玩家跳转到玛吉斯之翼
+					add_civil_war_target = MAG
+				}
+				#transfer_units_fraction= { #将一小部分军队转移到目标
+				#	target = MJS
+				#	size = 0
+				#	stockpile_ratio = 0.5 #库存
+				#	army_ratio = 0.5
+				#	navy_ratio = 0.3
+				#	air_ratio = 0.3
+				#}
+				MAG = {
+					declare_war_on = { target = MJS type = annex_everything }
+					add_civil_war_target = MJS
+					#retire_character = MAG_lijiandenghua
+					remove_trait = {
+						character = MAG_lijiandenghua
+						slot = political_advisor
+						trait = MAG_TR_jijindedaxiaojie
+					}
+				}
+				load_focus_tree = BZ_focus
+			}
+		}
+	}
+
+ ##########################################################
+	focus = { #三日月庄的巨头
+		id = MAG_BC_sryzdjt
+		icon = GFX_goal_support_communism
+		cost = 5
+		relative_position_id = MAG_BB_mfsndxs
+		x = 8
+		y = 1
+		ai_will_do = { factor = 0 }
+		prerequisite = {
+			focus = MAG_BB_mfsndxs
+		}
+		mutually_exclusive = {
+			focus = MAG_BF_jfbkzd
+		}
+		completion_reward = { }
+	}
+
+	focus = { #神滨的联合
+		id = MAG_BC_sbdlh
+		icon = GFX_focus_spr_masters_of_our_own_fate
+		cost = 10
+		relative_position_id = MAG_BC_sryzdjt
+		x = 0
+		y = 1
+		allow_branch = { has_completed_focus = MAG_BC_sryzdjt } ###
+		prerequisite = {
+			focus = MAG_BC_sryzdjt
+		}
+		completion_reward = {
+			hidden_effect = {
+			}
+		}
+	}
+
+	focus = { #理智尚存者的反击
+		id = MAG_BC_lzsczdfj
+		icon = GFX_focus_spr_masters_of_our_own_fate
+		cost = 1
+		relative_position_id = MAG_BC_sbdlh
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_BC_sbdlh
+		}
+		completion_reward = { }
+	}
+
+	focus = { #为了共同的理想
+		id = MAG_BC_wlgtdlx
+		icon = GFX_goal_support_communism
+		cost = 5
+		relative_position_id = MAG_BC_lzsczdfj
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_BC_lzsczdfj
+		}
+		completion_reward = { }
+	}
+
+	focus = { #破界行动
+		id = MAG_BC_pjxd
+		icon = GFX_goal_generic_military_deal
+		cost = 4
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 1
+		prerequisite = {
+			focus = MAG_BC_wlgtdlx
+		}
+		completion_reward = { }
+	}
+
+	focus = { #反玛吉斯的宣传
+		id = MAG_BC_fmjsdxc
+		icon = GFX_focus_generic_anti_fascist_diplomacy
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 0
+		y = 1
+		prerequisite = {
+			focus = MAG_BC_wlgtdlx
+		}
+		completion_reward = { }
+	}
+
+	focus = { #魔法少女也是人类
+		id = MAG_BC_mfsnysrl
+		icon = GFX_focus_generic_court
+		cost = 6
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 3
+		y = 1
+		prerequisite = {
+			focus = MAG_BC_wlgtdlx
+		}
+		completion_reward = { }
+	}
+
+	focus = { #夺取净化装置
+		id = MAG_BC_dqjhzz
+		icon = GFX_goal_generic_military_deal
+		cost = 3
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 2
+		prerequisite = {
+			focus = MAG_BC_pjxd
+		}
+		completion_reward = { }
+	}
+
+	focus = { #我们众志成城
+		id = MAG_BC_wmzzcc
+		icon = GFX_focus_ITA_corpo_volontari_della_liberta
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 0
+		y = 2
+		prerequisite = {
+			focus = MAG_BC_fmjsdxc
+		}
+		completion_reward = { }
+	}
+
+	focus = { #我们人人平等
+		id = MAG_BC_wmrrpd
+		icon = GFX_focus_generic_court
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 3
+		y = 2
+		prerequisite = {
+			focus = MAG_BC_mfsnysrl
+		}
+		completion_reward = { }
+	}
+
+	focus = { #真相大白
+		id = MAG_BC_zxdb
+		icon = GFX_goal_generic_military_deal
+		cost = 2
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 3
+		prerequisite = {
+			focus = MAG_BC_dqjhzz
+		}
+		completion_reward = { }
+	}
+
+	focus = { #魔法少女与共产主义
+		id = MAG_BC_mfsnygczy
+		icon = GFX_goal_support_communism
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 3
+		y = 3
+		prerequisite = {
+			focus = MAG_BC_wmrrpd
+		}
+		prerequisite = {
+			focus = MAG_BC_wmzzcc
+		}
+		completion_reward = { }
+	}
+
+	focus = { #属于我们的胜利
+		id = MAG_BC_sywmdsl
+		icon = GFX_goal_support_communism
+		cost = 1
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 4
+		prerequisite = {
+			focus = MAG_BC_zxdb
+		}
+		prerequisite = {
+			focus = MAG_BC_mfsnygczy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #人民的慈母
+		id = MAG_BC_rmdcm
+		icon = GFX_goal_tfv_burn_the_royal_portraits
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 3
+		y = 4
+		prerequisite = {
+			focus = MAG_BC_zxdb
+		}
+		prerequisite = {
+			focus = MAG_BC_mfsnygczy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #加强人民军队
+		id = MAG_BC_jqrmjd
+		icon = GFX_goal_generic_political_pressure
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -5
+		y = 5
+		prerequisite = {
+			focus = MAG_BC_sywmdsl
+		}
+		completion_reward = { }
+	}
+
+	focus = { #科学是第一生产力
+		id = MAG_BC_kxsdyscl
+		icon = GFX_goal_generic_soviet_construction
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 5
+		prerequisite = {
+			focus = MAG_BC_sywmdsl
+		}
+		completion_reward = { }
+	}
+
+	focus = { #重建我们的家园
+		id = MAG_BC_cjwmdjy
+		icon = GFX_goal_generic_construct_infrastructure
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -1
+		y = 5
+		prerequisite = {
+			focus = MAG_BC_sywmdsl
+		}
+		completion_reward = { }
+	}
+
+	focus = { #人民就是一切
+		id = MAG_BC_rmjsyq
+		icon = GFX_goal_support_communism
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 2
+		y = 5
+		prerequisite = {
+			focus = MAG_BC_rmdcm
+		}
+		completion_reward = { }
+	}
+
+	focus = { #共产主义宣传
+		id = MAG_BC_gczyxc
+		icon = GFX_focus_por_workers_of_iberia
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 4
+		y = 5
+		prerequisite = {
+			focus = MAG_BC_rmdcm
+		}
+		completion_reward = { }
+	}
+
+	focus = { #重视军事研究
+		id = MAG_BC_zsjsyj
+		icon = GFX_focus_generic_combined_arms
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -7
+		y = 6
+		prerequisite = {
+			focus = MAG_BC_jqrmjd
+		}
+		completion_reward = { }
+	}
+
+	focus = { #准魔法少女计划
+		id = MAG_BC_zmfsnjh
+		icon = GFX_focus_generic_manpower
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -5
+		y = 6
+		prerequisite = {
+			focus = MAG_BC_jqrmjd
+		}
+		completion_reward = { }
+	}
+
+	focus = { #人民科技大学
+		id = MAG_BC_rmkjdx
+		icon = GFX_focus_research
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 6
+		prerequisite = {
+			focus = MAG_BC_kxsdyscl
+		}
+		completion_reward = { }
+	}
+
+	focus = { #国防重于一切
+		id = MAG_BC_gfzyyq
+		icon = GFX_goal_generic_construct_mil_factory
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -1
+		y = 6
+		prerequisite = {
+			focus = MAG_BC_cjwmdjy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #魔法少女的家园
+		id = MAG_BC_mfsndjy
+		icon = GFX_goal_support_communism
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 2
+		y = 6
+		prerequisite = {
+			focus = MAG_BC_rmjsyq
+		}
+		completion_reward = { }
+	}
+
+	focus = { #寻找共产主义同志
+		id = MAG_BC_xzgczytz
+		icon = GFX_focus_por_workers_of_iberia
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 4
+		y = 6
+		prerequisite = {
+			focus = MAG_BC_gczyxc
+		}
+		completion_reward = { }
+	}
+
+	focus = { #重视火炮科技
+		id = MAG_BC_zshpkj
+		icon = GFX_goal_generic_army_artillery2
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -9
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_zsjsyj
+		}
+		completion_reward = { }
+	}
+
+	focus = { #重视装甲科技
+		id = MAG_BC_zszjkj
+		icon = GFX_goal_generic_army_tanks
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -7
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_zsjsyj
+		}
+		completion_reward = { }
+	}
+
+	focus = { #魔法少女与军队
+		id = MAG_BC_mfsnyjd
+		icon = GFX_goal_generic_allies_build_infantry
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -5
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_zmfsnjh
+		}
+		completion_reward = { }
+	}
+
+	focus = { #用科学解释魔法
+		id = MAG_BC_ykxjsmf
+		icon = GFX_goal_tfv_generic_tech_sharing
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_rmkjdx
+		}
+		completion_reward = { }
+	}
+
+	focus = { #人民的幸福生活
+		id = MAG_BC_rmdxfsh
+		icon = GFX_goal_generic_construct_civ_factory
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -1
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_gfzyyq
+		}
+		completion_reward = { }
+	}
+
+	focus = { #被压榨的魔法少女
+		id = MAG_BC_byzdmfsn
+		icon = GFX_focus_generic_annex_country
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 2
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_mfsndjy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #被压榨的无产阶级
+		id = MAG_BC_byzdwcjj
+		icon = GFX_focus_generic_annex_country
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 4
+		y = 7
+		prerequisite = {
+			focus = MAG_BC_xzgczytz
+		}
+		completion_reward = { }
+	}
+
+	focus = { #炮火洗地战术
+		id = MAG_BC_phxdzs
+		icon = GFX_goal_generic_army_artillery2
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -9
+		y = 8
+		prerequisite = {
+			focus = MAG_BC_zshpkj
+		}
+		completion_reward = { }
+	}
+
+	focus = { #装甲洪流战术
+		id = MAG_BC_zjhlzs
+		icon = GFX_goal_generic_army_tanks
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -7
+		y = 8
+		prerequisite = {
+			focus = MAG_BC_zszjkj
+		}
+		completion_reward = { }
+	}
+
+	focus = { #新式军队
+		id = MAG_BC_xsjd
+		icon = GFX_focus_SOV_support_spanish_poum
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -5
+		y = 8
+		prerequisite = {
+			focus = MAG_BC_mfsnyjd
+		}
+		prerequisite = {
+			focus = MAG_BC_ykxjsmf
+		}
+		completion_reward = { }
+	}
+
+	focus = { #我们的科研蒸蒸日上
+		id = MAG_BC_wmdkyzzrs
+		icon = GFX_focus_research2
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 8
+		prerequisite = {
+			focus = MAG_BC_ykxjsmf
+		}
+		completion_reward = { }
+	}
+
+	focus = { #我们的国家欣欣向荣
+		id = MAG_BC_wmdgjxxxr
+		icon = GFX_focus_SOV_the_supreme_soviet
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -1
+		y = 8
+		prerequisite = {
+			focus = MAG_BC_rmdxfsh
+		}
+		completion_reward = { }
+	}
+
+	focus = { #不能只是看着
+		id = MAG_BC_bnzskz
+		icon = GFX_focus_SOV_the_last_purge
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 3
+		y = 8
+		prerequisite = {
+			focus = MAG_BC_byzdmfsn
+		}
+		prerequisite = {
+			focus = MAG_BC_byzdwcjj
+		}
+		completion_reward = { }
+	}
+
+	focus = { #推广净化装置的保障
+		id = MAG_BC_tgjhzzdbz
+		icon = GFX_focus_SOV_builder_of_the_red_army
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -6
+		y = 9
+		prerequisite = {
+			focus = MAG_BC_phxdzs
+			focus = MAG_BC_zjhlzs
+		}
+		prerequisite = {
+			focus = MAG_BC_xsjd
+		}
+		prerequisite = {
+			focus = MAG_BC_wmdkyzzrs
+		}
+		completion_reward = { }
+	}
+
+	focus = { #给每个人希望的心愿
+		id = MAG_BC_gmgrxwdxy
+		icon = GFX_focus_SOV_proclaim_soviet_hegemony
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 1
+		y = 9
+		prerequisite = {
+			focus = MAG_BC_wmdgjxxxr
+		}
+		prerequisite = {
+			focus = MAG_BC_bnzskz
+		}
+		completion_reward = { }
+	}
+
+	focus = { #为了未来奋战当下
+		id = MAG_BC_wlwlfzdx
+		icon = GFX_focus_spr_torchbearers_of_tomorrow
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -6
+		y = 10
+		prerequisite = {
+			focus = MAG_BC_tgjhzzdbz
+		}
+		prerequisite = {
+			focus = MAG_BC_gmgrxwdxy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #联合志同道合者
+		id = MAG_BC_lhztdhz
+		icon = GFX_focus_SOV_mobilization_plan
+		cost = 5
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 10
+		prerequisite = {
+			focus = MAG_BC_tgjhzzdbz
+		}
+		prerequisite = {
+			focus = MAG_BC_gmgrxwdxy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #从邻国开始
+		id = MAG_BC_clgks
+		icon = GFX_goal_generic_major_war
+		cost = 1
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 0
+		y = 10
+		prerequisite = {
+			focus = MAG_BC_tgjhzzdbz
+		}
+		prerequisite = {
+			focus = MAG_BC_gmgrxwdxy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #散播革命的火种
+		id = MAG_BC_sbgmdhz
+		icon = GFX_focus_por_workers_of_iberia
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 3
+		y = 10
+		prerequisite = {
+			focus = MAG_BC_tgjhzzdbz
+		}
+		prerequisite = {
+			focus = MAG_BC_gmgrxwdxy
+		}
+		completion_reward = { }
+	}
+
+	focus = { #黎明之前最是黑暗
+		id = MAG_BC_lmzqzsha
+		icon = GFX_focus_spr_torchbearers_of_tomorrow
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -6
+		y = 11
+		prerequisite = {
+			focus = MAG_BC_wlwlfzdx
+		}
+		completion_reward = { }
+	}
+
+	focus = { #解放腐朽的世界
+		id = MAG_BC_jffxdsj
+		icon = GFX_focus_ger_great_red_menace
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -3
+		y = 11
+		prerequisite = {
+			focus = MAG_BC_lhztdhz
+		}
+		prerequisite = {
+			focus = MAG_BC_clgks
+		}
+		completion_reward = { }
+	}
+
+	focus = { #共产主义骑士
+		id = MAG_BC_gczyqs
+		icon = GFX_focus_SOV_mobilization_plan
+		cost = 10
+		relative_position_id = MAG_BC_wlgtdlx
+		x = 0
+		y = 11
+		prerequisite = {
+			focus = MAG_BC_lhztdhz
+		}
+		prerequisite = {
+			focus = MAG_BC_clgks
+		}
+		completion_reward = { }
+	}
+
+	focus = { #世界之外的援助
+		id = MAG_BC_sjzwdyz
+		icon = GFX_focus_generic_catholic_dominion
+		cost = 2
+		relative_position_id = MAG_BC_wlgtdlx
+		x = -6
+		y = 12
+		prerequisite = {
+			focus = MAG_BC_lmzqzsha
+		}
+		completion_reward = { }
+	}
+
+}
