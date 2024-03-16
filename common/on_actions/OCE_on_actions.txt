@@ -7,12 +7,6 @@ on_actions = {
                 add_offsite_building = { type = industrial_complex level = 4 }
                 add_offsite_building = { type = dockyard level = 5 }
             }
-            OCE = {
-                every_state = {
-			        limit = { is_core_of = DOC }
-			        add_state_claim = PREV
-		        }
-            }
             every_country = {
                 #动态战争修正
                 #p社沙比，运算只可以一个一个算，还计算报错
@@ -267,6 +261,101 @@ on_actions = {
 					    }
                     }
                     OCF = { annex_country = { target = OCE transfer_troops = no } }
+                }
+            }
+            if = {
+                limit = { OCE = { surrender_progress > 0.5 NOT = { has_war_with = OCF has_war_with = EIA has_war_with = INP } has_civil_war = no OR = { has_government = neutrality has_government = fascism has_government = reactionism } } }
+                OCE = {
+                    if = {
+                        limit = { has_government = neutrality }
+                        set_politics = { ruling_party = fascism }
+                    }
+                    set_party_name = {
+                        ideology = communism
+                        long_name = OCE_Abolish_political_parties
+                        name = OCE_Abolish_political_parties
+                    }
+                    set_party_name = {
+                        ideology = democratic
+                        long_name = OCE_Abolish_political_parties
+                        name = OCE_Abolish_political_parties
+                    }
+                    OCE_Heaven = { remove_unit_leader_role = yes }
+				    remove_advisor_role = {
+					    character = OCE_Heaven
+  					    slot = high_command
+				    }
+				    remove_country_leader_role = {
+    				    character = OCE_Heaven
+    				    ideology = sub_Social_Democracy
+				    }
+                    OCE_Oktyabrina = { remove_unit_leader_role = yes }
+				    remove_advisor_role = {
+					    character = OCE_Oktyabrina
+  					    slot = air_chief
+				    }
+				    remove_country_leader_role = {
+    				    character = OCE_Oktyabrina
+    				    ideology = sub_Left_Wing_Communism
+					}
+	                start_civil_war = {
+		                ideology = neutrality
+		                size = 0.5
+		                army_ratio = 0.4
+		                navy_ratio = 0
+		                air_ratio = 0.3
+		                states_filter = {
+		                	is_owned_by = OCE
+		                }
+                        retire_country_leader = yes
+		                create_country_leader = {
+        	                name = OCE_junta_government
+			                picture = "gfx/leaders/OCE/OCE_junta.dds"
+        	                ideology = sub_Junta
+                            traits={ OCE_junta_traits }
+		                }
+                        create_country_leader = {
+        	                name = OCE_Heaven
+			                picture = "gfx/leaders/OCE/Heaven.dds"
+        	                ideology = sub_Social_Democracy
+                            traits={ OCF_military }
+		                }
+                        create_country_leader = {
+        	                name = OCE_Oktyabrina
+			                picture = "gfx/leaders/OCE/Oktyabrina.dds"
+        	                ideology = sub_Left_Wing_Communism
+                            traits={ OCF_military }
+		                }
+                        set_party_name = {
+                            ideology = neutrality
+                            long_name = OCE_democratic_junta_party_long
+                            name = OCE_democratic_junta_party
+                        }
+                        set_party_name = {
+                            ideology = communism
+                            long_name = OCE_communism_party_long
+                            name = OCE_communism_party
+                        }
+                        set_party_name = {
+                            ideology = democratic
+                            long_name = OCE_democratic_party_long
+                            name = OCE_democratic_party
+                        }
+                        set_party_name = {
+                        ideology = fascism
+                            long_name = OCE_Abolish_political_parties
+                            name = OCE_Abolish_political_parties
+                        }
+                        set_party_name = {
+                            ideology = reactionism
+                            long_name = OCE_Abolish_political_parties
+                            name = OCE_Abolish_political_parties
+                        }
+		                keep_political_leader = false 
+		                keep_political_party_members = false 
+		                inherit_technology = OCE
+                        set_cosmetic_tag = OCE_junta
+                    }
                 }
             }
         }
