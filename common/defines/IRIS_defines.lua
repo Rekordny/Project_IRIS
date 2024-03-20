@@ -27,4 +27,3 @@ NDefines.NAI.STR_UNIT_WEAK = 0.4 --0.45												-- Strength (equipment) % for
 
 NDefines.NAI.PLAN_AVG_PREPARATION_TO_EXECUTE = 0.5				            -- % or more average plan preparation before executing
 NDefines.NAI.AI_FRONT_MOVEMENT_FACTOR_FOR_READY = 0.5			                -- If less than this fraction of units on a front is moving  AI sees it as ready for action
-
