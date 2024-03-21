@@ -28,11 +28,12 @@ focus_tree = {
 		completion_reward = {
 			add_political_power = 100
 			retire_country_leader = yes
-			retire_character = USR_yiliyasifeier
+			retire_character = USR_Yiliyasifeier
 			news_event = { id = usr_news.6 }
 			682 = { set_demilitarized_zone = yes }
 			hidden_effect = {
 				country_event = { id = usr.30 days = 1 }
+				set_cosmetic_tag = USR_MINNA_MODEL
 			}
 		}
 	}
@@ -209,7 +210,16 @@ focus_tree = {
 		relative_position_id = USR_establish_counter_intelligence_committee
 		prerequisite = { focus = USR_establish_counter_intelligence_committee }
 		ai_will_do = {
-			base = 20
+			base = 0
+			modifier = {
+				add = 10
+				ANZ = { has_civil_war = yes }
+			}
+			modifier = {
+				add = 10
+				ANZ = { exists = yes }
+				date > 3093.1.1
+			}
 		}
 		available = {
 			NOT = { has_war_with = ANZ }
@@ -316,7 +326,7 @@ focus_tree = {
 			modifier = {
 				has_government = fascism
 				ANZ = { has_government = fascism }
-				add = 30
+				add = 10
 			}
 			modifier = {
 				has_civil_war = yes
@@ -365,13 +375,46 @@ focus_tree = {
 				date > 3093.6.30
 				add = 10
 			}
+			modifier = {
+				STG = {
+					has_idea = STG_neurtrality_act
+				}
+				factor = 0
+			}
 		}
 		available = {
 			has_government = fascism
 			NOT = { has_war_with = STG }
+			NOT = { 
+				STG = {
+					has_government = communism 
+				}
+			}
 		}
 		completion_reward = {
 			country_event = { id = usr.28 }
+			if = {
+				limit = {
+					STG = {
+						has_country_leader = {
+							character = STG_ilya
+						}
+					}
+				}
+				custom_effect_tooltip = USR_our_senshado_tt_ilya
+			}
+			else_if = {
+				limit = {
+					STG = {
+						NOT = {
+							has_completed_focus = STG_com_1
+							has_completed_focus = STG_grey_1
+							has_completed_focus = STG_dar_1
+						}
+					}
+				}
+				custom_effect_tooltip = USR_our_senshado_tt
+			}
 		}
 	}
 	#于黑暗中前进
@@ -432,7 +475,7 @@ focus_tree = {
 		icon = GFX_focus_USR_meet_the_war_hero
 		x = 0
 		y = 1
-		cost = 10
+		cost = 8
 		relative_position_id = USR_writing_social_democratic_editorials
 		prerequisite = { focus = USR_writing_social_democratic_editorials }
 		#mutually_exclusive = { focus =  }
@@ -603,61 +646,7 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			155 = {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-					}
-				}
-			}
-			174= {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-					}
-				}
-			}
-			177= {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-					}
-				}
-			}
-			160= {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-					}
-				}
-			}
-			149= {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-					}
-				}
-			}
-			761= {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
-					}
-				}
-			}
-			764= {
+			every_controlled_state = {
 				if = { 
 					limit = { infrastructure < 5 } 
 					add_building_construction = {
@@ -759,13 +748,65 @@ focus_tree = {
 			}
 		}
 	}
+
+	#私有化优先
+	focus = {
+		id = USR_privatization_priority
+		icon = GFX_focus_USR_privatization_priority
+		x = -1
+		y = 1
+		cost = 5
+		relative_position_id = USR_centralized_control_of_industry
+		prerequisite = { focus = USR_centralized_control_of_industry focus = USR_marketizing_industry }
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			unlock_decision_tooltip = USR_privatize_welfare
+			unlock_decision_tooltip = USR_protect_national_industries
+			unlock_decision_tooltip = USR_transfer_heavy_industry
+			unlock_decision_tooltip = USR_alcohol_and_tobacco_certification
+			unlock_decision_tooltip = USR_finalize_privatization
+			clear_variable = usr_privatization_progress
+			set_variable = {
+				usr_privatization_progress = 0
+			}
+		}
+	}
+
+	#集体专业化
+	focus = {
+		id = USR_collective_specialization_sets
+		icon = GFX_focus_USR_collective_specialization_sets
+		x = 0
+		y = 1
+		cost = 10
+		relative_position_id = USR_privatization_priority
+		prerequisite = { focus = USR_privatization_priority }
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			add_ideas = USR_collective_specialization_sets
+		}
+	}
+
+	
+	
+	
 	#黑森峰科研中心
 	focus = {
 		id = USR_kuromorinmine_research_department
 		icon = GFX_focus_USR_kuromorinmine_research_department
 		x = 2
 		y = 1
-		cost = 10
+		cost = 5
 		relative_position_id = USR_invest_tank_factory
 		prerequisite = { focus = USR_invest_tank_factory }
 		#mutually_exclusive = { focus =  }
@@ -805,7 +846,7 @@ focus_tree = {
 		icon = GFX_focus_USR_ensecure_fuel_supply
 		x = 1
 		y = 1
-		cost = 10
+		cost = 8
 		relative_position_id = USR_kuromorinmine_research_department
 		prerequisite = { focus = USR_kuromorinmine_research_department }
 		#mutually_exclusive = { focus =  }
@@ -844,7 +885,10 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			add_ideas = USR_rekindling_indstrial_passion
+			add_timed_idea = {
+				idea = USR_rekindling_indstrial_passion
+				days = 1095
+			}
 		}
 	}
 	#帝国的工业遗产
@@ -874,6 +918,7 @@ focus_tree = {
 		completion_reward = {
 			country_event = { id = usr.13 }
 			activate_mission_tooltip = USR_mission_aftermath
+			unlock_decision_tooltip = USR_reindustrialization_of_military
 			hidden_effect = {
 				if = {
 					limit = { is_ai = yes }
@@ -916,6 +961,7 @@ focus_tree = {
 			
 		}
 		completion_reward = {
+			
 			add_doctrine_cost_reduction = {
 				cost_reduction = 0.75
 				uses = 3
@@ -1045,6 +1091,57 @@ focus_tree = {
 			}
 		}
 	}
+	#精益求精
+	focus = {
+		id = USR_constantly_improving
+		icon = GFX_focus_USR_constantly_improving
+		x = -1
+		y = 1
+		cost = 8
+		relative_position_id = USR_new_artillery
+		prerequisite = { focus = USR_new_artillery focus = USR_upgrade_panzer }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 7
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			add_ideas = USR_constantly_improving
+		}
+	}
+	#民族与意志的里程碑
+	focus = {
+		id = USR_milestone_of_nation_and_will
+		icon = GFX_focus_USR_milestone_of_nation_and_will
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_constantly_improving
+		prerequisite = { focus = USR_constantly_improving }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_completed_focus = USR_miho_return
+				add = 3
+			}
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			country_event = { id = usr.65 }
+			add_ideas = USR_volkshalle_in_construction
+		}
+	}
 	#纽伦堡名歌手作战
 	focus = {
 		id = USR_nurembery_initiative
@@ -1101,6 +1198,103 @@ focus_tree = {
 			}
 		}
 	}
+
+	#超然屹立
+	focus = {
+		id = USR_eminent_country
+		icon = GFX_focus_USR_eminent_country
+		x = 2
+		y = 1
+		cost = 5
+		relative_position_id = USR_defeat_manasim
+		prerequisite = { focus = USR_defeat_manasim }
+		prerequisite = { focus = USR_milestone_of_nation_and_will }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_completed_focus = USR_miho_return
+				add = 10
+			}
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			unlock_decision_tooltip = USR_hispania_merge
+			unlock_decision_tooltip = USR_mondstadt_merge
+			unlock_decision_tooltip = USR_galia_merge
+			unlock_decision_tooltip = USR_sck_merge
+			unlock_decision_tooltip = USR_panuslarism
+		}
+	}
+
+
+	#团结，正义与自由的胜利
+	focus = {
+		id = USR_triumph_of_solidarity_justice_and_freedom
+		icon = GFX_focus_USR_triumph_of_solidarity_justice_and_freedom
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_eminent_country
+		prerequisite = { focus = USR_eminent_country }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_completed_focus = USR_miho_return
+				add = 10
+			}
+		}
+		available = {
+			custom_trigger_tooltip = {
+				has_cosmetic_tag = USR_NISHIZUMI_MODEL
+				tooltip = USR_tooltip47
+			}
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = USR_the_new_born_empire
+				add_idea = USR_triumph_of_solidarity_justice_and_freedom
+			}
+		}
+	}
+
+	# #迈向欧罗巴的未来
+	# focus = {
+	# 	id = USR_towards_the_future_of_europa
+	# 	icon = GFX_focus_USR_eminent_country
+	# 	x = 0
+	# 	y = 1
+	# 	cost = 5
+	# 	relative_position_id = USR_triumph_of_solidarity_justice_and_freedom
+	# 	prerequisite = { focus = USR_triumph_of_solidarity_justice_and_freedom }
+	# 	#mutually_exclusive = { focus =  }
+	# 	ai_will_do = {
+	# 		base = 0
+	# 		modifier = {
+	# 			has_completed_focus = USR_miho_return
+	# 			add = 10
+	# 		}
+	# 	}
+	# 	available = {
+			
+	# 	}
+	# 	bypass = {
+			
+	# 	}
+	# 	completion_reward = {
+			
+	# 	}
+	# }
+	
 	
 
 	#502空军俱乐部
@@ -1134,6 +1328,9 @@ focus_tree = {
 		completion_reward = {
 			custom_effect_tooltip = invites_mio_tt
 			show_mio_tooltip = SCK_502_mio
+			mio:SCK_502_mio = {
+				add_mio_funds = 2000
+			}
 		}
 	}
 	#召回海因里克亲王
@@ -1349,7 +1546,28 @@ focus_tree = {
 			has_government = fascism
 		}
 		completion_reward = {
+			USR_Maho = {
+				add_field_marshal_role = {
+					traits={ armor_officer panzer_leader war_hero brilliant_strategist }
+					skill=4
+					attack_skill=3
+					defense_skill=3
+					planning_skill=3
+					logistics_skill=3
+				}
+				add_advisor_role = {
+					advisor = {
+						slot = theorist
+						idea_token = USR_Maho
+						traits = { mobile_warfare_expert }
+						ai_will_do = {
+							base = 10
+						}
+					}
+				}
+			}
 			country_event = { id = usr.36 }
+			add_war_support = 0.1
 		}
 	}
 	#乌斯拉尔第三帝国
@@ -1374,6 +1592,39 @@ focus_tree = {
 		completion_reward = {
 			remove_ideas = USR_the_republic_congress
 			add_ideas = USR_the_new_born_empire
+		}
+	}
+
+	#热情洋溢的新乌斯拉尔人
+	focus = {
+		id = USR_enthusiastic_new_uslarian
+		icon = GFX_focus_USR_enthusiastic_new_uslarian
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_the_third_Reich
+		prerequisite = { focus = USR_the_third_Reich }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_completed_focus = USR_the_indstrial_heritage_of_the_empire
+				add = 3
+			}
+			modifier = {
+				has_idea = limited_conscription
+				has_manpower < 100000
+				add = 10
+			}
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			add_ideas = USR_enthusiastic_new_uslarian
 		}
 	}
 
@@ -1433,7 +1684,75 @@ focus_tree = {
 		}
 	}
 
-	
+	#下一代军备计划
+	focus = {
+		id = USR_next_gen_weapon_project
+		icon = GFX_focus_USR_next_gen_weapon_project
+		x = 0
+		y = 3
+		cost = 10
+		relative_position_id = USR_strengthen_military_production
+		prerequisite = { focus = USR_strengthen_military_production }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 5
+		}
+		available = {
+			has_tech = improved_computing_machine
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			set_technology = {
+				usr_tactical_humanoids_tech = 1
+			}
+			USR = {
+				if = {
+					limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 14 } } }
+					add_to_array = { USR.Stamp_ID_list = 14 }
+					USR_add_stamp_utility = yes
+				}
+			}
+			add_corps_commander_role = {
+				character = USR_UMP45
+				traits={ usr_ai }
+				skill=1
+				attack_skill=2
+				defense_skill=2
+				planning_skill=1
+				logistics_skill=1
+			}
+			add_corps_commander_role = {
+				character = USR_UMP9
+				traits={ usr_ai }
+				skill=1
+				attack_skill=2
+				defense_skill=1
+				planning_skill=2
+				logistics_skill=1
+			}
+			add_corps_commander_role = {
+				character = USR_HK416
+				traits={ usr_ai }
+				skill=1
+				attack_skill=1
+				defense_skill=2
+				planning_skill=2
+				logistics_skill=1
+			}
+			add_corps_commander_role = {
+				character = USR_G11
+				traits={ usr_ai }
+				skill=1
+				attack_skill=2
+				defense_skill=1
+				planning_skill=1
+				logistics_skill=2
+			}
+		}
+	}
+
 
 	#重拾黑森峰战术
 	focus = {
@@ -1446,7 +1765,7 @@ focus_tree = {
 		prerequisite = { focus = USR_meet_the_war_hero }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 5
+			base = 7
 			modifier = {
 				has_completed_focus = USR_the_third_Reich
 				add = 5
@@ -1481,6 +1800,36 @@ focus_tree = {
 				category = artillery
 				bonus = 1
 				uses = 1
+			}
+		}
+	}
+
+	#重规编制
+	focus = {
+		id = USR_reformulation
+		icon = GFX_focus_USR_reformulation
+		x = 1
+		y = 1
+		cost = 5
+		relative_position_id = USR_rediscover_kuromorimine_tactics
+		prerequisite = { focus = USR_rediscover_kuromorimine_tactics }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			add_ideas = USR_reformulation
+			hidden_effect = {
+				set_technology = {
+					usr_reformulation_tech = 1 
+					popup = no
+				}
 			}
 		}
 	}
@@ -1542,7 +1891,7 @@ focus_tree = {
 		icon = GFX_focus_USR_upgrade_torpedo
 		x = 0
 		y = 2
-		cost = 10
+		cost = 5
 		relative_position_id = USR_expand_dockyard
 		prerequisite = { focus = USR_expand_dockyard }
 		#mutually_exclusive = { focus =  }
@@ -1570,7 +1919,7 @@ focus_tree = {
 		completion_reward = {
 			add_tech_bonus = {
 				category = naval_equipment
-				uses = 3
+				uses = 2
 				bonus = 1
 			}
 		}
@@ -1815,7 +2164,7 @@ focus_tree = {
 		icon = GFX_focus_USR_second_gen_aircraft_project
 		x = 0
 		y = 1
-		cost = 10
+		cost = 5
 		relative_position_id = USR_karlsland_aviation_department
 		prerequisite = { focus = USR_karlsland_aviation_department }
 		#mutually_exclusive = { focus =  }
@@ -1843,7 +2192,7 @@ focus_tree = {
 		completion_reward = {
 			add_tech_bonus = {
 				category = air_equipment
-				uses = 3
+				uses = 2
 				bonus = 1
 			}
 		}
@@ -1855,7 +2204,7 @@ focus_tree = {
 		icon = GFX_focus_USR_upgrade_radar
 		x = 0
 		y = 3
-		cost = 10
+		cost = 5
 		relative_position_id = USR_second_gen_aircraft_project
 		prerequisite = { focus = USR_second_gen_aircraft_project }
 		#mutually_exclusive = { focus =  }
@@ -1882,7 +2231,7 @@ focus_tree = {
 		completion_reward = {
 			add_tech_bonus = {
 				category = electronics
-				uses = 3
+				uses = 2
 				bonus = 1
 			}
 		}
@@ -1971,7 +2320,7 @@ focus_tree = {
 		icon = GFX_focus_USR_build_senshado_school
 		x = -2
 		y = 1
-		cost = 10
+		cost = 8
 		relative_position_id = USR_rediscover_kuromorimine_tactics
 		prerequisite = { focus = USR_rediscover_kuromorimine_tactics }
 		prerequisite = { focus = USR_kuromorimine_industrial_department }
@@ -1999,8 +2348,67 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_ideas = USR_senshado_school
+			unlock_decision_tooltip = USR_general_promotion_project
 		}
 	}
+
+	#震慑攻势
+	focus = {
+		id = USR_the_offensive_of_deterrence
+		icon = GFX_focus_USR_the_offensive_of_deterrence
+		x = 1
+		y = 1
+		cost = 5
+		relative_position_id = USR_build_senshado_school
+		prerequisite = { focus = USR_build_senshado_school }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 5
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = USR_senshado_school
+				add_idea = USR_senshado_school_1
+			}
+			unlock_decision_tooltip = USR_tactic_research_1
+		}
+	}
+
+	#机动突破
+	focus = {
+		id = USR_maneuvering_breakthrough
+		icon = GFX_focus_USR_maneuvering_breakthrough
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_the_offensive_of_deterrence
+		prerequisite = { focus = USR_the_offensive_of_deterrence }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 5
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = USR_senshado_school_1
+				add_idea = USR_senshado_school_2
+			}
+			unlock_decision_tooltip = USR_tactic_research_2
+		}
+	}
+
+	
 
 	#战场生命线
 	focus = {
@@ -2008,7 +2416,7 @@ focus_tree = {
 		icon = GFX_focus_USR_battlefiled_lifeline
 		x = 0
 		y = 4
-		cost = 10
+		cost = 8
 		relative_position_id = USR_build_senshado_school
 		prerequisite = { focus = USR_build_senshado_school }
 		prerequisite = { focus = USR_ensecure_fuel_supply }
@@ -2028,6 +2436,36 @@ focus_tree = {
 		}
 	}
 
+	#研发车载补给
+	focus = {
+		id = USR_tank_crew_supply
+		icon = GFX_focus_USR_tank_crew_supply
+		x = -1
+		y = 1
+		cost = 8
+		relative_position_id = USR_battlefiled_lifeline
+		prerequisite = { focus = USR_battlefiled_lifeline }
+		#mutually_exclusive = { focus =  }
+		available = {
+			has_army_size = {
+				size > 23
+				type = armor
+			}
+		}
+		ai_will_do = {
+			base = 5
+		}
+		available = {
+			
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			add_ideas = USR_kuromorimine_beer
+		}
+	}
+
 	#真正的西住流
 	focus = {
 		id = USR_real_nishizumi_ryu
@@ -2039,8 +2477,16 @@ focus_tree = {
 		prerequisite = { focus = USR_battlefiled_lifeline }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 10
-			
+			base = 0
+			modifier = {
+				has_completed_focus = USR_befriend_ANZ
+				add = 10
+			}
+			modifier = {
+				date > 3093.1.1
+				ANZ = { exists = no }
+				add = 10
+			}
 		}
 		available = {
 			has_war = yes
@@ -2059,6 +2505,32 @@ focus_tree = {
 			hidden_effect = {
 				USR_refresh_faction_effect = yes
 			}
+		}
+	}
+
+	#迎回西住美穗
+	focus = {
+		id = USR_miho_return
+		icon = GFX_focus_USR_miho_return
+		x = 0
+		y = 1
+		cost = 5
+		relative_position_id = USR_real_nishizumi_ryu
+		prerequisite = { focus = USR_real_nishizumi_ryu }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 10
+			
+		}
+		available = {
+			
+		}
+		cancel_if_invalid = no
+		bypass = {
+			
+		}
+		completion_reward = {
+			country_event = usr.64
 		}
 	}
 
@@ -2159,12 +2631,12 @@ focus_tree = {
 	# focus = {
 	# 	id = USR_break_the_quo
 	# 	icon = GFX_focus_USR_break_the_quo
-	# 	x = 50
+	# 	x = 40
 	# 	y = 0
 	# 	mutually_exclusive = {
 	# 		focus = USR_perpetrate_a_fraud
 	# 	}
-	# 	cost = 5
+	# 	cost = 10
 	# 	ai_will_do = {
 	# 		base = 0
 	# 	}

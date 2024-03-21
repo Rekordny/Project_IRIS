@@ -11,7 +11,7 @@ USR_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = infantry
-		value = 66
+		value = 60
 	}
 
 	ai_strategy = {
@@ -23,7 +23,7 @@ USR_unit_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = armor
-		value = 6
+		value = 13
 	}
 
 	ai_strategy = {
@@ -188,6 +188,12 @@ USR_unit_production = {
 		id = heavy_fighter
 		value = 2
 	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = artillery_equipment
+		value = 5
+	}
 }
 
 
@@ -212,19 +218,22 @@ USR_prepare_for_get_into_clemen = {
 	}
 }
 
-USR_no_invade_until_europa_falls = {
+USR_no_invade_until_ELN_falls = {
 	allowed = {
 		original_tag = USR
 	}
 
 	enable = {
-		date < 3097.1.1
-		ELN = {
-			has_capitulated = no
-		}
+		has_war_with = ELN
 	}
 
 	abort_when_not_enabled = yes
+
+	abort = {
+		ELN = {
+			has_capitulated = yes
+		}
+	}
 
 	ai_strategy = {
 		type = invasion_unit_request
@@ -359,13 +368,13 @@ USR_highered_armored_production = {
 	ai_strategy = {
 		type = role_ratio
 		id = armor
-		value = 10
+		value = 16
 	}
 
 	ai_strategy = {
 		type = equipment_production_min_factories
 		id = medium_armor
-		value = 12
+		value = 20
 	}
 }
 
@@ -393,7 +402,7 @@ USR_dont_waste_xp_until_medium_armor = {
 	}
 }
 
-ANZ_ally = {
+ANZ_is_our_ally = {
 	allowed = {
 		original_tag = USR
 	}
@@ -434,34 +443,62 @@ USR_dont_upgrade_to_weapons_3_too_early = {
 	}
 }
 
-USR_europa_frontal_land_control = {
+
+USR_garrison_in_war_UNG = {
+	abort_when_not_enabled = yes
 	allowed = {
 		original_tag = USR
-		has_war_with = ELN
-		has_war_with = MDS
+		has_war_with = UNG
+	}
+	ai_strategy = {
+		type = garrison
+		value = 13
+	}
+}
+
+USR_spare_extra_industry_to_maintain_tanks = {
+	allowed = {
+		original_tag = USR
+	}
+	enable = {
+		num_of_military_factories > 79
 	}
 	abort_when_not_enabled = yes
 	ai_strategy = {
+		type = equipment_production_factor
+		id = medium_armor
+		value = 25
+	}
+}
+
+USR_no_bold_move_in_europa_war = {
+	allowed = {
+		original_tag = USR
+	}
+	enable = {
+		has_war_with = ELN
+		ELN = { surrender_progress > 0.7 }
+	}
+	abort_when_not_enabled = yes
+	abort = {
+		ELN = {
+			has_capitulated = yes
+		}
+	}
+	ai_strategy = {
 		type = front_control
-		tag = ELN
-		ratio = 0.7
+		state_trigger = {
+			CONTROLLER = {
+				is_in_faction_with = ELN
+			}
+		}
+		ratio = 0.1
+		priority = 3
 		ordertype = front
 		execution_type = careful
-		manual_attack = yes
+		manual_attack = no
 	}
-	ai_strategy = {
-		type = front_control
-		tag = MDS
-		ratio = 0.5
-		ordertype = front
-		execution_type = balanced
-		manual_attack = yes
-	}
-	ai_strategy = {
-		type = front_armor_score
-		id = MDS
-		value = -100
-	}
+
 	ai_strategy = {
 		type = front_armor_score
 		id = ELN
@@ -476,20 +513,61 @@ USR_europa_frontal_land_control = {
 		type = garrison
 		value = -15
 	}
-	ai_strategy = {
-		type = spare_unit_factor
-		value = -30
+}
+
+USR_enough_armored_car_we_dont_want_it = {
+	allowed = {
+		original_tag = USR
+	}
+	enable = {
+		has_equipment = {
+			armored_car_equipment > 1000
+		}
+	}
+	abort_when_not_enabled = yes
+	abort = {
+		has_equipment = {
+			armored_car_equipment < 300
+		}
+	}
+	ai_strategy = { 
+		type = equipment_production_factor
+		id = armored_car_equipment
+		value = -100
 	}
 }
 
-USR_garrison_in_war_UNG = {
-	abort_when_not_enabled = yes
+USR_want_to_expand_to_sea = {
 	allowed = {
 		original_tag = USR
-		has_war_with = UNG
+	}
+	enable = {
+		date > 3095.1.1
+		ELN = {
+			has_capitulated = yes
+		}
 	}
 	ai_strategy = {
-		type = garrison
-		value = 15
+		type = unit_ratio
+		id = capital_ship
+		value = 22
+	}
+
+	ai_strategy = {
+		type = unit_ratio
+		id = submarine
+		value = 47
+	}
+
+	ai_strategy = {
+		type = unit_ratio
+		id = screen_ship
+		value = 39
+	}
+
+	ai_strategy = {
+		type = invasion_unit_request
+		country_trigger = { always = yes }
+		value = 20
 	}
 }

@@ -128,25 +128,46 @@ country_event = {
 		}
 	}
 }
-#
-# country_event = {
-# 	id = usr.6
-# 	title = usr.6.t
-# 	desc = usr.6.desc
-# 	picture = GFX_USR_CE6
-# 	is_triggered_only = yes
-# 	fire_only_once = yes
-# 	option = {
-# 		name = usr.6.a
-		
-# 		hidden_effect = {
-			
-# 		}
-# 		ai_chance = {
-# 			factor = 10
-# 		}
-# 	}
-# }
+
+#哈特曼设计局按期完成科研任务
+country_event = {
+	id = usr.6
+	title = usr.6.t
+	desc = usr.6.desc
+	picture = GFX_USR_CE6
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.6.a
+		random_list = {
+			50 = {
+				add_tech_bonus = {
+					category = armor
+					uses = 1
+					bonus = 0.5
+					ahead_reduction = 0.5
+				}
+			}
+			50 = {
+				add_tech_bonus = {
+					category = artillery
+					uses = 1
+					bonus = 0.5
+					ahead_reduction = 0.5
+				}
+			}
+		}
+		hidden_effect = {
+			add_to_variable = {
+				USR.hartman_completed = 1
+			}
+		}
+		ai_chance = {
+			factor = 10
+		}
+	}
+}
+
 #科斯特拒绝加入
 country_event = {
 	id = usr.7
@@ -437,6 +458,10 @@ country_event = {
 		ai_chance = {
 			base = 10
 			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
+			modifier = {
 				arms_factory > 40
 				factor = 2
 			}
@@ -599,7 +624,17 @@ country_event = {
 				add_core_of = SCK
 			}
 		}
-		MDS = { country_event = { id = usr.23 } }
+		if = {
+			limit = {
+				MDS = { is_subject = yes }
+			}
+			MDS = {
+				overlord = { country_event = { id = usr.23 } }
+			}
+		}
+		else = {
+			MDS = { country_event = { id = usr.23 } }
+		}
 		ai_chance = {
 			factor = 10
 		}
@@ -623,12 +658,16 @@ country_event = {
 		add_stability = 0.1
 		ai_chance = {
 			factor = 20
+			modifier = {
+				MDS = { is_subject = yes }
+				factor = 0
+			}
 		}
 	}
 	option = {
 		#NO
 		name = usr.23.a
-		add_stability = -0.1
+		#add_stability = -0.1
 		# SCK = {
 		# 	create_wargoal = {
 		# 		target = MDS
@@ -695,9 +734,12 @@ country_event = {
 			base = 10
 			modifier = {
 				STG = { 
-					has_country_leader = {
-						character = STG_ilya
-					} 
+					OR = {
+						has_country_leader = {
+							character = STG_ilya
+						} 
+						has_idea = STG_neurtrality_act
+					}					
 				}
 				add = -10
 			}
@@ -710,8 +752,11 @@ country_event = {
 			base = 0
 			modifier = {
 				STG = { 
-					has_country_leader = {
-						character = STG_ilya
+					OR = {
+						has_country_leader = {
+							character = STG_ilya
+						} 
+						has_idea = STG_neurtrality_act
 					} 
 				}
 				add = 10
@@ -729,6 +774,13 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = usr.26.a
+		hidden_effect = { #能变成合作政府的前提
+			STG = {
+				set_variable = {
+					collaboration_formed_by = 1
+				}
+			}
+		}
 		set_autonomy = {
 			target = STG
 			autonomy_state = autonomy_collaboration_government
@@ -789,16 +841,30 @@ country_event = {
 		STG = { country_event = { id = usr.25 } }
 		ai_chance = {
 			base = 10
+			modifier = {
+				factor = 0
+				STG = { is_ai = no }
+			}
 		}
 	}
 	option = {
 		name = usr.28.b
 		STG = { country_event = { id = usr.42 } }
 		ai_chance = {
-			base = 10
+			base = 1 #10
 			modifier = {
-				factor = 0
-				STG = { has_country_flag = STG_debug_go_focus_ilya }
+				factor = 10
+				has_game_rule = {
+					rule = STG_ai_behavior
+					option = STG_darjeeling_route_TT
+				}
+			}
+			modifier = {
+				factor = 10
+				has_game_rule = {
+					rule = STG_ai_behavior
+					option = STG_grey_route_TT
+				}
 			}
 		}
 	}
@@ -1162,8 +1228,11 @@ country_event = {
 			modifier = {
 				factor = 0
 				STG = { 
-					has_country_leader = {
-						character = STG_ilya
+					OR = {
+						has_country_leader = {
+							character = STG_ilya
+						} 
+						has_idea = STG_neurtrality_act
 					} 
 				}
 			}
@@ -1177,8 +1246,11 @@ country_event = {
 			modifier = {
 				add = 10
 				STG = { 
-					has_country_leader = {
-						character = STG_ilya
+					OR = {
+						has_country_leader = {
+							character = STG_ilya
+						} 
+						has_idea = STG_neurtrality_act
 					} 
 				}
 			}
@@ -1199,6 +1271,7 @@ country_event = {
 		add_to_faction = STG
 		PREV = { add_war_support = 0.05 }
 		ROOT = { add_war_support = 0.05 }
+		add_ideas = USR_darjeelingfront
 		hidden_effect = {
 			news_event = { id = usr_news.8 }
 		}
@@ -1631,11 +1704,442 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = usr.63.a
+		hidden_effect = {
+			country_event = { id = usr.70 days = 10 }
+		}
+		
 		ai_chance = {
 			base = 10
 		}
 	}
 }
+#西住美穗回归乌斯拉尔
+country_event = {
+	id = usr.64
+	title = usr.64.t
+	desc = usr.64.desc
+	picture = GFX_USR_CE64
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.64.a
+		USR_Miho = {
+			add_field_marshal_role = {
+				traits={ armor_officer panzer_leader brilliant_strategist trickster adaptable }
+				skill=4
+				attack_skill=4
+				defense_skill=4
+				planning_skill=4
+				logistics_skill=4
+			}
+		}
+		retire_country_leader = yes
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#人民大厅工程开始施工
+country_event = {
+	id = usr.65
+	title = usr.65.t
+	desc = usr.65.desc
+	picture = GFX_USR_CE65
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.65.a
+		hidden_effect = {
+			country_event = { id = usr.66 days = 80 random_days = 10 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#人民大厅工程第一阶段总结
+country_event = {
+	id = usr.66
+	title = usr.66.t
+	desc = usr.66.desc
+	picture = GFX_USR_CE66
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.66.a
+		#加大投入
+		swap_ideas = {
+			remove_idea = USR_volkshalle_in_construction
+			add_idea = USR_volkshalle_in_construction_1
+		}
+		hidden_effect = {
+			country_event = { id = usr.67 days = 90 random_days = 10 }
+			country_event = { id = usr.69 days = 80 random_days = 50 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = usr.66.b
+		#保持投入
+		hidden_effect = {
+			country_event = { id = usr.67 days = 130 random_days = 40 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#人民大厅工程第二阶段总结
+country_event = {
+	id = usr.67
+	title = usr.67.t
+	desc = usr.67.desc
+	picture = GFX_USR_CE67
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.67.a
+		#加大投入
+		if = {
+			limit = { has_idea = USR_volkshalle_in_construction }
+			swap_ideas = {
+				remove_idea = USR_volkshalle_in_construction
+				add_idea = USR_volkshalle_in_construction_1
+			}
+		}
+		else = {
+			swap_ideas = {
+				remove_idea = USR_volkshalle_in_construction_1
+				add_idea = USR_volkshalle_in_construction_2
+			}
+		}
+		hidden_effect = {
+			country_event = { id = usr.68 days = 130 random_days = 10 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = usr.67.b
+		#保持投入
+		hidden_effect = {
+			country_event = { id = usr.67 days = 200 random_days = 10 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#人民大厅竣工！
+country_event = {
+	id = usr.68
+	title = usr.68.t
+	desc = usr.68.desc
+	picture = GFX_USR_CE68
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		news_event = { id = usr_news.11 }
+	}
+	option = {
+		name = usr.68.a
+		if = {
+			limit = { has_country_flag = USR_MILESTONE_MATERIAL_1 }
+			add_ideas = USR_milestone_of_nation_and_will_1
+			clr_country_flag = USR_MILESTONE_MATERIAL_1
+		}
+		else_if = {
+			limit = { has_country_flag = USR_MILESTONE_MATERIAL_2 }
+			add_ideas = USR_milestone_of_nation_and_will_2
+			clr_country_flag = USR_MILESTONE_MATERIAL_2
+		}
+		else_if = {
+			limit = { has_country_flag = USR_MILESTONE_MATERIAL_3 }
+			add_ideas = USR_milestone_of_nation_and_will_3
+			clr_country_flag = USR_MILESTONE_MATERIAL_3
+		}
+		if = {
+			limit = { has_idea = USR_volkshalle_in_construction }
+			remove_ideas = USR_volkshalle_in_construction
+		}
+		else_if = {
+			limit = { has_idea = USR_volkshalle_in_construction_1 }
+			remove_ideas = USR_volkshalle_in_construction_1
+		}
+		else_if = {
+			limit = { has_idea = USR_volkshalle_in_construction_2 }
+			remove_ideas = USR_volkshalle_in_construction_2
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#人民大厅的特殊材料选购
+country_event = {
+	id = usr.69
+	title = usr.69.t
+	desc = usr.69.desc
+	picture = GFX_USR_CE7
+	is_triggered_only = yes
+	fire_only_once = yes
+	
+	option = {
+		name = usr.69.a
+		set_country_flag = USR_MILESTONE_MATERIAL_1
+		ai_chance = {
+			base = 1
+			modifier = {
+				has_stability < 0.7
+				add = 20
+			}
+		}
+	}
+	option = {
+		name = usr.69.b
+		set_country_flag = USR_MILESTONE_MATERIAL_2
+		ai_chance = {
+			base = 1
+			modifier = {
+				has_war_support < 0.7
+				add = 20
+			}
+		}
+	}
+	option = {
+		name = usr.69.c
+		set_country_flag = USR_MILESTONE_MATERIAL_3
+		ai_chance = {
+			base = 1
+			modifier = {
+				has_stability > 0.83
+				add = 8
+			}
+			modifier = {
+				has_war_support > 0.83
+				add = 8
+			}
+		}
+	}
+}
+
+#一本沉甸甸的邮册
+country_event = {
+	id = usr.70
+	title = usr.70.t
+	desc = usr.70.desc
+	picture = GFX_USR_CE70
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		set_country_flag = USR_STAMP_ALBUM_VISIBLE
+	}
+	option = {
+		name = usr.70.a
+		custom_effect_tooltip = USR_tooltip35
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#《福利机构促进法》
+country_event = {
+	id = usr.71
+	title = usr.71.t
+	desc = usr.71.desc
+	picture = GFX_USR_CE71
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+	}
+	option = {
+		name = usr.71.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#《民族产业保护法》
+country_event = {
+	id = usr.72
+	title = usr.72.t
+	desc = usr.72.desc
+	picture = GFX_USR_CE71
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+	}
+	option = {
+		name = usr.72.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#《工会保障法》《国企出卖细则》
+country_event = {
+	id = usr.73
+	title = usr.73.t
+	desc = usr.73.desc
+	picture = GFX_USR_CE71
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+	}
+	option = {
+		name = usr.73.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#乌斯拉尔爱情故事-终
+country_event = {
+	id = usr.74
+	title = usr.74.t
+	desc = usr.74.desc
+	picture = GFX_USR_CE71
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+	}
+	option = {
+		name = usr.74.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#HK416事件串1
+country_event = {
+	id = usr.76
+	title = usr.76.t
+	desc = usr.76.desc
+	picture = GFX_USR_CE76
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		set_country_flag = USR_HK416_EVENTS_STARTED
+		hidden_effect = {
+			country_event = { id = usr.77 days = 365 }
+		}
+	}
+	option = {
+		name = usr.76.a
+		add_equipment_to_stockpile = {
+			type = neural_cloud_equipment_1
+			amount = 100
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#HK416事件串2
+country_event = {
+	id = usr.77
+	title = usr.77.t
+	desc = usr.77.desc
+	picture = GFX_USR_CE77
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			country_event = { id = usr.78 days = 365 }
+		}
+	}
+	option = {
+		name = usr.77.a
+		add_stability = 0.05
+		add_war_support = 0.05
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+
+#HK416事件串3
+country_event = {
+	id = usr.78
+	title = usr.78.t
+	desc = usr.78.desc
+	picture = GFX_USR_CE78
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			country_event = { id = usr.79 days = 365 }
+		}
+	}
+	option = {
+		name = usr.78.a
+		add_ideas = USR_tactical_hair_clip
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+
+#HK416事件串4
+country_event = {
+	id = usr.79
+	title = usr.79.t
+	desc = usr.79.desc
+	picture = GFX_USR_CE79
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			country_event = { id = usr.80 days = 365 }
+		}
+	}
+	option = {
+		name = usr.79.a
+		add_equipment_to_stockpile = {
+			type = neural_cloud_equipment_1
+			amount = 1000
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#HK416事件串5
+country_event = {
+	id = usr.80
+	title = usr.80.t
+	desc = usr.80.desc
+	picture = GFX_USR_CE80
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = usr.80.a
+		add_stability = 0.15
+		add_war_support = 0.15
+		add_political_power = 500
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+
 
 
 #####################################################
@@ -1810,6 +2314,11 @@ news_event = {
 					threat = 5
 					name = usr_news.5.t
 				}
+				if = {
+					limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 7 } } }
+					add_to_array = { USR.Stamp_ID_list = 7 }
+					USR_add_stamp_utility = yes
+				}
 			}
 			UNG = { country_event = { id = usr.17 days = 1 } }
 			ELN = { country_event = { id = usr.17 days = 1 } }
@@ -1890,6 +2399,13 @@ news_event = {
 					name = usr_news.8.t
 				}
 			}
+			USR = {
+				if = {
+					limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 4 } } }
+					add_to_array = { USR.Stamp_ID_list = 4 }
+					USR_add_stamp_utility = yes
+				}
+			}
 		}
 	}
 	option = {
@@ -1954,7 +2470,15 @@ news_event = {
 	desc = usr_news.10.desc
 	is_triggered_only = yes
 	major = yes
-	immediate = {  }
+	immediate = {  
+		USR = {
+			if = {
+				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 6 } } }
+				add_to_array = { USR.Stamp_ID_list = 6 }
+				USR_add_stamp_utility = yes
+			}
+		}
+	}
 	option = {
 		name = usr_news.10.a
 		trigger = { OR = { tag = USR } }
@@ -1973,4 +2497,120 @@ news_event = {
 			USR = { has_same_ideology = no }
 		}
 	}
+}
+
+#黑森峰人民大厅
+news_event = {
+	id = usr_news.11
+	title = usr_news.11.t
+	picture = GFX_USR_NE11
+	desc = usr_news.11.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {  
+		USR = {
+			if = {
+				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 13 } } }
+				add_to_array = { USR.Stamp_ID_list = 13 }
+				USR_add_stamp_utility = yes
+			}
+		}
+	}
+	option = {
+		name = usr_news.11.a
+		trigger = { OR = { tag = USR } }
+	}
+	option = {
+		name = usr_news.11.b
+		trigger = {
+			not = { tag = USR }
+			USR = { has_same_ideology = yes }
+		}
+	}
+	option = {
+		name = usr_news.11.c
+		trigger = {
+			not = { tag = USR }
+			USR = { has_same_ideology = no }
+		}
+	}
+}
+
+
+#####################################################
+####################HIDDEN_EVENTS####################
+#####################################################
+country_event = {
+    id = usr_hidden_event.1
+    trigger = {
+        USR = {
+			dockyard > 100
+		}
+    }
+    mean_time_to_happen = {
+        days = 1
+    }
+    fire_only_once = yes
+    hidden = yes
+    
+    immediate = {
+        USR = {
+			if = {
+				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 5 } } }
+				add_to_array = { USR.Stamp_ID_list = 5 }
+				USR_add_stamp_utility = yes
+			}
+		}
+    }
+}
+country_event = {
+    id = usr_hidden_event.2
+    trigger = {
+        USR = {
+			has_deployed_air_force_size = {
+				size > 100000
+			}
+		}
+    }
+    mean_time_to_happen = {
+        days = 1
+    }
+    fire_only_once = yes
+    hidden = yes
+    
+    immediate = {
+        USR = {
+			if = {
+				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 3 } } }
+				add_to_array = { USR.Stamp_ID_list = 3 }
+				USR_add_stamp_utility = yes
+			}
+		}
+    }
+}
+country_event = {
+    id = usr_hidden_event.3
+    trigger = {
+        USR = {
+			has_army_size = {
+				size > 23
+				type = armor
+			}
+		}
+    }
+    mean_time_to_happen = {
+        days = 1
+    }
+    fire_only_once = yes
+    hidden = yes
+    
+    immediate = {
+        USR = {
+			if = {
+				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 9 } } }
+				add_to_array = { USR.Stamp_ID_list = 9 }
+				USR_add_stamp_utility = yes
+			}
+		}
+    }
 }
