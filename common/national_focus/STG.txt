@@ -26,7 +26,15 @@ focus_tree = {
                     has_country_flag = STG_monarchy_abolished
                     has_country_flag = STG_monarchy_kept
                     has_country_flag = STG_army_takeover
+                    has_country_flag = STG_darjeeling_route
                 }
+			}
+		}
+        offset = {
+			x = -5
+			y = 5
+			trigger = {
+				has_country_flag = STG_darjeeling_route
 			}
 		}
 	}
@@ -302,9 +310,7 @@ focus_tree = {
             NOT = {has_country_flag = STG_army_takeover}
             custom_trigger_tooltip = {
                 tooltip = STG_army_discontent_less_than_40_desc
-                trigger = {
-                    STG = { check_variable = { STG_army_discontent < 40 } }
-                }
+                STG = { check_variable = { STG_army_discontent < 40 } }
             }
         }
         ai_will_do = {
@@ -644,7 +650,7 @@ focus_tree = {
         completion_reward = {
             add_stability = 0.20
             add_ideas = STG_neutrality_idea
-            STG_decrease_global_unrest_big
+            STG_decrease_global_unrest_big = yes
             set_rule = {
                 can_create_factions = no
                 can_join_factions = no
@@ -3933,7 +3939,12 @@ focus_tree = {
 			STG_decrease_global_unrest = yes
             hidden_effect = {
                 country_event = {id = STG_grey.11 days = 3}
-                country_event = {id = STG_ilya.33 days = 6}
+                if = {
+                    limit =  {
+                        has_country_flag = STG_ilya_available
+                    }
+                    country_event = {id = STG_ilya.33 days = 6}
+                }
                 clr_country_flag = STG_conservative_controls_par
                 set_country_flag = STG_sd_controls_par
                 set_party_name = {ideology = democratic long_name = STG_democratic_party_sd_long name = STG_democratic_party_sd}
@@ -4313,6 +4324,21 @@ focus_tree = {
                 ideology = communism
                 popularity = 0.05
             }
+            add_tech_bonus = {
+                bonus = 1.0
+                uses = 1
+                category = excavation_tech
+            }
+            add_resource = {
+                type = steel
+                amount = 20
+                state = 230
+            }
+            add_resource = {
+                type = tungsten
+                amount = 10
+                state = 222
+            }
 		}
     }
     #成立国有企业
@@ -4568,6 +4594,7 @@ focus_tree = {
 		}
         completion_reward = {
             add_stability = 0.20
+            add_ideas = STG_shcool_rebuilt
             add_popularity = {
                 ideology = communism
                 popularity = 0.10
@@ -4835,9 +4862,7 @@ focus_tree = {
             }
             custom_trigger_tooltip = {
                 tooltip = STG_army_discontent_less_than_40_desc
-                trigger = {
-                    STG = { check_variable = {STG_army_discontent < 40 } }
-                }
+                STG = { check_variable = {STG_army_discontent < 40 } }
             }
         }
         ai_will_do = {
@@ -5118,6 +5143,7 @@ focus_tree = {
 		}
         completion_reward = {
             add_political_power = 100
+            add_ideas = STG_shcool_rebuilt
             STG_reduce_industralist_shock = yes
 		}
     }
@@ -6015,6 +6041,7 @@ focus_tree = {
         completion_reward = {
 			add_stability = 0.20
             add_political_power = 100
+            add_ideas = STG_shcool_rebuilt
             custom_effect_tooltip = STG_unite_ang_desc
             custom_effect_tooltip = Change_leader_desc_notice
             hidden_effect = {
@@ -6268,13 +6295,22 @@ focus_tree = {
     #外交事务
     focus = {
         id = STG_dip_1
-        icon = 1
+        icon = GFX_goal_continuous_increase_nu
         x = 0
         y = 8
         cost = 3
         relative_position_id = STG_mil_1
         available_if_capitulated = yes
-        prerequisite = {            
+        allow_branch = {
+            OR = {
+                has_country_flag = STG_monarchy_abolished
+                has_country_flag = STG_monarchy_kept
+                has_country_flag = STG_darjeeling_route
+                has_country_flag = STG_army_takeover
+            }
+            NOT = {
+                has_country_flag = STG_is_usr_puppet
+            }
         }
         available = {
             OR = {
@@ -6296,7 +6332,7 @@ focus_tree = {
     #两强锁喉
     focus = {
         id = STG_dip_2
-        icon = 1
+        icon = GFX_focus_STG_dip_2
         x = 0
         y = 1
         cost = 3
@@ -6318,7 +6354,7 @@ focus_tree = {
     #西方伪王
     focus = {
         id = STG_dip_3
-        icon = 1
+        icon = GFX_focus_STG_dip_3
         x = -2
         y = 1
         cost = 3
@@ -6340,7 +6376,7 @@ focus_tree = {
     #寻求支援
     focus = {
         id = STG_dip_5
-        icon = 1
+        icon = GFX_focus_secret_rearmament
         x = 0
         y = 1
         cost = 1
@@ -6361,7 +6397,7 @@ focus_tree = {
 			factor = 1000
 		}
         completion_reward = {
-			manpower = 75000
+			add_manpower = 75000
             add_equipment_to_stockpile = {
 		        type = infantry_equipment_1
 		        amount = 5000
@@ -6377,7 +6413,7 @@ focus_tree = {
     #北方睡狮
     focus = {
         id = STG_dip_6
-        icon = 1
+        icon = GFX_focus_STG_dip_6
         x = 2
         y = 1
         cost = 5
@@ -6532,6 +6568,10 @@ focus_tree = {
         }
         ai_will_do = {
 			factor = 1
+            modifier = {
+                add = -1000
+                has_country_flag = STG_usr_refuse_to_give_up_claim
+            }
 		}
         completion_reward = {
 			add_tech_bonus = {
@@ -6568,6 +6608,10 @@ focus_tree = {
         }
         ai_will_do = {
 			factor = 1
+            modifier = {
+                add = -1000
+                has_country_flag = STG_usr_refuse_to_give_up_claim
+            }
 		}
         completion_reward = {
 			add_ideas =  STG_speical_relationship_with_USR
@@ -6596,6 +6640,10 @@ focus_tree = {
         }
         ai_will_do = {
 			factor = 1
+            modifier = {
+                add = -1000
+                has_country_flag = STG_usr_refuse_to_give_up_claim
+            }
 		}
         completion_reward = {
 			add_doctrine_cost_reduction = {
@@ -6788,12 +6836,21 @@ focus_tree = {
     #国防事务
     focus = {
         id = STG_mil_1
-        icon = 1
+        icon = GFX_focus_STG_mil_1
         x = -14
         y = 2
         cost = 1
         available_if_capitulated = yes
-        prerequisite = {    
+        allow_branch = {
+            OR = {
+                has_country_flag = STG_monarchy_abolished
+                has_country_flag = STG_monarchy_kept
+                has_country_flag = STG_darjeeling_route
+                has_country_flag = STG_army_takeover
+            }
+            NOT = {
+                has_country_flag = STG_is_usr_puppet
+            }
         }
         available = {
             OR = {
@@ -6816,7 +6873,7 @@ focus_tree = {
     #转动齿轮
     focus = {
         id = STG_mil_2
-        icon = 1
+        icon = GFX_goal_continuous_reduce_training_time
         x = 0
         y = 1
         cost = 5
@@ -6844,7 +6901,7 @@ focus_tree = {
     #破敌之矛
     focus = {
         id = STG_mil_3
-        icon = 1
+        icon = GFX_focus_STG_mil_3
         x = -4
         y = 1
         cost = 5
@@ -6877,7 +6934,7 @@ focus_tree = {
     #战车道之国
     focus = {
         id = STG_mil_4
-        icon = 1
+        icon = GFX_focus_STG_mil_4
         x = 0
         y = 2
         cost = 5
@@ -6909,7 +6966,7 @@ focus_tree = {
     #秉持优雅
     focus = {
         id = STG_mil_5
-        icon = 1
+        icon = GFX_focus_STG_mil_5
         x = 0
         y = 1
         cost = 5
@@ -6934,7 +6991,7 @@ focus_tree = {
     #克敌制胜
     focus = {
         id = STG_mil_6
-        icon = 1
+        icon = GFX_focus_STG_mil_6
         x = 0
         y = 1
         cost = 5
@@ -6956,7 +7013,7 @@ focus_tree = {
     #机动火力
     focus = {
         id = STG_mil_7
-        icon = 1
+        icon = GFX_focus_STG_mil_7
         x = 0
         y = 1
         cost = 5
@@ -6992,7 +7049,7 @@ focus_tree = {
     #冲破防线
     focus = {
         id = STG_mil_8
-        icon = 1
+        icon = GFX_focus_STG_mil_8
         x = 0
         y = 1
         cost = 5
@@ -7017,7 +7074,7 @@ focus_tree = {
     #舰炮轰鸣
     focus = {
         id = STG_mil_9
-        icon = 1
+        icon = GFX_focus_generic_navy_battleship2
         x = -2
         y = 1
         cost = 5
@@ -7047,7 +7104,7 @@ focus_tree = {
     #航母之梦
     focus = {
         id = STG_mil_10
-        icon = 1
+        icon = GFX_goal_generic_navy_carrier
         x = 0
         y = 1
         cost = 5
@@ -7078,7 +7135,7 @@ focus_tree = {
     #掌握天空
     focus = {
         id = STG_mil_11
-        icon = 1
+        icon = GFX_goal_generic_air_fighter2
         x = 2
         y = 1
         cost = 5
@@ -7103,7 +7160,7 @@ focus_tree = {
     #战略打击
     focus = {
         id = STG_mil_12
-        icon = 1
+        icon = GFX_focus_STG_mil_12
         x = 0
         y = 1
         cost = 5
@@ -7133,7 +7190,7 @@ focus_tree = {
     #拔出宝剑
     focus = {
         id = STG_mil_14
-        icon = 1
+        icon = GFX_focus_STG_mil_14
         x = 0
         y = 1
         cost = 5
@@ -7157,7 +7214,7 @@ focus_tree = {
     #国家之盾
     focus = {
         id = STG_mil_15
-        icon = 1
+        icon = GFX_focus_STG_mil_15
         x = 4
         y = 1
         cost = 5
@@ -7190,7 +7247,7 @@ focus_tree = {
     #坦克的噩梦
     focus = {
         id = STG_mil_16
-        icon = 1
+        icon = GFX_focus_generic_army_tanks2
         x = 0
         y = 1
         cost = 5
@@ -7220,7 +7277,7 @@ focus_tree = {
     #不破的防线
     focus = {
         id = STG_mil_17
-        icon = 1
+        icon = GFX_focus_STG_mil_17
         x = 0
         y = 1
         cost = 5
@@ -7248,7 +7305,7 @@ focus_tree = {
     #缄默猎手
     focus = {
         id = STG_mil_18
-        icon = 1
+        icon = GFX_focus_generic_midget_submarines
         x = -2
         y = 1
         cost = 5
@@ -7290,7 +7347,7 @@ focus_tree = {
     #航线袭扰
     focus = {
         id = STG_mil_19
-        icon = 1
+        icon = GFX_focus_generic_cruiser_submarines
         x = 0
         y = 1
         cost = 5
@@ -7315,7 +7372,7 @@ focus_tree = {
     #捍卫天空
     focus = {
         id = STG_mil_20
-        icon = 1
+        icon = GFX_focus_generic_air_defense
         x = 2
         y = 1
         cost = 5
@@ -7355,7 +7412,7 @@ focus_tree = {
     #保存实力
     focus = {
         id = STG_mil_21
-        icon = 1
+        icon = GFX_focus_generic_air_bases
         x = 0
         y = 1
         cost = 5
@@ -7380,7 +7437,7 @@ focus_tree = {
     #竖起盾牌
     focus = {
         id = STG_mil_22
-        icon = 1
+        icon = GFX_focus_STG_mil_22
         x = 0
         y = 1
         cost = 5
@@ -7470,7 +7527,7 @@ focus_tree = {
             }
             add_ideas = STG_support_FNG
             FNG = {
-                add_timed_idea = {id = STG_support days = 180}
+                add_timed_idea = {idea = STG_support days = 180}
             }
         }
     }
@@ -8094,7 +8151,14 @@ focus_tree = {
             custom_effect_tooltip = STG_unlock_rossiya_tea
             hidden_effect = {
                 BLA = {add_to_variable = {BLA_industralization_fund = 200}}
-                STG = {country_event = {id = STG_dar.17 days = 3}}
+                STG = {
+                    if = {
+                        limit = {
+                            has_country_flag = STG_ilya_available
+                        }
+                        country_event = {id = STG_dar.17 days = 3}
+                    }
+                }
             }
         }
     }
@@ -8582,13 +8646,15 @@ focus_tree = {
         x = 0
         y = 1
         relative_position_id = STG_true_dar_8
-        cost = 6
+        cost = 10
         available_if_capitulated = yes
         prerequisite = {
             focus = STG_true_dar_8
         }
         available = {
             has_completed_focus = STG_true_dar_48
+            controls_state = 218
+            controls_state = 230
         }
         ai_will_do = {
 			factor = 100
@@ -8697,22 +8763,22 @@ focus_tree = {
             }
             hidden_effect = {
                 country_event = {id = STG_dar.24 days = 5}
-                ai_strategy = {
+                add_ai_strategy = {
                     type = antagonize
                     id = UNG
                     value = 9999
                 }
-                ai_strategy = {
+                add_ai_strategy = {
                     type = conquer
                     id = UNG
                     value = 9999
                 }
-                ai_strategy = {
+                add_ai_strategy = {
                     type = antagonize
                     id = MSA
                     value = 9999
                 }
-                ai_strategy = {
+                add_ai_strategy = {
                     type = conquer
                     id = MSA
                     value = 9999
@@ -8819,7 +8885,12 @@ focus_tree = {
         completion_reward = {
             add_political_power = 50
             hidden_effect = {
-                country_event = {id = STG_dar.11 days = 5}
+                if = {
+                    limit = {
+                        has_country_flag = STG_ilya_available
+                    }
+                    country_event = {id = STG_dar.11 days = 5}
+                }
             }
         }
     }
@@ -8978,7 +9049,12 @@ focus_tree = {
             STG_reduce_usr_unrest = yes
             STG_decrease_global_unrest = yes
             hidden_effect = {
-                country_event = {id = STG_dar.12 days = 5}
+                if = {
+                    limit = {
+                        has_country_flag = STG_ilya_available
+                    }
+                    country_event = {id = STG_dar.12 days = 5}
+                }
             }
         }
     }
@@ -9178,7 +9254,12 @@ focus_tree = {
             STG_decrease_global_unrest = yes
             STG_upgrade_home_of_industralist = yes
             hidden_effect = {
-                country_event = {id = STG_dar.13 days = 5}
+                if = {
+                    limit = {
+                        has_country_flag = STG_ilya_available
+                    }
+                    country_event = {id = STG_dar.13 days = 5}
+                }
             }
         }
     }
@@ -9204,7 +9285,12 @@ focus_tree = {
             custom_effect_tooltip = STG_can_crush_usr_desc
             set_country_flag = STG_can_crush_usr
             hidden_effect = {
-                country_event = {id = STG_dar.25 days = 5}
+                if = {
+                    limit = {
+                        has_country_flag  = STG_ilya_available
+                    }
+                    country_event = {id = STG_dar.25 days = 5}
+                }
             }
         }
     }
@@ -9585,9 +9671,15 @@ focus_tree = {
         available = {
             country_exists = USR
             USR = {
-                has_country_leader = {
-                    character = USR_Maho
-                    ruling_only = yes
+                OR = {
+                    has_country_leader = {
+                        character = USR_Maho
+                        ruling_only = yes
+                    }
+                    has_country_leader = {
+                        character = USR_Nishizumis
+                        ruling_only = yes
+                    }
                 }
             }
             has_army_manpower = {size > 699999}
@@ -9884,7 +9976,7 @@ focus_tree = {
                 bonus = 1.0
                 ahead_reduction = 1.5
                 uses = 1
-                category = infantry_equipment
+                category = infantry_weapons
             }
             add_tech_bonus = {
                 bonus = 1.0
@@ -10048,9 +10140,15 @@ focus_tree = {
         available = {
             country_exists = USR
             USR = {
-                has_country_leader = {
-                    character = USR_Maho
-                    ruling_only = yes
+                OR = {
+                    has_country_leader = {
+                        character = USR_Maho
+                        ruling_only = yes
+                    }
+                    has_country_leader = {
+                        character = USR_Nishizumis
+                        ruling_only = yes
+                    }
                 }
             }
             has_army_manpower = {size > 699999}

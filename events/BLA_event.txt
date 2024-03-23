@@ -16,7 +16,7 @@ country_event = {
 	option = {
 		name = BLA_intro.1.a
         hidden_effect = {
-            country_event {id = BLA_intro.2 days = 3}
+            country_event = {id = BLA_intro.2 days = 3}
         }
 	}
 }
@@ -30,7 +30,7 @@ country_event = {
 	option = {
 		name = BLA_intro.2.a
         hidden_effect = {
-            country_event {id = BLA_intro.3 days = 3}
+            country_event = {id = BLA_intro.3 days = 3}
         }
 	}
 }
@@ -44,7 +44,7 @@ country_event = {
 	option = {
 		name = BLA_intro.3.a
         hidden_effect = {
-            country_event {id = BLA_intro.4 days = 3}
+            country_event = {id = BLA_intro.4 days = 3}
         }
 	}
 }
@@ -829,7 +829,7 @@ country_event = {
                 ideology = sub_Monarchy
             }
             country_event = {id = BLA_pol.1000 days = 3}
-            BLA = {set_variable = BLA_nobility_opinion = 0}
+            BLA = {set_variable = {BLA_nobility_opinion = 0}}
             news_event = {id = BLA_news.2}
         }
 		ai_chance = {
@@ -846,7 +846,7 @@ country_event = {
         custom_effect_tooltip = BLA_plot_crushed_desc
         custom_effect_tooltip = BLA_reset_nobility_opinion_desc
         hidden_effect = {
-            BLA = {set_variable = BLA_nobility_opinion = 0}
+            BLA = {set_variable = {BLA_nobility_opinion = 0}}
             news_event = {id = BLA_news.1}
         }
 		ai_chance = {
@@ -1743,20 +1743,22 @@ country_event = {
             country_event = {id = BLA_rev.6 days = 3}
             NAC = {
                 division_template = {
-                        name = "真理解放军"
-                        is_locked = no
-                        priority = 0
-                        template_counter = 0
-                        regiments = {
-                            infantry = { x = 0 y = 0 }
-                            infantry = { x = 0 y = 1 }
-                            infantry = { x = 0 y = 2 }
-                            infantry = { x = 0 y = 3 }
-                        }
+                    name = "真理解放军"
+                    is_locked = no
+                    priority = 0
+                    template_counter = 0
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                    }
                 }
                 division_template = {
                     name = "罗西亚红军"
-                    priority = 0
+                    priority = 2
                     template_counter = 0
                     regiments = {
                         infantry = { x = 0 y = 0 }
@@ -1770,6 +1772,16 @@ country_event = {
                         artillery_brigade = { x =2 y = 0 }
                     }
                 }
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_1
+					amount = 25000
+					producer = NAC
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment_1
+					amount = 1000
+					producer = NAC
+				}
                 every_owned_state = {
                     limit = {
                         is_core_of = NAC
@@ -1814,6 +1826,10 @@ country_event = {
                         owner = NAC
                     }
                     create_unit = {
+                        division = "name = \"罗西亚红军\" division_template = \"罗西亚红军\" start_experience_factor = 0.25"
+                        owner = NAC
+                    }
+					create_unit = {
                         division = "name = \"罗西亚红军\" division_template = \"罗西亚红军\" start_experience_factor = 0.25"
                         owner = NAC
                     }
@@ -2093,6 +2109,76 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.15.a
+	}
+}
+#最后的甜美时光
+country_event = {
+    id = BLA_rev.16
+    title = BLA_rev.16.t
+	desc = BLA_rev.16.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = BLA
+		has_war_with = NAC
+		surrender_progress > 0.59
+		controls_state = 199
+        has_country_leader = {
+            character = BLA_anna
+            ruling_only = yes
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = BLA_rev.16.a
+	}
+}
+#皇座上的最后一日
+country_event = {
+    id = BLA_rev.17
+    title = BLA_rev.17.t
+	desc = BLA_rev.17.desc
+	#picture = GFX_ungevent_1
+	trigger = {
+		tag = BLA
+		has_war_with = NAC
+		NAC = {
+			controls_state = 199
+		}
+        has_country_leader = {
+            character = BLA_anna
+            ruling_only = yes
+		}
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	fire_only_once = yes
+	option = {
+		name = BLA_rev.17.a
+		custom_effect_tooltip = BLA_GAME_OVER
+		hidden_effect = {
+			BLA = {
+				transfer_navy = {
+					target = NAC
+				}
+				white_peace  = {
+					tag = NAC
+					message = NAC_WON_Revolution
+				}
+			}
+			NAC = {
+				annex_country = {
+					target = BLA
+					transfer_troops = no
+				}
+				remove_ideas = NAC_to_freedom
+				remove_ideas = NAC_Second_Rossiya_Revolution
+				remove_ideas = NAC_block
+			}
+		}
 	}
 }
 #革命的尾声
