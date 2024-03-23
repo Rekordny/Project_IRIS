@@ -54,6 +54,7 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = STG_general.1.a
+		custom_effect_tooltip = STG_dev_in_progress_desc
         set_country_flag = STG_monarchy_abolished
 		hidden_effect = {
 			load_focus_tree = {
@@ -63,7 +64,7 @@ country_event = {
 			mark_focus_tree_layout_dirty = yes
 		}
 		ai_chance = {
-			base = 30
+			base = 0
 			modifier = {
 				factor = 0
 				OR = {
@@ -78,6 +79,19 @@ country_event = {
 					has_game_rule = {
 						rule = STG_ai_behavior
 						option = STG_darjeeling_route_TT
+					}
+				}
+			}
+			modifier = {
+				add = 1000
+				OR = {
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_syndicalist_route_TT
+					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_syndicalist_social_democrat_route_TT
 					}
 				}
 			}
@@ -96,25 +110,23 @@ country_event = {
 			mark_focus_tree_layout_dirty = yes
 		}
 		ai_chance = {
-			base = 5 #10
-			#modifier = {
-			#	add = 20
-			#	USR = { is_ai = no }
-			#}
+			base = 1 
 			modifier = {
-				factor = 0
-				AND = {
-					USR = { is_ai = no }
-					#difficulty < 3
-				}
-			}
-			modifier = {
-				factor = 0
+				add = 1000
 				OR = {
 					has_game_rule = {
 						rule = STG_ai_behavior
-						option = STG_conservative_route_TT
+						option = STG_ilya_route_TT
 					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_darjeeling_route_TT
+					}
+				}
+			}
+			modifier = {
+				add = -1000
+				OR = {
 					has_game_rule = {
 						rule = STG_ai_behavior
 						option = STG_syndicalist_route_TT
@@ -122,10 +134,6 @@ country_event = {
 					has_game_rule = {
 						rule = STG_ai_behavior
 						option = STG_syndicalist_social_democrat_route_TT
-					}
-					has_game_rule = {
-						rule = STG_ai_behavior
-						option = STG_darjeeling_route_TT
 					}
 				}
 			}
@@ -145,12 +153,38 @@ country_event = {
 			mark_focus_tree_layout_dirty = yes
 		}
 		ai_chance = {
-			base = 2
+			base = 10
 			modifier = {
 				add = 1000
 				has_game_rule = {
 					rule = STG_ai_behavior
 					option = STG_darjeeling_route_TT
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_ilya_route_TT
+					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_grey_route_TT
+					}
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = {
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_syndicalist_route_TT
+					}
+					has_game_rule = {
+						rule = STG_ai_behavior
+						option = STG_syndicalist_social_democrat_route_TT
+					}
 				}
 			}
 		}
@@ -4098,10 +4132,16 @@ country_event = {
 		}
 		USR = {
 			is_faction_leader = yes
-			has_country_leader = {
-				character = USR_Maho
-				ruling_only = yes
-			}
+			OR = {
+                has_country_leader = {
+                    character = USR_Maho
+                    ruling_only = yes
+                }
+                has_country_leader = {
+                    character = USR_Nishizumis
+                    ruling_only = yes
+                }
+            }
 		}
 	}
 	mean_time_to_happen = {
@@ -4111,6 +4151,73 @@ country_event = {
 				
 	option = {
 		name = STG_dar.21.a
+		USR = {
+			country_event = {id = STG_dar.34}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#会面
+country_event = {
+    id = STG_dar.34
+    title = STG_dar.34.t
+	desc = STG_dar.34.desc
+	#picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_dar.35.a
+		custom_effect_tooltip = USR_give_up_claim_desc
+		STG = {
+			country_event = {id = STG_dar.35}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = STG_dar.36.a
+		custom_effect_tooltip = USR_never_give_up_claim_desc
+		STG = {
+			country_event = {id = STG_dar.36}
+		}
+		hidden_effect = {
+			STG = {
+				set_country_flag = STG_usr_refuse_to_give_up_claim
+				add_ai_strategy = {
+					ai_strategy = {
+						type = antagonize
+						id = USR
+						value = 200
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+#答复
+country_event = {
+    id = STG_dar.35
+    title = STG_dar.35.t
+	desc = STG_dar.35.desc
+	#picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_dar.35.a
+		add_popularity = {
+			ideology = fascism
+			popularity = -0.05
+		}
 		682 = {
 			add_core_of = STG
 		}
@@ -4120,6 +4227,24 @@ country_event = {
 			}
 			remove_claim_by = USR
 		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#答复
+country_event = {
+    id = STG_dar.36
+    title = STG_dar.36.t
+	desc = STG_dar.36.desc
+	#picture = GFX_ungevent_1
+	
+	is_triggered_only = yes
+	fire_only_once = yes
+				
+	option = {
+		name = STG_dar.36.a
+		STG_increase_usr_unrest = yes
 		ai_chance = {
 			base = 10
 		}
@@ -4140,10 +4265,16 @@ country_event = {
 			ruling_only = yes
 		}
 		USR = {
-			has_country_leader = {
-				character = USR_Maho
-				ruling_only = yes
-			}
+			OR = {
+                has_country_leader = {
+                    character = USR_Maho
+                    ruling_only = yes
+                }
+                has_country_leader = {
+                    character = USR_Nishizumis
+                    ruling_only = yes
+                }
+            }
 		}
 	}
 	mean_time_to_happen = {
