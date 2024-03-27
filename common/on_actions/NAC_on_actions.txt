@@ -3,6 +3,8 @@ on_actions = {
         effect ={
             NAC = {
                 set_variable = {NAC_morale = 50}
+                set_variable = {NAC_katyusha_power = 30}
+                set_variable = {NAC_pol_orientation = 1}
                 #基础数值
                 set_variable = { NAC_equipment_capture_factor_bonus = 0.001}
                 set_variable = { NAC_army_morale_factor_bonus = 0.002 } 
@@ -18,11 +20,31 @@ on_actions = {
                 multiply_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_army_org_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_land_reinforce_rate = NAC_morale}
+                #粮食系统初始化
+                set_variable = {NAC_food_supply = 50}
+                set_variable = {NAC_food_production = 12}
+                set_variable = {NAC_army_food_basic_cost = 0.05}
+                set_variable = {NAC_army_food_cost = num_battalions}
+                multiply_variable = {NAC_army_food_cost = NAC_army_food_basic_cost}
+                set_variable = {NAC_civ_food_cost = max_manpower_k}
+                divide_variable = {
+                    var = NAC_civ_food_cost
+                    value = 2
+                }
+                set_variable = {NAC_civ_food_basic_cost = 0.01}
+                multiply_variable = {NAC_civ_food_cost = NAC_civ_food_basic_cost}
+                set_variable = {NAC_food_balance = 0}
+                add_to_variable = {NAC_food_balance = NAC_food_production}
+                subtract_from_variable = {NAC_food_balance = NAC_army_food_cost}
+                subtract_from_variable = {NAC_food_balance = NAC_civ_food_cost}
             }
         }
     }
-    on_weekly = {
+    on_weekly_NAC = {
         effect = {
+            NAC_check_army_food_cost = yes
+            NAC_check_civ_food_cost = yes
+            NAC_check_food_balance = yes
             every_country = {
                 limit = {
                     NOT = {
@@ -47,6 +69,11 @@ on_actions = {
                     add_to_variable = {NAC_morale = -1.25}
                 }
             }
+        }
+    }
+    on_monthly_NAC = {
+        effect = {
+            NAC_update_food_supply = yes
         }
     }
 }
