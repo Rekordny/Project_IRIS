@@ -37,9 +37,23 @@ NAC_unite_russia = {
             add_stability = 0.10
             add_war_support = 0.10
             set_cosmetic_tag = NAC_RSR
-            swap_ideas = {
-                remove_idea = NAC_War_communism
-                add_idea = NAC_Planned_Economy
+            if = {
+                limit = {
+                    has_idea = NAC_War_communism
+                }
+                swap_ideas = {
+                    remove_idea = NAC_War_communism
+                    add_idea = NAC_Planned_Economy
+                }
+            }
+            if = {
+                limit = {
+                    has_idea = NAC_War_communism_2
+                }
+                swap_ideas = {
+                    remove_idea = NAC_War_communism_2
+                    add_idea = NAC_Planned_Economy
+                }
             }
             add_ideas = NAC_liberate_serf
             set_country_flag = NAC_united_rossiya
@@ -68,7 +82,10 @@ NAC_liberate_old_world = {
             RVA = {
                 country_event = {id = NAC.1949}
             }
-            add_ideas = NAC_liberate_the_world
+            swap_ideas = {
+                remove_idea = NAC_liberate_rossiya
+                add_idea = NAC_liberate_the_world
+            }
             every_state = {
                 limit = {
                     is_core_of = WPU
@@ -148,6 +165,882 @@ remove_embargo_on_NAC = {
         }
         complete_effect = {
             break_embargo = NAC
+        }
+    }
+}
+#革命的大敌
+NAC_food_supply = {
+    #征收余粮
+    NAC_collect_food = {
+        available = {
+            OR = {
+                has_idea = NAC_War_communism
+                has_idea = NAC_War_communism_2
+            }
+        }
+        visible = {
+        }
+        cost = 10
+        days_remove = 20
+        remove_effect = {
+            add_stability = -0.01
+            add_war_support = -0.01
+            add_popularity = {
+                ideology = communism
+                popularity = -0.005
+            }
+            custom_effect_tooltip = NAC_gain_food_but_reduce_production
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = 14}
+                    add_to_variable = {NAC_food_production = -1}
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 5
+                NAC = {
+                    check_variable = {NAC_food_supply < 20}
+                }
+            }
+            modifier = {
+                add = 5
+                NAC = {
+                    check_variable = {NAC_food_supply < 10}
+                }
+            }
+            modifier = {
+                add = 9999
+                NAC = {
+                    check_variable = {NAC_food_supply < 0}
+                }
+            }
+        }
+    }
+    #鼓励农业生产
+    NAC_encourage_food_production = {
+        available = {
+            OR = {
+                has_idea = NAC_War_communism
+                has_idea = NAC_War_communism_2
+            }
+        }
+        visible = {
+        }
+        cost = 40
+        days_remove = 80
+        remove_effect = {
+            custom_effect_tooltip = NAC_increase_food_production
+            hidden_effect = {
+                NAC = {
+                    random_list = {
+                        50 = {
+                            add_to_variable = {NAC_food_production = 1}
+                        }
+                        50 = {
+                            add_to_variable = {NAC_food_production = 2}
+                        }
+                    }
+                    
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+            modifier = {
+                add = -1000
+                NAC = {check_variable = {NAC_food_balance > 0}}
+            }
+        }
+    }
+    #增加工厂配给
+    NAC_increase_factory_quota = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = NAC_has_10_unit_food
+                NAC = {check_variable = {NAC_food_supply > 9}}
+            }
+            NOT = {
+                has_country_flag = NAC_reduce_factory_quota_flag
+            }
+        }
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_increase_factory_quota_flag
+            custom_effect_tooltip = NAC_cost_10_food
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = -10}
+                }
+            }
+        }
+        remove_effect = {
+            clr_country_flag = NAC_increase_factory_quota_flag
+        }
+        modifier = {
+            industrial_capacity_factory = 0.15
+        }
+        ai_will_do = {
+            base = 0
+        }
+    }
+    #减少工厂配给
+    NAC_reduce_factory_quota = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_increase_factory_quota_flag
+            }
+        }
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_reduce_factory_quota_flag
+            custom_effect_tooltip = NAC_gain_10_food
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = 10}
+                }
+            }
+        }
+        remove_effect = {
+            clr_country_flag = NAC_reduce_factory_quota_flag
+        }
+        modifier = {
+            industrial_capacity_factory = -0.25
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 100
+                NAC = {check_variable = {NAC_food_supply < 10}}
+            }
+        }
+    }
+    #为决战做准备
+    NAC_increase_army_quota = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = NAC_has_10_unit_food
+                NAC = {check_variable = {NAC_food_supply > 9}}
+            }
+            NOT = {
+                has_country_flag = NAC_reduce_army_quota_flag
+            }
+        }
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_increase_army_quota_flag
+            custom_effect_tooltip = NAC_cost_10_food
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = -10}
+                }
+            }
+        }
+        modifier = {
+            experience_gain_army = 0.75
+        }
+        remove_effect = {
+            clr_country_flag = NAC_increase_army_quota_flag
+            custom_effect_tooltip = NAC_preparation_increae_by_1
+            hidden_effect = {
+                NAC = {add_to_variable = {NAC_war_preparation = 1}}
+            }
+        }
+        ai_will_do = {
+            base = 1
+            modifier = {
+                add = 100
+                NAC = {check_variable = {NAC_food_supply > 40}}
+            }
+        }
+    }
+    #减少军队配给
+    NAC_reduce_army_quota = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_increase_army_quota_flag
+            }
+            custom_trigger_tooltip = {
+                tooltip = NAC_war_preparation_greater_than_0
+                NAC = {
+                    check_variable = {NAC_war_preparation > 0}
+                }
+            }
+        }
+        days_remove = 20
+        complete_effect = {
+            set_country_flag = NAC_reduce_army_quota_flag
+            add_war_support = -0.02
+            army_experience = -20
+            custom_effect_tooltip = NAC_gain_10_food
+            custom_effect_tooltip = NAC_preparation_decreae_by_1
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = 10}
+                    add_to_variable = {NAC_war_preparation = -1}
+                }
+            }
+        }
+        remove_effect = {
+            clr_country_flag =  NAC_reduce_army_quota_flag
+        }
+        ai_will_do = {
+            base = 0
+        }
+    }
+    NAC_test_summon = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = NAC_war_preparation_greater_than_0
+                NAC = {
+                    check_variable = {NAC_war_preparation > 0}
+                }
+            }
+        }
+        visible = {
+            is_debug = yes
+        }
+        days_remove = 15
+        remove_effect = {
+            NAC = {
+                division_template = {
+                    name = "精锐步兵师"
+                    regiments = {
+                        infantry = {x = 0 y = 0}
+                        infantry = {x = 0 y = 1}
+                        infantry = {x = 0 y = 2}
+                        infantry = {x = 1 y = 0}
+                        infantry = {x = 1 y = 1}
+                        infantry = {x = 1 y = 2}
+                        artillery_brigade = {x = 2 y = 0}
+                        artillery_brigade = {x = 2 y = 1}
+                        artillery_brigade = {x = 2 y = 2}
+                    }
+                    support = {
+                        engineer = {x = 0 y = 0}
+                        artillery = {x = 0 y = 1}
+                    }
+                }
+            }
+            for_loop_effect = {
+                start = 0
+                end = NAC_war_preparation
+                NAC = {
+                    capital_scope = {
+                        create_unit = {
+                            division = "name = \"精锐步兵师\" division_template = \"精锐步兵师\" start_experience_factor = 1.0"
+                            owner = NAC
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#喀秋莎的内心
+NAC_katyushas_heart = {
+}
+#宣传战线
+NAC_propaganda = {
+    NAC_jokes = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        cost = 30
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                random_list = {
+                    50 = {
+                        add_stability = -0.02
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.02
+                        }
+                    }
+                    50 = {
+                    }
+                }
+            }
+        }
+    }
+    NAC_focus_on_army = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                BLA_decrease_army_opinion = yes
+            }
+        }
+    }
+    NAC_focus_on_freeman = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                BLA_decrease_freeman_opinion = yes
+            }
+        }
+    }
+    NAC_focus_on_serf = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            add_manpower = 500
+            BLA = {
+                add_manpower = -100
+                random_list = {
+                    80 = {
+
+                    }
+                    20 = {
+                        BLA_decrease_serf_opinion = yes
+                    }
+                }
+            }
+        }
+    }
+}
+#北方航线
+NAC_north_route = {
+    #X航线
+    NAC_route_X = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_3
+            NOT = {
+                has_idea = NAC_block
+            }
+        }
+        cancel_trigger = {
+            NOT = {
+                has_idea = NAC_block
+            }
+        }
+        days_mission_timeout = 50
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            NAC = {
+                if = {
+                    limit = {
+                        has_completed_focus = NAC_prewar_6
+                    }
+                    random_list = {
+                        75 = {
+                            random_list = {
+                                40 = {
+                                    custom_effect_tooltip = NAC_gain_3_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 3}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 40
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 60
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 60
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 20
+                                        producer = USR
+                                    }
+
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 50
+                                        producer = ELN
+                                    }
+                                }
+                            }
+                        }
+                        25 = {
+                            custom_effect_tooltip = NAC_discovered
+                        }
+                    }
+                }
+                else = {
+                    random_list = {
+                        60 = {
+                            random_list = {
+                                40 = {
+                                    custom_effect_tooltip = NAC_gain_3_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 3}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 40
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 60
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 60
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 20
+                                        producer = USR
+                                    }
+
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 50
+                                        producer = ELN
+                                    }
+                                }
+                            }
+                        }
+                        40 = {
+                            custom_effect_tooltip = NAC_discovered
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #Y航线
+    NAC_route_Y = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_5
+            NOT = {
+                has_idea = NAC_block
+            }
+        }
+        cancel_trigger = {
+            NOT = {
+                has_idea = NAC_block
+            }
+        }
+        days_mission_timeout = 40
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            NAC = {
+                if = {
+                    limit = {
+                        has_completed_focus = NAC_prewar_6
+                    }
+                    random_list = {
+                        75 = {
+                            random_list = {
+                                40 = {
+                                    custom_effect_tooltip = NAC_gain_3_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 3}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 120
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 120
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 60
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 40
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 20
+                                        producer = USR
+                                    }
+                                }
+                            }
+                        }
+                        25 = {
+                            custom_effect_tooltip = NAC_discovered
+                        }
+                    }
+                }
+                else = {
+                    random_list = {
+                        60 = {
+                            random_list = {
+                                40 = {
+                                    custom_effect_tooltip = NAC_gain_3_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 3}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 120
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 120
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 60
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 80
+                                        producer = USR
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 40
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = artillery_equipment_1
+                                        amount = 20
+                                        producer = USR
+                                    }
+                                }
+                            }
+                        }
+                        40 = {
+                            custom_effect_tooltip = NAC_discovered
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #Z航线
+    NAC_route_Z = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_28
+            NOT = {
+                has_idea = NAC_block
+            }
+        }
+        cancel_trigger = {
+            NOT = {
+                has_idea = NAC_block
+            }
+        }
+        days_mission_timeout = 40
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            NAC = {
+                if = {
+                    limit = {
+                        has_completed_focus = NAC_prewar_6
+                    }
+                    random_list = {
+                        75 = {
+                            random_list = {
+                                40 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 200
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 200
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 150
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 150
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_1_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 1}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 100
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 100
+                                        producer = USR
+                                    }
+                                }
+                            }
+                        }
+                        25 = {
+                            custom_effect_tooltip = NAC_discovered
+                        }
+                    }
+                }
+                else = {
+                    random_list = {
+                        60 = {
+                            random_list = {
+                                40 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 200
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 200
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_2_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 2}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 150
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 150
+                                        producer = USR
+                                    }
+                                }
+                                30 = {
+                                    custom_effect_tooltip = NAC_gain_1_food
+                                    hidden_effect = {
+                                        NAC = {
+                                            add_to_variable = {NAC_food_supply = 1}
+                                        }
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 100
+                                        producer = ELN
+                                    }
+                                    add_equipment_to_stockpile = {
+                                        type = infantry_equipment_1
+                                        amount = 100
+                                        producer = USR
+                                    }
+                                }
+                            }
+                        }
+                        40 = {
+                            custom_effect_tooltip = NAC_discovered
+                        }
+                    }
+                }
+            }
         }
     }
 }

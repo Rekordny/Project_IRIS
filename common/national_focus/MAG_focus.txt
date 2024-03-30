@@ -25,7 +25,7 @@ focus_tree = {
 		}
 	}
 	default = no #是否是通用国策
-	reset_on_civil_war = yes #内战继承进度
+	#reset_on_civil_war = yes #内战继承进度 #报错了
 
 	continuous_focus_position = { x = 300 y = 150 } #持续性国策位置
 
@@ -2555,6 +2555,7 @@ focus_tree = {
 						defensive_doctrine #防御专家
 						organisational_leader #组织至上
 						inspirational_leader #魅力非凡
+						Mana_leader #玛纳部队指挥官
 					}
 					skill = 6
 					attack_skill = 6
@@ -3306,66 +3307,6 @@ focus_tree = {
 			}
 		}
 	}
-
-	focus = { #基础的娱乐保障
-	    id = MAG_AN_jcdylbz
-	    icon = GFX_goal_generic_construct_civ_factory
-	    cost = 10
-	    x = 26
-	    y = 15
-	    prerequisite = {
-	    	focus = MAG_AN_zjgycc
-	    }
-	    completion_reward = { }
-    }
-
-    focus = { #增设科研基地
-	    id = MAG_AN_zskyjd
-    	icon = GFX_goal_generic_construct_civ_factory
-	    cost = 10
-	    x = 26
-	    y = 15
-	    prerequisite = {
-	    	focus = MAG_AN_qmzskx
-	    }
-	    completion_reward = { }
-    }
-
-    focus = { #全世界的教众
-	    id = MAG_AN_qsjdjz
-	    icon = GFX_focus_generic_home_defense
-	    cost = 10
-	    x = 26
-    	y = 15
-    	prerequisite = {
-	    	focus = MAG_AN_cbwmdxy
-	    }
-    	completion_reward = { }
-    }
-
-    focus = { #魔法少女的加持
-    	id = MAG_AN_mfsndjc
-	    icon = GFX_goal_generic_build_tank
-	    cost = 10
-	    x = 24
-	    y = 15
-	    prerequisite = {
-	    	focus = MAG_AN_lxzwq
-	    }
-    	completion_reward = { }
-    }
-
-    focus = { #赶超于装甲
-	    id = MAG_AN_gcyzj
-	    icon = GFX_goal_generic_army_artillery2
-	    cost = 10
-	    x = 22
-	    y = 15
-	    prerequisite = {
-	    	focus = MAG_AN_lxzhp
-	    }
-	     completion_reward = { }
-    }
 	
 	focus = { #基础的娱乐保障
 	    id = MAG_AN_jcdylbz
@@ -4672,8 +4613,21 @@ focus_tree = {
 			focus = MAG_AR_pyktsm
 		}
 		available = {
-			has_war = no
 			has_government = reactionism
+			custom_trigger_tooltip = {
+				tooltip = MAG_AR_IRISsjdzn_available_t00ltip
+				or = {
+					has_war = no
+					all_state = {
+						if = {
+							limit = {
+								is_IRIS_melody_state = yes
+							}
+							is_controlled_by = MAG
+						}
+					}
+				}
+			}
 		}
 		completion_reward = { 
 			custom_effect_tooltip = MAG_AR_hajl_tooltip
@@ -4690,24 +4644,38 @@ focus_tree = {
 			#	}
 			#}
 			hidden_effect = {
-				every_country = {
-					limit = { 
-						NOT = {
-							tag = ROOT
-						}
+				if = {
+					limit = {
+						is_ai = yes
 					}
-					ROOT = { 
-						create_wargoal = {
-							target = PREV
-							type = annex_everything 
+					add_ideas = MAG_AR_aixz
+					every_country = {
+						limit = { 
+							NOT = {
+								tag = ROOT
+							}
+						}
+						ROOT = {
+							declare_war_on = {
+								target = PREV
+								type = annex_everything
+							}
 						}
 					}
 				}
-				MAG = {
-					ai_strategy = {
-						type = consider_weak #AI认为一个国家更弱，减少对宣战的犹豫或降低结盟的可能性
-						id = every_country
-						value = 75
+				else = {
+					every_country = {
+						limit = { 
+							NOT = {
+								tag = ROOT
+							}
+						}
+						ROOT = { 
+							create_wargoal = {
+								target = PREV
+								type = annex_everything 
+							}
+						}
 					}
 				}
 			}
