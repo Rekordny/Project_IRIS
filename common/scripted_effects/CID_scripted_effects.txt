@@ -58,6 +58,10 @@ Calculate_current_funding_requirements = {
 	set_variable = { Add_quantity = grid_faction_array^num }
 	add_to_variable = { Add_quantity = grid_faction_array_zhu^num }#计算出加入的所有国家
 	set_variable = { global.Bank_funds = 50 }#每个国家50pp
+	if = {
+		limit = { check_variable = { global.president = 1 } }
+		set_variable = { global.Bank_funds = 45 }
+	}
 	multiply_variable = { global.Bank_funds = Add_quantity }#投资所需pp
 	Calculate_current_funding_requirements_2 = yes
 }
@@ -91,11 +95,20 @@ member_investment_calculation_del = {
 calculation_President = {
 	set_variable = { global.next_president = 1 }
 	if = {
-		limit = { global.investment_DOC > global.investment_CID }
+		limit = { check_variable = { global.investment_DOC > global.investment_CID } }
 		set_variable = { global.next_president = 2 }
 	}
 	if = {
-		limit = { global.investment_OCF > global.investment_DOC }
+		limit = { check_variable = { global.investment_OCF > global.investment_DOC } }
 		set_variable = { global.next_president = 3 }
+	}
+}
+
+#当前行长
+calculation_President_now = {
+	set_variable = { global.president = 1 }
+	if = {
+		limit = { NOT = { check_variable = { global.next_president = 1 } } }
+		set_variable = { global.president = global.next_president }
 	}
 }
