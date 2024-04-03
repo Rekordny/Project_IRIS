@@ -57,7 +57,7 @@ focus = {
 	available_if_capitulated = no
 	cancel_if_invalid = yes
 	completion_reward = {
-		
+		country_event = { ID = UNG.12 }
 	}
 }
 #*屋檐下的乌鸦
@@ -376,6 +376,17 @@ focus = {
 	available_if_capitulated = no
 	cancel_if_invalid = yes
 	completion_reward = {
+		every_country = {
+			limit = {
+				is_major = yes
+				has_war = no
+				has_opinion = {
+					target = ROOT
+					value > 10
+				}
+			}
+			country_event = { ID = UNG.26 }
+		}
 	}
 }
 #*旭日方案
@@ -895,6 +906,9 @@ focus = {
 		}
 		add_popularity = { ideology = fascism popularity = -0.2 }
 		add_popularity = { ideology = democratic popularity = -0.2 }
+		hidden_effect = {
+			country_event = { ID = UNG.11 }
+		}
 	}
 }
 #*保留战时民兵
@@ -998,6 +1012,7 @@ focus = {
 			id = UNG_gap_aertuoliyarentongdu
 			value = 0.1
 		}
+		add_ideas = UNG_idea_zhanxindeyuanzhuoqishituan1
 		remove_ideas = UNG_idea_jianghuadeqishituantizhi
 	}
 }
@@ -1433,6 +1448,9 @@ focus = {
 	prerequisite = {
 		focus = UNG_Faqichongfeng
 	}
+	mutually_exclusive = {
+		foucs = UNG_Rongguangxiadezhixv
+	}
 	relative_position_id = UNG_Faqichongfeng
 	x = 4
 	y = 1
@@ -1477,12 +1495,40 @@ focus = {
 		}
 	}
 }
+#*荣光下的秩序
+focus = {
+	id = UNG_Rongguangxiadezhixv
+	icon = GFX_UNG_Rongguangxiadezhixv
+	prerequisite = {
+		focus = UNG_Faqichongfeng
+	}
+	mutually_exclusive = {
+		foucs = UNG_Bashenglideqizhichadaohaixiaduian
+	}
+	relative_position_id = UNG_Faqichongfeng
+	x = 6
+	y = 1
+	cost = 4
+	ai_will_do = {
+		factor = 1
+	}
+	available = {
+		NOT = { country_exists = STG }
+	}
+	available_if_capitulated = no
+	cancel_if_invalid = yes
+	completion_reward = {
+		add_ideas = UNG_idea_shouxvzhengyi_1
+
+	}
+}
 #*战争总结
 focus = {
 	id = UNG_Zhanzhengzongjie
 	icon = GFX_UNG_Zhanzhengzongjie
 	prerequisite = {
 		focus = UNG_Bashenglideqizhichadaohaixiaduian
+		focus = UNG_Rongguangxiadezhixv
 	}
 	relative_position_id = UNG_Bashenglideqizhichadaohaixiaduian
 	x = -1
@@ -1502,7 +1548,7 @@ focus = {
 	cancel_if_invalid = yes
 	completion_reward = {
 		add_doctrine_cost_reduction = {
-			uses = 2
+			uses = 1
 			category = land_doctrine
 			cost_reduction = 0.75
 		}
@@ -1516,6 +1562,11 @@ focus = {
 			category = naval_doctrine
 			cost_reduction = 0.75
 		}
+
+		swap_ideas = {
+			remove_idea = UNG_idea_zhanxindeyuanzhuoqishituan1
+			add_idea = UNG_idea_zhanxindeyuanzhuoqishituan2
+		}
 	}
 }
 #*海峡经济
@@ -1524,6 +1575,7 @@ focus = {
 	icon = GFX_UNG_Haixiajingji
 	prerequisite = {
 		focus = UNG_Bashenglideqizhichadaohaixiaduian
+		focus = UNG_Rongguangxiadezhixv
 	}
 	relative_position_id = UNG_Bashenglideqizhichadaohaixiaduian
 	x = 1
@@ -1537,12 +1589,21 @@ focus = {
 		}
 	}
 	available = {
-		country_exists = STR
-		STR = {
-			is_puppet_of = UNG
+		NOT = {
+			country_exists = STG
 		}
-		222 = {
-			is_controlled_by = STR
+		OR = {
+			AND = {
+				STR = {
+					is_puppet_of = UNG
+				}
+				222 = {
+					is_controlled_by = STR
+				}
+			}
+			222 = {
+				is_controlled_by = UNG
+			}
 		}
 		182 = {
 			is_controlled_by = UNG
@@ -1573,16 +1634,50 @@ focus = {
 		}
 	}
 }
+#*铁面的审判者
+focus = {
+	id = UNG_Tiemiandeshenpanzhe
+	icon = GFX_UNG_Tiemiandeshenpanzhe
+	prerequisite = {
+		focus = UNG_Rongguangxiadezhixv
+		focus = UNG_Rongguangxiadezhixv
+	}
+	relative_position_id = UNG_Rongguangxiadezhixv
+	x = 1
+	y = 1
+	cost = 4
+	ai_will_do = {
+		factor = 1
+		modifier = {
+			is_historical_focus_on = yes
+			factor = 50
+		}
+	}
+	available = {
+		always = yes
+	}
+	available_if_capitulated = no
+	cancel_if_invalid = yes
+	completion_reward = {
+		add_ideas = UNG_idea_jianjiekuaisugaoxiaoshenpanjizhi
+	}
+}
 #*先发制人
 focus = {
 	id = UNG_Xianfazhiren
 	icon = GFX_UNG_Xianfazhiren
 	prerequisite = {
-		focus = UNG_Bashenglideqizhichadaohaixiaduian
+		focus = UNG_Zhanzhengzongjie
 	}
-	relative_position_id = UNG_Bashenglideqizhichadaohaixiaduian
+	prerequisite = {
+		focus = UNG_Haixiajingji
+	}
+	prerequisite = {
+		focus = UNG_Tiemiandeshenpanzhe
+	}
+	relative_position_id = UNG_Haixiajingji
 	x = 0
-	y = 3
+	y = 2
 	cost = 4
 	ai_will_do = {
 		 factor = 1
@@ -1611,6 +1706,13 @@ focus = {
 	cancel_if_invalid = yes
 	will_lead_to_war_with = USR
 	completion_reward = {
+		add_state_claim = 682
+		add_state_claim = 174
+		add_state_claim = 723
+		add_state_claim = 763
+		add_state_claim = 721
+		add_state_claim = 153
+
 		declare_war_on = {
 			target = USR
 			type = puppet_wargoal_focus
@@ -1863,11 +1965,14 @@ focus = {
 		focus = UNG_Xiangailinuokaolong
 		focus = UNG_Yongshidelixiangxiang
 	}
+	prerequisite = {
+		focus = UNG_Yasewangshipingzhicaochang
+	}
 	relative_position_id = UNG_Yongshidelixiangxiang
 	# mutually_exclusive = {
 	# 	focus = UNG_Dayangzhanlue
 	# }
-	x = 1
+	x = 3
 	y = 1
 	cost = 8
 	ai_will_do = {
@@ -1894,6 +1999,7 @@ focus = {
 	cancel_if_invalid = yes
 	completion_reward = {
 		unlock_decision_category_tooltip = UNG_Tandongxingdong
+		news_event = { ID = ungnews.111 }
 	}
 }
 #*亚瑟王食品制造厂
@@ -1917,11 +2023,11 @@ focus = {
 	y = 3
 	cost = 4
 	ai_will_do = {
-		# factor = 1
-		# modifier = {
-		# 	is_historical_focus_on = yes
-		# 	factor = 50
-		# }
+		factor = 1
+		modifier = {
+			is_historical_focus_on = yes
+			factor = 50
+		}
 	}
 	available = {
 	}
@@ -1959,7 +2065,7 @@ focus = {
 	# mutually_exclusive = {
 	# 	focus = UNG_Dayangzhanlue
 	# }
-	x = 0
+	x = 1
 	y = 2
 	cost = 4
 	ai_will_do = {
@@ -1970,12 +2076,87 @@ focus = {
 		# }
 	}
 	available = {
+		industrial_complex > 50
 	}
 	
 	available_if_capitulated = no
 	cancel_if_invalid = yes
 	completion_reward = {
 		unlock_decision_category_tooltip = UNG_Yasewangcanting
+		news_event = { ID = ungnews.110 }
+	}
+}
+#*长路漫漫,苦行求索
+focus = {
+	id = UNG_ChanglumanmanKuxingqiusuo
+	icon = GFX_UNG_ChanglumanmanKuxingqiusuo
+	prerequisite = {
+		focus = UNG_Tandongxingdong
+		
+	}
+	prerequisite = {
+		
+		focus = UNG_Kuodayewufanwei
+	}
+	relative_position_id = UNG_Tandongxingdong
+	# mutually_exclusive = {
+	# 	focus = UNG_Dayangzhanlue
+	# }
+	x = 1
+	y = 2
+	cost = 4
+	ai_will_do = {
+		factor = 1
+		modifier = {
+			is_historical_focus_on = yes
+			factor = 50
+		}
+	}
+	available = {		
+		OR = {
+			CLD = {
+				is_puppet_of = UNG
+				num_of_controlled_states > 7
+			}	
+			AND = {
+				NOT = {
+					country_exists = CLD
+				}
+				643 = {
+					is_owned_and_controlled_by = UNG
+				}
+			}
+		}
+	}
+	
+	available_if_capitulated = no
+	cancel_if_invalid = yes
+	completion_reward = {
+		if = {
+			limit = {
+				country_exists = CLD
+				CLD = {
+					is_puppet_of = UNG
+				}	
+			}
+			UNG = {
+				annex_country = {
+					target = CLD
+					transfer_troops = yes
+				}
+				every_state = {
+					limit = {
+						is_core_of = CLD
+					}
+					add_core_of = UNG
+				}
+			}
+		}
+		set_victory_points = {
+			province = 3215
+			value = 20
+		}
+		custom_effect_tooltip = UNG_Tansuoqianwenminyiji_TXT
 	}
 }
 #*卡美洛国家银行
@@ -2039,7 +2220,8 @@ focus = {
 	available_if_capitulated = no
 	cancel_if_invalid = yes
 	completion_reward = {
-		
+		country_event = { ID = UNG.16 }
+		add_ideas = UNG_idea_guoyouhuazhongyaochangye
 	}
 }
 #*至善者的美德
@@ -2079,7 +2261,7 @@ focus = {
 #*阿瓦隆模式
 focus = {
 	id = UNG_Awalongmoshi
-	icon = GFX_focus_UNG_king_32
+	icon = GFX_focus_UNG_Awalongmoshi
 	prerequisite = {
 		focus = UNG_Zhishanzhedemeide
 	}
@@ -2122,7 +2304,7 @@ focus = {
 #*昂格利亚共同体精神
 focus = {
 	id = UNG_Angeliyagongtongtijinshen
-	icon = GFX_UNG_Angeliyagongtongtijinshen
+	icon = GFX_focus_UNG_king_32
 	prerequisite = {
 		focus = UNG_Awalongmoshi
 	}
@@ -2148,6 +2330,7 @@ focus = {
 	cancel_if_invalid = yes
 	completion_reward = {
 		country_event = { ID = UNG.15 }
+		add_ideas = UNG_idea_yongshideyaolan
 	}
 }
 #*和赤色罗西亚的经济合作
