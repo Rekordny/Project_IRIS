@@ -1,6 +1,14 @@
 #更新动态修正
 NAC_update_dynamic_modifier = {
     NAC = {
+        if = {
+            limit = {
+                check_variable = {
+                    NAC_morale > 120
+                }
+            }
+            set_variable = {NAC_morale = 120}
+        }
         set_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_equipment_capture_factor_bonus}
         set_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_army_morale_factor_bonus}
         set_variable = {NAC_revolution_dynamic_army_org_factor = NAC_army_org_factor_bonus}
@@ -9,5 +17,230 @@ NAC_update_dynamic_modifier = {
         multiply_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_morale}
         multiply_variable = {NAC_revolution_dynamic_army_org_factor = NAC_morale}
         multiply_variable = {NAC_revolution_dynamic_land_reinforce_rate = NAC_morale}
+    }
+}
+#检测军队粮食消耗
+NAC_check_army_food_cost = {
+    NAC = {
+        set_variable = {NAC_army_food_cost = num_battalions}
+        multiply_variable = {NAC_army_food_cost = NAC_army_food_basic_cost}
+    }
+}
+#检测民用粮食消耗
+NAC_check_civ_food_cost = {
+    NAC = {
+        set_variable = {NAC_civ_food_cost = max_manpower_k}
+        divide_variable = {
+            var = NAC_civ_food_cost
+            value = 2
+        }
+        multiply_variable = {NAC_civ_food_cost = NAC_civ_food_basic_cost}
+    }
+}
+#检测收支
+NAC_check_food_balance = {
+    NAC = {
+        set_variable = {NAC_food_balance = 0}
+        add_to_variable = {NAC_food_balance = NAC_food_production}
+        subtract_from_variable = {NAC_food_balance = NAC_army_food_cost}
+        subtract_from_variable = {NAC_food_balance = NAC_civ_food_cost}
+    }
+}
+#粮食储备变化
+NAC_update_food_supply = {
+    NAC = {
+        NAC_check_army_food_cost = yes
+        NAC_check_civ_food_cost = yes
+        NAC_check_food_balance = yes
+        add_to_variable = {NAC_food_supply = NAC_food_balance}
+        if = {
+            limit = {
+                check_variable = {NAC_food_supply < 0 }
+            }
+            set_variable = {
+                NAC_food_supply = 0
+            }
+        }
+        NAC_check_food_supply = yes
+    }
+}
+#检测粮食供应等级
+NAC_check_food_supply = {
+    NAC = {
+        if = {
+            limit = {
+                NOT = {
+                    has_country_flag = NAC_disable_food_system
+                }
+            }
+            if = {
+                limit = {
+                    check_variable = {NAC_food_supply > 99}
+                }
+                add_ideas = NAC_enough_food_1
+                remove_ideas = NAC_enough_food_2
+                remove_ideas = NAC_insufficient_food_1
+                remove_ideas = NAC_insufficient_food_2
+                remove_ideas = NAC_famine_1
+                remove_ideas = NAC_famine_2
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        var = NAC_food_supply
+                        value = 0
+                        compare = greater_than_or_equals
+                    }
+                    check_variable = {NAC_food_supply < 100}
+                    check_variable = {NAC_food_supply > 0}
+                }
+                NAC_one_step_from_famine = yes
+            }
+            if = {
+                limit = {
+                    check_variable = {NAC_food_supply < 1}
+                }
+                remove_ideas = NAC_enough_food_1
+                remove_ideas = NAC_enough_food_2
+                NAC_one_step_to_famine = yes
+            }
+        }
+    }
+}
+#朝饥荒前进一步
+NAC_one_step_to_famine = {
+    if = {
+        limit = {
+            NOT = {
+                has_idea = NAC_insufficient_food_1
+                has_idea = NAC_insufficient_food_2
+                has_idea = NAC_famine_1
+                has_idea = NAC_famine_2
+            }
+        }
+        add_ideas = NAC_insufficient_food_1
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_insufficient_food_1
+        }
+        swap_ideas = {
+            remove_idea = NAC_insufficient_food_1
+            add_idea = NAC_insufficient_food_2
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_insufficient_food_2
+        }
+        swap_ideas = {
+            remove_idea = NAC_insufficient_food_2
+            add_idea = NAC_famine_1
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_famine_1
+        }
+        swap_ideas = {
+            remove_idea = NAC_famine_1
+            add_idea = NAC_famine_2
+        }
+    }
+}
+#有饭吃了，好耶！
+NAC_one_step_from_famine = {
+    if = {
+        limit = {
+            has_idea = NAC_famine_2
+        }
+        swap_ideas = {
+            remove_idea = NAC_famine_2
+            add_idea = NAC_famine_1
+        }
+    }
+    if = {
+        limit = {
+            has_idea = NAC_famine_1
+        }
+        swap_ideas = {
+            remove_idea = NAC_famine_1
+            add_idea = NAC_insufficient_food_2
+        }
+    }
+    if = {
+        limit = {
+            has_idea = NAC_insufficient_food_2
+        }
+        swap_ideas = {
+            remove_idea = NAC_insufficient_food_2
+            add_idea = NAC_insufficient_food_1
+        }
+    }
+    if = {
+        limit = {
+            has_idea = NAC_insufficient_food_1
+        }
+        swap_ideas = {
+            remove_idea = NAC_insufficient_food_1
+            add_idea = NAC_enough_food_2
+        }
+    }
+    if = {
+        limit = {
+            NOT = {
+                has_idea = NAC_famine_1
+                has_idea = NAC_famine_2
+                has_idea = NAC_insufficient_food_1
+                has_idea = NAC_insufficient_food_2
+                has_idea = NAC_enough_food_2
+            }
+        }
+        add_ideas = NAC_enough_food_2
+    }
+}
+#降低革命余波
+NAC_recover_from_revolution = {
+    if = {
+        limit = {
+            has_idea = NAC_ruined_rossiya_5
+        }
+        swap_ideas = {
+            remove_idea = NAC_ruined_rossiya_5
+            add_idea = NAC_ruined_rossiya_4
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_ruined_rossiya_4
+        }
+        swap_ideas = {
+            remove_idea = NAC_ruined_rossiya_4
+            add_idea = NAC_ruined_rossiya_3
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_ruined_rossiya_3
+        }
+        swap_ideas = {
+            remove_idea = NAC_ruined_rossiya_3
+            add_idea = NAC_ruined_rossiya_2
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_ruined_rossiya_2
+        }
+        swap_ideas = {
+            remove_idea = NAC_ruined_rossiya_2
+            add_idea = NAC_ruined_rossiya_1
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = NAC_ruined_rossiya_1
+        }
+        remove_ideas = NAC_ruined_rossiya_1
     }
 }
