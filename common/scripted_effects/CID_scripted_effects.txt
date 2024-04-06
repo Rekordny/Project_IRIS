@@ -1,0 +1,114 @@
+#建立投资银行
+Establishing_investment_bank = {
+	CID = { add_ideas = Member_countries_investment_banks_idea }
+	DOC = { add_ideas = Member_countries_investment_banks_idea }
+	OCF = { add_ideas = Member_countries_investment_banks_idea }
+	every_country = {
+		limit = { OR = { has_war_with = DOC has_war_with = OCF has_war_with = CID } }
+		remove_ideas = Member_countries_investment_banks_idea
+	}
+	every_country = {
+		limit = { always = yes }
+		clear_array = ROOT.grid_faction_array
+		clear_array = ROOT.grid_faction_array_zhu
+	}
+	every_country = {
+		limit = { has_idea = Member_countries_investment_banks_idea }
+		
+		if = {
+			limit = { OR = { tag = OCF tag = CID tag = DOC } }#分配成员国
+			add_to_array = { ROOT.grid_faction_array_zhu = THIS }
+		}else={
+			add_to_array = { ROOT.grid_faction_array = THIS }#分配加盟国
+		}
+		Calculate_current_funding_requirements = yes
+	}
+	set_variable = { global.touzi_jine = 0 }
+}
+
+#刷新成员
+Establishing_investment_bank_2 = {
+	CID = { add_ideas = Member_countries_investment_banks_idea }
+	DOC = { add_ideas = Member_countries_investment_banks_idea }
+	OCF = { add_ideas = Member_countries_investment_banks_idea }
+	every_country = {
+		limit = { OR = { has_war_with = DOC has_war_with = OCF has_war_with = CID } }
+		remove_ideas = Member_countries_investment_banks_idea
+	}
+	every_country = {
+		limit = { always = yes }
+		clear_array = ROOT.grid_faction_array
+		clear_array = ROOT.grid_faction_array_zhu
+	}
+	every_country = {
+		limit = { has_idea = Member_countries_investment_banks_idea }
+		
+		if = {
+			limit = { OR = { tag = OCF tag = CID tag = DOC } }#分配成员国
+			add_to_array = { ROOT.grid_faction_array_zhu = THIS }
+		}else={
+			add_to_array = { ROOT.grid_faction_array = THIS }#分配加盟国
+		}
+		Calculate_current_funding_requirements = yes
+	}
+}
+
+#计算目前需要PP
+Calculate_current_funding_requirements = {
+	set_variable = { Add_quantity = grid_faction_array^num }
+	add_to_variable = { Add_quantity = grid_faction_array_zhu^num }#计算出加入的所有国家
+	set_variable = { global.Bank_funds = 50 }#每个国家50pp
+	if = {
+		limit = { check_variable = { global.president = 1 } }
+		set_variable = { global.Bank_funds = 45 }
+	}
+	multiply_variable = { global.Bank_funds = Add_quantity }#投资所需pp
+	Calculate_current_funding_requirements_2 = yes
+}
+#计算进度
+Calculate_current_funding_requirements_2 = {
+	set_variable = { global.touzijindu = global.touzi_jine }
+	multiply_variable = { global.touzijindu = 100 }
+	divide_variable = { global.touzijindu = global.Bank_funds  }#进度条进度百分比
+}
+#投资
+add_touzi_jine_10 = {
+	add_political_power = -10
+	add_to_variable = { global.touzi_jine = 10 }#投资总额增加
+	Calculate_current_funding_requirements_2 = yes
+	calculation_President = yes
+}
+#成员投资计算
+member_investment_calculation = {
+	
+}
+
+#成员投资计算(归零)
+member_investment_calculation_del = {
+	set_variable = { global.investment_CID = 0 }
+	set_variable = { global.investment_DOC = 0 }
+	set_variable = { global.investment_OCF = 0 }
+	set_variable = { global.investment_other = 0 }
+}
+
+#行长计算
+calculation_President = {
+	set_variable = { global.next_president = 1 }
+	if = {
+		limit = { check_variable = { global.investment_DOC > global.investment_CID } }
+		set_variable = { global.next_president = 2 }
+	}
+	if = {
+		limit = { check_variable = { global.investment_OCF > global.investment_DOC } }
+		set_variable = { global.next_president = 3 }
+	}
+}
+
+#当前行长
+calculation_President_now = {
+	set_variable = { global.president = 1 }
+	if = {
+		limit = { NOT = { check_variable = { global.next_president = 1 } } }
+		set_variable = { global.president = global.next_president }
+	}
+}
