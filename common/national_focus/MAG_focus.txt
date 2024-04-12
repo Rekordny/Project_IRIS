@@ -4277,7 +4277,12 @@ focus_tree = {
 					NOT = {
 						tag = ROOT
 					}
-					is_IRIS_melody_country = yes
+					or = {
+						is_IRIS_melody_country = yes
+						any_owned_state = {
+							is_IRIS_melody_state = yes
+						}
+					}
 				}
 				ROOT = { 
 					declare_war_on = {
@@ -4295,10 +4300,10 @@ focus_tree = {
 						NOT = { is_core_of = MAG }
 						is_IRIS_melody_state = yes
 					}
-					add_claim_by = ROOT
+					add_state_claim = PREV
 				}
 			}
-			mark_focus_tree_layout_dirty = yes #刷新国策树
+			#mark_focus_tree_layout_dirty = yes #刷新国策树
 			#initial_show_position = { focus = MAG_AR_hajl } #点开国策树显示的位置
 		}
 		search_filters = { FOCUS_FILTER_POLITICAL }
@@ -4406,6 +4411,9 @@ focus_tree = {
 		y = 9
 		ai_will_do = { factor = 50 }
 		available_if_capitulated = no #投降后是否能点
+		cancel_if_invalid = no #条件不满足是否取消
+		continue_if_invalid = yes #条件不满足是否继续
+		cancelable = no #无法手动取消
 		prerequisite = {
 			focus = MAG_AR_qtmdtl
 		}
@@ -4429,7 +4437,10 @@ focus_tree = {
 							limit = {
 								is_IRIS_melody_state = yes
 							}
-							is_controlled_by = MAG
+							or = {
+								is_controlled_by = MAG
+								is_owned_by = MAG
+							}
 						}
 					}
 				}
@@ -4437,53 +4448,54 @@ focus_tree = {
 		}
 		completion_reward = { 
 			custom_effect_tooltip = MAG_AR_hajl_tooltip
+			#remove_country_leader_trait = MAG_TR_yyzfzdzz
 			add_stability = 0.15
 			add_war_support = 0.15
 			add_political_power = 200
 			army_experience = 50 #陆军经验
 			navy_experience = 100 #海军经验
 			air_experience = 100 #空军经验
-			#every_other_country = {
-			#	country_event = {
-			#	    id = MAG_A.38
-			#	    days = 1
-			#	}
-			#}
+			swap_ruler_traits = {
+				remove = MAG_TR_yyzfzdzz
+				add = MAG_TR_wyIRISsj
+			}
 			hidden_effect = {
+				every_country = {
+					limit = { 
+						NOT = {
+							tag = ROOT
+							tag = WRQ
+						}
+					}
+					ROOT = {
+						declare_war_on = {
+							target = PREV
+							type = annex_everything
+						}
+					}
+				}
 				if = {
 					limit = {
 						is_ai = yes
 					}
 					add_ideas = MAG_AR_aixz
-					every_country = {
-						limit = { 
-							NOT = {
-								tag = ROOT
-							}
-						}
-						ROOT = {
-							declare_war_on = {
-								target = PREV
-								type = annex_everything
-							}
-						}
-					}
 				}
-				else = {
-					every_country = {
-						limit = { 
-							NOT = {
-								tag = ROOT
-							}
-						}
-						ROOT = { 
-							create_wargoal = {
-								target = PREV
-								type = annex_everything 
-							}
-						}
-					}
-				}
+				#else = {
+				#	every_country = {
+				#		limit = { 
+				#			NOT = {
+				#				tag = ROOT
+				#				tag = WRQ
+				#			}
+				#		}
+				#		ROOT = { 
+				#			create_wargoal = {
+				#				target = PREV
+				#				type = annex_everything 
+				#			}
+				#		}
+				#	}
+				#}
 			}
 		}
 		search_filters = { FOCUS_FILTER_ANNEXATION } #领土扩张
@@ -4506,8 +4518,12 @@ focus_tree = {
 				add = 50
 			}
 			modifier = {
-				surrender_progress > 0.69
-				add = 50
+				surrender_progress > 0.49
+				add = 500
+			}
+			modifier = {
+				surrender_progress > 0.09
+				add = 100
 			}
 		}
 		prerequisite = {
