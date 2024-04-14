@@ -34,29 +34,24 @@ NAC_unite_russia = {
                 ideology = communism
                 popularity = 0.10
             }
-            add_stability = 0.10
-            add_war_support = 0.10
             set_cosmetic_tag = NAC_RSR
-            if = {
-                limit = {
-                    has_idea = NAC_War_communism
-                }
-                swap_ideas = {
-                    remove_idea = NAC_War_communism
-                    add_idea = NAC_Planned_Economy
-                }
-            }
-            if = {
-                limit = {
-                    has_idea = NAC_War_communism_2
-                }
-                swap_ideas = {
-                    remove_idea = NAC_War_communism_2
-                    add_idea = NAC_Planned_Economy
-                }
-            }
-            add_ideas = NAC_liberate_serf
             set_country_flag = NAC_united_rossiya
+            hidden_effect = {
+                load_focus_tree = {
+                    tree = NAC
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+                add_popularity = {
+                    ideology = fascism
+                    popularity = 0.10
+                }
+                add_popularity = {
+                    ideology = reactionism
+                    popularity = 0.10
+                }
+                country_event = {id = NAC.23 days = 3}
+            }
         }
         ai_will_do = {
             base = 1000
@@ -66,6 +61,9 @@ NAC_unite_russia = {
 #输出革命
 NAC_liberate_old_world = {
     NAC_to_south = {
+        available = {
+            has_completed_focus = NAC_reconstruction_20
+        }
         cost = 25
         days_remove = 30
         fire_only_once = yes
@@ -157,6 +155,85 @@ NAC_liberate_old_world = {
         }
     }
 }
+#解放东方
+NAC_eastern_issue = {
+    NAC_to_east = {
+        available = {
+            has_completed_focus = NAC_reconstruction_1
+            country_exists = OPA
+        }
+        visible = {
+            NOT = {
+                OPA = {
+                    has_government = NAC
+                }
+            }
+        }
+        cost = 10
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            if = {
+                limit = {
+                    country_exists = OPA
+                }
+                declare_war_on = {
+                    target = OPA
+                    type = annex_everything
+                }
+            }
+            55 = {
+                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
+            }
+            63 = {
+                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
+            }
+            102 = {
+                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
+            }
+            117 = {
+                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
+            }
+            167 = {
+                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
+            }
+            hidden_effect = {
+                OPA = {
+                    swap_ideas = {
+                        remove_idea = OPA_oriental_legion
+                        add_idea = OPA_true_oriental_legion
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    NAC_annex_OPA = {
+        available = {
+            has_completed_focus = NAC_reconstruction_1
+            country_exists = OPA
+        }
+        visible = {
+            OPA = {
+                has_government = NAC
+            }
+        }
+        cost = 10
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            annex_country = {
+                target = OPA
+                transfer_troops = yes
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+}
 #解除对真理禁运
 remove_embargo_on_NAC = {
     REMOVE_NAC_EMBARGO = {
@@ -165,6 +242,9 @@ remove_embargo_on_NAC = {
         }
         complete_effect = {
             break_embargo = NAC
+        }
+        ai_will_do = {
+            factor = 1000
         }
     }
 }
@@ -186,14 +266,19 @@ NAC_food_supply = {
             add_stability = -0.01
             add_war_support = -0.01
             add_popularity = {
-                ideology = communism
-                popularity = -0.005
+                ideology = neutrality
+                popularity = 0.01
             }
             custom_effect_tooltip = NAC_gain_food_but_reduce_production
             hidden_effect = {
                 NAC = {
-                    add_to_variable = {NAC_food_supply = 14}
-                    add_to_variable = {NAC_food_production = -1}
+                    add_to_variable = {NAC_food_supply = 10}
+                    if = {
+                        limit = {
+                            check_variable = {NAC_food_production > 7}
+                        }
+                        add_to_variable = {NAC_food_production = -1}
+                    }
                 }
             }
         }
@@ -236,10 +321,10 @@ NAC_food_supply = {
             hidden_effect = {
                 NAC = {
                     random_list = {
-                        50 = {
+                        75 = {
                             add_to_variable = {NAC_food_production = 1}
                         }
-                        50 = {
+                        25 = {
                             add_to_variable = {NAC_food_production = 2}
                         }
                     }
@@ -339,7 +424,7 @@ NAC_food_supply = {
             }
         }
         modifier = {
-            experience_gain_army = 0.75
+            experience_gain_army = 0.50
         }
         remove_effect = {
             clr_country_flag = NAC_increase_army_quota_flag
@@ -349,10 +434,10 @@ NAC_food_supply = {
             }
         }
         ai_will_do = {
-            base = 1
+            base = 0
             modifier = {
                 add = 100
-                NAC = {check_variable = {NAC_food_supply > 40}}
+                NAC = {check_variable = {NAC_food_supply > 35}}
             }
         }
     }
@@ -471,6 +556,13 @@ NAC_propaganda = {
                 }
             }
         }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
     }
     NAC_focus_on_army = {
         available = {
@@ -489,6 +581,13 @@ NAC_propaganda = {
                 BLA_decrease_army_opinion = yes
             }
         }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
     }
     NAC_focus_on_freeman = {
         available = {
@@ -505,6 +604,13 @@ NAC_propaganda = {
             clr_country_flag = NAC_propaganda_in_progress
             BLA = {
                 BLA_decrease_freeman_opinion = yes
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
             }
         }
     }
@@ -534,6 +640,13 @@ NAC_propaganda = {
                 }
             }
         }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
     }
 }
 #北方航线
@@ -548,9 +661,7 @@ NAC_north_route = {
         activation = {
             tag = NAC
             has_completed_focus = NAC_prewar_3
-            NOT = {
-                has_idea = NAC_block
-            }
+            has_idea = NAC_block
         }
         cancel_trigger = {
             NOT = {
@@ -721,9 +832,7 @@ NAC_north_route = {
         activation = {
             tag = NAC
             has_completed_focus = NAC_prewar_5
-            NOT = {
-                has_idea = NAC_block
-            }
+            has_idea = NAC_block
         }
         cancel_trigger = {
             NOT = {
@@ -892,9 +1001,7 @@ NAC_north_route = {
         activation = {
             tag = NAC
             has_completed_focus = NAC_prewar_28
-            NOT = {
-                has_idea = NAC_block
-            }
+            has_idea = NAC_block
         }
         cancel_trigger = {
             NOT = {
@@ -1040,6 +1147,219 @@ NAC_north_route = {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+#外国支援罗西亚革命
+Rossiya_Revolution = {
+    Support_NAC = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 1999
+            }
+        }
+        visible = {
+            OR = {
+                has_government = communism
+                has_government = democratic
+            }
+            ROOT = {
+                check_variable = {infantry_equipment_shipped_to_NAC < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 2000
+                target = NAC
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {infantry_equipment_shipped_to_NAC = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 100
+                has_government = NAC
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 99 }
+            }
+        }
+    }
+    Give_heavy_weapons_to_NAC = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 199
+            }
+        }
+        visible = {
+            OR = {
+                has_government = communism
+                has_government = democratic
+            }
+            ROOT = {
+                check_variable = {artillery_equipment_shipped_to_NAC < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 200
+                target = NAC
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {artillery_equipment_shipped_to_NAC = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 100
+                has_government = NAC
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 99 }
+            }
+        }
+    }
+    Support_BLA = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 999
+            }
+        }
+        visible = {
+            OR = {
+                has_government = neutrality
+                has_government = reactionism
+                has_government = fascism
+            }
+            ROOT = {
+                check_variable = {infantry_equipment_shipped_to_BLA < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 1000
+                target = BLA
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {infantry_equipment_shipped_to_BLA = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 5
+                has_government = BLA
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 99 }
+            }
+        }
+    }
+    Give_heavy_weapons_to_BLA = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 99
+            }
+        }
+        visible = {
+            OR = {
+                has_government = neutrality
+                has_government = reactionism
+                has_government = fascism
+            }
+            ROOT = {
+                check_variable = {artillery_equipment_shipped_to_BLA < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 100
+                target = BLA
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {artillery_equipment_shipped_to_BLA = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 5
+                has_government = BLA
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 99 }
             }
         }
     }
