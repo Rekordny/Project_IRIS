@@ -2,7 +2,11 @@ on_actions = {
     on_startup = {
         effect ={
             NAC = {
+                add_to_variable = {NAC_red_army_army_org_factor = 0.05}
+                add_to_variable = {NAC_red_army_land_reinforce_rate = 0.02}
+                country_event = {id = NAC.1 days = 10}
                 set_variable = {NAC_morale = 50}
+                set_variable = {NAC_katyusha_power = 30}
                 #基础数值
                 set_variable = { NAC_equipment_capture_factor_bonus = 0.001}
                 set_variable = { NAC_army_morale_factor_bonus = 0.002 } 
@@ -18,15 +22,45 @@ on_actions = {
                 multiply_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_army_org_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_land_reinforce_rate = NAC_morale}
+                #粮食系统初始化
+                set_variable = {NAC_food_supply = 50}
+                set_variable = {NAC_food_production = 12}
+                set_variable = {NAC_army_food_basic_cost = 0.05}
+                set_variable = {NAC_army_food_cost = num_battalions}
+                multiply_variable = {NAC_army_food_cost = NAC_army_food_basic_cost}
+                set_variable = {NAC_civ_food_cost = max_manpower_k}
+                divide_variable = {
+                    var = NAC_civ_food_cost
+                    value = 2
+                }
+                set_variable = {NAC_civ_food_basic_cost = 0.01}
+                multiply_variable = {NAC_civ_food_cost = NAC_civ_food_basic_cost}
+                set_variable = {NAC_food_balance = 0}
+                add_to_variable = {NAC_food_balance = NAC_food_production}
+                subtract_from_variable = {NAC_food_balance = NAC_army_food_cost}
+                subtract_from_variable = {NAC_food_balance = NAC_civ_food_cost}
             }
         }
     }
-    on_weekly = {
+    on_weekly_NAC = {
         effect = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = NAC_disable_food_system
+                    }
+                }
+                NAC_check_army_food_cost = yes
+                NAC_check_civ_food_cost = yes
+                NAC_check_food_balance = yes
+            }
             every_country = {
                 limit = {
                     NOT = {
                         tag = NAC
+                    }
+                    NOT = {
+                        tag = WRQ
                     }
                     NOT = {
                         has_government = NAC
@@ -39,12 +73,58 @@ on_actions = {
            }
             NAC = {
                 NAC_update_dynamic_modifier = yes
-                if = {
-                    limit = {
-                        has_war_with = BLA
-                        NOT = {check_variable = {NAC_morale < -99}}
+            }
+        }
+    }
+    on_monthly_NAC = {
+        effect = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = NAC_disable_food_system
                     }
-                    add_to_variable = {NAC_morale = -1.25}
+                }
+                NAC_update_food_supply = yes
+            }
+        }
+    }
+
+    on_state_control_changed = {
+        effect = {
+            if = {
+                limit = {
+                    NAC = {
+                        has_war_with = BLA
+                    }
+                    FROM.FROM = {
+                        OR = {
+                            is_core_of = NAC
+                            is_core_of = BLA
+                        }
+                    }
+                }
+                FROM = {
+                    add_stability = -0.02
+                    add_war_support = -0.02
+                    if = {
+                        limit = {
+                            tag = NAC
+                        }
+                        add_to_variable = {NAC_morale = -2}
+                    }
+                    if = {
+                        limit = {
+                            tag = BLA
+                        }
+                        NAC = {
+                            add_to_variable = {NAC_morale = 1}
+                            add_equipment_to_stockpile = {
+                                type = infantry_equipment_1
+                                amount = 300
+                                producer = BLA
+                            }
+                        }
+                    }
                 }
             }
         }

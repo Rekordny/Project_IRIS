@@ -9,7 +9,7 @@ focus_tree = {
 	}
 	default = no
 	continuous_focus_position = { x = 100 y = 100 }
-	#偷梁换柱
+	#驱逐无能者
 	focus = {
 		id = USR_perpetrate_a_fraud
 		icon = GFX_focus_USR_perpetrate_a_fraud
@@ -20,7 +20,7 @@ focus_tree = {
 			base = 20
 		}
 		mutually_exclusive = {
-			#focus = USR_break_the_quo
+			focus = USR_break_the_quo
 		}
 		available = {
 			
@@ -210,7 +210,7 @@ focus_tree = {
 		relative_position_id = USR_establish_counter_intelligence_committee
 		prerequisite = { focus = USR_establish_counter_intelligence_committee }
 		ai_will_do = {
-			base = 0
+			base = 10
 			modifier = {
 				add = 10
 				ANZ = { has_civil_war = yes }
@@ -328,10 +328,6 @@ focus_tree = {
 				ANZ = { has_government = fascism }
 				add = 10
 			}
-			modifier = {
-				has_civil_war = yes
-				add = -100
-			}
 		}
 		available = {
 			USR = { has_government = fascism }
@@ -346,12 +342,10 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			create_faction = "战车道联盟"
+			create_faction = USR_senshado_alliance_idea
 			#触发事件询问安齐奥是否愿意加入战车道联盟
 			ANZ = { country_event = { id = usr.4 } }
-			hidden_effect = {
-				USR_refresh_SSD_alliance_members = yes
-			}
+			add_ideas = USR_senshado_alliance_idea
 		}
 	}
 	#我们的战车道
@@ -475,7 +469,7 @@ focus_tree = {
 		icon = GFX_focus_USR_meet_the_war_hero
 		x = 0
 		y = 1
-		cost = 8
+		cost = 5
 		relative_position_id = USR_writing_social_democratic_editorials
 		prerequisite = { focus = USR_writing_social_democratic_editorials }
 		#mutually_exclusive = { focus =  }
@@ -631,7 +625,7 @@ focus_tree = {
 		icon = GFX_focus_USR_underpass_tunnel_through_mountain
 		x = -2
 		y = 1
-		cost = 5
+		cost = 10
 		relative_position_id = USR_invest_tank_factory
 		prerequisite = { focus = USR_invest_tank_factory }
 		#mutually_exclusive = { focus =  }
@@ -646,12 +640,15 @@ focus_tree = {
 			
 		}
 		completion_reward = {
-			every_controlled_state = {
-				if = { 
-					limit = { infrastructure < 5 } 
-					add_building_construction = {
-						type = infrastructure
-						level = 1
+			custom_effect_tooltip = USR_tooltip51
+			hidden_effect = {
+				every_core_state = {
+					if = { 
+						limit = { infrastructure < 5 is_controlled_by = USR } 
+						add_building_construction = {
+							type = infrastructure
+							level = 1
+						}
 					}
 				}
 			}
@@ -846,7 +843,7 @@ focus_tree = {
 		icon = GFX_focus_USR_ensecure_fuel_supply
 		x = 1
 		y = 1
-		cost = 8
+		cost = 10
 		relative_position_id = USR_kuromorinmine_research_department
 		prerequisite = { focus = USR_kuromorinmine_research_department }
 		#mutually_exclusive = { focus =  }
@@ -911,9 +908,6 @@ focus_tree = {
 			}
 		}
 		bypass = {
-			NOT = { 159 = { controller = {
-				tag = USR
-			} } }
 		}
 		completion_reward = {
 			country_event = { id = usr.13 }
@@ -966,6 +960,13 @@ focus_tree = {
 				cost_reduction = 0.75
 				uses = 3
 				category = land_doctrine
+			}
+			hidden_effect = {
+				if = {
+					limit = { is_ai = yes }
+					deactivate_advisor = USR_Hanna
+					activate_advisor = USR_Neumann
+				}
 			}
 		}
 	}
@@ -1097,7 +1098,7 @@ focus_tree = {
 		icon = GFX_focus_USR_constantly_improving
 		x = -1
 		y = 1
-		cost = 8
+		cost = 10
 		relative_position_id = USR_new_artillery
 		prerequisite = { focus = USR_new_artillery focus = USR_upgrade_panzer }
 		#mutually_exclusive = { focus =  }
@@ -1252,7 +1253,7 @@ focus_tree = {
 		}
 		available = {
 			custom_trigger_tooltip = {
-				has_cosmetic_tag = USR_NISHIZUMI_MODEL
+				has_cosmetic_tag = USR_GROS_USLAR
 				tooltip = USR_tooltip47
 			}
 		}
@@ -1540,7 +1541,7 @@ focus_tree = {
 		}
 		available = {
 			NOT = { has_government = fascism }
-			USR = { fascism > 0.5 }
+			USR = { fascism > 0.45 }
 		}
 		bypass = {
 			has_government = fascism
@@ -1559,12 +1560,16 @@ focus_tree = {
 					advisor = {
 						slot = theorist
 						idea_token = USR_Maho
-						traits = { mobile_warfare_expert }
+						traits = { blitzkrieg_theorist }
 						ai_will_do = {
-							base = 10
+							base = 15
 						}
 					}
 				}
+			}
+			if = {
+				limit = { is_ai = yes }
+				add_ideas = USR_Maho
 			}
 			country_event = { id = usr.36 }
 			add_war_support = 0.1
@@ -1684,7 +1689,75 @@ focus_tree = {
 		}
 	}
 
-	
+	#下一代军备计划
+	focus = {
+		id = USR_next_gen_weapon_project
+		icon = GFX_focus_USR_next_gen_weapon_project
+		x = 0
+		y = 3
+		cost = 10
+		relative_position_id = USR_strengthen_military_production
+		prerequisite = { focus = USR_strengthen_military_production }
+		#mutually_exclusive = { focus =  }
+		ai_will_do = {
+			base = 25
+		}
+		available = {
+			has_tech = improved_computing_machine
+		}
+		bypass = {
+			
+		}
+		completion_reward = {
+			set_technology = {
+				usr_tactical_humanoids_tech = 1
+			}
+			USR = {
+				if = {
+					limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 14 } } }
+					add_to_array = { USR.Stamp_ID_list = 14 }
+					USR_add_stamp_utility = yes
+				}
+			}
+			add_corps_commander_role = {
+				character = USR_UMP45
+				traits={ usr_ai }
+				skill=1
+				attack_skill=2
+				defense_skill=2
+				planning_skill=1
+				logistics_skill=1
+			}
+			add_corps_commander_role = {
+				character = USR_UMP9
+				traits={ usr_ai }
+				skill=1
+				attack_skill=2
+				defense_skill=1
+				planning_skill=2
+				logistics_skill=1
+			}
+			add_corps_commander_role = {
+				character = USR_HK416
+				traits={ usr_ai }
+				skill=1
+				attack_skill=1
+				defense_skill=2
+				planning_skill=2
+				logistics_skill=1
+			}
+			add_corps_commander_role = {
+				character = USR_G11
+				traits={ usr_ai }
+				skill=1
+				attack_skill=2
+				defense_skill=1
+				planning_skill=1
+				logistics_skill=2
+			}
+		}
+	}
+
 
 	#重拾黑森峰战术
 	focus = {
@@ -1744,7 +1817,7 @@ focus_tree = {
 		y = 1
 		cost = 5
 		relative_position_id = USR_rediscover_kuromorimine_tactics
-		prerequisite = { focus = USR_rediscover_kuromorimine_tactics }
+		prerequisite = { focus = USR_rediscover_kuromorimine_tactics focus = USR_auferstanden_aus_ruinen }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
 			base = 10
@@ -1774,20 +1847,12 @@ focus_tree = {
 		y = 4
 		cost = 5
 		relative_position_id = USR_rediscover_kuromorimine_tactics
-		prerequisite = { focus = USR_rediscover_kuromorimine_tactics }
+		prerequisite = { focus = USR_rediscover_kuromorimine_tactics focus = USR_auferstanden_aus_ruinen }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 0
+			base = 1
 			modifier = {
-				date < 3093.9.1
-				add = -15
-			}
-			modifier = {
-				has_completed_focus = USR_supreme_army_staff_committee
-				add = 5
-			}
-			modifier = {
-				has_completed_focus = USR_strengthen_military_production
+				date > 3096.1.1
 				add = 5
 			}
 		}
@@ -1828,19 +1893,7 @@ focus_tree = {
 		prerequisite = { focus = USR_expand_dockyard }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
-			base = 0
-			modifier = {
-				date < 3093.9.1
-				add = -15
-			}
-			modifier = {
-				has_completed_focus = USR_supreme_army_staff_committee
-				add = 5
-			}
-			modifier = {
-				has_completed_focus = USR_strengthen_military_production
-				add = 5
-			}
+			base = 5
 		}
 		available = {
 			
@@ -2061,7 +2114,7 @@ focus_tree = {
 		y = 2
 		cost = 5
 		relative_position_id = USR_rediscover_kuromorimine_tactics
-		prerequisite = { focus = USR_rediscover_kuromorimine_tactics }
+		prerequisite = { focus = USR_rediscover_kuromorimine_tactics focus = USR_auferstanden_aus_ruinen }
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
 			base = 0
@@ -2252,7 +2305,7 @@ focus_tree = {
 		icon = GFX_focus_USR_build_senshado_school
 		x = -2
 		y = 1
-		cost = 8
+		cost = 10
 		relative_position_id = USR_rediscover_kuromorimine_tactics
 		prerequisite = { focus = USR_rediscover_kuromorimine_tactics }
 		prerequisite = { focus = USR_kuromorimine_industrial_department }
@@ -2279,6 +2332,15 @@ focus_tree = {
 			
 		}
 		completion_reward = {
+			add_potential_special_forces_tree = yes
+			hidden_effect = {
+				if = {
+					limit = { is_ai = yes }
+					set_technology = {
+						special_forces_mountaineers = 1
+					}
+				}
+			}
 			add_ideas = USR_senshado_school
 			unlock_decision_tooltip = USR_general_promotion_project
 		}
@@ -2296,6 +2358,10 @@ focus_tree = {
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
 			base = 5
+			modifier = {
+				has_war = yes
+				add = 5
+			}
 		}
 		available = {
 			
@@ -2324,6 +2390,10 @@ focus_tree = {
 		#mutually_exclusive = { focus =  }
 		ai_will_do = {
 			base = 5
+			modifier = {
+				has_war = yes
+				add = 5
+			}
 		}
 		available = {
 			
@@ -2348,7 +2418,7 @@ focus_tree = {
 		icon = GFX_focus_USR_battlefiled_lifeline
 		x = 0
 		y = 4
-		cost = 8
+		cost = 10
 		relative_position_id = USR_build_senshado_school
 		prerequisite = { focus = USR_build_senshado_school }
 		prerequisite = { focus = USR_ensecure_fuel_supply }
@@ -2374,7 +2444,7 @@ focus_tree = {
 		icon = GFX_focus_USR_tank_crew_supply
 		x = -1
 		y = 1
-		cost = 8
+		cost = 5
 		relative_position_id = USR_battlefiled_lifeline
 		prerequisite = { focus = USR_battlefiled_lifeline }
 		#mutually_exclusive = { focus =  }
@@ -2423,7 +2493,7 @@ focus_tree = {
 		available = {
 			has_war = yes
 			has_army_manpower = {
-				size > 1199999
+				size > 999999
 			}
 			arms_factory > 99
 		}
@@ -2433,10 +2503,6 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_ideas = USR_real_nishizumi_ryu
-			custom_effect_tooltip = USR_tooltip17
-			hidden_effect = {
-				USR_refresh_faction_effect = yes
-			}
 		}
 	}
 
@@ -2559,24 +2625,954 @@ focus_tree = {
 ####################################################################
 ####################################################################
 ####################################################################
-	# #破罐破摔
-	# focus = {
-	# 	id = USR_break_the_quo
-	# 	icon = GFX_focus_USR_break_the_quo
-	# 	x = 50
-	# 	y = 0
-	# 	mutually_exclusive = {
-	# 		focus = USR_perpetrate_a_fraud
-	# 	}
-	# 	cost = 5
-	# 	ai_will_do = {
-	# 		base = 0
-	# 	}
-	# 	available = {
+	#破罐破摔
+	focus = {
+		id = USR_break_the_quo
+		icon = GFX_focus_USR_break_the_quo
+		x = 40
+		y = 0
+		mutually_exclusive = {
+			focus = USR_perpetrate_a_fraud
+		}
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
 			
-	# 	}
-	# 	completion_reward = {
-	# 		USR_let_be_brokenz = yes
-	# 	}
-	# }
+		}
+		completion_reward = {
+			USR_let_be_brokenz = yes
+		}
+	}
+
+	#重建艾尔平骑士团
+	focus = {
+		id = USR_rebuild_alpin_orden
+		icon = GFX_focus_USR_rebuild_alpin_orden
+		x = -5
+		y = 1
+		prerequisite = { focus = USR_break_the_quo }
+		relative_position_id = USR_break_the_quo
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#改良教育
+	focus = {
+		id = USR_reform_education
+		icon = GFX_focus_USR_reform_education
+		x = 1
+		y = 4
+		prerequisite = { focus = USR_rebuild_alpin_orden }
+		prerequisite = { focus = USR_auferstanden_aus_ruinen }
+		relative_position_id = USR_rebuild_alpin_orden
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#奥鲁士士官学院
+	focus = {
+		id = USR_orussian_military_academy
+		icon = GFX_focus_USR_orussian_military_academy
+		x = 0
+		y = 3
+		prerequisite = { focus = USR_reform_education }
+		prerequisite = { focus = USR_tribute_to_veterans }
+		relative_position_id = USR_reform_education
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#纪律
+	focus = {
+		id = USR_disciplinary
+		icon = GFX_focus_USR_disciplinary
+		x = -2
+		y = 1
+		prerequisite = { focus = USR_rebuild_alpin_orden }
+		relative_position_id = USR_rebuild_alpin_orden
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#苦行
+	focus = {
+		id = USR_asceticism
+		icon = GFX_focus_USR_asceticism
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_rebuild_alpin_orden }
+		relative_position_id = USR_rebuild_alpin_orden
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#协作
+	focus = {
+		id = USR_coordination
+		icon = GFX_focus_USR_coordination
+		x = 2
+		y = 1
+		prerequisite = { focus = USR_rebuild_alpin_orden }
+		relative_position_id = USR_rebuild_alpin_orden
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#军事化贵族
+	focus = {
+		id = USR_militarized_aristocracy
+		icon = GFX_focus_USR_militarized_aristocracy
+		x = -1
+		y = 1
+		prerequisite = { focus = USR_break_the_quo }
+		relative_position_id = USR_break_the_quo
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#对希斯帕尼亚的许诺
+	focus = {
+		id = USR_promise_to_hispania
+		icon = GFX_focus_USR_promise_to_hispania
+		x = 5
+		y = 1
+		prerequisite = { focus = USR_break_the_quo }
+		relative_position_id = USR_break_the_quo
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#面见寇蒂莉雅·基·兰德古利兹
+	focus = {
+		id = USR_meet_Cordelia
+		icon = GFX_focus_USR_meet_Cordelia
+		
+		x = 7
+		y = 1
+		prerequisite = { focus = USR_break_the_quo }
+		relative_position_id = USR_break_the_quo
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#军队优先
+	focus = {
+		id = USR_military_priority
+		icon = GFX_focus_USR_military_priority
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_break_the_quo }
+		relative_position_id = USR_break_the_quo
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#Sonderweg
+	focus = {
+		id = USR_sonderweg
+		icon = GFX_focus_USR_sonderweg
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_militarized_aristocracy }
+		prerequisite = { focus = USR_military_priority }
+		relative_position_id = USR_militarized_aristocracy
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#从废墟中崛起
+	focus = {
+		id = USR_auferstanden_aus_ruinen
+		icon = GFX_focus_USR_auferstanden_aus_ruinen
+		x = 0
+		y = 2
+		prerequisite = { focus = USR_sonderweg }
+		relative_position_id = USR_sonderweg
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#第一公仆
+	focus = {
+		id = USR_first_public_servant
+		icon = GFX_focus_USR_first_public_servant
+		x = 3
+		y = 1
+		prerequisite = { focus = USR_auferstanden_aus_ruinen }
+		relative_position_id = USR_auferstanden_aus_ruinen
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#芙藤堡审判
+	focus = {
+		id = USR_the_wurttemberg_trials
+		icon = GFX_focus_USR_the_wurttemberg_trials
+		x = -1
+		y = 1
+		prerequisite = { focus = USR_first_public_servant }
+		relative_position_id = USR_first_public_servant
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#禁酒令
+	focus = {
+		id = USR_prohibition
+		icon = GFX_focus_USR_prohibition
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_the_wurttemberg_trials }
+		relative_position_id = USR_the_wurttemberg_trials
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#奥鲁士军事警察
+	focus = {
+		id = USR_orussian_military_police
+		icon = GFX_focus_USR_orussian_military_police
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_first_public_servant }
+		relative_position_id = USR_first_public_servant
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#清算时刻
+	focus = {
+		id = USR_reckoning_time
+		icon = GFX_focus_USR_reckoning_time
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_orussian_military_police }
+		relative_position_id = USR_orussian_military_police
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#奥鲁士战争部
+	focus = {
+		id = USR_orussian_war_department
+		icon = GFX_focus_USR_orussian_war_department
+		x = -6
+		y = 1
+		prerequisite = { focus = USR_auferstanden_aus_ruinen }
+		relative_position_id = USR_auferstanden_aus_ruinen
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#奥鲁士战争部
+	focus = {
+		id = USR_orussian_war_department
+		icon = GFX_focus_USR_orussian_war_department
+		x = -6
+		y = 1
+		prerequisite = { focus = USR_auferstanden_aus_ruinen }
+		relative_position_id = USR_auferstanden_aus_ruinen
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#总体战
+	focus = {
+		id = USR_total_war
+		icon = GFX_focus_USR_total_war
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_orussian_war_department }
+		relative_position_id = USR_orussian_war_department
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#老兵敬意
+	focus = {
+		id = USR_tribute_to_veterans
+		icon = GFX_focus_USR_tribute_to_veterans
+		x = 0
+		y = 2
+		prerequisite = { focus = USR_orussian_war_department }
+		relative_position_id = USR_orussian_war_department
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#灵活调遣
+	focus = {
+		id = USR_flexible_deployment
+		icon = GFX_focus_USR_flexible_deployment
+		x = 1
+		y = 4
+		prerequisite = { focus = USR_tribute_to_veterans }
+		prerequisite = { focus = USR_strengthen_trunk_railroads }
+		relative_position_id = USR_tribute_to_veterans
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#敬业的军队
+	focus = {
+		id = USR_dedicated_army
+		icon = GFX_focus_USR_dedicated_army
+		x = -1
+		y = 1
+		prerequisite = { focus = USR_tribute_to_veterans }
+		prerequisite = { focus = USR_disciplinary }
+		relative_position_id = USR_tribute_to_veterans
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#皇家猎兵团
+	focus = {
+		id = USR_royal_hunting_regiment
+		icon = GFX_focus_USR_royal_hunting_regiment
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_dedicated_army }
+		relative_position_id = USR_dedicated_army
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#国王的头衔乃是光荣的苦役
+	focus = {
+		id = USR_kings_title_is_a_glorious_chore
+		icon = GFX_focus_USR_kings_title_is_a_glorious_chore
+		x = 0
+		y = 7
+		prerequisite = { focus = USR_tribute_to_veterans }
+		relative_position_id = USR_tribute_to_veterans
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#喧声
+	focus = {
+		id = USR_clamor
+		icon = GFX_focus_USR_clamor
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_prohibition }
+		prerequisite = { focus = USR_reckoning_time }
+		relative_position_id = USR_prohibition
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#打击钟壁主义
+	focus = {
+		id = USR_fight_bellwallism
+		icon = GFX_focus_USR_fight_bellwallism
+		x = 3
+		y = 1
+		prerequisite = { focus = USR_break_the_quo }
+		relative_position_id = USR_break_the_quo
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#帝国议会
+	focus = {
+		id = USR_reichstag
+		icon = GFX_focus_USR_reichstag
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_auferstanden_aus_ruinen }
+		relative_position_id = USR_auferstanden_aus_ruinen
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#要求西阿尔卑斯
+	focus = {
+		id = USR_request_west_alpins
+		icon = GFX_focus_USR_request_west_alpins
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_clamor }
+		relative_position_id = USR_clamor
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#对圣葛罗莉安娜的最后通牒
+	focus = {
+		id = USR_ultimatum_to_stgloriana
+		icon = GFX_focus_USR_ultimatum_to_stgloriana
+		x = 2
+		y = 1
+		prerequisite = { focus = USR_clamor }
+		relative_position_id = USR_clamor
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#飞跃忒瑞恩
+	focus = {
+		id = USR_leapfrog_theleon
+		icon = GFX_focus_USR_leapfrog_theleon
+		x = -2
+		y = 1
+		prerequisite = { focus = USR_clamor }
+		prerequisite = { focus = USR_natural_boundary }
+		relative_position_id = USR_clamor
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#从艾薇龙到阿尔布雷希特
+	focus = {
+		id = USR_from_aveyron_to_albrecht
+		icon = GFX_focus_USR_from_aveyron_to_albrecht
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_request_west_alpins focus = USR_ultimatum_to_stgloriana focus = USR_leapfrog_theleon }
+		relative_position_id = USR_request_west_alpins
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#拓展克莱门工业区
+	focus = {
+		id = USR_expand_clemen_industrialization
+		icon = GFX_focus_USR_expand_clemen_industrialization
+		x = -2
+		y = 1
+		prerequisite = { focus = USR_auferstanden_aus_ruinen }
+		relative_position_id = USR_auferstanden_aus_ruinen
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+	#工业产品关税同盟
+	focus = {
+		id = USR_industrial_products_union
+		icon = GFX_focus_USR_industrial_products_union
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_expand_clemen_industrialization }
+		prerequisite = { focus = USR_reichstag }
+		relative_position_id = USR_expand_clemen_industrialization
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+	#薇丝忒法钢铁厂
+	focus = {
+		id = USR_vestefa_steel_works
+		icon = GFX_focus_USR_vestefa_steel_works
+		x = -1
+		y = 1
+		prerequisite = { focus = USR_expand_clemen_industrialization }
+		relative_position_id = USR_expand_clemen_industrialization
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+	#工厂转产
+	focus = {
+		id = USR_production_conversion
+		icon = GFX_focus_USR_production_conversion
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_vestefa_steel_works }
+		relative_position_id = USR_vestefa_steel_works
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#加强主干铁路
+	focus = {
+		id = USR_strengthen_trunk_railroads
+		icon = GFX_focus_USR_strengthen_trunk_railroads
+		x = 0
+		y = 2
+		prerequisite = { focus = USR_production_conversion }
+		relative_position_id = USR_production_conversion
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#施塔尔克里格设计局
+	focus = {
+		id = USR_henschel_design_bureau
+		icon = GFX_focus_USR_henschel_design_bureau
+		x = -1
+		y = 1
+		prerequisite = { focus = USR_strengthen_trunk_railroads }
+		relative_position_id = USR_strengthen_trunk_railroads
+		mutually_exclusive = { focus = USR_lysaght_motor_works }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#莱莎尔汽车厂
+	focus = {
+		id = USR_lysaght_motor_works
+		icon = GFX_focus_USR_lysaght_motor_works
+		x = 1
+		y = 1
+		prerequisite = { focus = USR_strengthen_trunk_railroads }
+		relative_position_id = USR_strengthen_trunk_railroads
+		mutually_exclusive = { focus = USR_henschel_design_bureau }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#人人都有小汽车
+	focus = {
+		id = USR_everyone_has_a_car
+		icon = GFX_focus_USR_everyone_has_a_car
+		x = -1
+		y = 1
+		prerequisite = { focus = USR_lysaght_motor_works focus = USR_henschel_design_bureau }
+		relative_position_id = USR_lysaght_motor_works
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#安瓿瓶中的未来
+	focus = {
+		id = USR_the_future_in_ampoules
+		icon = GFX_focus_USR_the_future_in_ampoules
+		x = 2
+		y = 2
+		prerequisite = { focus = USR_production_conversion }
+		relative_position_id = USR_production_conversion
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#唯一大臣
+	focus = {
+		id = USR_sole_minister
+		icon = GFX_focus_USR_sole_minister
+		x = 0
+		y = 2
+		prerequisite = { focus = USR_reichstag }
+		relative_position_id = USR_reichstag
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#乌斯拉尔的自然边界
+	focus = {
+		id = USR_natural_boundary
+		icon = GFX_focus_USR_natural_boundary
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_sole_minister }
+		relative_position_id = USR_sole_minister
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
+
+	#蒙德问题
+	focus = {
+		id = USR_mond_issue
+		icon = GFX_focus_USR_nurembery_initiative
+		x = 0
+		y = 1
+		prerequisite = { focus = USR_leapfrog_theleon }
+		relative_position_id = USR_leapfrog_theleon
+		mutually_exclusive = { }
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			
+		}
+	}
 }

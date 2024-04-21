@@ -196,7 +196,6 @@ USR_republic_congress_decisions = {
 		icon = generic_industry
 		visible = {
 			has_completed_focus = USR_limited_interference_with_UNG
-			UNG = { has_war_with = MSA }
 			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
@@ -214,6 +213,7 @@ USR_republic_congress_decisions = {
 				type = infantry_equipment
 				amount = -4000
 			}
+			unlock_decision_tooltip = USR_provide_volunteer
 			add_war_support = 0.05
 			add_political_power = 100
 			UNG = { 
@@ -228,13 +228,15 @@ USR_republic_congress_decisions = {
 				} 
 			}
 		}
+		ai_will_do = {
+			base = 0
+		}
 	}
 	#共和国外交:向莫德雷德提供装备
 	USR_provide_equipments_MSA = {
 		icon = generic_industry
 		visible = {
 			has_completed_focus = USR_limited_interference_with_UNG
-			UNG = { has_war_with = MSA }
 			NOT = { OR = { has_country_flag = USR_UNG_AIDED has_country_flag = USR_MSA_AIDED } }
 		}
 		ai_will_do = {
@@ -247,6 +249,7 @@ USR_republic_congress_decisions = {
 		}
 		fire_only_once = yes
 		complete_effect = {
+			unlock_decision_tooltip = USR_provide_volunteer
 			set_country_flag = USR_MSA_AIDED
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
@@ -266,6 +269,9 @@ USR_republic_congress_decisions = {
 				} 
 			}
 		}
+		ai_will_do = {
+			base = 10
+		}
 	}
 	#共和国外交:发送志愿军
 	USR_provide_volunteer = {
@@ -284,10 +290,14 @@ USR_republic_congress_decisions = {
 		}
 		fire_only_once = yes
 		complete_effect = {
+			unlock_decision_tooltip = USR_protect_refugee
 			add_timed_idea = {
 				idea = USR_volunteers
 				days = 365
 			}
+		}
+		ai_will_do = {
+			base = 10
 		}
 	}
 	#共和国外交:保护盎格利亚政要与难民
@@ -311,6 +321,9 @@ USR_republic_congress_decisions = {
 				idea = USR_protect_refugee
 				days = 365
 			}
+		}
+		ai_will_do = {
+			base = 10
 		}
 	}
 }
@@ -356,10 +369,9 @@ USR_privatization_priority_order = {
 				}
 			}
 		}
-		days_remove = 130
+		days_remove = 150
 		modifier = {
-			consumer_goods_expected_value = 0.15
-			political_power_factor = -0.1
+			consumer_goods_expected_value = 0.1
 		}
 		remove_effect = {
 			add_stability = 0.05
@@ -418,13 +430,12 @@ USR_privatization_priority_order = {
 			}
 		}
 		modifier = {
-			stability_weekly_factor = 0.002
-			trade_laws_cost_factor = 1
-			trade_opinion_factor = -1
+			stability_weekly_factor = 0.001
+			trade_laws_cost_factor = 0.5
+			trade_opinion_factor = -0.5
 			research_speed_factor = -0.15
-			political_power_factor = -0.1
 		}
-		days_remove = 180
+		days_remove = 150
 		remove_effect = {
 			custom_effect_tooltip = USR_tooltip36
 			add_to_variable = {
@@ -470,7 +481,7 @@ USR_privatization_priority_order = {
 		visible = {
 			TAG = USR
 		}
-		days_remove = 200
+		days_remove = 150
 		available = {
 			custom_trigger_tooltip = {
 				tooltip = USR_tooltip39
@@ -483,9 +494,9 @@ USR_privatization_priority_order = {
 			arms_factory > 3
 		}
 		modifier = {
-			consumer_goods_factor = 0.2
-			production_factory_max_efficiency_factor = -0.15
-			political_power_factor = -0.1
+			consumer_goods_factor = 0.05
+			production_factory_max_efficiency_factor = -0.1
+			production_factory_efficiency_gain_factor = -0.1
 		}
 
 		remove_effect = {
@@ -587,9 +598,9 @@ USR_privatization_priority_order = {
 				}
 			}
 		}
-		days_remove = 80
+		days_remove = 90
 		modifier = {
-			political_power_factor = -0.1
+			political_power_factor = -0.15
 		}
 
 		remove_effect = {
@@ -770,7 +781,7 @@ USR_panuslarism = {
 		}
 		fire_only_once = yes
 		complete_effect = {
-			set_cosmetic_tag = USR_NISHIZUMI_MODEL
+			set_cosmetic_tag = USR_GROS_USLAR
 		}
 		ai_will_do = {
 			base = 100
@@ -794,7 +805,7 @@ USR_industrialization = {
 			unlock_decision_tooltip = USR_invest_hartman
 			set_country_flag = USR_HARTMAN
 			set_variable = {
-				USR.hartman_timer = 60
+				USR.hartman_timer = 30
 			}
 			set_variable = {
 				USR.hartman_completed = 0
@@ -1205,21 +1216,16 @@ USR_high_command_kuromorimine = {
 		available = {
 			arms_factory > 49
 		}
-		is_good = yes
+		is_good = no
 		days_mission_timeout = 365
 		timeout_effect = {
-			add_war_support = -0.05
-			hidden_effect = {
-				if = { 
-					limit = { is_ai = yes }
-					add_stability = 0.1
-					add_war_support = 0.1
-				}
+			if = { 
+				limit = { is_ai = no }
+				add_war_support = -0.1
 			}
 		}
 		selectable_mission = no
 		complete_effect = {
-			add_stability = 0.1
 			add_war_support = 0.1
 		}
 		ai_will_do = {
@@ -1229,9 +1235,11 @@ USR_high_command_kuromorimine = {
 }
 
 USR_ai_decisions = {
+	#临时
 	invite_YMD = {
 		available = {
 			is_faction_leader = yes
+			has_government = fascism
 			YMD = { has_same_ideology = yes is_in_faction = no }
 		}
 		complete_effect = {
@@ -1244,10 +1252,24 @@ USR_ai_decisions = {
 	invite_TAU = {
 		available = {
 			is_faction_leader = yes
+			has_government = fascism
 			TAU = { has_same_ideology = yes is_in_faction = no }
 		}
 		complete_effect = {
-			add_to_faction = YMD
+			add_to_faction = TAU
+		}	
+		ai_will_do = {
+			base = 20
+		}
+	}
+	invite_CTC = {
+		available = {
+			is_faction_leader = yes
+			has_government = fascism
+			CTC = { has_government = neutrality is_in_faction = no }
+		}
+		complete_effect = {
+			add_to_faction = CTC
 		}	
 		ai_will_do = {
 			base = 20

@@ -3,6 +3,7 @@ RLN_railroad_shop_others = {
     #购买老式火车
     Purchase_train_equipment_1 = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -25,7 +26,7 @@ RLN_railroad_shop_others = {
                     country_exists = NAC
                 }
             }
-            num_of_available_civilian_factories > 2
+            num_of_civilian_factories_available_for_projects > 2
             NOT = {
                 has_country_flag = IS_PURCHASING_TRAIN
             }
@@ -118,6 +119,7 @@ RLN_railroad_shop_others = {
     #购买新式火车
     Purchase_train_equipment_2 = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -140,7 +142,7 @@ RLN_railroad_shop_others = {
                     country_exists = NAC
                 }
             }
-            num_of_available_civilian_factories > 3
+            num_of_civilian_factories_available_for_projects > 3
             NOT = {
                 has_country_flag = IS_PURCHASING_TRAIN
             }
@@ -233,6 +235,7 @@ RLN_railroad_shop_others = {
     #购买装甲列车
     Purchase_train_equipment_3 = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -255,7 +258,7 @@ RLN_railroad_shop_others = {
                     country_exists = NAC
                 }
             }
-            num_of_available_civilian_factories > 4
+            num_of_civilian_factories_available_for_projects > 4
             NOT = {
                 has_country_flag = IS_PURCHASING_TRAIN
             }
@@ -348,6 +351,7 @@ RLN_railroad_shop_others = {
     #购买列车炮技术
     Purchase_railway_gun_tech = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -454,6 +458,7 @@ RLN_railroad_shop_others = {
     #购买增强型列车炮技术
     Purchase_railway_gun_tech_2 = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -563,6 +568,7 @@ RLN_railroad_shop_others = {
     #购买列车炮
     Purchase_railway_gun = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -585,7 +591,7 @@ RLN_railroad_shop_others = {
                     country_exists = NAC
                 }
             }
-            num_of_available_civilian_factories > 7
+            num_of_civilian_factories_available_for_projects > 7
             NOT = {
                 has_country_flag = IS_PURCHASING_TRAIN
             }
@@ -667,6 +673,7 @@ RLN_railroad_shop_others = {
     #购买增强型列车炮
     Purchase_railway_gun_2 = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -690,7 +697,7 @@ RLN_railroad_shop_others = {
                     country_exists = NAC
                 }
             }
-            num_of_available_civilian_factories > 7
+            num_of_civilian_factories_available_for_projects > 7
             NOT = {
                 has_country_flag = IS_PURCHASING_TRAIN
             }
@@ -772,6 +779,7 @@ RLN_railroad_shop_others = {
     #雇佣工程师
     Employ_engineer = {
         available = {
+            country_exists = RLN
             OR = {
                 tag = YUZ
                 is_major = yes
@@ -804,6 +812,28 @@ RLN_railroad_shop_others = {
             production_speed_infrastructure_factor = 0.25
         }
         remove_effect = {
+            random_owned_controlled_state = {
+                limit = {
+                    infrastructure < 5 
+                }
+                add_building_construction = {
+                    type = infrastructure
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            random_owned_controlled_state = {
+                limit = {
+                    is_capital = no
+                }
+                owner = {
+                    build_railway = {				
+                        start_state = ROOT.capital
+                        target_state = PREV
+                        build_only_on_allied = yes
+                    }
+                }
+            }
             hidden_effect = {
                 RLN = {
                     add_to_variable = {
@@ -813,7 +843,7 @@ RLN_railroad_shop_others = {
             }
         }
         ai_will_do = {
-            factor = 10
+            factor = 50
             modifier = {
                 add = 10
                 RLN = {
@@ -1148,6 +1178,320 @@ RLN_railroad_shop = {
                 type = train_equipment_2
                 amount = 10
             }
+        }
+    }
+}
+#铁路浪漫
+RLN_rail_romanesque = {
+    #新铁路人偶入役
+    RLN_enlist_new_raillord = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = RLN
+        }
+        cancel_trigger = {
+            always = no
+        }
+        days_mission_timeout = 199
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = RLN_gain_new_raillord_desc
+            hidden_effect = {
+                RLN = {
+                    add_to_variable = {RLN_num_of_RailLord = 1}
+                    add_to_variable = {RLN_num_of_free_RailLord = 1}
+                }
+            }
+        }
+    }
+}
+#社会保障系统
+RLN_ss_system = {
+    RLN_upgrade_worker_compensation = {
+        available = {
+            has_completed_focus = RLN_ss_2
+        }
+        visible = {
+            has_completed_focus = RLN_ss_2
+            NOT = {
+                has_idea = RLN_worker_compensation_5
+            }
+        }
+        days_remove = 50
+        cost = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    has_idea = RLN_worker_compensation_1
+                }
+                swap_ideas = {
+                    remove_idea = RLN_worker_compensation_1
+                    add_idea = RLN_worker_compensation_2
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_worker_compensation_2
+                }
+                swap_ideas = {
+                    remove_idea = RLN_worker_compensation_2
+                    add_idea = RLN_worker_compensation_3
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_worker_compensation_3
+                }
+                swap_ideas = {
+                    remove_idea = RLN_worker_compensation_3
+                    add_idea = RLN_worker_compensation_4
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_worker_compensation_4
+                }
+                swap_ideas = {
+                    remove_idea = RLN_worker_compensation_4
+                    add_idea = RLN_worker_compensation_5
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    RLN_upgrade_social_security = {
+        available = {
+            has_completed_focus = RLN_ss_7
+        }
+        visible = {
+            has_completed_focus = RLN_ss_7
+            NOT = {
+                has_idea = RLN_social_security_5
+            }
+        }
+        days_remove = 50
+        cost = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    has_idea = RLN_social_security_1
+                }
+                swap_ideas = {
+                    remove_idea = RLN_social_security_1
+                    add_idea = RLN_social_security_2
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_social_security_2
+                }
+                swap_ideas = {
+                    remove_idea = RLN_social_security_2
+                    add_idea = RLN_social_security_3
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_social_security_3
+                }
+                swap_ideas = {
+                    remove_idea = RLN_social_security_3
+                    add_idea = RLN_social_security_4
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_social_security_4
+                }
+                swap_ideas = {
+                    remove_idea = RLN_social_security_4
+                    add_idea = RLN_social_security_5
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    RLN_upgrade_medical_care = {
+        available = {
+            has_completed_focus = RLN_ss_8
+        }
+        visible = {
+            has_completed_focus = RLN_ss_8
+            NOT = {
+                has_idea = RLN_medical_care_3
+            }
+        }
+        days_remove = 50
+        cost = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    has_idea = RLN_medical_care_1
+                }
+                swap_ideas = {
+                    remove_idea = RLN_medical_care_1
+                    add_idea = RLN_medical_care_2
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_medical_care_2
+                }
+                swap_ideas = {
+                    remove_idea = RLN_medical_care_2
+                    add_idea = RLN_medical_care_3
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    RLN_upgrade_education_subsidy = {
+        available = {
+            has_completed_focus = RLN_ss_9
+        }
+        visible = {
+            has_completed_focus = RLN_ss_9
+            NOT = {
+                has_idea = RLN_education_subsidy_5
+            }
+        }
+        days_remove = 50
+        cost = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    has_idea = RLN_education_subsidy_1
+                }
+                swap_ideas = {
+                    remove_idea = RLN_education_subsidy_1
+                    add_idea = RLN_education_subsidy_2
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_education_subsidy_2
+                }
+                swap_ideas = {
+                    remove_idea = RLN_education_subsidy_2
+                    add_idea = RLN_education_subsidy_3
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_education_subsidy_3
+                }
+                swap_ideas = {
+                    remove_idea = RLN_education_subsidy_3
+                    add_idea = RLN_education_subsidy_4
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_education_subsidy_4
+                }
+                swap_ideas = {
+                    remove_idea = RLN_education_subsidy_4
+                    add_idea = RLN_education_subsidy_5
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    RLN_upgrade_unemployment_benefit = {
+        available = {
+            has_completed_focus = RLN_ss_3
+        }
+        visible = {
+            has_completed_focus = RLN_ss_3
+            NOT = {
+                has_idea = RLN_unemployment_benefit_5
+            }
+        }
+        days_remove = 50
+        cost = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    has_idea = RLN_unemployment_benefit_1
+                }
+                swap_ideas = {
+                    remove_idea = RLN_unemployment_benefit_1
+                    add_idea = RLN_unemployment_benefit_2
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_unemployment_benefit_2
+                }
+                swap_ideas = {
+                    remove_idea = RLN_unemployment_benefit_2
+                    add_idea = RLN_unemployment_benefit_3
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_unemployment_benefit_3
+                }
+                swap_ideas = {
+                    remove_idea = RLN_unemployment_benefit_3
+                    add_idea = RLN_unemployment_benefit_4
+                }
+            }
+            else_if = {
+                limit = {
+                    has_idea = RLN_unemployment_benefit_4
+                }
+                swap_ideas = {
+                    remove_idea = RLN_unemployment_benefit_4
+                    add_idea = RLN_unemployment_benefit_5
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+#八六还是右田铃
+RLN_maitetsu = {
+    RLN_i_love_hachiroku = {
+        visible = {
+            has_country_flag = RLN_use_suzu_name
+        }
+        complete_effect = {
+            set_character_name = {
+                character = RLN_Hachiroku
+                name = RLN_Hachiroku
+            }
+            set_country_flag = RLN_use_hachiroku_name
+            clr_country_flag = RLN_use_suzu_name
+        }
+    }
+    RLN_i_love_suzu = {
+        visible = {
+            has_country_flag = RLN_use_hachiroku_name
+        }
+        complete_effect = {
+            set_character_name = {
+                character = RLN_Hachiroku
+                name = RLN_Hachiroku_suzu
+            }
+            clr_country_flag = RLN_use_hachiroku_name
+            set_country_flag = RLN_use_suzu_name
         }
     }
 }
