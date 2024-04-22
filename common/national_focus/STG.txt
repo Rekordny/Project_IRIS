@@ -2900,7 +2900,58 @@ focus_tree = {
                 set_country_leader_description = {
                     desc = "STG_ilya_desc_4"
                 }
+                add_resource = {
+                    type = raw_mana
+                    amount = 40
+                    state = 682
+                }
                 set_cosmetic_tag = STG_ilya_mahoushoujyo
+                set_technology = {mana_infantry_weapons_0_tech = 1}
+                set_technology = {magic_armor_piercing_equipment_1 = 1}
+                set_technology = {mana_army_upgrade_1 = 1}
+                set_technology = {mana_infantry_weapons_upgrade_1 = 1}
+                set_technology = {mana_infantry_weapons_1_tech = 1}
+                set_technology = {AT_equipment_energy_research_1 = 1}
+                set_technology = {AT_equipment_energy_research_2 = 1}
+                set_technology = {magic_shield_0 = 1}
+                set_technology = {magic_shield_1 = 1}
+                set_technology = {magic_shield_upgrade_1 = 1}
+                set_technology = {interwar_period_space_spell_research = 1}
+                set_technology = {standardized_space_spells = 1}
+                division_template = {
+                    name = "人活着就是为了伊莉雅"
+                    priority = 2
+                    regiments = {
+                        Arcane_Battle_Camp = { x = 0 y = 0 }
+                        Arcane_Battle_Camp = { x = 0 y = 1 }
+                        Arcane_Battle_Camp = { x = 0 y = 2 }
+                        Arcane_Battle_Camp = { x = 1 y = 0 }
+                        Arcane_Battle_Camp = { x = 1 y = 1 }
+                        Arcane_Battle_Camp = { x = 1 y = 2 }
+                        Arcane_Battle_Camp = { x = 2 y = 0 }
+                        Arcane_Battle_Camp = { x = 2 y = 1 }
+                        Arcane_Battle_Camp = { x = 2 y = 2 }
+                        artillery_brigade = { x = 3 y = 0 }
+                        artillery_brigade = { x = 3 y = 1 }
+                        artillery_brigade = { x = 3 y = 2 }
+                        artillery_brigade = { x = 3 y = 3 }
+                        Heavy_Magic_Guide_Battle_Battalion = { x = 4 y = 0 }
+                    }
+                    support = {
+                        engineer = { x = 0 y = 0 }
+                        recon = { x = 1 y = 0 }
+                    }
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 8
+                    capital_scope = {
+                        create_unit = {
+                            division = "name = \"人活着就是为了伊莉雅\" division_template = \"人活着就是为了伊莉雅\" start_experience_factor = 0.5"
+                            owner = STG
+                        }
+                    }
+                }
             }
 		}
     }
@@ -3012,6 +3063,7 @@ focus_tree = {
 		}
         completion_reward = {
             custom_effect_tooltip = STG_ilya_no_ero_desc
+            army_experience = 100
 		}
     }
     #魔法少女Prisma☆伊莉雅
@@ -3041,8 +3093,18 @@ focus_tree = {
         will_lead_to_war_with = ANZ
         will_lead_to_war_with = USR
         will_lead_to_war_with = ELN
+        will_lead_to_war_with = MAG
         completion_reward = {
             STG_increase_army_discontent_big = yes
+            if = {
+                limit = {
+                    country_exists = MAG
+                }
+                create_wargoal = {
+                    target = MAG
+                    type = annex_everything
+                }
+            }
             if = {
                 limit = {
                     country_exists = UNG
@@ -4214,6 +4276,39 @@ focus_tree = {
             }
 		}
     }
+    #克伦威尔上的魔鬼
+    focus = {
+        id = STG_grey_devil_on_cronwell
+        icon = 1
+        x = -1
+        y = 1
+        cost = 5
+        relative_position_id = STG_grey_senshaddo_college
+        available_if_capitulated = yes
+        prerequisite = { focus = STG_grey_senshaddo_college }
+        prerequisite = { focus = STG_grey_issue_2 }
+        available = {
+            has_country_leader = {
+                character = STG_grey
+                ruling_only = yes
+            }
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        completion_reward = {
+            custom_effect_tooltip = STG_upgrade_grey_trait
+            STG_grey = {
+                add_attack = 2
+                add_unit_leader_trait = adaptable
+            }
+            hidden_effect = {
+                remove_country_leader_trait = TRAIT_STG_grey_panzer
+                add_country_leader_trait = TRAIT_STG_grey_panzer_2
+            }
+		}
+    }
     #王家格雷伯爵工会
     focus = {
         id = STG_grey_7
@@ -4555,6 +4650,9 @@ focus_tree = {
                 remove_idea = new_economic_policy
                 add_idea = new_economic_policy_2
             }
+            hidden_effect = {
+                country_event = {id = STG_grey.29 days = 3}
+            }
 		}
     }
     #社会主义的胜利
@@ -4599,6 +4697,7 @@ focus_tree = {
             STG_reduce_industralist_shock = yes
             hidden_effect = {
                 set_country_flag = STG_com_par
+                country_event = {id = STG_grey.31 days = 3}
             }
 		}
     }
@@ -4690,6 +4789,9 @@ focus_tree = {
                 add_defense = 1
                 add_logistics = 1
                 add_planning = 1
+            }
+            hidden_effect = {
+                country_event = {id = STG_grey.39 days = 7}
             }
 		}
     }
@@ -5051,10 +5153,7 @@ focus_tree = {
                 set_capital = {state = 182}
                 if = {
                     limit = {
-                        communism > 0.40
-                    }
-                    set_country_leader_description = {
-                        desc = "STG_grey_desc_com"
+                        communism > 0.30
                     }
                     set_cosmetic_tag = STG_grey_empire_communism
                     set_politics = {
@@ -5069,6 +5168,16 @@ focus_tree = {
                     promote_character = {
                         character = STG_grey
                         ideology = sub_Social_monarchism
+                    }
+                    set_country_leader_description = {
+                        desc = "STG_grey_desc_com"
+                    }
+                    if = {
+                        limit = {
+                            has_completed_focus = STG_grey_devil_on_cronwell
+                        }
+                        remove_country_leader_trait = TRAIT_STG_grey_panzer
+                        add_country_leader_trait = TRAIT_STG_grey_panzer_2
                     }
                     load_focus_tree = {
                         tree = STG
@@ -5123,6 +5232,9 @@ focus_tree = {
                 }
                 remove_country_leader_trait = TRAIT_STG_grey_monarch
                 add_country_leader_trait = TRAIT_STG_grey_monarch_2
+            }
+            hidden_effect = {
+                country_event = {id = STG_grey.31 days = 3}
             }
 		}
     }
@@ -7012,6 +7124,17 @@ focus_tree = {
 		}
         completion_reward = {
             army_experience = 50
+            if = {
+				limit = {
+					has_dlc = "Arms Against Tyranny"
+				}
+				add_potential_special_forces_tree = yes
+				add_doctrine_cost_reduction = {
+					cost_reduction = 0.33
+					uses = 1
+					category = special_forces_doctrine
+				}
+			}
             set_technology = { blackshirt_assault_battalion_tech = 1 }
 		}
     }
@@ -9250,7 +9373,7 @@ focus_tree = {
             focus = STG_true_dar_42
         }
         prerequisite = {
-            focus = STG_true_dar_44
+            focus = STG_true_dar_45
         }
         available = {
         }
