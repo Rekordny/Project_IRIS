@@ -10,10 +10,25 @@ OCF_obtain_banknotes = {
     add_to_variable = { OCF_obtain_banknotes_variable_markup = 0.2 }
   }
   multiply_variable = { OCF_obtain_banknotes_variable = OCF_obtain_banknotes_variable_markup }
+
+  #计算税收
+  set_variable = { OCF_obtain_banknotes_variable_markup = 1 }
+  multiply_variable = { tax_impact = 0.1 }
+  add_to_variable = { OCF_obtain_banknotes_variable_markup = current_int }
+  multiply_variable = { OCF_obtain_banknotes_variable = OCF_obtain_banknotes_variable_markup }
+
+  set_variable = { tax_impact = current_int }
+  #显示的稳定度下降
+  add_to_variable = { tax_impact = -15 }#默认值
+  multiply_variable = { tax_impact = -0.1 }
+  set_variable = { tax_impact_100 = tax_impact }#加成数值
+  multiply_variable = { tax_impact_100 = 0.01 }#加成数值
+
   add_to_variable = { OCF_bill = OCF_obtain_banknotes_variable }
   OCF_spending_funds = yes
 }
 
+#初始化资金调整
 set_custom_slider = {
 	set_variable = { slider_dot_x = 104 }
 	for_loop_effect = {
@@ -33,6 +48,12 @@ set_custom_slider = {
 		end = 101
 		value = val
 		add_to_array = { OCF_adjusting_education_expenses_buttons = val }
+	}
+    for_loop_effect = {
+		start = 0
+		end = 101
+		value = val
+		add_to_array = { OCF_adjusting_medical_treatment_buttons = val }
 	}
 }
 
@@ -75,6 +96,37 @@ OCF_spending_funds = {
     multiply_variable = { OCF_spending_funds_variable = OCF_spending_funds_variable_has_war }
     multiply_variable = { OCF_spending_funds_variable = OCF_number_military_personnel }#减去军队花费
   }
+  #军费修正
+  set_variable = { OCF_obtain_banknotes_variable_markup = 0 }
+  add_to_variable = { OCF_obtain_banknotes_variable_markup = adjusting_military_spending_int }
+
+  set_variable = { military_expenditure_impact = adjusting_military_spending_int }
+  add_to_variable = { military_expenditure_impact = -30 }#默认值
+  set_variable = { adjusting_military_spending_int_100 = adjusting_military_spending_int }#加成数值
+  multiply_variable = { adjusting_military_spending_int_100 = 0.01 }#加成数值
+
+  #教育修正
+  add_to_variable = { OCF_obtain_banknotes_variable_markup = adjusting_education_expenses_int }
+
+  set_variable = { education_revision = adjusting_education_expenses_int }
+  multiply_variable = { education_revision = 0.1 }
+  add_to_variable = { education_revision = -15 }#默认值
+  set_variable = { education_revision_100 = education_revision }#加成数值
+  multiply_variable = { education_revision_100 = 0.01 }#加成数值
+
+  #医疗修正
+  add_to_variable = { OCF_obtain_banknotes_variable_markup = adjusting_medical_treatment_int }
+
+  set_variable = { medical_correction = adjusting_medical_treatment_int }
+  add_to_variable = { medical_correction = -40 }#默认值
+  set_variable = { medical_correction_100 = medical_correction }#加成数值
+  multiply_variable = { medical_correction_100 = 0.01 }#加成数值
+
+
+
+  multiply_variable = { OCF_obtain_banknotes_variable_markup = 0.1 }
+  add_to_variable = { OCF_obtain_banknotes_variable_markup = 1 }#默认值
+  multiply_variable = { OCF_spending_funds_variable = OCF_obtain_banknotes_variable_markup }
   subtract_from_variable = { OCF_bill = OCF_spending_funds_variable }#每月花费
 }
 
