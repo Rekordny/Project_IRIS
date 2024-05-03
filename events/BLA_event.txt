@@ -1979,6 +1979,7 @@ country_event = {
 		name = BLA_rev.14.a
 		hidden_effect = {
 			country_event = {id = BLA_rev.15 days = 3}
+			NAC = {country_event = {id = BLA_rev.14 days = 3}}
 		}
 	}
 }
@@ -1992,6 +1993,16 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.15.a
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = NAC
+				}
+				ROOT = {
+					country_event = {id = NAC.24 days = 3}
+				}
+			}
+		}
 	}
 }
 #最后的甜美时光
@@ -2025,14 +2036,22 @@ country_event = {
 	desc = BLA_rev.17.desc
 	#picture = GFX_ungevent_1
 	trigger = {
-		tag = BLA
-		has_war_with = NAC
-		NAC = {
-			controls_state = 199
-		}
-        has_country_leader = {
-            character = BLA_anna
-            ruling_only = yes
+		OR = {
+			AND = {
+				tag = BLA
+				has_war_with = NAC
+				NAC = {
+					controls_state = 199
+				}
+				has_country_leader = {
+					character = BLA_anna
+					ruling_only = yes
+				}
+			}
+			AND = {
+				tag = NAC
+				controls_state = 199
+			}
 		}
 	}
 	mean_time_to_happen = {
@@ -2041,6 +2060,9 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = BLA_rev.17.a
+		trigger = {
+			tag = BLA
+		}
 		custom_effect_tooltip = BLA_GAME_OVER
 		hidden_effect = {
 			BLA = {
@@ -2063,6 +2085,14 @@ country_event = {
 			}
 		}
 	}
+	option = {
+		name = BLA_rev.17.b
+		trigger = {
+			tag = NAC
+		}
+		add_political_power = 100
+		custom_effect_tooltip = NAC_fall_of_tsargrad
+	}
 }
 #寄咯！
 country_event = {
@@ -2074,7 +2104,15 @@ country_event = {
 	is_triggered_only = yes
 	option = {
 		name = BLA_rev.998.a
-		kill_country_leader = yes
+		if = {
+			limit = {
+				has_country_leader = {
+					character = OPA_Rasputin
+					ruling_only = yes
+				}
+			}
+			kill_country_leader = yes
+		}
 		set_politics = {
 			ruling_party = communism
 		}
@@ -2084,6 +2122,9 @@ country_event = {
 		}
 		hidden_effect = {
 			news_event = {id = BLA_news.8 days = 3}
+			BLA = {
+				retire_character = BLA_Rasputin
+			}
 			add_ai_strategy = {
 				type = force_defend_ally_borders
 				id = NAC
@@ -2095,6 +2136,10 @@ country_event = {
 					id = OPA
 					value = -1000
 				}
+			}
+			add_popularity = {
+				ideology = communism
+				popularity = 0.50
 			}
 			set_cosmetic_tag = OPA_red_army
 			remove_ideas = OPA_Murmansk_leader
@@ -2171,6 +2216,14 @@ country_event = {
 					}
 				}
 			}
+			hidden_effect = {
+				BLA = {
+					declare_war_on = {
+						target = ROOT
+						type = annex_everything
+					}
+				}
+			}
 		}
 	}
 }
@@ -2203,7 +2256,7 @@ country_event = {
         }
         for_loop_effect = {
             start = 0
-            end = 15
+            end = 8
             capital_scope = {
                 create_unit = {
                     division = "name = \"帝国残军\" division_template = \"帝国残军\" start_experience_factor = 0.30"
