@@ -83,7 +83,7 @@ TAU_dedicated_goddesses = {
 	}
 }
 
-#管理胡萝卜食品贸易
+#FROM:管理胡萝卜食品贸易
 TAU_carrot_food_import_cat = {
 	TAU_cancel_the_import_revoke = {
 		visible = {
@@ -109,6 +109,36 @@ TAU_carrot_food_import_cat = {
 }
 
 TAU_student_union = {
+	#debug
+	TAU_debug_refresh_dev = {
+		visible = {
+			is_testing = yes
+		}
+		complete_effect = {
+			
+		}
+	}
+
+	#在当前省份建立URA管理协会
+	TAU_build_URA_in_current_state = {
+		cost = 100
+		visible = {
+			has_completed_focus = TAU_neocolonialism
+		}
+		available = {
+			FROM = { compliance > 75 }
+		}
+		on_map_mode = map_only
+		icon = GFX_decision_generic_colonial_administration
+		state_target = yes
+		target_trigger = {
+			FROM = { NOT = { is_core_of = ROOT } is_controlled_by = ROOT }
+		}
+		complete_effect = {
+			FROM = { add_core_of = ROOT }
+		}
+	}
+
 	#出口胡萝卜
 	TAU_export_carrot_food = {
 		on_map_mode = map_and_decisions_view
@@ -134,27 +164,27 @@ TAU_student_union = {
 						}
 					}
 					AND = {
-						ROOT = { has_completed_focus = GFX_focus_TAU_invite_BLA_investments }
+						ROOT = { has_completed_focus = TAU_invite_BLA_investments }
 						tag = BLA
 					}
 					AND = {
-						ROOT = { has_completed_focus = GFX_focus_TAU_invite_ELN_investments }
+						ROOT = { has_completed_focus = TAU_invite_ELN_investments }
 						tag = ELN
 					}
 					AND = {
-						ROOT = { has_completed_focus = GFX_focus_TAU_invite_USR_investments }
+						ROOT = { has_completed_focus = TAU_invite_USR_investments }
 						tag = USR
 					}
 					AND = {
-						ROOT = { has_completed_focus = GFX_focus_TAU_invite_UNG_investments }
+						ROOT = { has_completed_focus = TAU_invite_UNG_investments }
 						tag = UNG
 					}
 					AND = {
-						ROOT = { has_completed_focus = GFX_focus_TAU_invite_USF_investments }
+						ROOT = { has_completed_focus = TAU_invite_USF_investments }
 						tag = USF
 					}
 					AND = {
-						ROOT = { has_completed_focus = GFX_focus_TAU_invite_SLL_investments }
+						ROOT = { has_completed_focus = TAU_invite_SLL_investments }
 						tag = SLL
 					}
 				}
@@ -186,31 +216,48 @@ TAU_student_union = {
 	    }
 	}
 
+	#邀请兰德索尔加入阵营
+	TAU_invite_LAD = {
+		icon = GFX_decision_eng_trade_unions_support
+		visible = { has_country_flag = TAU_LAD_INVESTMENT_DONE }
+		available = {
+			is_faction_leader = yes
+			LAD = { 
+				is_in_faction = no
+				has_opinion = {
+				target = PREV
+				value > 9
+			} }
+		}
+		fire_only_once = yes
+		complete_effect = {
+			LAD = { country_event = TAU.5 }
+		}
+		ai_will_do = {
+			base = 20
+		}
+	}
+
 	#扩建特雷森
 	TAU_expand_campus = {
 		icon = GFX_decision_eng_trade_unions_support
 		visible = {  }
 		modifier = {
-			civilian_factory_use = 3
-		}
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				
-			}
+			consumer_goods_expected_value = 0.2
 		}
 		available = {
 			has_war = no
 		}
 		fire_only_once = no
-		days_re_enable = 60
+		days_re_enable = 1
 		days_remove = 59
-		cost = 100
+		cost = 45
 		remove_effect = {
+			custom_effect_tooltip = TAU_dev_effect_tt
 			set_temp_variable = { temp_var = ROOT.max_manpower_k }
 			multiply_temp_variable = { temp_var = 10 }
 			multiply_temp_variable = { temp_var = amount_research_slots }
-			divide_temp_variable = { temp_var = 100 }
+			divide_temp_variable = { temp_var = 50 }
 			multiply_temp_variable = { temp_var = num_of_civilian_factories }
 			multiply_temp_variable = { temp_var = ROOT.stability }
 			multiply_temp_variable = { temp_var = ROOT.has_war_support }
@@ -223,114 +270,221 @@ TAU_student_union = {
 		ai_will_do = {
 			base = 0
 			modifier = {
-				industrial_complex > 20
-				add = 10
-			}
-		}
-	}
-	#批准特雷森战时条例
-	TAU_war_law1 = {
-		icon = GFX_decision_eng_trade_unions_support
-		visible = { OR = { has_completed_focus = TAU_expand_the_student_union } NOT = { has_idea = TAU_war_law } }
-		ai_will_do = {
-			factor = 1
-			modifier = {
-				
-			}
-		}
-		available = {
-			has_war = yes
-		}
-		fire_only_once = no
-		days_remove = 10
-		remove_effect = {
-			add_stability = -0.05
-			add_ideas = TAU_war_law
-		}
-		ai_will_do = {
-			base = 0
-			modifier = {
-				has_war = yes
+				industrial_complex > 29
 				add = 5
 			}
-			modifier = {
-				has_war = yes surrender_progress > 0.3
-				add = 10
-			}
 		}
 	}
-	#废除特雷森战时条例
-	TAU_war_law2 = {
-		icon = GFX_decision_eng_trade_unions_support
-		visible = { OR = { has_completed_focus = TAU_expand_the_student_union } has_idea = TAU_war_law }
-		ai_will_do = {
-			base = 0
-			modifier = {
-				NOT = { has_war = yes }
-				add = 15
+	#学生会选举正在进行中
+	TAU_election_ongoing = {
+		activation = {
+			has_country_flag = TAU_ELECTION_ON
+		}
+		is_good = yes
+		days_mission_timeout = 180
+		days_re_enable = 0
+		selectable_mission = no
+		timeout_effect = {
+			custom_effect_tooltip = TAU_tooltip36
+			hidden_effect = {
+				TAU_retire_vice_country_leader = yes
+				random_list = {
+					10 = { add_ideas = TAU_another_leader_AirGroove }
+					10 = { add_ideas = TAU_another_leader_DaiwaScarlet }
+					10 = { add_ideas = TAU_another_leader_KitasanBlack }
+					10 = { add_ideas = TAU_another_leader_Maruzensky }
+					tau_vice2_ratio = { add_ideas = TAU_another_leader_MayanoTopGun }
+					10 = { add_ideas = TAU_another_leader_MihonoBourbon }
+					10 = { add_ideas = TAU_another_leader_OguriCap }
+					tau_vice1_ratio = { add_ideas = TAU_another_leader_RiceShower }
+					10 = { add_ideas = TAU_another_leader_SatonoDiamond }
+					10 = { add_ideas = TAU_another_leader_HaruUrara }
+				}
+				TAU_update_dev = yes
 			}
 		}
-		available = {
-		}
-		fire_only_once = no
-		days_remove = 10
-		remove_effect = {
-			remove_ideas = TAU_war_law
-		}
-		ai_will_do = {
-			base = 0
-			modifier = {
-				has_war = no
-				add = 100
-			}
-		}
+		available = { ROOT = { exists = no } }
 	}
-	#为专制添砖加瓦
-	TAU_propaganda = {
-		icon = GFX_decision_eng_trade_unions_support
-		visible = { OR = { has_completed_focus = TAU_expand_the_student_union } }
-		ai_will_do = {
-			factor = 5
-			modifier = { }
+	#延后下一次选举
+	TAU_election_delay = {
+		icon = GFX_decision_eng_propaganda_campaigns
+		visible = {
+			has_completed_focus = TAU_interference_in_student_council_elections
 		}
 		available = {
-			has_intelligence_agency = yes
-			OR = { 
-				AND = { has_completed_focus = TAU_radical
-				fascism < 0.8 }
-				AND = { has_completed_focus = TAU_conservative
-				neutrality < 0.8 }
-			}
+			has_active_mission = TAU_election_ongoing
 		}
-		fire_only_once = no
-		days_remove = 85
-		cost = 50
-		remove_effect = { 
-			if = { limit = { has_completed_focus = TAU_radical } add_popularity = {
-				ideology = fascism
-				popularity = 0.1
-			} }
-			if = { limit = { has_completed_focus = TAU_conservative } add_popularity = {
-				ideology = neutrality
-				popularity = 0.1
-			} }
-		}
-	}
-	#乌拉拉鼓励计划
-	TAU_urara_funds = {
-		icon = GFX_decision_eng_trade_unions_support
-		visible = { OR = { has_completed_focus = TAU_new_generation_student_union } }
-		available = {
-			industrial_complex > 14
-		}
-		fire_only_once = yes
+		days_re_enable = 1
 		complete_effect = {
-			add_timed_idea = {
-				idea = TAU_urara_funds
-				days = 365
+			add_days_mission_timeout = {
+				mission = TAU_election_ongoing
+				days = 180
 			}
 		}
+		cost = 100
 	}
+	#加速下一次选举
+	TAU_election_accelerate = {
+		icon = GFX_decision_eng_propaganda_campaigns
+		visible = {
+			has_completed_focus = TAU_interference_in_student_council_elections
+		}
+		available = {
+			has_active_mission = TAU_election_ongoing
+		}
+		days_re_enable = 1
+		complete_effect = {
+			add_days_mission_timeout = {
+				mission = TAU_election_ongoing
+				days = -60
+			}
+		}
+		cost = 50
+	}
+	#荣进闪耀正在乌斯拉尔进修
+	TAU_ongoing_visit_USR = {
+		activation = {
+			has_country_flag = TAU_ONGOING_VISIT_USR
+		}
+		is_good = yes
+		days_mission_timeout = 11
+		fire_only_once = yes
+		selectable_mission = no
+		complete_effect = {
+			effect_tooltip = {
+				add_corps_commander_role = {
+					character = TAU_EishinFlash
+				}
+			}
+			clr_country_flag = TAU_ONGOING_VISIT_USR
+		}
+		timeout_effect = {
+			USR = {
+				remove_ideas = TAU_cavalry_tactical_exchange
+			}
+			effect_tooltip = {
+				add_corps_commander_role = {
+					character = TAU_EishinFlash
+				}
+			}
+			add_advisor_role = {
+				character = TAU_EishinFlash
+				advisor = { 
+					slot = theorist
+					idea_token = TAU_EishinFlash
+					traits = {
+						TAU_Meisterschaft
+					}
+				}
+			}
+			army_experience = 50
+			clr_country_flag = TAU_ONGOING_VISIT_USR
+		}
+		available = { USR = { exists = no } }
+	}
+	# #批准特雷森战时条例
+	# TAU_war_law1 = {
+	# 	icon = GFX_decision_eng_trade_unions_support
+	# 	visible = { OR = { has_completed_focus = TAU_expand_the_student_union } NOT = { has_idea = TAU_war_law } }
+	# 	ai_will_do = {
+	# 		factor = 1
+	# 		modifier = {
+				
+	# 		}
+	# 	}
+	# 	available = {
+	# 		has_war = yes
+	# 	}
+	# 	fire_only_once = no
+	# 	days_remove = 10
+	# 	remove_effect = {
+	# 		add_stability = -0.05
+	# 		add_ideas = TAU_war_law
+	# 	}
+	# 	ai_will_do = {
+	# 		base = 0
+	# 		modifier = {
+	# 			has_war = yes
+	# 			add = 5
+	# 		}
+	# 		modifier = {
+	# 			has_war = yes surrender_progress > 0.3
+	# 			add = 10
+	# 		}
+	# 	}
+	# }
+	# #废除特雷森战时条例
+	# TAU_war_law2 = {
+	# 	icon = GFX_decision_eng_trade_unions_support
+	# 	visible = { OR = { has_completed_focus = TAU_expand_the_student_union } has_idea = TAU_war_law }
+	# 	ai_will_do = {
+	# 		base = 0
+	# 		modifier = {
+	# 			NOT = { has_war = yes }
+	# 			add = 15
+	# 		}
+	# 	}
+	# 	available = {
+	# 	}
+	# 	fire_only_once = no
+	# 	days_remove = 10
+	# 	remove_effect = {
+	# 		remove_ideas = TAU_war_law
+	# 	}
+	# 	ai_will_do = {
+	# 		base = 0
+	# 		modifier = {
+	# 			has_war = no
+	# 			add = 100
+	# 		}
+	# 	}
+	# }
+	# #为专制添砖加瓦
+	# TAU_propaganda = {
+	# 	icon = GFX_decision_eng_trade_unions_support
+	# 	visible = { OR = { has_completed_focus = TAU_expand_the_student_union } }
+	# 	ai_will_do = {
+	# 		factor = 5
+	# 		modifier = { }
+	# 	}
+	# 	available = {
+	# 		has_intelligence_agency = yes
+	# 		OR = { 
+	# 			AND = { has_completed_focus = TAU_radical
+	# 			fascism < 0.8 }
+	# 			AND = { has_completed_focus = TAU_conservative
+	# 			neutrality < 0.8 }
+	# 		}
+	# 	}
+	# 	fire_only_once = no
+	# 	days_remove = 85
+	# 	cost = 50
+	# 	remove_effect = { 
+	# 		if = { limit = { has_completed_focus = TAU_radical } add_popularity = {
+	# 			ideology = fascism
+	# 			popularity = 0.1
+	# 		} }
+	# 		if = { limit = { has_completed_focus = TAU_conservative } add_popularity = {
+	# 			ideology = neutrality
+	# 			popularity = 0.1
+	# 		} }
+	# 	}
+	# }
+	# #乌拉拉鼓励计划
+	# TAU_urara_funds = {
+	# 	icon = GFX_decision_eng_trade_unions_support
+	# 	visible = { OR = { has_completed_focus = TAU_new_generation_student_union } }
+	# 	available = {
+	# 		industrial_complex > 14
+	# 	}
+	# 	fire_only_once = yes
+	# 	complete_effect = {
+	# 		add_timed_idea = {
+	# 			idea = TAU_urara_funds
+	# 			days = 365
+	# 		}
+	# 	}
+	# }
 	#学生会扩张指标
 	TAU_war_indicator = {
 		activation = { has_completed_focus = TAU_territorial_expansion }
@@ -406,6 +560,6 @@ TAU_URA = {
 				}
 			}
 		}
-		available = { ROOT = { exists = yes } }
+		available = { ROOT = { exists = no } }
 	}
 }
