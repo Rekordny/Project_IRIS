@@ -55,9 +55,9 @@ Establishing_investment_bank_2 = {
 
 #计算目前需要PP
 Calculate_current_funding_requirements = {
-	set_variable = { Add_quantity = ROOT.grid_faction_array^num }
-	add_to_variable = { Add_quantity = ROOT.grid_faction_array_zhu^num }#计算出加入的所有国家
-	set_variable = { global.Bank_funds = 80 }#每个国家50pp
+	set_variable = { Add_quantity = global.grid_faction_array^num }
+	add_to_variable = { Add_quantity = global.grid_faction_array_zhu^num }#计算出加入的所有国家
+	set_variable = { global.Bank_funds = 50 }#每个国家50pp
 	if = {
 		limit = { check_variable = { global.president = 1 } }
 		set_variable = { global.Bank_funds = 45 }
@@ -83,22 +83,36 @@ add_touzi_jine_10 = {
 member_investment_calculation = {
 	calculation_President = yes
 	set_variable = { global.touzi_jine_100 = global.touzi_jine }
-	multiply_variable = { global.touzi_jine_100 = 0.1 }
+	multiply_variable = { global.touzi_jine_100 = 0.01 }
 
 	set_variable = { global.CID_member_investment_calculation = global.investment_CID }
-	multiply_variable = { global.CID_member_investment_calculation = 50 }
 
 	set_variable = { global.OCF_member_investment_calculation = global.investment_OCF }
-	multiply_variable = { global.OCF_member_investment_calculation = 50 }
 	add_to_variable = { global.OCF_member_investment_calculation = global.CID_member_investment_calculation }
 
 	set_variable = { global.DOC_member_investment_calculation = global.investment_DOC }
-	multiply_variable = { global.DOC_member_investment_calculation = 50 }
 	add_to_variable = { global.DOC_member_investment_calculation = global.OCF_member_investment_calculation }
+
+	set_variable = { global.eu_member_investment_calculation = global.investment_eu }
+	add_to_variable = { global.eu_member_investment_calculation = global.DOC_member_investment_calculation }
+
+	set_variable = { global.melody_member_investment_calculation = global.investment_melody }
+	add_to_variable = { global.melody_member_investment_calculation = global.eu_member_investment_calculation }
+
+	set_variable = { global.voyage_member_investment_calculation = global.investment_voyage }
+	add_to_variable = { global.voyage_member_investment_calculation = global.melody_member_investment_calculation }
+
+	set_variable = { global.axia_member_investment_calculation = global.investment_axia }
+	add_to_variable = { global.axia_member_investment_calculation = global.voyage_member_investment_calculation }
 
 	divide_variable = { global.CID_member_investment_calculation = global.touzi_jine_100  }#寒岛投资百分比
 	divide_variable = { global.OCF_member_investment_calculation = global.touzi_jine_100  }#大洋投资百分比
 	divide_variable = { global.DOC_member_investment_calculation = global.touzi_jine_100  }#诗旎投资百分比
+
+	divide_variable = { global.eu_member_investment_calculation = global.touzi_jine_100  }
+	divide_variable = { global.melody_member_investment_calculation = global.touzi_jine_100  }
+	divide_variable = { global.voyage_member_investment_calculation = global.touzi_jine_100  }
+	divide_variable = { global.axia_member_investment_calculation = global.touzi_jine_100  }
 }
 
 #成员投资计算(归零)
@@ -106,6 +120,10 @@ member_investment_calculation_del = {
 	set_variable = { global.investment_CID = 0 }
 	set_variable = { global.investment_DOC = 0 }
 	set_variable = { global.investment_OCF = 0 }
+	set_variable = { global.investment_eu = 0 }
+	set_variable = { global.investment_melody = 0 }
+	set_variable = { global.investment_voyage = 0 }
+	set_variable = { global.investment_axia = 0 }
 	set_variable = { global.investment_other = 0 }
 	member_investment_calculation = yes
 }
@@ -113,12 +131,13 @@ member_investment_calculation_del = {
 #行长计算
 calculation_President = {
 	set_variable = { global.next_president = 1 }
+	set_variable = { global.next_president_max = global.investment_CID }
 	if = {
-		limit = { check_variable = { global.investment_DOC > global.investment_CID } }
+		limit = { check_variable = { global.investment_DOC > global.next_president_max } }
 		set_variable = { global.next_president = 2 }
 	}
 	if = {
-		limit = { check_variable = { global.investment_OCF > global.investment_DOC } }
+		limit = { check_variable = { global.investment_OCF > global.next_president_max } }
 		set_variable = { global.next_president = 3 }
 	}
 }
