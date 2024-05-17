@@ -7,6 +7,12 @@ on_actions = {
                 #p社沙比，运算只可以一个一个算，还计算报错
                 set_variable = { DOC_morale = -25 } 
             }
+            every_state = {
+				limit = {
+					is_core_of = DOC
+				}
+				add_core_of = CNI
+			}
             DOC = {
                 add_opinion_modifier = {
 					target = OCE
@@ -29,17 +35,44 @@ on_actions = {
                 add_popularity = { ideology = communism popularity = 0.02 }
                 white_peace = OCE
             }
+            set_variable = { DOC.noble_dissatisfaction = 0.18 }#贵族不满
+            set_variable = { DOC.progress_riots = 0 }#暴乱进度
+
+            set_variable = { DOC.DOC_local_aristocratic_dissatisfaction_stability_factor = 0 }#稳定度
+            set_variable = { DOC.DOC_local_aristocratic_dissatisfaction_production_factory_max_efficiency_factor = 0 }#生产效率上限
         }
     }
     on_daily_DOC = {
         effect = {
-            DOC_calculate_existing_parcel_logic = yes
+            if = {
+                limit = { has_country_flag = DOC_process_of_democratization_flag }
+                DOC_calculate_existing_parcel_logic = yes
+            }
+            if = {
+                limit = { has_country_flag = DOC_process_of_democratization_flag NOT = { has_country_flag = DOC_noble_explosion_flag } }
+                DOC_local_aristocratic_dissatisfaction_calculate = yes
+            }
             if = {
                 limit = { DOC = { NOT = { has_government = ELN } is_in_faction_with = ELN } ELN = { is_faction_leader = yes } }
                 DOC = { leave_faction = yes }
             }
         }
     }
+    on_monthly_DOC = {
+        effect = {
+            if = {
+                limit = { has_country_flag = DOC_process_of_democratization_flag NOT = { has_country_flag = DOC_noble_explosion_flag } }
+                if = {
+                    limit = { check_variable = { NOT = { DOC.noble_dissatisfaction < 0.5 } } }
+                    add_to_variable = { DOC.progress_riots = 0.25 } 
+                }else = {
+                    add_to_variable = { DOC.progress_riots = -0.1 } 
+                }
+                add_to_variable = { DOC.noble_dissatisfaction = -0.04 } 
+            }
+        }
+    }
+    
     on_capitulation_immediate = {
         effect = {
             #诗旎公国宣布投降废弃
