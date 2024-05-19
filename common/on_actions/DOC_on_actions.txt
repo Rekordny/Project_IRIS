@@ -26,20 +26,31 @@ on_actions = {
 					target = PLD
 					modifier = separatist_forces
 				}
+                add_dynamic_modifier = { modifier = DOC_local_aristocratic_dissatisfaction }
             }
             PLD = {
-                set_politics = { ruling_party = neutrality }
-				add_popularity = { ideology = reactionism popularity = 1 }
-                add_popularity = { ideology = neutrality popularity = 0.35 }
-                add_popularity = { ideology = democratic popularity = 0.05 }
-                add_popularity = { ideology = communism popularity = 0.02 }
+                set_politics = {
+	                ruling_party = neutrality
+	                last_election = "3090.1.1"
+	                election_frequency = 144
+	                elections_allowed = no
+                }
+
+                set_popularities = {
+	                neutrality = 30
+	                democratic = 5
+	                communism = 2
+	                fascism = 0
+	                reactionism = 63
+                }
                 white_peace = OCE
             }
-            set_variable = { DOC.noble_dissatisfaction = 0.18 }#贵族不满
-            set_variable = { DOC.progress_riots = 0 }#暴乱进度
+            set_variable = { DOC_noble_dissatisfaction = 0.18 }#贵族不满
+            set_variable = { DOC_progress_riots = 0 }#暴乱进度
+            set_variable = { global.CNI_summoned_times = 0 }#可召唤次数
 
-            set_variable = { DOC.DOC_local_aristocratic_dissatisfaction_stability_factor = 0 }#稳定度
-            set_variable = { DOC.DOC_local_aristocratic_dissatisfaction_production_factory_max_efficiency_factor = 0 }#生产效率上限
+            set_variable = { DOC_local_aristocratic_dissatisfaction_stability_factor = 0 }#稳定度
+            set_variable = { DOC_local_aristocratic_dissatisfaction_production_factory_max_efficiency_factor = 0 }#生产效率上限
         }
     }
     on_daily_DOC = {
@@ -48,10 +59,7 @@ on_actions = {
                 limit = { has_country_flag = DOC_process_of_democratization_flag }
                 DOC_calculate_existing_parcel_logic = yes
             }
-            if = {
-                limit = { has_country_flag = DOC_process_of_democratization_flag NOT = { has_country_flag = DOC_noble_explosion_flag } }
-                DOC_local_aristocratic_dissatisfaction_calculate = yes
-            }
+            DOC_local_aristocratic_dissatisfaction_calculate = yes
             if = {
                 limit = { DOC = { NOT = { has_government = ELN } is_in_faction_with = ELN } ELN = { is_faction_leader = yes } }
                 DOC = { leave_faction = yes }
@@ -61,14 +69,19 @@ on_actions = {
     on_monthly_DOC = {
         effect = {
             if = {
-                limit = { has_country_flag = DOC_process_of_democratization_flag NOT = { has_country_flag = DOC_noble_explosion_flag } }
+                limit = { has_country_flag = DOC_process_of_democratization_flag }
                 if = {
-                    limit = { check_variable = { NOT = { DOC.noble_dissatisfaction < 0.5 } } }
-                    add_to_variable = { DOC.progress_riots = 0.25 } 
+                    limit = { NOT = { check_variable = { DOC_noble_dissatisfaction < 0.5 } } }
+                    add_to_variable = { DOC_progress_riots = 0.25 } 
+                    if = {
+                        limit = { check_variable = { global.DOC_opposition_bg_window_list_change_record_array^num < 5 } }
+                        DOC_random_opposition_name = yes
+                        add_to_variable = { global.CNI_summoned_times = 1 } 
+                    }
                 }else = {
-                    add_to_variable = { DOC.progress_riots = -0.1 } 
+                    add_to_variable = { DOC_progress_riots = -0.1 } 
                 }
-                add_to_variable = { DOC.noble_dissatisfaction = -0.04 } 
+                add_to_variable = { DOC_noble_dissatisfaction = -0.015 } 
             }
         }
     }
