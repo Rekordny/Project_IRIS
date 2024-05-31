@@ -28,3 +28,9 @@ NDefines.NAI.STR_UNIT_WEAK = 0.4 --0.45												-- Strength (equipment) % for
 NDefines.NAI.PLAN_AVG_PREPARATION_TO_EXECUTE = 0.5				            -- % or more average plan preparation before executing
 NDefines.NAI.AI_FRONT_MOVEMENT_FACTOR_FOR_READY = 0.5			                -- If less than this fraction of units on a front is moving  AI sees it as ready for action
 
+
+
+NDefines.NNavy.NAVAL_RANGE_TO_INGAME_DISTANCE = 0.18
+
+NDefines.NCountry.MAJOR_MIN_FACTORIES = 50
+NDefines.NDiplomacy.BASE_SURRENDER_LEVEL = 0.85

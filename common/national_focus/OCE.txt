@@ -5,7 +5,7 @@ focus_tree = {
 		modifier = {
 			OR = {
 				TAG = OCE
-				TAG = OCF
+				#TAG = OCF
 				TAG = INP
 				TAG = EIA
 			}
@@ -13,6 +13,8 @@ focus_tree = {
 		}
 	}
 	default = no
+	#shared_focus = Establishing_Eastern_European_Loba_Cooperation
+	
 	continuous_focus_position = {
 		x = 500
 		y = 2600
@@ -127,111 +129,7 @@ focus_tree = {
     }
 
 
-	focus = { #与东方进行联络
-	id = OCF_Liaise_with_East
 	
-	cost = 2
-	x = 3
-	y = 0
-	allow_branch = {
-		tag = OCF
-	}
-	ai_will_do = { factor = 50 }
-	mutually_exclusive = {
-		focus = OCE_Dispatch_ideological_police
-	}
-	completion_reward = {
-		OCF = {
-			hidden_effect = {
-				white_peace  = {
-				tag = EIA
-				message = OCF_AND_EIA_TT
-				}
-			}
-			diplomatic_relation = {
-   	 			country = EIA
-    			relation = guarantee
-    			active = yes
-			}
-			diplomatic_relation = {
-   	 			country = EIA
-    			relation = non_aggression_pact
-    			active = yes
-			}
-			diplomatic_relation = {
-   	 			country = EIA
-    			relation = military_access
-    			active = yes
-			}
-			diplomatic_relation = {
-   	 			country = EIA
-    			relation = docking_rights
-    			active = yes
-			}
-			white_peace = EIA
-		}
-		EIA = {
-			diplomatic_relation = {
-   	 			country = OCF
-    			relation = guarantee
-    			active = yes
-			}
-			diplomatic_relation = {
-   	 			country = OCF
-    			relation = non_aggression_pact
-    			active = yes
-			}
-			diplomatic_relation = {
-   	 			country = OCF
-    			relation = military_access
-    			active = yes
-			}
-			diplomatic_relation = {
-   	 			country = OCF
-    			relation = docking_rights
-    			active = yes
-			}
-		}
-	}
-	available = {
-		has_war = yes
-	}
-	search_filters = { FOCUS_FILTER_STABILITY }
-    }
-
-	focus = { #联合政府
-	id = OCF_Coalition_government
-	
-	cost = 7
-	relative_position_id = OCF_Liaise_with_East
-	x = 0
-	y = 1
-	allow_branch = {
-		tag = OCF
-	}
-	ai_will_do = { factor = 50 }
-	prerequisite = {focus = OCF_Liaise_with_East }
-	mutually_exclusive = {
-		focus = OCE_Dispatch_ideological_police
-	}
-	completion_reward = {
-		OCF = {
-			hidden_effect = {
-				white_peace  = {
-				tag = EIA
-				message = OCF_MEAGE_EIA_TT
-				}
-			}
-			annex_country = { target = EIA transfer_troops = yes }
-		}
-		add_popularity = { ideology = communism popularity = 0.3 }
-		add_popularity = { ideology = democratic popularity = -0.2 }
-		add_popularity = { ideology = neutrality popularity = -0.1 }
-	}
-	available = {
-	}
-	search_filters = { FOCUS_FILTER_STABILITY }
-    }
 
 
 
@@ -540,9 +438,10 @@ focus_tree = {
 	mutually_exclusive = {
 	}
 	completion_reward = {
+		news_event = { id = ocenews.13 }
         every_state = {
 				limit = {
-					is_controlled_by = TFD
+					is_core_of = TFD
 				}
 				add_core_of = OCE
 			}
@@ -551,6 +450,7 @@ focus_tree = {
 			    id = OCE_stable_value_2
 			    value = 0.15
 			}
+			news_event = { id = ocenews.13 }
 	}
 	available = {
 		date > 3095.1.1
@@ -575,7 +475,7 @@ focus_tree = {
 	x = 1
 	y = 1
 	ai_will_do = { factor = 50 }
-	prerequisite = {focus = OCE_Regional_blockades focus = OCE_Open_borders }
+	prerequisite = {focus = OCE_Regional_blockades focus = OCE_Central_industrial_construction focus = OCE_Open_borders }
 	mutually_exclusive = {
 	}
 	completion_reward = {
@@ -586,7 +486,7 @@ focus_tree = {
 	search_filters = { FOCUS_FILTER_STABILITY }
     }
 
-    focus = { #稳定国内局势
+    focus = { #双重思想
 	id = OCE_Stabilizing_domestic_situation
 	
 	cost = 3
@@ -647,7 +547,7 @@ focus_tree = {
 	id = OCE_Have_some_larger_ones
 	
 	relative_position_id = OCE_War_is_peace
-	cost = 20
+	cost = 10
 	x = -1
 	y = 1
 	ai_will_do = { factor = 10 }
@@ -998,9 +898,11 @@ focus_tree = {
 			custom_effect_tooltip = OCE_Start_cleaning_tt
 			set_country_flag = OCE_Start_cleaning
 		}
+		if = {
+			limit = { has_completed_focus = OCE_Stabilizing_domestic_situation }
+			country_event = { id = OCE.101}
+		}
 		add_manpower = -30293
-		add_popularity = { ideology = communism popularity = -1 }
-		add_popularity = { ideology = democratic popularity = -1 }
 		set_party_name = {
     			ideology = communism
     			long_name = OCE_Abolish_political_parties
@@ -1010,12 +912,6 @@ focus_tree = {
     			ideology = democratic
     			long_name = OCE_Abolish_political_parties
     			name = OCE_Abolish_political_parties
-			}
-		every_state = {
-				limit = {
-					is_core_of = OCE
-				}
-				set_demilitarized_zone = no
 			}
 			set_power_balance = {
     			id = OCE_stable_value_2
@@ -1029,8 +925,9 @@ focus_tree = {
 			}
 		hidden_effect = {
 			country_event = { id = OCE_bop.0 days = 5 }
-			}
-		
+			add_popularity = { ideology = communism popularity = -1 }
+			add_popularity = { ideology = democratic popularity = -1 }
+		}
 	}
 	
 	search_filters = { FOCUS_FILTER_POLITICAL }
@@ -1109,7 +1006,7 @@ focus_tree = {
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Kill_relevant_personnel focus = OCE_Fix_Weimingge}
     available = {
-        has_war = no
+ 
     }
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
@@ -1205,7 +1102,7 @@ focus_tree = {
 	}
 	ai_will_do = { factor = 90 }
 	prerequisite = { focus = OCE_False_wars }
-	prerequisite = { focus = OCE_join_USR }
+	#prerequisite = { focus = OCE_join_USR }
     prerequisite = { focus = OCE_Central_industrial_construction focus = OCE_Open_borders focus = OCE_Regional_blockades focus = OCE_Our_allies_bla }
 	completion_reward = {
 		add_political_power = 75
@@ -1415,7 +1312,7 @@ focus_tree = {
 		}
 	}
 	completion_reward = {
-		declare_war_on = { target = NEV type = annex_everything }
+		create_wargoal = { target = NEV type = annex_everything }
 		every_state = {
 			limit = { is_core_of = NEV }
 			OCE = { add_state_claim = PREV }
@@ -1445,7 +1342,7 @@ focus_tree = {
 		}
 	}
 	completion_reward = {
-		declare_war_on = { target = PCC type = annex_everything }
+		create_wargoal = { target = PCC type = annex_everything }
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -1513,7 +1410,7 @@ focus_tree = {
 	focus = { #发动第二次特兰西瓦战争
 	id = OCE_declare_war_DOC
 	icon = GFX_focus_OCE_declare_war_DOC
-	cost = 5
+	cost = 1
 	relative_position_id = OCE_march_westward
 	x = 0
 	y = 1
@@ -1534,6 +1431,7 @@ focus_tree = {
 	prerequisite = { focus = OCE_march_westward }
 	completion_reward = {
 		declare_war_on = { target = DOC type = annex_everything }
+		news_event = { id = ocenews.15 }
 	}
 	search_filters = { FOCUS_FILTER_ANNEXATION }
     }
@@ -1578,7 +1476,7 @@ focus_tree = {
 	focus = { #来自不公平的公正
 	id = OCE_From_unfair_justice
 	icon = GFX_focus_OCE_From_unfair_justice
-	cost = 5
+	cost = 1
 	relative_position_id = OCE_Lord_of_Eastern_European_Loba
 	x = 0
 	y = 1
@@ -1612,7 +1510,7 @@ focus_tree = {
     focus = { #投资建设
 	id = OCE_Investing_in_local_military_industry
 	icon = GFX_focus_OCE_Investing_in_local_military_industry
-	cost = 10
+	cost = 4
 	x = 24
 	y = 0
 	ai_will_do = { factor = 10 }
@@ -1953,7 +1851,7 @@ focus_tree = {
     focus = { #大洋海军翻新
 	id = OCE_Ocean_Navy_Refurbishment
 	
-	cost = 7
+	cost = 5
 	relative_position_id = OCE_Investing_in_local_military_industry
 	x = 4
 	y = 2
@@ -1986,11 +1884,11 @@ focus_tree = {
 	prerequisite = {focus = OCE_Ocean_Navy_Refurbishment}
 	completion_reward = {
 		navy_experience = 50
-		add_tech_bonus = {
-		bonus = 0.50
-		uses = 2
-		category = naval_doctrine
-		}
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 4
+				category = naval_doctrine
+			}
 	}
 	search_filters = { FOCUS_FILTER_NAVY_XP }
 	
@@ -2066,8 +1964,7 @@ focus_tree = {
 	x = -3
 	y = 3
 	ai_will_do = { factor = 10 }
-	prerequisite = {focus = OCE_Ocean_going_combat_ideology}
-	prerequisite = {focus = OCE_Offshore_combat_ideology}
+	prerequisite = {focus = OCE_Ocean_going_combat_ideology focus = OCE_Offshore_combat_ideology}
 	completion_reward = {
 		swap_ideas = {
 			remove_idea = OCE_idea_Ocean_Navy_Refurbishment
@@ -2080,13 +1977,12 @@ focus_tree = {
 	focus = { #大洋潜艇
 	id = OCE_Oceanic_submarines
 	
-	cost = 10
+	cost = 5
 	relative_position_id = OCE_Offshore_combat_ideology
 	x = -1
 	y = 1
-	ai_will_do = { factor = 10 }
-	prerequisite = {focus = OCE_Ocean_going_combat_ideology}
-	prerequisite = {focus = OCE_Offshore_combat_ideology}
+	ai_will_do = { factor = 5 }
+	prerequisite = {focus = OCE_Ocean_going_combat_ideology focus = OCE_Offshore_combat_ideology}
 	completion_reward = {
 		create_equipment_variant = {
 					name = "Orlandocard submarine"
@@ -2278,7 +2174,7 @@ focus_tree = {
 	focus = { #轻武器生产
 	id = OCE_Production_light_weapons
 	icon = GFX_OCE_Production_light_weapons
-	cost = 10
+	cost = 5
 	relative_position_id = OCE_Kradas_Industrial_Base
 	x = 0
 	y = 1
@@ -2312,7 +2208,6 @@ focus_tree = {
 	completion_reward = {
 		add_tech_bonus = {
 		bonus = 1.0 
-		ahead_reduction = 1 
 		uses = 2
 		category = electronics
 		}
@@ -2323,7 +2218,7 @@ focus_tree = {
 	focus = { #提高武器杀伤
 	id = OCE_Increases_weapon_damage
 	icon = GFX_OCE_Increases_weapon_damage
-	cost = 10
+	cost = 5
 	relative_position_id = OCE_Kradas_Industrial_Base
 	x = 0
 	y = 2
@@ -2354,7 +2249,7 @@ focus_tree = {
     focus = { #战场上的堡垒
 	id = OCE_fortress_battlefield
 	icon = GFX_OCE_fortress_battlefield
-	cost = 10
+	cost = 5
 	relative_position_id = OCE_Kradas_Industrial_Base
 	x = 2
 	y = 1
@@ -2490,7 +2385,7 @@ focus_tree = {
     focus = { #高空守卫者
 	id = OCE_High_Guardian
 	
-	cost = 8
+	cost = 4
 	relative_position_id = OCE_Research_on_new_types_of_aircraft
 	x = -1
 	y = 2
@@ -2508,7 +2403,7 @@ focus_tree = {
 	focus = { #高空支援者
 	id = OCE_High_altitude_supporters
 	
-	cost = 8
+	cost = 4
 	relative_position_id = OCE_Research_on_new_types_of_aircraft
 	x = 1
 	y = 2
@@ -2534,11 +2429,11 @@ focus_tree = {
 	prerequisite = {focus = OCE_High_Guardian focus = OCE_High_altitude_supporters }
 	completion_reward = {
 		air_experience = 100
-		add_tech_bonus = {
-			bonus = 0.5 
-			uses = 4
-			category = air_doctrine
-		}
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 4
+				category = air_doctrine
+			}
 	}
 	search_filters = { FOCUS_FILTER_RESEARCH }
 	search_filters = { FOCUS_FILTER_AIR_XP }
@@ -2547,7 +2442,7 @@ focus_tree = {
     focus = { #联邦军官学院
 	id = OCE_Federal_Military_Academy
 	icon = GFX_OCE_Federal_Military_Academy
-	cost = 20
+	cost = 15
 	relative_position_id = OCE_Increases_weapon_damage
 	x = 0
 	y = 3
@@ -2556,15 +2451,15 @@ focus_tree = {
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		army_experience = 100
-		add_tech_bonus = {
-		bonus = 0.5
-		uses = 2
-		category = land_doctrine
-		every_army_leader = {
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 2
+				category = land_doctrine
+			}
+	every_army_leader = {
 			add_attack = 1
 			add_planning = 1
 		} 
-	}
 	if = {
 		limit = { tag = OCE }
 		custom_effect_tooltip = OCE_Federal_Military_Academy_tt
@@ -2590,11 +2485,11 @@ focus_tree = {
 
     focus = { #大洋上的联邦
 	id = OCE_Federation_Ocean
-	
+	icon = GFX_focus_OCE_Federation_Ocean
 	cost = 10
 	relative_position_id = OCE_Increases_weapon_damage
 	x = 0
-	y = 4
+	y = 5
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Osias_Sky }
 	prerequisite = {focus = OCE_Federal_Military_Academy }
@@ -2616,13 +2511,18 @@ focus_tree = {
 	ai_will_do = { factor = 10 }
 	prerequisite = {focus = OCE_Federation_Ocean }
 	available={  
-		date > 3094.3.1
 		num_of_factories > 110
 	}
 	completion_reward = {
         custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		add_ideas = OCE_idea_V_plan
 		add_research_slot = 1
+		add_tech_bonus = {
+		bonus = 1
+		ahead_reduction = 2
+		uses = 2
+		category = nuclear
+	}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -2679,11 +2579,11 @@ focus_tree = {
 	prerequisite = {focus = OCE_V_plan }
 	completion_reward = {
         air_experience = 75
-		add_tech_bonus = {
-			bonus = 0.5
-			uses = 4
-			category = air_doctrine
-		}
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 4
+				category = air_doctrine
+			}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -2922,11 +2822,11 @@ focus_tree = {
 	prerequisite = {focus = OCE_V_plan }
 	completion_reward = {
         navy_experience = 75
-		add_tech_bonus = {
-			bonus = 0.5
-			uses = 4
-			category = naval_doctrine
-		}
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 4
+				category = naval_doctrine
+			}
 	}
 	available={  
 		available={  
@@ -3390,11 +3290,11 @@ focus_tree = {
 	prerequisite = {focus = OCE_V_plan }
 	completion_reward = {
         army_experience = 25
-		add_tech_bonus = {
-			bonus = 0.75
-			uses = 2
-			category = land_doctrine
-		}
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -3438,6 +3338,7 @@ focus_tree = {
 			custom_effect_tooltip = ability_oce_poison_gas_charge_plan_TT
 		}
 		hidden_effect = {
+			news_event = { id = ocenews.16 }
 			set_technology = { blackshirt_assault_battalion_tech = 1 popup = no }
 		}
 	}
@@ -3538,11 +3439,11 @@ focus_tree = {
 	prerequisite = {focus = OCE_Mobile_raid focus = OCE_Trench_breakthrough_methods }
 	completion_reward = {
 		army_experience = 25
-		add_tech_bonus = {
-			bonus = 0.5
-			uses = 1
-			category = land_doctrine
-		}
+		add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = land_doctrine
+			}
 	}
 	search_filters = { FOCUS_FILTER_POLITICAL }
     }
@@ -3615,7 +3516,7 @@ focus_tree = {
 	focus = { #装甲流水线
 	id = OCE_Armor_assembly_line
 	
-	cost = 9
+	cost = 4
 	relative_position_id = OCE_Quick_breakout
 	x = 0
 	y = 1

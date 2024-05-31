@@ -14,16 +14,20 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = tau.1.a
-		TAU = { country_event = { id = tau.2 days = 1 } }
+		FROM = { country_event = { id = tau.2 days = 5 } }
 		ai_chance = {
 			base = 10
 		}
 	}
 	option = {
 		name = tau.1.b
-		TAU = { country_event = { id = tau.3 days = 1 } }
+		FROM = { country_event = { id = tau.3 days = 6 } }
 		ai_chance = {
 			base = 10
+			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
 		}
 	}
 }
@@ -43,13 +47,13 @@ country_event = {
 		}
 	}
 	option = {
-		name = tau.2.a
+		name = tau.2.b
 		create_wargoal = {
-			target = PREV
+			target = FROM
 			type = take_core_state
 		}
 		ai_chance = {
-			base = 0
+			base = 10
 		}
 	}
 }
@@ -65,9 +69,9 @@ country_event = {
 		name = tau.3.a
 		transfer_state = 713
 		diplomatic_relation = {
-			country = BOW
+			country = FROM
 			relation = non_aggression_pact
-			active = no
+			active = yes
 		}
 	}
 }
@@ -96,7 +100,7 @@ country_event = {
 	}
 	option = {
 		name = tau.4.b
-		trigger = { NOT = { has_war_with = USF } }
+		trigger = { NOT = { has_war_with = ANZ } }
 		custom_effect_tooltip = available_industrial_concern
 		show_ideas_tooltip = TAU_lda_material
 		ANZ = {
@@ -106,12 +110,12 @@ country_event = {
 			}
 		}
 		ai_chance = {
-			base = 10
+			base = 0
 		}
 	}
 	option = {
 		name = tau.4.c
-		trigger = { NOT = { has_war_with = USF } }
+		trigger = { NOT = { has_war_with = STG } }
 		custom_effect_tooltip = available_industrial_concern
 		show_ideas_tooltip = TAU_xmbs_material
 		STG = {
@@ -120,6 +124,198 @@ country_event = {
 				modifier = TAU_international_solicitation_om
 			}
 		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+#LAD:邀请兰德索尔加入阵营
+country_event = {
+	id = tau.5
+	title = tau.5.t
+	desc = tau.5.desc
+	picture = GFX_TAU_CE5
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.5.a
+		FROM = { country_event = { id = tau.6 days = 5 } }
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = tau.5.b
+		FROM = { country_event = { id = tau.7 days = 5 } }
+		ai_chance = {
+			base = 10
+			modifier = {
+				is_historical_focus_on = yes
+				factor = 0
+			}
+		}
+	}
+}
+#兰德索尔同意加入阵营
+country_event = {
+	id = tau.6
+	title = tau.6.t
+	desc = tau.6.desc
+	picture = GFX_TAU_CE6
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.6.a
+		if = {
+			limit = { is_faction_leader = yes }
+			add_to_faction = LAD
+		}
+	}
+}
+#兰德索尔拒绝加入阵营
+country_event = {
+	id = tau.7
+	title = tau.7.t
+	desc = tau.7.desc
+	picture = GFX_TAU_CE7
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.7.a
+	}
+}
+#兰德索尔投资协定到期
+country_event = {
+	id = tau.9
+	title = tau.9.t
+	desc = tau.9.desc
+	picture = GFX_TAU_CE9
+	# trigger = {
+	# 	tag = TAU
+	# }
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.9.a
+		unlock_decision_tooltip = TAU_invite_LAD
+		if = {
+			limit = { has_idea = TAU_LAD_investment_1 }
+			remove_ideas = TAU_LAD_investment_1
+			random_list = {
+				10 = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 3
+					}
+				}
+				10 = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 5
+					}
+				}
+				5 = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 7
+					}
+				} 
+			}
+		}
+		if = {
+			limit = { has_idea = TAU_LAD_investment_2 }
+			remove_ideas = TAU_LAD_investment_2
+			random_list = {
+				10 = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 5
+					}
+				}
+				10 = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 8
+					}
+				}
+				5 = {
+					add_offsite_building = {
+						type = industrial_complex
+						level = 12
+					}
+				} 
+			}
+			
+		}
+		hidden_effect = {
+			LAD = { 
+				if = {
+					limit = { has_idea = TAU_LAD_investment_3 }
+					remove_ideas = TAU_LAD_investment_3
+				}
+				if = {
+					limit = { has_idea = TAU_LAD_investment_4 }
+					remove_ideas = TAU_LAD_investment_4
+				}
+			}
+			set_country_flag = TAU_LAD_INVESTMENT_DONE
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#兰德索尔经济互助协定通过
+country_event = {
+	id = tau.10
+	title = tau.10.t
+	desc = tau.10.desc
+	picture = GFX_TAU_CE10
+	# trigger = {
+	# 	tag = TAU
+	# }
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.10.a
+		add_ideas = TAU_LAD_investment_1
+		FROM = {
+			add_ideas = TAU_LAD_investment_3
+		}
+		hidden_effect = {
+			country_event = { id = tau.9 days = 300 random_days = 100 }
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = tau.10.b
+		add_ideas = TAU_LAD_investment_2
+		FROM = {
+			add_ideas = TAU_LAD_investment_4
+		}
+		hidden_effect = {
+			country_event = { id = tau.9 days = 300 random_days = 300 }
+		}
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+#兰德索尔经济互助协定驳回
+country_event = {
+	id = tau.11
+	title = tau.11.t
+	desc = tau.11.desc
+	picture = GFX_TAU_CE11
+	# trigger = {
+	# 	tag = TAU
+	# }
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = tau.11.a
 		ai_chance = {
 			base = 10
 		}
@@ -134,7 +330,7 @@ country_event = {
 	trigger = {
 		tag = TAU
 	}
-	mean_time_to_happen = { days = 400 }
+	mean_time_to_happen = { days = 150 }
 	fire_only_once = yes
 	option = {
 		name = tau.12.a
@@ -148,10 +344,9 @@ country_event = {
 			logistics_skill=3
 			legacy_id=1105
 		}
-		mark_focus_tree_layout_dirty = yes
 	}
 }
-#主动平衡天平
+#LAD:兰德索尔经济互助协定
 country_event = {
 	id = tau.13
 	title = tau.13.t
@@ -164,46 +359,55 @@ country_event = {
 	fire_only_once = yes
 	option = {
 		name = tau.13.a
+		FROM = { country_event = TAU.10 }
 		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = tau.13.b
+		FROM = { country_event = TAU.11 }
+		ai_chance = {
+			base = 10
 		}
 	}
 }
 #后生可畏
-country_event = {
-	id = tau.14
-	title = tau.14.t
-	desc = tau.14.desc
-	picture = GFX_TAU_CE14
-	# trigger = {
-	# 	tag = TAU
-	# }
-	is_triggered_only = yes
-	fire_only_once = yes
-	option = {
-		name = tau.14.a
-		custom_effect_tooltip = TAU_tooltip20
-		custom_effect_tooltip = TAU_tooltip22
-		hidden_effect = {
-			TAU_retire_vice_country_leader = yes
-			add_ideas = TAU_another_leader_SatonoDiamond
-		}
-		ai_chance = {
-			factor = 10
-		}
-	}
-	option = {
-		name = tau.14.b
-		custom_effect_tooltip = TAU_tooltip20
-		custom_effect_tooltip = TAU_tooltip24
-		hidden_effect = {
-			TAU_retire_vice_country_leader = yes
-			add_ideas = TAU_another_leader_KitasanBlack
-		}
-		ai_chance = {
-			factor = 20
-		}
-	}
-}
+# country_event = {
+# 	id = tau.14
+# 	title = tau.14.t
+# 	desc = tau.14.desc
+# 	picture = GFX_TAU_CE14
+# 	# trigger = {
+# 	# 	tag = TAU
+# 	# }
+# 	is_triggered_only = yes
+# 	fire_only_once = yes
+# 	option = {
+# 		name = tau.14.a
+# 		custom_effect_tooltip = TAU_tooltip20
+# 		custom_effect_tooltip = TAU_tooltip22
+# 		hidden_effect = {
+# 			TAU_retire_vice_country_leader = yes
+# 			add_ideas = TAU_another_leader_SatonoDiamond
+# 		}
+# 		ai_chance = {
+# 			factor = 10
+# 		}
+# 	}
+# 	option = {
+# 		name = tau.14.b
+# 		custom_effect_tooltip = TAU_tooltip20
+# 		custom_effect_tooltip = TAU_tooltip24
+# 		hidden_effect = {
+# 			TAU_retire_vice_country_leader = yes
+# 			add_ideas = TAU_another_leader_KitasanBlack
+# 		}
+# 		ai_chance = {
+# 			factor = 20
+# 		}
+# 	}
+# }
 
 #URA赏赞助
 country_event = {
@@ -230,56 +434,55 @@ country_event = {
 }
 
 #
-country_event = {
-	id = tau.16
-	title = tau.16.t
-	desc = tau.16.desc
-	picture = GFX_TAU_CE16
-	trigger = {
+# country_event = {
+# 	id = tau.16
+# 	title = tau.16.t
+# 	desc = tau.16.desc
+# 	picture = GFX_TAU_CE16
+# 	trigger = {
 		
-	}
-	immediate = { 
+# 	}
+# 	immediate = { 
 		
-	}
-	mean_time_to_happen = {
+# 	}
+# 	mean_time_to_happen = {
 		
-	}
-	#is_triggered_only = yes
-	fire_only_once = yes
-	option = {
-		name = tau.16.a
+# 	}
+# 	#is_triggered_only = yes
+# 	fire_only_once = yes
+# 	option = {
+# 		name = tau.16.a
 
-	}
-}
+# 	}
+# }
 
-#隐藏开战自动移除
-country_event = {
-	id = tau.17
-	hidden = yes
-	trigger = {
-		tag = TAU
-		TAU = { has_war = yes }
-	}
-	immediate = { 
-		hidden_effect = { 
-			TAU  ={
-				if = {
-					limit = { has_idea = TAU_independent_political_status }
-					remove_ideas = TAU_independent_political_status
-				}
-			}
-		}
-	}
-	mean_time_to_happen = {
-		days = 1
-	}
-	#is_triggered_only = yes
-	fire_only_once = yes
-	option = {
-		name = tau.16.a
+#
+# country_event = {
+# 	id = tau.17
+# 	hidden = yes
+# 	trigger = {
+# 		tag = TAU
+# 	}
+# 	immediate = { 
+# 		hidden_effect = { 
+# 			TAU  ={
+# 				if = {
+# 					limit = { has_idea = TAU_independent_political_status }
+# 					remove_ideas = TAU_independent_political_status
+# 				}
+# 			}
+# 		}
+# 	}
+# 	mean_time_to_happen = {
+# 		days = 1
+# 	}
+# 	#is_triggered_only = yes
+# 	fire_only_once = yes
+# 	option = {
+# 		name = tau.16.a
 
-	}
-}
+# 	}
+# }
 
 #目标国：特雷森提议胡萝卜贸易
 country_event = {
@@ -291,10 +494,10 @@ country_event = {
 	#fire_only_once = yes
 	option = {
 		name = tau.18.a
-		TAU = { country_event = { id = tau.19 } }
+		FROM = { country_event = { id = tau.19 } }
 		add_ideas = TAU_carrot_food_import
 		effect_tooltip = { 
-			TAU = {
+			FROM = {
 				add_offsite_building = {
 					type = industrial_complex
 					level = 2
@@ -317,9 +520,9 @@ country_event = {
 		hidden_effect = {
 			set_country_flag = TAU_REJECT_FOOD_IMPORT
 		}
-		TAU = { country_event = { id = tau.20 } }
+		FROM = { country_event = { id = tau.20 } }
 		ai_chance = {
-			base = 1
+			base = 5
 		}
 	}
 }

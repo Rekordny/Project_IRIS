@@ -1,4 +1,4 @@
-version="1.13.*"
+version="1.14.*"
 tags={
 	"Alternative History"
 	"Map"
@@ -33,4 +33,5 @@ replace_path="portraits"
 replace_path="tutorial"
 replace_path="common/bookmarks"
 replace_path="gfx/loadingscreens"
-supported_version="1.13.*"
+replace_path="gfx/flags"
+supported_version="1.14.*"
