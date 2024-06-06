@@ -89,12 +89,12 @@ country_event = {
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
+		name = BLA_anna.2.a
         set_country_flag = BLA_minor_problem
         add_ideas = BLA_nobility_unrest
 		hidden_effect = {
 			every_country = {add_to_variable = {BLA_nobility_opinion_change = -0.5}}
 		}
-		name = BLA_anna.2.a
 		ai_chance = {
 			base = 10
 		}
@@ -982,6 +982,20 @@ country_event = {
 		name = BLA_general.2.a
         custom_effect_tooltip = BLA_serf_revolt_desc
         set_country_flag = BLA_serf_revolt
+		hidden_effect = {
+			if = {
+				limit = {
+					has_idea = BLA_PM_Siera
+				}
+				country_event = {id = id = BLA_general.41 days = 3}
+			}
+			if = {
+				limit = {
+					has_idea = BLA_PM_Sanya
+				}
+				country_event = {id = id = BLA_general.42 days = 3}
+			}
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -1072,7 +1086,8 @@ country_event = {
 		name = BLA_general.7.a
         add_stability = -0.05
         hidden_effect = {
-            country_event = {id = BLA_general.8 days = 1}
+            country_event = {id = BLA_general.8 days = 3}
+			news_event = {id = BLA_new.10 days = 2}
         }
 		ai_chance = {
 			base = 10
@@ -1091,6 +1106,9 @@ country_event = {
 		name = BLA_general.8.a
         BLA_increase_all_opinion = yes
         complete_national_focus = BLA_Anna_starting_1
+		hidden_effect = {
+			news_event = {id = BLA_news.10 days = 5}
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -1648,6 +1666,49 @@ country_event = {
 		}
 	}
 }
+#买单
+country_event = {
+    id = BLA_general.41
+    title = BLA_general.41.t
+	desc = BLA_general.41.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+
+	option = {
+		name = BLA_general.41.a
+		add_political_power = -50
+		BLA_decrease_nobility_opinion = yes
+		add_stability = 0.05
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.02
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#买单
+country_event = {
+    id = BLA_general.42
+    title = BLA_general.42.t
+	desc = BLA_general.42.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+
+	option = {
+		name = BLA_general.42.a
+		add_political_power = -50
+		BLA_decrease_nobility_opinion_big = yes
+		BLA_increase_freeman_opinion = yes
+		add_stability = 0.075
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #异常的调动
 country_event = {
     id = BLA_rev.1
@@ -1803,8 +1864,14 @@ country_event = {
             target = NAC
             type = annex_everything
         }
+		add_dynamic_modifier = {modifier = BLA_revolution_dynamic_modifier}
+		add_named_threat = {
+            threat = 10
+            name = Second_Rossiya_Revolution
+        }
 		division_template = {
             name = "动员师"
+			is_locked = yes
             regiments = {
                 infantry = {x = 0 y = 0}
                 infantry = {x = 0 y = 1}
@@ -1812,14 +1879,10 @@ country_event = {
 				infantry = {x = 1 y = 0}
                 infantry = {x = 1 y = 1}
             }
-            support = {
-                engineer = {x = 0 y = 0}
-				artillery = {x = 1 y = 0}
-            }
         }
         for_loop_effect = {
             start = 0
-            end = 40
+            end = 30
             capital_scope = {
                 create_unit = {
                     division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
@@ -2093,6 +2156,7 @@ country_event = {
 		custom_effect_tooltip = BLA_GAME_OVER
 		hidden_effect = {
 			BLA = {
+				Clear_Big_Game_ideas = yes
 				transfer_navy = {
 					target = NAC
 				}
@@ -2102,6 +2166,7 @@ country_event = {
 				}
 			}
 			NAC = {
+				Clear_Big_Game_ideas = yes
 				annex_country = {
 					target = BLA
 					transfer_troops = no
@@ -2309,6 +2374,10 @@ country_event = {
     }
 	option = {
 		name = BLA_rev.1991.a
+		delete_unit_template_and_units = {
+			division_template = "动员师"
+            disband = yes
+		}
         if = {
             limit = {
                 has_idea = BLA_panic_of_revolution
@@ -2711,6 +2780,65 @@ news_event = {
 	}
 	option = {
 		name = BLA_news.9.c
+		trigger = {
+			tag = BLA
+		}
+	}
+}
+#阿纳斯塔西娅沙皇登基
+news_event = {
+	id = BLA_news.10
+	title = BLA_news.10.t
+	desc = BLA_news.10.desc
+	#picture = GFX_STG_news_3
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+    option = {
+		name = BLA_news.10.a
+		trigger = {
+			NOT = {
+				tag = NAC
+				tag = BLA
+			}
+		}
+	}
+	option = {
+		name = BLA_news.10.b
+		trigger = {
+			tag = NAC
+		}
+	}
+	option = {
+		name = BLA_news.10.c
+		trigger = {
+			tag = BLA
+		}
+	}
+}
+#罗西亚撤离帕夏
+news_event = {
+	id = BLA_news.11
+	title = BLA_news.11.t
+	desc = BLA_news.11.desc
+	#picture = GFX_STG_news_3
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+    option = {
+		name = BLA_news.11.a
+		trigger = {
+			NOT = {
+				tag = BLA
+			}
+		}
+	}
+	option = {
+		name = BLA_news.11.b
 		trigger = {
 			tag = BLA
 		}
