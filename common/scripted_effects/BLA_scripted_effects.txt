@@ -458,9 +458,9 @@ BLA_calculate_capitalist_tax = {
 #结算再投资
 BLA_calculate_reinvest = {
     BLA = {
-        set_variable = {BLA_capitalist_reinvest = 0}
-        set_variable = {BLA_capitalist_reinvest = num_of_civilian_factories}
-		multiply_variable = {BLA_capitalist_reinvest = 0.2}
+        set_variable = {BLA_revenue = 0}
+        set_variable = {BLA_revenue = num_of_civilian_factories}
+		multiply_variable = {BLA_revenue = 0.4}
     }
 }
 #计算总体债务
@@ -488,7 +488,7 @@ BLA_calculate_total_tax = {
         add_to_variable = {BLA_industralization_fund = BLA_serf_tax}
         add_to_variable = {BLA_industralization_fund = BLA_foreign_investment}
         add_to_variable = {BLA_industralization_fund = BLA_extra}
-        add_to_variable = {BLA_industralization_fund = BLA_capitalist_reinvest}
+        add_to_variable = {BLA_industralization_fund = BLA_revenue}
         subtract_from_variable = {BLA_industralization_fund = BLA_total_interest}
     }
 }
@@ -1318,5 +1318,100 @@ BLA_bop_move_rightward_big = {
         id = BLA_legacy_of_August
         value = 0.10
         tooltip_side = BLA_ice_dream
+    }
+}
+BLA_update_revolution_dynamic_modifier = {
+    BLA = {
+        if = {
+            limit = {
+                has_war_with = NAC
+                NOT = {check_variable = {BLA_morale < -99}}
+            }
+            add_to_variable = {BLA_morale = -1}
+            if = {
+                limit = {
+                    check_variable = {BLA_nobility_opinion > 59}
+                }
+                add_to_variable = {BLA_morale = 0.1}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_church_opinion > 59}
+                }
+                add_to_variable = {BLA_morale = 0.1}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_army_opinion > 59}
+                }
+                add_to_variable = {BLA_morale = 0.1}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_freeman_opinion > 59}
+                }
+                add_to_variable = {BLA_morale = 0.15}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_capitalist_opinion > 59}
+                }
+                add_to_variable = {BLA_morale = 0.1}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_serf_opinion > 0}
+                }
+                add_to_variable = {BLA_morale = 0.15}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_serf_opinion < 0}
+                }
+                add_to_variable = {BLA_morale = -0.15}
+            }
+        }
+        NAC = {
+            if = {
+                limit = {
+                    surrender_progress > 0.79
+                }
+                BLA = {add_to_variable = {BLA_morale = 0.25}}
+            }
+            if = {
+                limit = {
+                    surrender_progress > 0.59
+                }
+                BLA = {add_to_variable = {BLA_morale = 0.25}}
+            }
+            if = {
+                limit = {
+                    surrender_progress > 0.39
+                }
+                BLA = {add_to_variable = {BLA_morale = 0.25}}
+            }
+            if = {
+                limit = {
+                    surrender_progress > 0.19
+                }
+                BLA = {add_to_variable = {BLA_morale = 0.25}}
+            }
+        }
+        clamp_variable = {
+            var = BLA_morale
+            max = 120
+            min = -100
+        }
+        set_variable = {BLA_revolution_dynamic_army_attack_factor = BLA_army_attack_factor}
+        set_variable = {BLA_revolution_dynamic_army_defence_factor = BLA_army_defence_factor}
+        set_variable = {BLA_revolution_dynamic_army_morale_factor = BLA_army_morale_factor}
+        set_variable = {BLA_revolution_dynamic_army_org_factor = BLA_army_org_factor}
+        set_variable = {BLA_revolution_dynamic_equipment_capture_factor = BLA_equipment_capture_factor}
+        set_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_land_reinforce_rate}
+        multiply_variable = {BLA_revolution_dynamic_army_attack_factor = BLA_morale}
+        multiply_variable = {BLA_revolution_dynamic_army_defence_factor = BLA_morale}
+        multiply_variable = {BLA_revolution_dynamic_army_morale_factor = BLA_morale}
+        multiply_variable = {BLA_revolution_dynamic_army_org_factor = BLA_morale}
+        multiply_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_morale}
     }
 }
