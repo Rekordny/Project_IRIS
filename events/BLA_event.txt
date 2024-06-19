@@ -958,12 +958,21 @@ country_event = {
 	option = {
 		name = BLA_general.1.a
         add_stability = -0.20
-        add_manpower = -1350
+        add_manpower = -1650
         BLA_decrease_serf_opinion_big = yes
         BLA_decrease_freeman_opinion_big = yes
+		add_popularity = {
+			ideology = communism
+			popularity = 0.10
+		}
         hidden_effect = {
             country_event = {id = BLA_general.2 days = 5}
 			news_event = {id = BLA_news.9 days = 3}
+			every_country = {
+				add_to_variable = {NAC_S_control_point = 1}
+				add_to_variable = {NAC_W_control_point = 1}
+				add_to_variable = {NAC_E_control_point = 1}
+			}
         }
 		ai_chance = {
 			base = 10
@@ -1709,6 +1718,226 @@ country_event = {
 		}
 	}
 }
+#昨日重现
+country_event = {
+    id = BLA_general.43
+    title = BLA_general.43.t
+	desc = BLA_general.43.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+		tag = BLA
+		date > 3091.12.1
+		country_exists = NAC
+	}
+	mean_time_to_happen = {
+		days = 20
+	}
+	option = {
+		name = BLA_general.43.a
+		add_stability = -0.10
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.05
+		}
+		add_popularity = {
+			ideology = communism
+			popularity = 0.05
+		}
+		custom_effect_tooltip = BLA_just_prey
+		hidden_effect = {
+			news_event = {id = BLA_news.12}
+			every_country = {
+				add_to_variable = {NAC_S_control_point = 2}
+				add_to_variable = {NAC_W_control_point = 2}
+				add_to_variable = {NAC_E_control_point = 2}
+			}
+			126 = {
+				add_core_of = HEL
+				transfer_state_to = HEL
+			}
+			HEL = {
+				inherit_technology = BLA
+				country_lock_all_division_template = yes
+				add_ideas = HEL_reborn
+				add_manpower = 50000
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = 15000
+					producer = BLA
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 100
+					producer = BLA
+				}
+				set_politics = {
+					ruling_party = democratic
+				}
+				promote_character = {
+					character = HEL_Nikitich
+					ideology = sub_Universalism
+				}
+				set_political_party = {
+					ideology = democratic
+					popularity = 60
+				}
+				set_political_party = {
+					ideology = communism
+					popularity = 30
+				}
+				set_political_party = {
+					ideology = neutrality
+					popularity = 5
+				}
+				set_political_party = {
+					ideology = reactionism
+					popularity = 5
+				}
+				division_template = {
+					name = "赫萝西查卫队"
+					regiments = {
+						infantry = {x = 0 y = 0}
+						infantry = {x = 0 y = 1}
+						infantry = {x = 0 y = 2}
+						infantry = {x = 1 y = 0}
+						infantry = {x = 1 y = 1}
+						infantry = {x = 1 y = 2}
+						infantry = {x = 1 y = 3}
+						artillery_brigade = {x = 2 y = 0}
+						artillery_brigade = {x = 2 y = 0}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+					}
+				}
+				division_template = {
+					name = "赫萝西查民兵"
+					regiments = {
+						militia = {x = 0 y = 0}
+						militia = {x = 0 y = 1}
+						militia = {x = 0 y = 2}
+						militia = {x = 1 y = 0}
+						militia = {x = 1 y = 1}
+						militia = {x = 1 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+					}
+				}
+				for_loop_effect = {
+					start = 0
+					end = 4
+					capital_scope = {
+						create_unit = {
+							division = "name = \"赫萝西查卫队\" division_template = \"赫萝西查卫队\" start_experience_factor = 0.30"
+							owner = HEL
+						}
+					}
+				}
+				for_loop_effect = {
+					start = 0
+					end = 6
+					capital_scope = {
+						create_unit = {
+							division = "name = \"赫萝西查民兵\" division_template = \"赫萝西查民兵\" start_experience_factor = 0.10"
+							owner = HEL
+						}
+					}
+				}
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#抉择
+country_event = {
+    id = BLA_general.44
+    title = BLA_general.44.t
+	desc = BLA_general.44.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+
+	option = {
+		name = BLA_general.44.a
+		BLA = {
+			annex_country = {
+				target = HEL
+				transfer_troops = no
+			}
+			every_state = {
+				limit = {
+						s_core_of = HEL
+				}
+				remove_core_of = HEL
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = BLA_general.44.b
+		hidden_effect = {
+			BLA = {
+				country_event = {id = BLA_general.45 days = 7}
+			}
+		}
+		ai_chance = {
+			base = 20
+		}
+	}
+}
+#回应
+country_event = {
+    id = BLA_general.45
+    title = BLA_general.45.t
+	desc = BLA_general.45.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+
+	option = {
+		name = BLA_general.45.a
+		declare_war_on = {
+			target = HEL
+			type = annex_everything
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#视察
+country_event = {
+    id = BLA_general.46
+    title = BLA_general.46.t
+	desc = BLA_general.46.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    is_triggered_only = yes
+
+	option = {
+		name = BLA_general.46.a
+		126 = {
+			add_extra_state_shared_building_slots = 1
+			add_building_construction = {
+				type = industrial_complex
+			    level = 1
+			    instant_build = yes
+		    }
+		}
+		hidden_effect = {
+			country_event = {id = BLA_general.1 days = 100}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #异常的调动
 country_event = {
     id = BLA_rev.1
@@ -1864,6 +2093,10 @@ country_event = {
             target = NAC
             type = annex_everything
         }
+		declare_war_on = {
+            target = ORE
+            type = annex_everything
+        }
 		add_dynamic_modifier = {modifier = BLA_revolution_dynamic_modifier}
 		add_named_threat = {
             threat = 10
@@ -1899,6 +2132,10 @@ country_event = {
 			}
 			transfer_navy = {
 				target = WAR
+			}
+			ORE = {
+				inherit_technology = BLA
+				add_ideas = NAC_Second_Rossiya_Revolution
 			}
 			WAR = {
 				add_ideas = WAR_navy_regime
@@ -2839,6 +3076,32 @@ news_event = {
 	}
 	option = {
 		name = BLA_news.11.b
+		trigger = {
+			tag = BLA
+		}
+	}
+}
+#第二次赫萝西查暴动
+news_event = {
+	id = BLA_news.12
+	title = BLA_news.12.t
+	desc = BLA_news.12.desc
+	#picture = GFX_STG_news_3
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+    option = {
+		name = BLA_news.12.a
+		trigger = {
+			NOT = {
+				tag = BLA
+			}
+		}
+	}
+	option = {
+		name = BLA_news.12.b
 		trigger = {
 			tag = BLA
 		}
