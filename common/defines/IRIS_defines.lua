@@ -7,7 +7,7 @@ NDefines.NDiplomacy.MAX_OPINION_VALUE = 200							-- Max opinion value cap.
 NDefines.NDiplomacy.MIN_OPINION_VALUE = -200						-- Min opinion value cap.
 
 NDefines.NCountry.MIN_STABILITY = -1.0
-NDefines.NCountry.MAX_WAR_SUPPORT = 1.0					
+NDefines.NCountry.MAX_WAR_SUPPORT = 1.0			
 
 --------------------------------------------------------------------------------------------------------------
 -- LAND AI
