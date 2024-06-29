@@ -68,12 +68,14 @@ OPA_oriental_legion_decisions = {
     }
     #拜访东方军团
     OPA_meet_with_Murmansk = {
+        visible = {
+            has_country_flag = OPA_phase1_enabled
+        }
         cost = 25
         days_remove = 7
         days_re_enable = 90
         remove_effect = {
             OPA_doubt_random_decrease = yes
-            country_event = {id = OPA.1}
         }
         ai_will_do = {
             base = 10
@@ -90,7 +92,7 @@ OPA_oriental_legion_decisions = {
             tag = OPA
             OPA = {
                 check_variable = {
-                    OPA_legion_doubt = 100
+                    OPA_legion_doubt > 99
                 }
             }
         }
@@ -103,7 +105,48 @@ OPA_oriental_legion_decisions = {
         complete_effect = {
         }
         timeout_effect = {
-            
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = OPA_Rasputin
+                            ruling_only = yes
+                        }
+                    }
+                    kill_country_leader = yes
+                }
+                set_politics = {
+                    ruling_party = neutrality
+                }
+                promote_character = {
+                    character = OPA_Murmansk
+                    ideology = sub_Junta
+                }
+                set_cosmetic_tag = OPA_legion
+                OPA_clear_icons = yes
+                remove_ideas = OPA_Murmansk_leader
+                remove_ideas = OPA_imperial_terrtority_in_name
+                remove_ideas = OPA_knights_of_st_dimitry
+                remove_ideas = OPA_knights_of_st_dimitry_buffed
+                remove_ideas = OPA_knights_of_st_dimitry_buffed_2
+                remove_dynamic_modifier = {modifier = OPA_authority_dynamic_modifier}
+                delete_unit_template_and_units = {
+                    division_template = "圣德米特里骑士"
+                    disband = yes
+                }
+                load_focus_tree = {
+                    tree = OPA
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+                BLA = {
+                    end_puppet = OPA
+                    set_autonomy = {
+                        target = OPA
+                        autonomous_state = autonomy_imperial_march
+                    }
+                }
+            }
         }
     }
 }
@@ -478,6 +521,16 @@ OPA_diplomacy = {
         available = {
             country_exists = WAR
             is_neighbor_of = WAR
+            NOT = {
+                NAC = {
+                    is_neighbor_of = WAR
+                }
+            }
+            NOT = {
+                BLA = {
+                    is_neighbor_of = WAR
+                }
+            }
         }
         cost = 20
         days_remove = 7
@@ -505,6 +558,9 @@ OPA_diplomacy = {
 				transfer_troops = yes
 			}
         }
+        ai_will_do = {
+            base = 1000
+        }
     }
     OPA_join_SLL = {
         available = {
@@ -525,6 +581,9 @@ OPA_diplomacy = {
             SLL = {
                 add_to_faction = OPA
             }
+        }
+        ai_will_do = {
+            base = 1000
         }
     }
 }
