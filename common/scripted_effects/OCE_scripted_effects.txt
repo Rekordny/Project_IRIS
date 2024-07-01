@@ -4,6 +4,100 @@ OCE_Federal_collapse_trigger = {
 		id = OCE_stable_value 
 	}
 }
+oceania_faction_window_switch = {
+	ROOT = {
+		if = {
+			limit = {
+				has_country_flag = oceania_faction_window_flag
+			}
+			clr_country_flag = oceania_faction_window_flag
+		}
+		else = {
+			set_country_flag = oceania_faction_window_flag
+		}
+	}
+}
+#大洋协约
+OCE_oceania_faction_array = {
+	hidden_effect = {
+		clear_array = global.oceania_faction_array
+		every_country = {
+			limit = {
+				exists = yes
+				NOT = {
+					has_global_flag = OCE_oceania_faction_collapse_flag
+				}
+				OR = {
+					tag = OCE
+					is_ally_with = OCE
+					has_country_flag = OCE_federal_territory_flag
+					has_country_flag = OCE_federal_district_flag
+					has_country_flag = OCE_federal_dominion_flag
+					has_country_flag = OCE_federal_custody_claim_flag
+					has_country_flag = OCE_federal_protectorate_flag
+				}
+			}
+			add_to_array = {
+				global.oceania_faction_array = THIS
+			}
+		}
+		get_sorted_scored_countries = {
+			scorer = IRIS_oceania_faction_array
+			array = global.oceania_faction_array
+		}
+	}
+}
+
+#设置自由傀儡
+OCE_set_up_puppet = {
+	
+		OCE = {
+        	end_puppet = ROOT
+			add_opinion_modifier = {
+                target = ROOT
+                modifier = Federal_District
+            }
+    	}
+		add_opinion_modifier = {
+            target = OCE
+            modifier = Federal_District
+        }
+		set_rule = {
+    		can_be_spymaster = no
+			can_create_collaboration_government = no
+			can_decline_call_to_war = no
+			can_join_factions = no
+			can_not_declare_war = yes
+			can_puppet = no
+			can_send_volunteers = yes
+		}
+		OCE_free_puppet_must_have_military_passage_security_with_suzerain = YES
+	
+}
+
+#自由傀儡必须与宗主有军事通行以及保障
+OCE_free_puppet_must_have_military_passage_security_with_suzerain = {
+	
+		every_country = {
+			limit = {
+				OR = {
+					has_country_flag = OCE_federal_territory_flag
+					has_country_flag = OCE_federal_district_flag
+					has_country_flag = OCE_federal_dominion_flag
+					has_country_flag = OCE_federal_custody_claim_flag
+					has_country_flag = OCE_federal_protectorate_flag
+				}
+			}
+			OCE = {
+				give_guarantee = PREV
+			}
+			PREV ={
+				give_military_access = OCE
+			}
+		}
+	
+}
+
 OCE_pie_chart_type = {
   clear_variable = OCE_factory
   set_variable = { OCE_gross_domestic_product = 0 } #生产总值初始
