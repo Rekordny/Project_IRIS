@@ -2,20 +2,28 @@ on_actions = {
     on_startup = {
         effect ={
             NAC = {
+                add_to_variable = {NAC_red_army_army_org_factor = 0.05}
+                add_to_variable = {NAC_red_army_land_reinforce_rate = 0.02}
                 country_event = {id = NAC.1 days = 10}
                 set_variable = {NAC_morale = 50}
                 set_variable = {NAC_katyusha_power = 30}
                 #基础数值
+                set_variable = { NAC_army_attack_factor = 0.001}
+				set_variable = { NAC_army_defence_factor = 0.001}
                 set_variable = { NAC_equipment_capture_factor_bonus = 0.001}
                 set_variable = { NAC_army_morale_factor_bonus = 0.002 } 
                 set_variable = { NAC_army_org_factor_bonus = 0.001 } 
                 set_variable = { NAC_land_reinforce_rate_bonus = 0.001 } 
 
                 #计算
+                set_variable = {NAC_revolution_dynamic_army_attack_factor = NAC_army_attack_factor}
+				set_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_army_defence_factor}
                 set_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_equipment_capture_factor_bonus}
                 set_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_army_morale_factor_bonus}
                 set_variable = {NAC_revolution_dynamic_army_org_factor = NAC_army_org_factor_bonus}
                 set_variable = {NAC_revolution_dynamic_land_reinforce_rate = NAC_land_reinforce_rate_bonus}
+                multiply_variable = {NAC_revolution_dynamic_army_attack_factor = NAC_morale}
+				multiply_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_army_org_factor = NAC_morale}
@@ -61,6 +69,9 @@ on_actions = {
                         tag = WRQ
                     }
                     NOT = {
+                        tag = WST
+                    }
+                    NOT = {
                         has_government = NAC
                     }
                     NOT = {
@@ -68,18 +79,12 @@ on_actions = {
                     }
                 }
                 send_embargo = NAC
-           }
+            }
             NAC = {
                 NAC_update_dynamic_modifier = yes
-                if = {
-                    limit = {
-                        has_war_with = BLA
-                        NOT = {check_variable = {NAC_morale < -99}}
-                    }
-                    add_to_variable = {NAC_morale = -1.25}
-                }
             }
         }
+
     }
     on_monthly_NAC = {
         effect = {
@@ -90,6 +95,50 @@ on_actions = {
                     }
                 }
                 NAC_update_food_supply = yes
+            }
+        }
+    }
+
+    on_state_control_changed = {
+        effect = {
+            if = {
+                limit = {
+                    NAC = {
+                        has_war_with = BLA
+                    }
+                    FROM.FROM = {
+                        OR = {
+                            is_core_of = NAC
+                            is_core_of = BLA
+                        }
+                    }
+                }
+                FROM = {
+                    add_stability = -0.02
+                    add_war_support = -0.02
+                    if = {
+                        limit = {
+                            tag = NAC
+                        }
+                        add_to_variable = {NAC_morale = -2}
+                        BLA = {
+                            add_to_variable = {BLA_morale = 2}
+                        }
+                    }
+                    if = {
+                        limit = {
+                            tag = BLA
+                        }
+                        NAC = {
+                            add_to_variable = {NAC_morale = 1}
+                            add_equipment_to_stockpile = {
+                                type = infantry_equipment_1
+                                amount = 300
+                                producer = BLA
+                            }
+                        }
+                    }
+                }
             }
         }
     }

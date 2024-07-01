@@ -1,13 +1,5 @@
 #统一罗西亚
 NAC_unite_russia = {
-    NAC_test = {
-        complete_effect = {
-            white_peace = {
-                tag = OPA
-                message = NAC_defeated_OPA
-            }
-        }
-    }
     NAC_socialist_republic = {
         available = {
             NOT = {
@@ -22,7 +14,6 @@ NAC_unite_russia = {
             controls_state = 191
             controls_state = 163
             controls_state = 118
-            controls_state = 41
             controls_state = 68
             controls_state = 73
             controls_state = 87
@@ -30,8 +21,6 @@ NAC_unite_russia = {
         }
         visible = {
         }
-        cost = 0
-        days_remove = 0
         fire_only_once = yes
         complete_effect = {
         }
@@ -44,7 +33,40 @@ NAC_unite_russia = {
             }
             set_cosmetic_tag = NAC_RSR
             set_country_flag = NAC_united_rossiya
+            if = {
+                limit = {
+                    WAR = {
+                        exists = yes
+                        has_war = no
+                    }
+                }
+                WAR = {
+					transfer_navy = {
+						target = FROM
+					}
+                    WAR_Belorussiya = {
+                        set_nationality = NAC
+                    }
+                    WAR_Chapayev = {
+                        set_nationality = NAC
+                    }
+                    WAR_Gangut = {
+                        set_nationality = NAC
+                    }
+                    WAR_Sevastopol = {
+                        set_nationality = NAC
+                    }
+				}
+                annex_country = {
+					target = WAR
+					transfer_troops = yes
+				}
+            }
             hidden_effect = {
+                set_power_balance = {
+                    id = NAC_our_revolution
+                    set_default = yes
+                }
                 load_focus_tree = {
                     tree = NAC
                     keep_completed = yes
@@ -58,6 +80,7 @@ NAC_unite_russia = {
                     ideology = reactionism
                     popularity = 0.10
                 }
+                add_ideas = NAC_adm_shortage
                 country_event = {id = NAC.23 days = 3}
             }
         }
@@ -68,27 +91,36 @@ NAC_unite_russia = {
 }
 #输出革命
 NAC_liberate_old_world = {
-    NAC_to_east = {
+    NAV_invite_RVA = {
         available = {
-            has_completed_focus = NAC_reconstruction_1
-            country_exists = OPA
-        }
-        cost = 10
-        days_remove = 30
-        fire_only_once = yes
-        remove_effect = {
-            if = {
-                limit = {
-                    country_exists = OPA
-                }
-                declare_war_on = {
-                    target = OPA
-                    type = annex_everything
-                }
+            country_exists = RVA
+            is_neighbor_of = RVA
+            has_completed_focus = NAC_dip_9
+            NOT = {
+                has_war_with = RVA
+            }
+            NOT = {
+                is_in_faction_with = RVA
+            }
+            RVA = {
+                SRS_complete_unification = yes
             }
         }
-        ai_will_do = {
-            base = 1000
+        visible = {
+            country_exists = RVA
+            has_completed_focus = NAC_dip_9
+            NOT = {
+                has_war_with = RVA
+            }
+            NOT = {
+                is_in_faction_with = RVA
+            }
+        }
+        fire_only_once = yes
+        complete_effect = {
+            RVA = {
+                country_event = {NAC.996 days = 3}
+            }
         }
     }
     NAC_to_south = {
@@ -101,51 +133,22 @@ NAC_liberate_old_world = {
         remove_effect = {
             if = {
                 limit = {
-                    NOT = {
-                        is_in_faction = yes
-                    }
-                }
-                create_faction = NAC_FACTION
-            }
-            add_to_faction = RVA
-            RVA = {
-                country_event = {id = NAC.1949}
-            }
-            swap_ideas = {
-                remove_idea = NAC_liberate_rossiya
-                add_idea = NAC_liberate_the_world
-            }
-            every_state = {
-                limit = {
-                    is_core_of = WPU
-                }
-                add_core_of = NAC
-            }
-            if = {
-                limit = {
                     country_exists = WPU
+                    WPU = {
+                        NOT = {
+                            has_government = NAC
+                        }
+                    }
                 }
                 create_wargoal = {
                     target = WPU
                     type = annex_everything
                 }
-            }
-            if = {
-                limit = {
-                    country_exists = KAM
-                }
-                create_wargoal = {
-                    target = KAM
-                    type = annex_everything
-                }
-            }
-            if = {
-                limit = {
-                    country_exists = IKR
-                }
-                create_wargoal = {
-                    target = IKR
-                    type = annex_everything
+                every_state = {
+                    limit = {
+                        is_core_of = WPU
+                    }
+                    add_core_of = NAC
                 }
             }
             hidden_effect = {
@@ -159,26 +162,346 @@ NAC_liberate_old_world = {
                     id = WPU
                     value = 1000
                 }
-                add_ai_strategy = {
-                    type = antagonize
-                    id = KAM
-                    value = 1000
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #建立帕夏共和国
+    NAC_pasha_country = {
+        available = {
+            OR = {
+                NOT = {
+                    country_exists = KAM
                 }
-                add_ai_strategy = {
-                    type = conquer
-                    id = IKR
-                    value = 1000
+                KAM = {
+                    is_puppet_of = NAC
                 }
-                add_ai_strategy = {
-                    type = antagonize
-                    id = KAM
-                    value = 1000
+            }
+            OR = {
+                NOT = {
+                    country_exists = IKR
                 }
-                add_ai_strategy = {
-                    type = conquer
-                    id = IKR
-                    value = 1000
+                IKR = {
+                    is_puppet_of = NAC
                 }
+            }
+            if = {
+                limit = {
+                    NOT = {
+                        country_exists = KAM
+                        country_exists = IKR
+                    }
+                }
+                any_controlled_state = {
+                    OR = {
+                        is_core_of = KAM
+                        is_core_of = IKR
+                    }
+                }
+            }
+        }
+        visible = {
+            OR = {
+                NOT = {
+                    country_exists = KAM
+                }
+                KAM = {
+                    is_puppet_of = NAC
+                }
+            }
+            OR = {
+                NOT = {
+                    country_exists = IKR
+                }
+                IKR = {
+                    is_puppet_of = NAC
+                }
+            }
+            if = {
+                limit = {
+                    NOT = {
+                        country_exists = KAM
+                        country_exists = IKR
+                    }
+                }
+                any_controlled_state = {
+                    OR = {
+                        is_core_of = KAM
+                        is_core_of = IKR
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = NAC_establish_the_independent_pasha
+            hidden_effect = {
+                if = {
+                    limit = {
+                        KAM = {is_puppet_of = NAC}
+                    }
+                    set_autonomy = {
+                        target = KAM
+                        autonomy_state = autonomy_free
+                    }
+                    every_controlled_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = KAM
+                                is_core_of = IKR
+                            }
+                        }
+                        transfer_state_to = KAM
+                        add_core_of = KAM
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = IKR
+                        }
+                        add_core_of = KAM
+                    }
+                    if = {
+                        limit = {
+                            country_exists = IKR
+                            IKR = {
+                                is_puppet_of = NAC
+                            }
+                        }
+                        KAM = {
+                            annex_country = {
+                                target = IKR
+                                transfer_troops = yes
+                            }
+                        }
+                    }
+                    KAM = {
+                        set_cosmetic_tag = KAM_Pasha_communism
+                        set_politics = {
+                            ruling_party = communism
+                        }
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.20
+                        }
+                    }
+                    NAC = {
+                        add_to_faction = KAM
+                    }
+                }
+                else_if = {
+                    limit = {
+                        IKR = {is_puppet_of = NAC}
+                    }
+                    set_autonomy = {
+                        target = IKR
+                        autonomy_state = autonomy_free
+                    }
+                    every_controlled_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = KAM
+                                is_core_of = IKR
+                            }
+                        }
+                        transfer_state_to = IKR
+                        add_core_of = IKR
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = KAM
+                        }
+                        add_core_of = IKR
+                    }
+                    if = {
+                        limit = {
+                            country_exists = KAM
+                            KAM = {
+                                is_puppet_of = NAC
+                            }
+                        }
+                        IKR = {
+                            annex_country = {
+                                target = KAM
+                                transfer_troops = yes
+                            }
+                        }
+                    }
+                    IKR = {
+                        set_cosmetic_tag = KAM_Pasha_communism
+                        set_politics = {
+                            ruling_party = communism
+                        }
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.20
+                        }
+                    }
+                    NAC = {
+                        add_to_faction = IKR
+                    }
+                }
+                else = {
+                    every_controlled_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = KAM
+                                is_core_of = IKR
+                            }
+                        }
+                        transfer_state_to = KAM
+                        add_core_of = KAM
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = IKR
+                        }
+                        add_core_of = KAM
+                    }
+                    KAM = {
+                        set_cosmetic_tag = KAM_Pasha_communism
+                        set_politics = {
+                            ruling_party = communism
+                        }
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.20
+                        }
+                    }
+                    NAC = {
+                        add_to_faction = KAM
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #向南进军
+    NAC_liberate_south = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = All_NAS_is_communism
+                all_country = {
+                    if = {
+                        limit = {
+                            is_IRIS_NAS_country = yes
+                        }
+                        has_government = communism
+                    }
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = NAC_dip_7
+        }
+        complete_effect = {
+            every_other_country = {
+                limit = {
+                    is_IRIS_SAS_country = yes
+                    has_government = communism
+                }
+                country_event = {id = NAC.996}
+            }
+            custom_effect_tooltip = NAC_gain_cb_on_SAS
+            hidden_effect = {
+                every_other_country = {
+                    limit = {
+                        is_IRIS_SAS_country = yes
+                        NOT = {has_government = communism}
+                        NOT = {
+                            tag = USF
+                        }
+                        NOT = {
+                            tag = WST
+                        }
+                    }
+                    NAC = {
+                        create_wargoal = {
+                            target = PREV
+                            type = annex_everything
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#解放东方
+NAC_eastern_issue = {
+    NAC_to_east = {
+        available = {
+            has_completed_focus = NAC_reconstruction_1
+            country_exists = OPA
+        }
+        visible = {
+            NOT = {
+                OPA = {
+                    has_government = NAC
+                }
+            }
+        }
+        cost = 10
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            if = {
+                limit = {
+                    country_exists = OPA
+                    NOT = {
+                        has_war_with = OPA
+                    }
+                }
+                declare_war_on = {
+                    target = OPA
+                    type = annex_everything
+                }
+            }
+            every_state = {
+                limit = {
+                    is_controlled_by = OPA
+                }
+                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
+            }
+            hidden_effect = {
+                OPA = {
+                    if = {
+                        limit = {
+                            has_idea = OPA_oriental_legion
+                        }
+                        swap_ideas = {
+                            remove_idea = OPA_oriental_legion
+                            add_idea = OPA_true_oriental_legion
+                        }
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    NAC_annex_OPA = {
+        available = {
+            has_completed_focus = NAC_reconstruction_1
+            country_exists = OPA
+        }
+        visible = {
+            OPA = {
+                has_government = NAC
+            }
+        }
+        cost = 10
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            annex_country = {
+                target = OPA
+                transfer_troops = yes
+            }
+            hidden_effect = {
+                country_event = {id = NAC.37 days = 3}
             }
         }
         ai_will_do = {
@@ -194,6 +517,9 @@ remove_embargo_on_NAC = {
         }
         complete_effect = {
             break_embargo = NAC
+        }
+        ai_will_do = {
+            factor = 1000
         }
     }
 }
@@ -211,18 +537,29 @@ NAC_food_supply = {
         }
         cost = 10
         days_remove = 20
+        cancel_trigger = {
+            has_completed_focus = NAC_prewar_29
+        }
+        cancel_effect = {
+            add_political_power = 10
+        }
         remove_effect = {
             add_stability = -0.01
             add_war_support = -0.01
             add_popularity = {
-                ideology = communism
-                popularity = -0.005
+                ideology = neutrality
+                popularity = 0.01
             }
             custom_effect_tooltip = NAC_gain_food_but_reduce_production
             hidden_effect = {
                 NAC = {
-                    add_to_variable = {NAC_food_supply = 14}
-                    add_to_variable = {NAC_food_production = -1}
+                    add_to_variable = {NAC_food_supply = 10}
+                    if = {
+                        limit = {
+                            check_variable = {NAC_food_production > 7}
+                        }
+                        add_to_variable = {NAC_food_production = -1}
+                    }
                 }
             }
         }
@@ -260,15 +597,21 @@ NAC_food_supply = {
         }
         cost = 40
         days_remove = 80
+        cancel_trigger = {
+            has_completed_focus = NAC_prewar_29
+        }
+        cancel_effect = {
+            add_political_power = 40
+        }
         remove_effect = {
             custom_effect_tooltip = NAC_increase_food_production
             hidden_effect = {
                 NAC = {
                     random_list = {
-                        50 = {
+                        75 = {
                             add_to_variable = {NAC_food_production = 1}
                         }
-                        50 = {
+                        25 = {
                             add_to_variable = {NAC_food_production = 2}
                         }
                     }
@@ -296,6 +639,9 @@ NAC_food_supply = {
             }
         }
         days_remove = 60
+        cancel_trigger = {
+            has_completed_focus = NAC_prewar_29
+        }
         complete_effect = {
             set_country_flag = NAC_increase_factory_quota_flag
             custom_effect_tooltip = NAC_cost_10_food
@@ -323,6 +669,9 @@ NAC_food_supply = {
             }
         }
         days_remove = 60
+        cancel_trigger = {
+            has_completed_focus = NAC_prewar_29
+        }
         complete_effect = {
             set_country_flag = NAC_reduce_factory_quota_flag
             custom_effect_tooltip = NAC_gain_10_food
@@ -358,6 +707,9 @@ NAC_food_supply = {
             }
         }
         days_remove = 60
+        cancel_trigger = {
+            has_completed_focus = NAC_prewar_29
+        }
         complete_effect = {
             set_country_flag = NAC_increase_army_quota_flag
             custom_effect_tooltip = NAC_cost_10_food
@@ -368,7 +720,7 @@ NAC_food_supply = {
             }
         }
         modifier = {
-            experience_gain_army = 0.75
+            experience_gain_army = 0.50
         }
         remove_effect = {
             clr_country_flag = NAC_increase_army_quota_flag
@@ -378,10 +730,10 @@ NAC_food_supply = {
             }
         }
         ai_will_do = {
-            base = 1
+            base = 0
             modifier = {
                 add = 100
-                NAC = {check_variable = {NAC_food_supply > 40}}
+                NAC = {check_variable = {NAC_food_supply > 35}}
             }
         }
     }
@@ -399,6 +751,9 @@ NAC_food_supply = {
             }
         }
         days_remove = 20
+        cancel_trigger = {
+            has_completed_focus = NAC_prewar_29
+        }
         complete_effect = {
             set_country_flag = NAC_reduce_army_quota_flag
             add_war_support = -0.02
@@ -500,6 +855,13 @@ NAC_propaganda = {
                 }
             }
         }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
     }
     NAC_focus_on_army = {
         available = {
@@ -518,6 +880,13 @@ NAC_propaganda = {
                 BLA_decrease_army_opinion = yes
             }
         }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
     }
     NAC_focus_on_freeman = {
         available = {
@@ -534,6 +903,13 @@ NAC_propaganda = {
             clr_country_flag = NAC_propaganda_in_progress
             BLA = {
                 BLA_decrease_freeman_opinion = yes
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
             }
         }
     }
@@ -561,6 +937,13 @@ NAC_propaganda = {
                         BLA_decrease_serf_opinion = yes
                     }
                 }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
             }
         }
     }
@@ -1062,6 +1445,500 @@ NAC_north_route = {
                             custom_effect_tooltip = NAC_discovered
                         }
                     }
+                }
+            }
+        }
+    }
+}
+#外国支援罗西亚革命
+Rossiya_Revolution = {
+    Support_NAC = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 1999
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+        }
+        visible = {
+            OR = {
+                has_government = communism
+                has_government = democratic
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+            ROOT = {
+                check_variable = {infantry_equipment_shipped_to_NAC < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 2000
+                target = NAC
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {infantry_equipment_shipped_to_NAC = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 100
+                has_government = NAC
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 99 }
+            }
+        }
+    }
+    Give_heavy_weapons_to_NAC = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 199
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+        }
+        visible = {
+            OR = {
+                has_government = communism
+                has_government = democratic
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+            ROOT = {
+                check_variable = {artillery_equipment_shipped_to_NAC < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 200
+                target = NAC
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {artillery_equipment_shipped_to_NAC = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 100
+                has_government = NAC
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 99 }
+            }
+        }
+    }
+    Support_BLA = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 999
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+        }
+        visible = {
+            OR = {
+                has_government = neutrality
+                has_government = reactionism
+                has_government = fascism
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+            ROOT = {
+                check_variable = {infantry_equipment_shipped_to_BLA < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 1000
+                target = BLA
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {infantry_equipment_shipped_to_BLA = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 5
+                has_government = BLA
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 99 }
+            }
+        }
+    }
+    Give_heavy_weapons_to_BLA = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 99
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+        }
+        visible = {
+            OR = {
+                has_government = neutrality
+                has_government = reactionism
+                has_government = fascism
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+            ROOT = {
+                check_variable = {artillery_equipment_shipped_to_BLA < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 100
+                target = BLA
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {artillery_equipment_shipped_to_BLA = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 5
+                has_government = BLA
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 99 }
+            }
+        }
+    }
+}
+Second_Rossiya_Revolution_decisions = {
+    #鼓舞士气
+    Increase_morale = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = Morale_less_than_120
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    NAC = {
+                        check_variable = {NAC_morale < 120}
+                    }
+                }
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    BLA = {
+                        check_variable = {NAC_morale < 120}
+                    }
+                }
+            }
+        }
+        cost = 25
+        days_remove = 30
+        remove_effect = {
+            random_list = {
+                50 = {
+                    custom_effect_tooltip = Morale_increase_by_5
+                    hidden_effect = {
+                        if = {
+                            limit = {
+                                tag = NAC
+                            }
+                            NAC = {
+                                add_to_variable = {NAC_morale = 5}
+                            }
+                        }
+                        if = {
+                            limit = {
+                                tag = BLA
+                            }
+                            BLA = {
+                                add_to_variable = {BLA_morale = 5}
+                            }
+                        }
+                    }
+                }
+                50 = {
+                    custom_effect_tooltip = Morale_increase_by_3
+                    hidden_effect = {
+                        if = {
+                            limit = {
+                                tag = NAC
+                            }
+                            NAC = {
+                                add_to_variable = {NAC_morale = 3}
+                            }
+                        }
+                        if = {
+                            limit = {
+                                tag = BLA
+                            }
+                            BLA = {
+                                add_to_variable = {BLA_morale = 3}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    BLA_mobalise = {
+        available = {
+            has_war_with = NAC
+            surrender_progress < 0.50
+        }
+        visible = {
+            tag = BLA
+        }
+        cost = 30
+        days_remove = var:BLA_mobalise_cost
+        remove_effect = {
+            custom_effect_tooltip = BLA_cost_time_increase_desc
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {BLA_mobalise_cost = 5}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #动员群众
+    NAC_mobalise = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_war_with = BLA
+        }
+        cancel_trigger = {
+            NOT = {
+                has_war_with = BLA
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = NAC_comorades_join_us
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_template = "动员兵"
+                        }
+                    }
+                    division_template = {
+                        name = "动员兵"
+                        is_locked = yes
+                        regiments = {
+                            infantry = { x = 0 y = 0 }
+                            infantry = { x = 0 y = 1 }
+                            infantry = { x = 0 y = 2 }
+                            infantry = { x = 0 y = 3 }
+                            infantry = { x = 0 y = 4 }
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        NOT = {
+                            has_template = "志愿师"
+                        }
+                    }
+                    division_template = {
+                        name = "志愿师"
+                        is_locked = yes
+                        priority = 2
+                        template_counter = 0
+                        regiments = {
+                            infantry = { x = 0 y = 0 }
+                            infantry = { x = 0 y = 1 }
+                            infantry = { x = 0 y = 2 }
+                            infantry = { x = 1 y = 0 }
+                            infantry = { x = 1 y = 1 }
+                            infantry = { x = 1 y = 2 }
+                            artillery_brigade = { x = 2 y = 0 }
+                            artillery_brigade = { x = 2 y = 1 }
+                        }
+                    }
+                }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"志愿师\" division_template = \"志愿师\" start_experience_factor = 0.50"
+                        owner = NAC
+                    }
+                }
+                random_controlled_state = {
+                    limit = {
+                        is_core_of = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                }
+                random_controlled_state = {
+                    limit = {
+                        is_core_of = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                }
+            }
+        }
+    }
+}
+#调试决议
+NAC_debug_decisions = {
+    NAC_win_big_game = {
+        available = {
+            NAC = {
+                NOT = {has_war_with = BLA}
+            }
+            NOT = {
+                has_global_flag = End_Big_Game_flag
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {NAC_W_control_point = 1000}
+                    add_to_variable = {NAC_S_control_point = 1000}
+                    add_to_variable = {NAC_E_control_point = 1000}
+                }
+            }
+        }
+    }
+    NAC_food = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_disable_food_system
+            }
+        }
+        remove_effect = {
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = 1000}
+                }
+            }
+        }
+    }
+    NAC_morale = {
+        remove_effect = {
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_morale = BLA.party_popularity_100@communism}
                 }
             }
         }
