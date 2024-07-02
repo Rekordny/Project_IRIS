@@ -11,13 +11,7 @@ NAC_update_dynamic_modifier = {
         BLA = {
             if = {
                 limit = {
-                    surrender_progress > 0.19
-                }
-                NAC = {add_to_variable = {NAC_morale = 0.25}}
-            }
-            if = {
-                limit = {
-                    surrender_progress > 0.39
+                    surrender_progress > 0.79
                 }
                 NAC = {add_to_variable = {NAC_morale = 0.25}}
             }
@@ -29,23 +23,30 @@ NAC_update_dynamic_modifier = {
             }
             if = {
                 limit = {
-                    surrender_progress > 0.79
+                    surrender_progress > 0.39
+                }
+                NAC = {add_to_variable = {NAC_morale = 0.25}}
+            }
+            if = {
+                limit = {
+                    surrender_progress > 0.19
                 }
                 NAC = {add_to_variable = {NAC_morale = 0.25}}
             }
         }
-        if = {
-            limit = {
-                check_variable = {
-                    NAC_morale > 120
-                }
-            }
-            set_variable = {NAC_morale = 120}
+        clamp_variable = {
+            var = NAC_morale
+            max = 120
+            min = -100
         }
+        set_variable = {NAC_revolution_dynamic_army_attack_factor = NAC_army_attack_factor}
+		set_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_army_defence_factor}
         set_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_equipment_capture_factor_bonus}
         set_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_army_morale_factor_bonus}
         set_variable = {NAC_revolution_dynamic_army_org_factor = NAC_army_org_factor_bonus}
         set_variable = {NAC_revolution_dynamic_land_reinforce_rate = NAC_land_reinforce_rate_bonus}
+        multiply_variable = {NAC_revolution_dynamic_army_attack_factor = NAC_morale}
+		multiply_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_morale}
         multiply_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_morale}
         multiply_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_morale}
         multiply_variable = {NAC_revolution_dynamic_army_org_factor = NAC_morale}
@@ -282,5 +283,22 @@ NAC_bop_move_leftward = {
         id = NAC_our_revolution
         value = -0.05
         tooltip_side = NAC_support
+    }
+}
+
+
+
+NAC_Refreshing_Non_Socialist_Countries = {
+    clear_array = ROOT.NAC_non_socialist_countries
+    every_country = {
+        limit = {
+            OR = {
+                is_IRIS_NAS_country = yes
+                is_IRIS_SAS_country = yes
+            }
+            NOT = { tag = WST}
+            NOT = { has_government = communism }
+        }
+        add_to_array = { ROOT.NAC_non_socialist_countries = THIS }
     }
 }

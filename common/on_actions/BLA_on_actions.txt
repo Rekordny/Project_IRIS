@@ -32,8 +32,10 @@ on_actions = {
 				set_variable = {BLA_army_attack_factor = 0.001}
 				set_variable = {BLA_army_defence_factor = 0.001}
 				set_variable = {BLA_consumer_goods_factor = -0.003}
+				set_variable = {BLA_industrial_capacity_factory = 0.002}
 				set_variable = {BLA_conscription_factor = 0.003}
 				set_variable = {BLA_communism_drift = -0.001}
+				set_variable = {BLA_democratic_drift = -0.001}
 				#每周变化初始化
 				set_variable = {BLA_nobility_opinion_change = 0}
 				set_variable = {BLA_church_opinion_change = 0.25}
@@ -53,20 +55,25 @@ on_actions = {
 				set_variable = {BLA_dynamic_army_attack_factor = BLA_army_attack_factor}
 				set_variable = {BLA_dynamic_army_defence_factor = BLA_army_defence_factor}
 				set_variable = {BLA_dynamic_consumer_goods_factor = BLA_consumer_goods_factor}
+				set_variable = {BLA_dynamic_industrial_capacity_factory_2 = BLA_industrial_capacity_factory}
 				set_variable = {BLA_dynamic_conscription_factor = BLA_conscription_factor}
 				set_variable = {BLA_dynamic_communism_drift = BLA_communism_drift}
+				set_variable = {BLA_dynamic_democratic_drift = BLA_democratic_drift}
 				multiply_variable = { BLA_dynamic_stability_factor = BLA_nobility_opinion} #贵族
 				multiply_variable = { BLA_dynamic_political_power_gain = BLA_church_opinion} #教会
 				multiply_variable = { BLA_dynamic_army_morale_factor = BLA_church_opinion} #教会
 				multiply_variable = { BLA_dynamic_army_attack_factor = BLA_army_opinion} #军队
 				multiply_variable = { BLA_dynamic_army_defence_factor = BLA_army_opinion} #军队
 				multiply_variable = { BLA_dynamic_consumer_goods_factor = BLA_capitalist_opinion} #实业家
+				multiply_variable = { BLA_dynamic_industrial_capacity_factory_2 = BLA_capitalist_opinion} #实业家
 				multiply_variable = { BLA_dynamic_conscription_factor = BLA_freeman_opinion} #自由民
+				multiply_variable = { BLA_dynamic_democratic_drift = BLA_serf_opinion} #农奴
 				multiply_variable = { BLA_dynamic_communism_drift = BLA_serf_opinion} #农奴
+				multiply_variable = { BLA_dynamic_democratic_drift = 0.35} #农奴
+				multiply_variable = { BLA_dynamic_communism_drift = 0.65} #农奴
 				add_dynamic_modifier = {modifier = BLA_rule_of_tsar_dynamic_modifier}
 			}
 			BLA = {
-				country_event = {id = BLA_general.1 days = 200}
 				#罗西亚工业化动态修正
 				add_dynamic_modifier = {modifier = BLA_industralization_dynamic_modifier}
 				set_variable = {BLA_industralization_target = 69}
@@ -102,9 +109,16 @@ on_actions = {
 				set_variable = {BLA_nobility_basic_tax = 0.4}
 				set_variable = {BLA_church_basic_tax = 0}
 				set_variable = {BLA_capitalist_basic_tax = 0.5}
-				set_variable = {BLA_capitalist_reinvest = num_of_civilian_factories}
-				multiply_variable = {BLA_capitalist_reinvest = 0.2}
-				set_variable = {BLA_freeman_tax = 25} #自由民税收固定
+				set_variable = {BLA_revenue_c = num_of_civilian_factories}
+				multiply_variable = {BLA_revenue_c = 0.6}
+				set_variable = {BLA_revenue_m = num_of_military_factories}
+				multiply_variable = {BLA_revenue_m = 0.2}
+				set_variable = {BLA_revenue_d = num_of_naval_factories}
+				multiply_variable = {BLA_revenue_d = 0.2}
+				add_to_variable = {BLA_revenue = BLA_revenue_c}
+				add_to_variable = {BLA_revenue = BLA_revenue_m}
+				add_to_variable = {BLA_revenue = BLA_revenue_d}
+				set_variable = {BLA_freeman_tax = 60} #自由民税收固定
 				set_variable = {BLA_serf_tax = 50} #农奴税收固定
 				set_variable = {BLA_extra = 10}
 				set_variable = {BLA_foreign_investment = 0}
@@ -132,8 +146,30 @@ on_actions = {
 				set_variable = {BLA_total_interest = BLA_debt}
 				multiply_variable = {BLA_total_interest = 0.01}
 				#决议花费
-				set_variable = {BLA_rot_nobility_cost = 25}
+				set_variable = {BLA_rot_nobility_cost = 20}
 				set_variable = {BLA_secret_police_cost = 10}
+				#以沙皇之名
+				set_variable = { BLA_army_attack_factor = 0.001}
+				set_variable = { BLA_army_defence_factor = 0.001}
+				set_variable = { BLA_equipment_capture_factor = 0.001}
+                set_variable = { BLA_army_morale_factor = 0.002 } 
+                set_variable = { BLA_army_org_factor = 0.001 } 
+                set_variable = { BLA_land_reinforce_rate = 0.001 } 
+				set_variable = { BLA_morale = 50}
+				#计算
+				set_variable = {BLA_revolution_dynamic_army_attack_factor = BLA_army_attack_factor}
+				set_variable = {BLA_revolution_dynamic_army_defence_factor = BLA_army_defence_factor}
+				set_variable = {BLA_revolution_dynamic_army_morale_factor = BLA_army_morale_factor}
+				set_variable = {BLA_revolution_dynamic_army_org_factor = BLA_army_org_factor}
+				set_variable = {BLA_revolution_dynamic_equipment_capture_factor = BLA_equipment_capture_factor}
+				set_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_land_reinforce_rate}
+				multiply_variable = {BLA_revolution_dynamic_army_attack_factor = BLA_morale}
+				multiply_variable = {BLA_revolution_dynamic_army_defence_factor = BLA_morale}
+				multiply_variable = {BLA_revolution_dynamic_army_morale_factor = BLA_morale}
+				multiply_variable = {BLA_revolution_dynamic_army_org_factor = BLA_morale}
+				multiply_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_morale}
+				#革命决议
+				set_variable = {BLA_mobalise_cost = 40}
 			}
 		}
 	}
@@ -156,6 +192,7 @@ on_actions = {
 	on_weekly_BLA = {
         effect = {
             BLA = {
+				BLA_update_revolution_dynamic_modifier = yes
 				BLA_check_industralization = yes
 				BLA_opinion_weekly_change = yes
 				BLA_update_rot = yes
@@ -191,12 +228,13 @@ on_actions = {
 							tag = BLA
 						}
 					}
-					WRA = {
+					WAR = {
 						transfer_navy = {
 							target = FROM
 						}
 					}
 					ROOT = {
+						Clear_Big_Game_ideas = yes
 						transfer_navy = {
 							target = FROM
 						}
@@ -206,6 +244,7 @@ on_actions = {
 						}
 					}
 					FROM = {
+						Clear_Big_Game_ideas = yes
 						annex_country = {
 							target = ROOT
 							transfer_troops = no
@@ -213,6 +252,16 @@ on_actions = {
 						annex_country = {
 							target = WAR
 							transfer_troops = yes
+						}
+						set_autonomy = {
+							target = SVI
+							autonomous_state = autonomy_imperial_march
+						}
+						every_owned_state = {
+							limit = {
+								is_core_of = HBR
+							}
+							transfer_state_to = HBR
 						}
 						remove_ideas = BLA_Second_Rossiya_Revolution
 					}
@@ -229,14 +278,6 @@ on_actions = {
 							declare_war_on = {
 								target = OPA
 								type = annex_everything
-							}
-						}
-					}
-					else = {
-						FROM = {
-							set_autonomy = {
-								target = OPA
-								autonomous_state = patriarchate
 							}
 						}
 					}
@@ -273,22 +314,104 @@ on_actions = {
 							target = ROOT
 							transfer_troops = no
 						}
+						if = {
+							limit = {
+								country_exists = ORE
+							}
+							annex_country = {
+								target = ORE
+								transfer_troops = yes
+							}
+						}
+						if = {
+							limit = {
+								country_exists = HBR
+							}
+							annex_country = {
+								target = HBR
+								transfer_troops = no
+							}
+						}
+						if = {
+							limit = {
+								country_exists = HEL
+							}
+							annex_country = {
+								target = HEL
+								transfer_troops = no
+							}
+						}
 						remove_ideas = NAC_to_freedom
 						remove_ideas = NAC_Second_Rossiya_Revolution
 						remove_ideas = NAC_block
 					}
-					OPA = {
-						if = {
-							limit = {
+					if = {
+						limit = {
+							country_exists = IKR
+							IKR = {
 								NOT = {
-									has_government = NAC
+									has_war_with = NAC
+								}
+								is_puppet = no
+								NOT = {
+									is_in_faction_with = NAC
 								}
 							}
-							country_event = {id = BLA_rev.999}
+						}
+						IKR = {
+							country_event = {id = IKR.3}
+						}	
+					}
+					else_if = {
+						limit = {
+							country_exists = KAM
+							KAM = {
+								NOT = {
+									has_war_with = NAC
+								}
+								is_puppet = no
+								NOT = {
+									is_in_faction_with = NAC
+								}
+							}
+						}
+						KAM = {
+							country_event = {id = IKR.3}
+						}
+					}
+					if = {
+						limit = {
+							country_exists = OPA
+							OPA = {
+								has_country_leader = {
+									character = OPA_Rasputin
+									ruling_only = yes
+								}
+							}
+						}
+						OPA = {
+							country_event = {id = BLA_rev.999 days = 3}
 						}
 					}
 					217 = {
 						remove_core_of = WAR
+					}
+					every_state = {
+						limit = {
+							is_core_of = HEL
+						}
+						remove_core_of = HEL
+					}
+					every_state = {
+						limit = {
+							is_core_of = ORE
+						}
+						remove_core_of = ORE
+					}
+					ORE = {
+						ORE_Valeri = {
+							set_nationality = NAC
+						}
 					}
 				}
 				news_event = {id = BLA_news.7 days = 3}
@@ -343,6 +466,72 @@ on_actions = {
 			if = {
 				limit = {
 					ROOT = {
+						tag = ORE
+						has_war_with = BLA
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							tag = BLA
+						}
+					}
+					ROOT = {
+						white_peace  = {
+							tag = FROM
+							message = BLA_defeated_ORE
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+				every_state = {
+					limit = {
+						is_core_of = ORE
+					}
+					remove_core_of = ORE
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = HEL
+						has_war_with = BLA
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							tag = BLA
+						}
+					}
+					ROOT = {
+						white_peace  = {
+							tag = FROM
+							message = BLA_defeated_HEL
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+				every_state = {
+					limit = {
+						is_core_of = HEL
+					}
+					remove_core_of = HEL
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
 						tag = OPA
 						has_war_with = BLA
 						has_government = communism
@@ -376,6 +565,103 @@ on_actions = {
 						}
 						NAC = {
 							country_event = {id = NAC.35 days = 10}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					FROM = {
+						tag = OPA
+						has_government = reactionism
+					}
+				}
+				if = {
+					limit = {
+						ROOT = BLA
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						if = {
+							limit = {
+								country_exists = HBR
+							}
+							annex_country = {
+								target = HBR
+								transfer_troops = no
+							}
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_BLA_rasputin
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = ORE
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_ORE_rasputin
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = NAC
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_NAC_rasputin
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = HEL
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_HEL_rasputin
 						}
 					}
 				}

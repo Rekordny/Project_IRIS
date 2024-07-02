@@ -1,5 +1,39 @@
 #诗旎决议
-
+IRIS_debug_decisions_DOC = {
+	debug_DOC_Eternal_Night = {
+		icon = GFX_decision_eng_trade_unions_support
+		available = {
+			always = yes
+		}
+		visible = {
+			always = yes
+		}
+		fire_only_once = no
+		complete_effect = {
+			DOC = {
+				load_focus_tree = DOC_Her_Majesty
+				add_ideas = DOC_Bluewater_Navy
+				add_ideas = DOC_Kitt_Harbour_Naval_School
+				add_ideas = DOC_modern_military_5
+				add_ideas = DOC_Lasnia_Naval_Design_Bureau
+			}
+		}
+	}
+	DOC_add_opposition = {
+		complete_effect = {
+			
+			#clear_array = global.DOC_opposition_bg_window_list_change_record_array
+			#clear_array = global.DOC_opposition_bg_window_list_change_2_record_array
+			#clear_array = global.DOC_emblem_icon_window_list_change_1_array
+			#clear_array = global.DOC_emblem_icon_window_list_change_2_array
+			#clear_array = global.DOC_emblem_icon_window_list_change_3_array
+			#clear_array = global.DOC_emblem_icon_window_list_change_4_array
+			set_country_flag = DOC_opposition_bg_window_flag
+			DOC_random_opposition_name = yes
+			add_to_variable = { global.CNI_summoned_times = 1 } 
+		}
+	}
+}
 
 #战争状态
 DOC_Emergency_decision_category = {
@@ -1349,6 +1383,90 @@ DOC_Economy_decision_category = {
 }
 
 DOC_process_of_democratization = {
+	#给予地方贵族适当的补偿
+	DOC_provide_appropriate_compensation_local_nobles = {
+		cost = 25
+		days_remove = 5
+		days_re_enable = 10
+		visible = {
+
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = {	
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = DOC_provide_appropriate_compensation_local_nobles_tt
+			hidden_effect = {
+				DOC_local_aristocratic_dissatisfaction_calculate_del = yes
+			}
+		}
+	}
+	#给予地方贵族宽限期
+	DOC_granting_grace_periods_local_nobles = {
+		cost = 15
+		days_remove = 5
+		days_re_enable = 10
+		visible = {
+
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = {	
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = DOC_granting_grace_periods_local_nobles_tt
+			hidden_effect = {
+				DOC_local_aristocratic_dissatisfaction_calculate_del_2 = yes
+			}
+		}
+	}
+	#放宽部分条款
+	DOC_relax_some_clauses = {
+		cost = 50
+		days_remove = 15
+		days_re_enable = 15
+		visible = {
+
+		}
+		ai_will_do = {
+			factor = 15
+			modifier = {	
+			}
+		}
+		remove_effect = {
+			custom_effect_tooltip = DOC_relax_some_clauses_tt
+			hidden_effect = {
+				DOC_local_aristocratic_dissatisfaction_calculate_del_3 = yes
+			}
+		}
+	}
+	#让我们打开天窗说亮话吧
+	DOC_frankly_speaking = {
+		cost = 80
+		visible = {
+			check_variable = {DOC_province_classification_b < 15.1}
+			NOT = { has_country_flag = DOC_noble_explosion_flag }
+		}
+		fire_only_once = yes
+
+		complete_effect = {
+			custom_effect_tooltip = DOC_frankly_speaking_tt
+			DOC_local_aristocratic_dissatisfaction_calculate_work_out = yes
+			CNI = { add_timed_idea = { idea = CNI_hasty_rise days = 30 } }
+			CNI = { declare_war_on = { target = DOC type = annex_everything } inherit_technology = DOC }
+			hidden_effect = {
+				clear_array = global.DOC_opposition_bg_window_list_change_record_array
+				clear_array = global.DOC_opposition_bg_window_list_change_2_record_array
+				clear_array = global.DOC_emblem_icon_window_list_change_1_array
+				clear_array = global.DOC_emblem_icon_window_list_change_2_array
+				clear_array = global.DOC_emblem_icon_window_list_change_3_array
+				clear_array = global.DOC_emblem_icon_window_list_change_4_array
+			}
+		}
+	}
 	#随机使0~2个白色省份变为绿色。
 	DOC_Revised_feudal_contract_entries = {
 		ai_will_do = {
@@ -1358,7 +1476,7 @@ DOC_process_of_democratization = {
 		}
 		cost = 35
 		days_remove = 7
-		days_re_enable = 20
+		days_re_enable = 13
 		visible = {
 			check_variable = {DOC_province_classification_w > 0}
 		}
@@ -1368,6 +1486,7 @@ DOC_process_of_democratization = {
 		remove_effect = {
 			custom_effect_tooltip = DOC_Revised_feudal_contract_entries_tt
 			hidden_effect = {
+				DOC_local_aristocratic_dissatisfaction_calculate_add = yes
 				random_list = {
 					33 = {
 						DOC_Revised_feudal_contract_entries_change = yes
@@ -1378,6 +1497,11 @@ DOC_process_of_democratization = {
 					}
 					33 = {
 					}
+				}
+				if = {
+					limit = { is_ai = yes }
+					DOC_Revised_feudal_contract_entries_change = yes
+					DOC_Revised_feudal_contract_entries_change = yes
 				}
 			}
 		}
@@ -1391,17 +1515,21 @@ DOC_process_of_democratization = {
 		}
 		visible = {
 			check_variable = {DOC_province_classification_b < 15.1}
-			check_variable = {DOC_province_classification_w > 0}
+			OR = {
+				check_variable = {DOC_province_classification_g > 0}
+				check_variable = {DOC_province_classification_w > 0}
+			}
 		}
 		cost = 75
 		days_remove = 14
-		days_re_enable = 30
+		days_re_enable = 15
 		modifier = {
 			stability_factor = -0.1
 		}
 		remove_effect = {
 			custom_effect_tooltip = DOC_promote_regional_land_reform_tt
 			hidden_effect = {
+				DOC_local_aristocratic_dissatisfaction_calculate_add = yes
 				if = {
 					limit = {
 						check_variable = {DOC_province_classification_w < 1}
@@ -1422,6 +1550,11 @@ DOC_process_of_democratization = {
 						}
 					}
 				}
+				if = {
+					limit = { is_ai = yes }
+					DOC_Revised_feudal_contract_entries_change = yes
+					DOC_promote_regional_land_reform_change = yes
+				}
 			}
 		}
 	}
@@ -1441,6 +1574,7 @@ DOC_process_of_democratization = {
 		days_re_enable = 30
 		remove_effect = {
 			custom_effect_tooltip = DOC_Subsidies_for_regional_private_industries_tt
+			DOC_local_aristocratic_dissatisfaction_calculate_add = yes
 			hidden_effect = {
 				random_list = {
 					70 = {
@@ -1495,6 +1629,7 @@ DOC_process_of_democratization = {
 			}
 		}
 		remove_effect = {
+			DOC_local_aristocratic_dissatisfaction_calculate_add = yes
 			custom_effect_tooltip = DOC_military_integration_production_of_civilian_enterprises_rights_tt
 			hidden_effect = {
 				DOC_Subsidies_for_regional_private_industries_change = yes

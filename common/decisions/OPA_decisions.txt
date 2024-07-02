@@ -1,0 +1,593 @@
+OPA_oriental_legion_decisions = {
+    #武器运抵
+    OPA_supply = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            custom_trigger_tooltip ={
+                tooltip = BLA_goes_well
+                tag = OPA
+                country_exists = BLA
+                is_puppet_of = BLA
+                BLA = {
+                    has_war = no
+                }
+            }
+        }
+        cancel_trigger = {
+            NOT = {
+                is_puppet_of = BLA
+            }
+        }
+        days_mission_timeout = 180
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = Gain_supply_when_BLA_goes_well
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 1500
+                producer = BLA
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 80
+                producer = BLA
+            }
+        }
+    }
+    #请求额外增援
+    OPA_ask_for_reinforcement = {
+        available = {
+            BLA = {
+                has_war = no
+            }
+        }
+        visible = {
+            country_exists = BLA
+            is_puppet_of = BLA
+        }
+        cost = 50
+        days_remove = 30
+        days_re_enable = 90
+        complete_effect = {
+            add_manpower = 2500
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 3000
+                producer = BLA
+            }
+        }
+        ai_will_do = {
+            base = 0
+        }
+    }
+    #拜访东方军团
+    OPA_meet_with_Murmansk = {
+        visible = {
+            has_country_flag = OPA_phase1_enabled
+        }
+        cost = 25
+        days_remove = 7
+        days_re_enable = 90
+        remove_effect = {
+            OPA_doubt_random_decrease = yes
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #军靴落地
+    OPA_oriental_legion_takeover = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = OPA
+            OPA = {
+                check_variable = {
+                    OPA_legion_doubt > 99
+                }
+            }
+        }
+        cancel_trigger = {
+            always = no
+        }
+        days_mission_timeout = 7
+        selectable_mission = no
+        fire_only_once = yes
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = OPA_Rasputin
+                            ruling_only = yes
+                        }
+                    }
+                    kill_country_leader = yes
+                }
+                set_politics = {
+                    ruling_party = neutrality
+                }
+                promote_character = {
+                    character = OPA_Murmansk
+                    ideology = sub_Junta
+                }
+                set_cosmetic_tag = OPA_legion
+                OPA_clear_icons = yes
+                swap_ideas = {
+                    remove_idea = mana_priority
+                    add_idea = industrial_priority
+                }
+                remove_ideas = OPA_Murmansk_leader
+                remove_ideas = OPA_imperial_terrtority_in_name
+                remove_ideas = OPA_knights_of_st_dimitry
+                remove_ideas = OPA_knights_of_st_dimitry_buffed
+                remove_ideas = OPA_knights_of_st_dimitry_buffed_2
+                remove_dynamic_modifier = {modifier = OPA_authority_dynamic_modifier}
+                delete_unit_template_and_units = {
+                    division_template = "圣德米特里骑士"
+                    disband = yes
+                }
+                load_focus_tree = {
+                    tree = OPA
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+                BLA = {
+                    end_puppet = OPA
+                    set_autonomy = {
+                        target = OPA
+                        autonomous_state = autonomy_imperial_march
+                    }
+                }
+            }
+        }
+    }
+}
+#圣德米特里骑士团
+OPA_knights_of_st_dimitry_decisions =  {
+    #训练骑士团
+    OPA_train_a_new_order = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_15_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 14
+                    }
+                }
+            }
+        }
+        days_remove = var:OPA_order_training_time
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -15}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"圣德米特里骑士团\" division_template = \"圣德米特里骑士\" start_experience_factor = 1.0"
+                    owner = OPA
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #扩编一个奥术战斗营
+    OPA_add_a_Arcane_Battle_Camp = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_10_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 9
+                    }
+                }
+            }
+        }
+        visible = {
+            hidden_trigger = {
+                OPA = {
+                    check_variable = {OPA_Arcane_Battle_Camp < 2}
+                }
+            }
+        }
+        days_remove = 40
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -10}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            custom_effect_tooltip = OPA_add_a_Arcane_Battle_Camp_to_order
+            hidden_effect = {
+                if = {
+                    limit = {
+                        OPA = {
+                            check_variable = {OPA_Arcane_Battle_Camp = 0}
+                        }
+                    }
+                    add_units_to_division_template = {
+                        template_name = "圣德米特里骑士"
+                        regiments = {
+                            Arcane_Battle_Camp = 0
+                        }
+                    }
+                }
+                else = {
+                    add_units_to_division_template = {
+                        template_name = "圣德米特里骑士"
+                        regiments = {
+                            Arcane_Battle_Camp = 1
+                        }
+                    }
+                }
+                add_to_variable = {OPA_Arcane_Battle_Camp = 1}
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #扩编一个魔导突破营
+    OPA_add_a_Magic_Breakthrough_Camp = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_12_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 11
+                    }
+                }
+            }
+        }
+        visible = {
+            hidden_trigger = {
+                OPA = {
+                    check_variable = {OPA_Magic_Breakthrough_Camp < 2}
+                }
+            }
+        }
+        days_remove = 50
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -12}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            custom_effect_tooltip = OPA_add_a_Magic_Breakthrough_Camp_to_order
+            hidden_effect = {
+                add_units_to_division_template = {
+                    template_name = "圣德米特里骑士"
+                    regiments = {
+                        Magic_Breakthrough_Camp = 2
+                    }
+                }
+                add_to_variable = {OPA_Magic_Breakthrough_Camp = 1}
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #扩编一个重型魔导战斗营
+    OPA_add_a_Heavy_Magic_Guide_Battle_Battalion = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_15_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 14
+                    }
+                }
+            }
+        }
+        visible = {
+            hidden_trigger = {
+                OPA = {
+                    check_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion < 3}
+                }
+            }
+        }
+        days_remove = 60
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -15}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            custom_effect_tooltip = OPA_add_a_Heavy_Magic_Guide_Battle_Battalion_to_order
+            hidden_effect = {
+                add_units_to_division_template = {
+                    template_name = "圣德米特里骑士"
+                    regiments = {
+                        Heavy_Magic_Guide_Battle_Battalion = 3
+                    }
+                }
+                add_to_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 1}
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+}
+#敬奉圣像
+OPA_icon_decisions = {
+    #圣德米特里
+    OPA_icon_st_Demetrius = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_25_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 24
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -25}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            OPA_clear_icons = yes
+            add_timed_idea = {
+                idea = OPA_icon_st_Demetrius_idea
+                days = 365
+            }
+        }
+    }
+    #圣卡捷琳
+    OPA_icon_st_Katerin = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_25_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 24
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -25}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            OPA_clear_icons = yes
+            add_timed_idea = {
+                idea = OPA_icon_st_Katerin_idea
+                days = 365
+            }
+        }
+    }
+    #圣尼古拉
+    OPA_icon_st_Nicolas = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_25_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 24
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -25}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            OPA_clear_icons = yes
+            add_timed_idea = {
+                idea = OPA_icon_st_Nicolas_idea
+                days = 365
+            }
+        }
+    }
+    #圣米哈伊尔
+    OPA_icon_st_Mikhail = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_25_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 24
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -25}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            OPA_clear_icons = yes
+            add_timed_idea = {
+                idea = OPA_icon_st_Mikhail_idea
+                days = 365
+            }
+        }
+    }
+    #圣塔博里茨基
+    OPA_icon_st_Taboritsky = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = OPA_has_25_authority
+                OPA = {
+                    check_variable = {
+                        OPA_authority > 24
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                OPA = {
+                    add_to_variable = {OPA_authority = -25}
+                    OPA_update_dynamic_modifier = yes
+                }
+            }
+        }
+        remove_effect = {
+            OPA_clear_icons = yes
+            add_timed_idea = {
+                idea = OPA_icon_st_Taboritsky_idea
+                days = 365
+            }
+        }
+    }
+    OPA_st_ztz = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            custom_effect_tooltip = EASTER_ONLY
+        }
+    }
+    OPA_st_reko = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            custom_effect_tooltip = EASTER_ONLY
+        }
+    }
+    OPA_st_baiyi = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            custom_effect_tooltip = EASTER_ONLY
+        }
+    }
+    OPA_st_guye = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            custom_effect_tooltip = EASTER_ONLY
+        }
+    }
+    OPA_st_qianhua = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            custom_effect_tooltip = EASTER_ONLY
+        }
+    }
+}
+OPA_diplomacy = {
+    OPA_annex_WAR = {
+        available = {
+            country_exists = WAR
+            is_neighbor_of = WAR
+            NOT = {
+                NAC = {
+                    is_neighbor_of = WAR
+                }
+            }
+            NOT = {
+                BLA = {
+                    is_neighbor_of = WAR
+                }
+            }
+        }
+        cost = 20
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+             WAR = {
+				transfer_navy = {
+					target = FROM
+				}
+                WAR_Belorussiya = {
+                    set_nationality = NAC
+                }
+                WAR_Chapayev = {
+                    set_nationality = NAC
+                }
+                WAR_Gangut = {
+                    set_nationality = NAC
+                }
+                WAR_Sevastopol = {
+                    set_nationality = NAC
+                }
+			}
+            annex_country = {
+				target = WAR
+				transfer_troops = yes
+			}
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    OPA_join_SLL = {
+        available = {
+            is_in_faction = no
+            country_exists = SLL
+            NOT = {
+                has_war_with = SLL
+            }
+            SLL = {
+                is_faction_leader = yes
+            }
+            has_completed_focus = OPA_phase3_27
+        }
+        visible = {
+            has_completed_focus = OPA_phase3_15
+        }
+        remove_effect = {
+            SLL = {
+                add_to_faction = OPA
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+}
