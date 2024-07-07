@@ -1,10 +1,10 @@
-########     ###    ######## ######## 
-##     ##   ## ##      ##    ##       
-##     ##  ##   ##     ##    ##       
-##     ## ##     ##    ##    ######   
-##     ## #########    ##    ##       
-##     ## ##     ##    ##    ##       
-########  ##     ##    ##    ######## 
+########     ###    ######## ########
+##     ##   ## ##      ##    ##
+##     ##  ##   ##     ##    ##
+##     ## ##     ##    ##    ######
+##     ## #########    ##    ##
+##     ## ##     ##    ##    ##
+########  ##     ##    ##    ########
 
 OCF_changes_in_parliamentary_history_list_dates_add = {
     add_to_array = {
@@ -17,13 +17,13 @@ OCF_changes_in_parliamentary_history_list_dates_add = {
 
 
 
-   ###        ######  ##     ##    ###     #######  ######## ####  ######      ######  ######## ########  ##     ##  ######    ######   ##       ######## 
-  ## ##      ##    ## ##     ##   ## ##   ##     ##    ##     ##  ##    ##    ##    ##    ##    ##     ## ##     ## ##    ##  ##    ##  ##       ##       
- ##   ##     ##       ##     ##  ##   ##  ##     ##    ##     ##  ##          ##          ##    ##     ## ##     ## ##        ##        ##       ##       
-##     ##    ##       ######### ##     ## ##     ##    ##     ##  ##           ######     ##    ########  ##     ## ##   #### ##   #### ##       ######   
-#########    ##       ##     ## ######### ##     ##    ##     ##  ##                ##    ##    ##   ##   ##     ## ##    ##  ##    ##  ##       ##       
-##     ##    ##    ## ##     ## ##     ## ##     ##    ##     ##  ##    ##    ##    ##    ##    ##    ##  ##     ## ##    ##  ##    ##  ##       ##       
-##     ##     ######  ##     ## ##     ##  #######     ##    ####  ######      ######     ##    ##     ##  #######   ######    ######   ######## ######## 
+###        ######  ##     ##    ###     #######  ######## ####  ######      ######  ######## ########  ##     ##  ######    ######   ##       ########
+## ##      ##    ## ##     ##   ## ##   ##     ##    ##     ##  ##    ##    ##    ##    ##    ##     ## ##     ## ##    ##  ##    ##  ##       ##
+##   ##     ##       ##     ##  ##   ##  ##     ##    ##     ##  ##          ##          ##    ##     ## ##     ## ##        ##        ##       ##
+##     ##    ##       ######### ##     ## ##     ##    ##     ##  ##           ######     ##    ########  ##     ## ##   #### ##   #### ##       ######
+#########    ##       ##     ## ######### ##     ##    ##     ##  ##                ##    ##    ##   ##   ##     ## ##    ##  ##    ##  ##       ##
+##     ##    ##    ## ##     ## ##     ## ##     ##    ##     ##  ##    ##    ##    ##    ##    ##    ##  ##     ## ##    ##  ##    ##  ##       ##
+##     ##     ######  ##     ## ##     ##  #######     ##    ####  ######      ######     ##    ##     ##  #######   ######    ######   ######## ########
 
 #政府崩溃后（ 测试）
 OCF_After_collapse_government = {
@@ -255,11 +255,26 @@ OCF_After_collapse_government = {
                 Arcane_Battle_Camp = {
                     x = 0 y = 3
                 }
+                Arcane_Battle_Camp = {
+                    x = 1 y = 0
+                }
+                Arcane_Battle_Camp = {
+                    x = 1 y = 1
+                }
+                Arcane_Battle_Camp = {
+                    x = 1 y = 2
+                }
+                Arcane_Battle_Camp = {
+                    x = 1 y = 3
+                }
                 Magic_Breakthrough_Camp = {
                     x = 2 y = 0
                 }
                 Magic_Breakthrough_Camp = {
                     x = 2 y = 1
+                }
+                Magic_Breakthrough_Camp = {
+                    x = 2 y = 2
                 }
             }
             support = {
@@ -274,6 +289,10 @@ OCF_After_collapse_government = {
         every_controlled_state = {
             limit = {
                 is_owned_by = INP
+            }
+            create_unit = {
+                division = "name = \"内战玛娜教导师\" division_template = \"内战玛娜教导师\" start_experience_factor = 0.3 start_equipment_factor = 1 "
+                owner = INP
             }
             create_unit = {
                 division = "name = \"内战玛娜教导师\" division_template = \"内战玛娜教导师\" start_experience_factor = 0.3 start_equipment_factor = 1 "
@@ -452,13 +471,152 @@ OCF_After_collapse_government_Declare_war = {
     }
 }
 
-########   #######  ##      ## ######## ########  
-##     ## ##     ## ##  ##  ## ##       ##     ## 
-##     ## ##     ## ##  ##  ## ##       ##     ## 
-########  ##     ## ##  ##  ## ######   ########  
-##        ##     ## ##  ##  ## ##       ##   ##   
-##        ##     ## ##  ##  ## ##       ##    ##  
-##         #######   ###  ###  ######## ##     ## 
+
+#内战结束
+OCF_end_of_civil_war = {
+    OCF = {
+        OCF_reset_ruling_party = yes
+        OCF_clear_all_deputy_leaders = yes
+        set_country_flag = OCF_abolition_parliament_yes_flag
+        transfer_state = 115
+        add_state_core = 115
+        inherit_technology = ROOT
+        set_variable = {
+            OCF_bill = 150
+        }
+        country_event = {
+            id = OCF.2 days = 4
+        }
+    }
+
+    ROOT = {
+        transfer_navy = {
+            target = OCF
+        }
+    }
+    every_country = {
+        limit = {
+            has_country_flag = OCF_After_collapse_government_countries_flag
+            NOT = {
+                tag = ROOT
+            }
+        }
+        ROOT = {
+            annex_country = {
+                target = PREV transfer_troops = yes
+            }
+        }
+        every_unit_leader = {
+            set_nationality = ROOT
+        }
+    }
+    ROOT = {
+        every_unit_leader = {
+            set_nationality = OCF
+        }
+    }
+    set_global_flag = OCF_civil_war_so_it_was_unified_flag
+    if = {
+        limit = {
+            tag = INP
+        }
+        if = {
+            limit = {
+                has_character = OCF_Eblana_Dublinn
+            }
+            set_nationality = {
+                target_country = OCF
+                character = OCF_Eblana_Dublinn
+            }
+        }
+        if = {
+            limit = {
+                has_character = OCF_Reed_The_Flame_Shadow
+            }
+            set_nationality = {
+                target_country = OCF
+                character = OCF_Reed_The_Flame_Shadow
+            }
+        }
+        OCF = {
+            set_cosmetic_tag = INP_unification
+            set_politics = {
+                ruling_party = fascism
+            }
+            add_popularity = {
+                ideology = fascism
+                popularity = 1
+            }
+            OCF_Eblana_Dublinn = {
+                promote_character = yes
+            }
+            add_ideas = OCF_idea_Reed_The_Flame_Shadow
+            annex_country = {
+                target = ROOT transfer_troops = yes
+            }
+            change_tag_from = ROOT
+        }
+    }
+    else_if = {
+        limit = {
+            OR = {
+                tag = OFC
+                tag = KEZ
+                tag = SIE
+                tag = KCL
+                tag = KGF
+                tag = BRI
+            }
+        }
+        OCF = {
+            set_cosmetic_tag = OCF_fourth
+            annex_country = {
+                target = ROOT transfer_troops = yes
+            }
+            change_tag_from = ROOT
+        }
+    }
+    else_if = {
+        limit = {
+            tag = TKD
+        }
+        OCF = {
+            set_cosmetic_tag = TKD_kingdom
+            annex_country = {
+                target = ROOT transfer_troops = yes
+            }
+            change_tag_from = ROOT
+        }
+    }
+    else_if = {
+        limit = {
+            tag = GFZ
+        }
+        OCF = {
+            set_cosmetic_tag = GFZ_unification
+            annex_country = {
+                target = ROOT transfer_troops = yes
+            }
+            change_tag_from = ROOT
+        }
+    }
+    every_state = {
+        limit = {
+            has_state_flag = regions_belonging_OCF_flag
+        }
+        remove_core_of = ANA
+        add_core_of = OCF
+        transfer_state = OCF
+    }
+}
+
+########   #######  ##      ## ######## ########
+##     ## ##     ## ##  ##  ## ##       ##     ##
+##     ## ##     ## ##  ##  ## ##       ##     ##
+########  ##     ## ##  ##  ## ######   ########
+##        ##     ## ##  ##  ## ##       ##   ##
+##        ##     ## ##  ##  ## ##       ##    ##
+##         #######   ###  ###  ######## ##     ##
 
 #克洛宁权力点
 Clonine_power_add = {
@@ -476,13 +634,13 @@ Herman_Douglas_power_add = {
     }
 }
 
-########  ########   #######  ##     ## #### ##    ##  ######  ########  ######      ######  ##     ## ########  ########  ######## ##    ## ######## ##       ##    ##    ##     ## ##    ## ########  ######## ########      ######   #######  ##    ##  ######  ######## ########  ##     ##  ######  ######## ####  #######  ##    ## 
-##     ## ##     ## ##     ## ##     ##  ##  ###   ## ##    ## ##       ##    ##    ##    ## ##     ## ##     ## ##     ## ##       ###   ##    ##    ##        ##  ##     ##     ## ###   ## ##     ## ##       ##     ##    ##    ## ##     ## ###   ## ##    ##    ##    ##     ## ##     ## ##    ##    ##     ##  ##     ## ###   ## 
-##     ## ##     ## ##     ## ##     ##  ##  ####  ## ##       ##       ##          ##       ##     ## ##     ## ##     ## ##       ####  ##    ##    ##         ####      ##     ## ####  ## ##     ## ##       ##     ##    ##       ##     ## ####  ## ##          ##    ##     ## ##     ## ##          ##     ##  ##     ## ####  ## 
-########  ########  ##     ## ##     ##  ##  ## ## ## ##       ######    ######     ##       ##     ## ########  ########  ######   ## ## ##    ##    ##          ##       ##     ## ## ## ## ##     ## ######   ########     ##       ##     ## ## ## ##  ######     ##    ########  ##     ## ##          ##     ##  ##     ## ## ## ## 
-##        ##   ##   ##     ##  ##   ##   ##  ##  #### ##       ##             ##    ##       ##     ## ##   ##   ##   ##   ##       ##  ####    ##    ##          ##       ##     ## ##  #### ##     ## ##       ##   ##      ##       ##     ## ##  ####       ##    ##    ##   ##   ##     ## ##          ##     ##  ##     ## ##  #### 
-##        ##    ##  ##     ##   ## ##    ##  ##   ### ##    ## ##       ##    ##    ##    ## ##     ## ##    ##  ##    ##  ##       ##   ###    ##    ##          ##       ##     ## ##   ### ##     ## ##       ##    ##     ##    ## ##     ## ##   ### ##    ##    ##    ##    ##  ##     ## ##    ##    ##     ##  ##     ## ##   ### 
-##        ##     ##  #######     ###    #### ##    ##  ######  ########  ######      ######   #######  ##     ## ##     ## ######## ##    ##    ##    ########    ##        #######  ##    ## ########  ######## ##     ##     ######   #######  ##    ##  ######     ##    ##     ##  #######   ######     ##    ####  #######  ##    ## 
+########  ########   #######  ##     ## #### ##    ##  ######  ########  ######      ######  ##     ## ########  ########  ######## ##    ## ######## ##       ##    ##    ##     ## ##    ## ########  ######## ########      ######   #######  ##    ##  ######  ######## ########  ##     ##  ######  ######## ####  #######  ##    ##
+##     ## ##     ## ##     ## ##     ##  ##  ###   ## ##    ## ##       ##    ##    ##    ## ##     ## ##     ## ##     ## ##       ###   ##    ##    ##        ##  ##     ##     ## ###   ## ##     ## ##       ##     ##    ##    ## ##     ## ###   ## ##    ##    ##    ##     ## ##     ## ##    ##    ##     ##  ##     ## ###   ##
+##     ## ##     ## ##     ## ##     ##  ##  ####  ## ##       ##       ##          ##       ##     ## ##     ## ##     ## ##       ####  ##    ##    ##         ####      ##     ## ####  ## ##     ## ##       ##     ##    ##       ##     ## ####  ## ##          ##    ##     ## ##     ## ##          ##     ##  ##     ## ####  ##
+########  ########  ##     ## ##     ##  ##  ## ## ## ##       ######    ######     ##       ##     ## ########  ########  ######   ## ## ##    ##    ##          ##       ##     ## ## ## ## ##     ## ######   ########     ##       ##     ## ## ## ##  ######     ##    ########  ##     ## ##          ##     ##  ##     ## ## ## ##
+##        ##   ##   ##     ##  ##   ##   ##  ##  #### ##       ##             ##    ##       ##     ## ##   ##   ##   ##   ##       ##  ####    ##    ##          ##       ##     ## ##  #### ##     ## ##       ##   ##      ##       ##     ## ##  ####       ##    ##    ##   ##   ##     ## ##          ##     ##  ##     ## ##  ####
+##        ##    ##  ##     ##   ## ##    ##  ##   ### ##    ## ##       ##    ##    ##    ## ##     ## ##    ##  ##    ##  ##       ##   ###    ##    ##          ##       ##     ## ##   ### ##     ## ##       ##    ##     ##    ## ##     ## ##   ### ##    ##    ##    ##    ##  ##     ## ##    ##    ##     ##  ##     ## ##   ###
+##        ##     ##  #######     ###    #### ##    ##  ######  ########  ######      ######   #######  ##     ## ##     ## ######## ##    ##    ##    ########    ##        #######  ##    ## ########  ######## ##     ##     ######   #######  ##    ##  ######     ##    ##     ##  #######   ######     ##    ####  #######  ##    ##
 #当前已建设省份增加
 OCF_provinces_currently_under_construction_add = {
     custom_effect_tooltip = OCF_second_industrial_revolution_decisions_TT
@@ -491,13 +649,13 @@ OCF_provinces_currently_under_construction_add = {
     }
 }
 
- ######  ########     ###     ######  ##     ##    ########  ########  ######   #######  ##     ## ######## ########  ##    ## 
-##    ## ##     ##   ## ##   ##    ## ##     ##    ##     ## ##       ##    ## ##     ## ##     ## ##       ##     ##  ##  ##  
-##       ##     ##  ##   ##  ##       ##     ##    ##     ## ##       ##       ##     ## ##     ## ##       ##     ##   ####   
-##       ########  ##     ##  ######  #########    ########  ######   ##       ##     ## ##     ## ######   ########     ##    
-##       ##   ##   #########       ## ##     ##    ##   ##   ##       ##       ##     ##  ##   ##  ##       ##   ##      ##    
-##    ## ##    ##  ##     ## ##    ## ##     ##    ##    ##  ##       ##    ## ##     ##   ## ##   ##       ##    ##     ##    
- ######  ##     ## ##     ##  ######  ##     ##    ##     ## ########  ######   #######     ###    ######## ##     ##    ##    
+######  ########     ###     ######  ##     ##    ########  ########  ######   #######  ##     ## ######## ########  ##    ##
+##    ## ##     ##   ## ##   ##    ## ##     ##    ##     ## ##       ##    ## ##     ## ##     ## ##       ##     ##  ##  ##
+##       ##     ##  ##   ##  ##       ##     ##    ##     ## ##       ##       ##     ## ##     ## ##       ##     ##   ####
+##       ########  ##     ##  ######  #########    ########  ######   ##       ##     ## ##     ## ######   ########     ##
+##       ##   ##   #########       ## ##     ##    ##   ##   ##       ##       ##     ##  ##   ##  ##       ##   ##      ##
+##    ## ##    ##  ##     ## ##    ## ##     ##    ##    ##  ##       ##    ## ##     ##   ## ##   ##       ##    ##     ##
+######  ##     ## ##     ##  ######  ##     ##    ##     ## ########  ######   #######     ###    ######## ##     ##    ##
 
 #崩溃的政府体系计算
 OCF_collapsed_government_system_yes = {
@@ -644,16 +802,16 @@ OCF_Random_infrastructure = {
 }
 
 
-                                                                                                                                                                                                                                                                                                                                       
-                                                                                                                                                                                                                                                                                                                                       
 
-########  ######   #######  ##    ##  #######  ##     ## ####  ######      ######     ###    ##        ######  ##     ## ##          ###    ######## ####  #######  ##    ## 
-##       ##    ## ##     ## ###   ## ##     ## ###   ###  ##  ##    ##    ##    ##   ## ##   ##       ##    ## ##     ## ##         ## ##      ##     ##  ##     ## ###   ## 
-##       ##       ##     ## ####  ## ##     ## #### ####  ##  ##          ##        ##   ##  ##       ##       ##     ## ##        ##   ##     ##     ##  ##     ## ####  ## 
-######   ##       ##     ## ## ## ## ##     ## ## ### ##  ##  ##          ##       ##     ## ##       ##       ##     ## ##       ##     ##    ##     ##  ##     ## ## ## ## 
-##       ##       ##     ## ##  #### ##     ## ##     ##  ##  ##          ##       ######### ##       ##       ##     ## ##       #########    ##     ##  ##     ## ##  #### 
-##       ##    ## ##     ## ##   ### ##     ## ##     ##  ##  ##    ##    ##    ## ##     ## ##       ##    ## ##     ## ##       ##     ##    ##     ##  ##     ## ##   ### 
-########  ######   #######  ##    ##  #######  ##     ## ####  ######      ######  ##     ## ########  ######   #######  ######## ##     ##    ##    ####  #######  ##    ## 
+
+
+########  ######   #######  ##    ##  #######  ##     ## ####  ######      ######     ###    ##        ######  ##     ## ##          ###    ######## ####  #######  ##    ##
+##       ##    ## ##     ## ###   ## ##     ## ###   ###  ##  ##    ##    ##    ##   ## ##   ##       ##    ## ##     ## ##         ## ##      ##     ##  ##     ## ###   ##
+##       ##       ##     ## ####  ## ##     ## #### ####  ##  ##          ##        ##   ##  ##       ##       ##     ## ##        ##   ##     ##     ##  ##     ## ####  ##
+######   ##       ##     ## ## ## ## ##     ## ## ### ##  ##  ##          ##       ##     ## ##       ##       ##     ## ##       ##     ##    ##     ##  ##     ## ## ## ##
+##       ##       ##     ## ##  #### ##     ## ##     ##  ##  ##          ##       ######### ##       ##       ##     ## ##       #########    ##     ##  ##     ## ##  ####
+##       ##    ## ##     ## ##   ### ##     ## ##     ##  ##  ##    ##    ##    ## ##     ## ##       ##    ## ##     ## ##       ##     ##    ##     ##  ##     ## ##   ###
+########  ######   #######  ##    ##  #######  ##     ## ####  ######      ######  ##     ## ########  ######   #######  ######## ##     ##    ##    ####  #######  ##    ##
 #初始化资金调整
 set_custom_slider = {
     for_loop_effect = {
@@ -1235,7 +1393,7 @@ OCF_spending_funds = {
         }
 
 
-        
+
         #计算修正（军费开支修正）
         set_variable = {
             ocf_capital_military_expenses_correction_2 = 1
@@ -1396,13 +1554,13 @@ OCF_spending_funds = {
     #每月花费
 }
 
-##        #######  ########  ########      #######  ########    ########     ###    ########  ##       ####    ###    ##     ## ######## ##    ## ######## 
-##       ##     ## ##     ## ##     ##    ##     ## ##          ##     ##   ## ##   ##     ## ##        ##    ## ##   ###   ### ##       ###   ##    ##    
-##       ##     ## ##     ## ##     ##    ##     ## ##          ##     ##  ##   ##  ##     ## ##        ##   ##   ##  #### #### ##       ####  ##    ##    
-##       ##     ## ########  ##     ##    ##     ## ######      ########  ##     ## ########  ##        ##  ##     ## ## ### ## ######   ## ## ##    ##    
-##       ##     ## ##   ##   ##     ##    ##     ## ##          ##        ######### ##   ##   ##        ##  ######### ##     ## ##       ##  ####    ##    
-##       ##     ## ##    ##  ##     ##    ##     ## ##          ##        ##     ## ##    ##  ##        ##  ##     ## ##     ## ##       ##   ###    ##    
-########  #######  ##     ## ########      #######  ##          ##        ##     ## ##     ## ######## #### ##     ## ##     ## ######## ##    ##    ##    
+##        #######  ########  ########      #######  ########    ########     ###    ########  ##       ####    ###    ##     ## ######## ##    ## ########
+##       ##     ## ##     ## ##     ##    ##     ## ##          ##     ##   ## ##   ##     ## ##        ##    ## ##   ###   ### ##       ###   ##    ##
+##       ##     ## ##     ## ##     ##    ##     ## ##          ##     ##  ##   ##  ##     ## ##        ##   ##   ##  #### #### ##       ####  ##    ##
+##       ##     ## ########  ##     ##    ##     ## ######      ########  ##     ## ########  ##        ##  ##     ## ## ### ## ######   ## ## ##    ##
+##       ##     ## ##   ##   ##     ##    ##     ## ##          ##        ######### ##   ##   ##        ##  ######### ##     ## ##       ##  ####    ##
+##       ##     ## ##    ##  ##     ##    ##     ## ##          ##        ##     ## ##    ##  ##        ##  ##     ## ##     ## ##       ##   ###    ##
+########  #######  ##     ## ########      #######  ##          ##        ##     ## ##     ## ######## #### ##     ## ##     ## ######## ##    ##    ##
 
 #议会老爷正在搓牌
 OCE_Rub_cards_new = {
@@ -1495,304 +1653,304 @@ OCF_gridbox_seat_array_senate_no_del = {
 }
 
 
-########     ###    ########  ######## ##    ##    ########  ######## ##          ###    ######## ####  #######  ##    ##  ######     ########  ######## ######## ########  ########  ######  ##     ## 
-##     ##   ## ##   ##     ##    ##     ##  ##     ##     ## ##       ##         ## ##      ##     ##  ##     ## ###   ## ##    ##    ##     ## ##       ##       ##     ## ##       ##    ## ##     ## 
-##     ##  ##   ##  ##     ##    ##      ####      ##     ## ##       ##        ##   ##     ##     ##  ##     ## ####  ## ##          ##     ## ##       ##       ##     ## ##       ##       ##     ## 
-########  ##     ## ########     ##       ##       ########  ######   ##       ##     ##    ##     ##  ##     ## ## ## ##  ######     ########  ######   ######   ########  ######    ######  ######### 
-##        ######### ##   ##      ##       ##       ##   ##   ##       ##       #########    ##     ##  ##     ## ##  ####       ##    ##   ##   ##       ##       ##   ##   ##             ## ##     ## 
-##        ##     ## ##    ##     ##       ##       ##    ##  ##       ##       ##     ##    ##     ##  ##     ## ##   ### ##    ##    ##    ##  ##       ##       ##    ##  ##       ##    ## ##     ## 
-##        ##     ## ##     ##    ##       ##       ##     ## ######## ######## ##     ##    ##    ####  #######  ##    ##  ######     ##     ## ######## ##       ##     ## ########  ######  ##     ## 
+########     ###    ########  ######## ##    ##    ########  ######## ##          ###    ######## ####  #######  ##    ##  ######     ########  ######## ######## ########  ########  ######  ##     ##
+##     ##   ## ##   ##     ##    ##     ##  ##     ##     ## ##       ##         ## ##      ##     ##  ##     ## ###   ## ##    ##    ##     ## ##       ##       ##     ## ##       ##    ## ##     ##
+##     ##  ##   ##  ##     ##    ##      ####      ##     ## ##       ##        ##   ##     ##     ##  ##     ## ####  ## ##          ##     ## ##       ##       ##     ## ##       ##       ##     ##
+########  ##     ## ########     ##       ##       ########  ######   ##       ##     ##    ##     ##  ##     ## ## ## ##  ######     ########  ######   ######   ########  ######    ######  #########
+##        ######### ##   ##      ##       ##       ##   ##   ##       ##       #########    ##     ##  ##     ## ##  ####       ##    ##   ##   ##       ##       ##   ##   ##             ## ##     ##
+##        ##     ## ##    ##     ##       ##       ##    ##  ##       ##       ##     ##    ##     ##  ##     ## ##   ### ##    ##    ##    ##  ##       ##       ##    ##  ##       ##    ## ##     ##
+##        ##     ## ##     ##    ##       ##       ##     ## ######## ######## ##     ##    ##    ####  #######  ##    ##  ######     ##     ## ######## ##       ##     ## ########  ######  ##     ##
 
 #党派关系刷新
 OCF_party_relations_refresh = {
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_2
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_3
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_4
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_5
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_6
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_7
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_8
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_8
-		}
-	}
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_2
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_3
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_4
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_5
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_6
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_7
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_8
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_8
+        }
+    }
 }
 #以下是党派关系修改
 OCF_gridbox_seat_array_original_relationship_variable_1_add = {
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_8
-		}
-	}
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 33 index = 0
     }
@@ -1800,82 +1958,82 @@ OCF_gridbox_seat_array_original_relationship_variable_1_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_1_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_1 = OCF_gridbox_seat_array_original_relationship_variable_1_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 41 index = 0
     }
@@ -1884,83 +2042,83 @@ OCF_gridbox_seat_array_original_relationship_variable_1_del = {
 
 
 OCF_gridbox_seat_array_original_relationship_variable_2_add = {
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_8
-		}
-	}
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 34 index = 0
     }
@@ -1968,82 +2126,82 @@ OCF_gridbox_seat_array_original_relationship_variable_2_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_2_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_2 = OCF_gridbox_seat_array_original_relationship_variable_2_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 42 index = 0
     }
@@ -2052,83 +2210,83 @@ OCF_gridbox_seat_array_original_relationship_variable_2_del = {
 
 
 OCF_gridbox_seat_array_original_relationship_variable_3_add = {
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_8
-		}
-	}
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 35 index = 0
     }
@@ -2136,82 +2294,82 @@ OCF_gridbox_seat_array_original_relationship_variable_3_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_3_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_3 = OCF_gridbox_seat_array_original_relationship_variable_3_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 43 index = 0
     }
@@ -2221,82 +2379,82 @@ OCF_gridbox_seat_array_original_relationship_variable_3_del = {
 
 OCF_gridbox_seat_array_original_relationship_variable_4_add = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 36 index = 0
     }
@@ -2304,82 +2462,82 @@ OCF_gridbox_seat_array_original_relationship_variable_4_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_4_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_4 = OCF_gridbox_seat_array_original_relationship_variable_4_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 44 index = 0
     }
@@ -2389,82 +2547,82 @@ OCF_gridbox_seat_array_original_relationship_variable_4_del = {
 
 OCF_gridbox_seat_array_original_relationship_variable_5_add = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 37 index = 0
     }
@@ -2472,82 +2630,82 @@ OCF_gridbox_seat_array_original_relationship_variable_5_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_5_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_5 = OCF_gridbox_seat_array_original_relationship_variable_5_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 45 index = 0
     }
@@ -2557,82 +2715,82 @@ OCF_gridbox_seat_array_original_relationship_variable_5_del = {
 
 OCF_gridbox_seat_array_original_relationship_variable_6_add = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 38 index = 0
     }
@@ -2640,82 +2798,82 @@ OCF_gridbox_seat_array_original_relationship_variable_6_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_6_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_7
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_7
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_6 = OCF_gridbox_seat_array_original_relationship_variable_6_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 46 index = 0
     }
@@ -2725,82 +2883,82 @@ OCF_gridbox_seat_array_original_relationship_variable_6_del = {
 
 OCF_gridbox_seat_array_original_relationship_variable_7_add = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_8 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_8 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 39 index = 0
     }
@@ -2808,82 +2966,82 @@ OCF_gridbox_seat_array_original_relationship_variable_7_add = {
 }
 OCF_gridbox_seat_array_original_relationship_variable_7_del = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_8
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_8 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_8
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_8 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_7 = OCF_gridbox_seat_array_original_relationship_variable_7_8
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 47 index = 0
     }
@@ -2893,165 +3051,165 @@ OCF_gridbox_seat_array_original_relationship_variable_7_del = {
 
 OCF_gridbox_seat_array_original_relationship_variable_8_add = {
     if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_1 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_2 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_3 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_4 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_5 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_6 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_7 = 1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_7
-		}
-	}
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_1 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_2 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_3 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_4 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_5 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_6 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_7 = 1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_7
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 40 index = 0
     }
     OCF_changes_in_parliamentary_history_list_dates_add = yes
 }
 OCF_gridbox_seat_array_original_relationship_variable_8_del = {
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_1
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_1 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_1
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_2
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_2 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_2
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_3
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_3 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_3
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_4
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_4 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_4
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_5
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_5 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_5
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_6
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_6 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_6
-		}
-	}
-	if = {
-		limit = {
-			has_country_flag = OCF_control_government_flag_7
-		}
-		add_to_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_7 = -1
-		}
-		set_variable = {
-			OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_7
-		}
-	}
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_1 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_1
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_2 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_2
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_3 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_3
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_4 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_4
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_5 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_5
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_6 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_6
+        }
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_7 = -1
+        }
+        set_variable = {
+            OCF_gridbox_seat_array_original_relationship_variable_8 = OCF_gridbox_seat_array_original_relationship_variable_8_7
+        }
+    }
     add_to_array = {
         global.OCF_changes_in_parliamentary_history_change_record_array = 48 index = 0
     }
@@ -3060,71 +3218,71 @@ OCF_gridbox_seat_array_original_relationship_variable_8_del = {
 
 #随机添加好感度
 OCF_gridbox_seat_array_original_relationship_variable_random_list_add = {
-	random_list = {
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_add = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_add = yes
-		}
-	}
+    random_list = {
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_add = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_add = yes
+        }
+    }
 }
 
 #随机减少好感度
 OCF_gridbox_seat_array_original_relationship_variable_random_list_del = {
-	random_list = {
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_1_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_2_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_3_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_4_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_5_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_6_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_7_del  = yes
-		}
-		1 = {
-			OCF_gridbox_seat_array_original_relationship_variable_8_del  = yes
-		}
-	}
+    random_list = {
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_1_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_2_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_3_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_4_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_5_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_6_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_7_del  = yes
+        }
+        1 = {
+            OCF_gridbox_seat_array_original_relationship_variable_8_del  = yes
+        }
+    }
 }
 
-########  ########  ######## ##     ## ######## ##    ## ########     #######  ##     ## ######## ########  ######## ##        #######  ##      ## 
-##     ## ##     ## ##       ##     ## ##       ###   ##    ##       ##     ## ##     ## ##       ##     ## ##       ##       ##     ## ##  ##  ## 
-##     ## ##     ## ##       ##     ## ##       ####  ##    ##       ##     ## ##     ## ##       ##     ## ##       ##       ##     ## ##  ##  ## 
-########  ########  ######   ##     ## ######   ## ## ##    ##       ##     ## ##     ## ######   ########  ######   ##       ##     ## ##  ##  ## 
-##        ##   ##   ##        ##   ##  ##       ##  ####    ##       ##     ##  ##   ##  ##       ##   ##   ##       ##       ##     ## ##  ##  ## 
-##        ##    ##  ##         ## ##   ##       ##   ###    ##       ##     ##   ## ##   ##       ##    ##  ##       ##       ##     ## ##  ##  ## 
-##        ##     ## ########    ###    ######## ##    ##    ##        #######     ###    ######## ##     ## ##       ########  #######   ###  ###  
+########  ########  ######## ##     ## ######## ##    ## ########     #######  ##     ## ######## ########  ######## ##        #######  ##      ##
+##     ## ##     ## ##       ##     ## ##       ###   ##    ##       ##     ## ##     ## ##       ##     ## ##       ##       ##     ## ##  ##  ##
+##     ## ##     ## ##       ##     ## ##       ####  ##    ##       ##     ## ##     ## ##       ##     ## ##       ##       ##     ## ##  ##  ##
+########  ########  ######   ##     ## ######   ## ## ##    ##       ##     ## ##     ## ######   ########  ######   ##       ##     ## ##  ##  ##
+##        ##   ##   ##        ##   ##  ##       ##  ####    ##       ##     ##  ##   ##  ##       ##   ##   ##       ##       ##     ## ##  ##  ##
+##        ##    ##  ##         ## ##   ##       ##   ###    ##       ##     ##   ## ##   ##       ##    ##  ##       ##       ##     ## ##  ##  ##
+##        ##     ## ########    ###    ######## ##    ##    ##        #######     ###    ######## ##     ## ##       ########  #######   ###  ###
 
 #防止一切溢出
 OCF_Prevent_spillage = {
@@ -3753,13 +3911,13 @@ OCF_randomly_changing_support = {
     OCF_Insert_Party_Position = yes
 }
 
-##          ###    ##    ##  #######  ######## ########  ######  
-##         ## ##    ##  ##  ##     ## ##       ##       ##    ## 
-##        ##   ##    ####   ##     ## ##       ##       ##       
-##       ##     ##    ##    ##     ## ######   ######    ######  
-##       #########    ##    ##     ## ##       ##             ## 
-##       ##     ##    ##    ##     ## ##       ##       ##    ## 
-######## ##     ##    ##     #######  ##       ##        ######  
+##          ###    ##    ##  #######  ######## ########  ######
+##         ## ##    ##  ##  ##     ## ##       ##       ##    ##
+##        ##   ##    ####   ##     ## ##       ##       ##
+##       ##     ##    ##    ##     ## ######   ######    ######
+##       #########    ##    ##     ## ##       ##             ##
+##       ##     ##    ##    ##     ## ##       ##       ##    ##
+######## ##     ##    ##     #######  ##       ##        ######
 
 #裁员
 OCF_Layoffs = {
@@ -3809,13 +3967,13 @@ OCF_Layoffs = {
 }
 
 
-######## ######## ######## ########  ######  ######## 
-##       ##       ##       ##       ##    ##    ##    
-##       ##       ##       ##       ##          ##    
-######   ######   ######   ######   ##          ##    
-##       ##       ##       ##       ##          ##    
-##       ##       ##       ##       ##    ##    ##    
-######## ##       ##       ########  ######     ##    
+######## ######## ######## ########  ######  ########
+##       ##       ##       ##       ##    ##    ##
+##       ##       ##       ##       ##          ##
+######   ######   ######   ######   ##          ##
+##       ##       ##       ##       ##          ##
+##       ##       ##       ##       ##    ##    ##
+######## ##       ##       ########  ######     ##
 
 #计算政府影响力
 OCF_calculate_government_influence = {
@@ -4022,13 +4180,13 @@ OCF_calculate_government_influence = {
     OCF_Prevent_spillage = yes
 }
 
-   ###    ##     ## ######## ##     ##  #######  ########  #### ########    ###    ######## #### ##     ## ######## 
-  ## ##   ##     ##    ##    ##     ## ##     ## ##     ##  ##     ##      ## ##      ##     ##  ##     ## ##       
- ##   ##  ##     ##    ##    ##     ## ##     ## ##     ##  ##     ##     ##   ##     ##     ##  ##     ## ##       
-##     ## ##     ##    ##    ######### ##     ## ########   ##     ##    ##     ##    ##     ##  ##     ## ######   
-######### ##     ##    ##    ##     ## ##     ## ##   ##    ##     ##    #########    ##     ##   ##   ##  ##       
-##     ## ##     ##    ##    ##     ## ##     ## ##    ##   ##     ##    ##     ##    ##     ##    ## ##   ##       
-##     ##  #######     ##    ##     ##  #######  ##     ## ####    ##    ##     ##    ##    ####    ###    ######## 
+###    ##     ## ######## ##     ##  #######  ########  #### ########    ###    ######## #### ##     ## ########
+## ##   ##     ##    ##    ##     ## ##     ## ##     ##  ##     ##      ## ##      ##     ##  ##     ## ##
+##   ##  ##     ##    ##    ##     ## ##     ## ##     ##  ##     ##     ##   ##     ##     ##  ##     ## ##
+##     ## ##     ##    ##    ######### ##     ## ########   ##     ##    ##     ##    ##     ##  ##     ## ######
+######### ##     ##    ##    ##     ## ##     ## ##   ##    ##     ##    #########    ##     ##   ##   ##  ##
+##     ## ##     ##    ##    ##     ## ##     ## ##    ##   ##     ##    ##     ##    ##     ##    ## ##   ##
+##     ##  #######     ##    ##     ##  #######  ##     ## ####    ##    ##     ##    ##    ####    ###    ########
 
 #政府权威性
 OCF_government_authority = {
@@ -4116,13 +4274,13 @@ OCF_government_authority = {
     }
 }
 
-########  ######## ######## ########  ########  ######  ##     ##    ########  ########  ######   ####  #######  ##    ##    ###    ##           ######  ##     ## ########  ########   #######  ########  ########    ########     ###    ######## ######## 
-##     ## ##       ##       ##     ## ##       ##    ## ##     ##    ##     ## ##       ##    ##   ##  ##     ## ###   ##   ## ##   ##          ##    ## ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##   ## ##      ##    ##       
-##     ## ##       ##       ##     ## ##       ##       ##     ##    ##     ## ##       ##         ##  ##     ## ####  ##  ##   ##  ##          ##       ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##  ##   ##     ##    ##       
-########  ######   ######   ########  ######    ######  #########    ########  ######   ##   ####  ##  ##     ## ## ## ## ##     ## ##           ######  ##     ## ########  ########  ##     ## ########     ##       ########  ##     ##    ##    ######   
-##   ##   ##       ##       ##   ##   ##             ## ##     ##    ##   ##   ##       ##    ##   ##  ##     ## ##  #### ######### ##                ## ##     ## ##        ##        ##     ## ##   ##      ##       ##   ##   #########    ##    ##       
-##    ##  ##       ##       ##    ##  ##       ##    ## ##     ##    ##    ##  ##       ##    ##   ##  ##     ## ##   ### ##     ## ##          ##    ## ##     ## ##        ##        ##     ## ##    ##     ##       ##    ##  ##     ##    ##    ##       
-##     ## ######## ##       ##     ## ########  ######  ##     ##    ##     ## ########  ######   ####  #######  ##    ## ##     ## ########     ######   #######  ##        ##         #######  ##     ##    ##       ##     ## ##     ##    ##    ######## 
+########  ######## ######## ########  ########  ######  ##     ##    ########  ########  ######   ####  #######  ##    ##    ###    ##           ######  ##     ## ########  ########   #######  ########  ########    ########     ###    ######## ########
+##     ## ##       ##       ##     ## ##       ##    ## ##     ##    ##     ## ##       ##    ##   ##  ##     ## ###   ##   ## ##   ##          ##    ## ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##   ## ##      ##    ##
+##     ## ##       ##       ##     ## ##       ##       ##     ##    ##     ## ##       ##         ##  ##     ## ####  ##  ##   ##  ##          ##       ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##  ##   ##     ##    ##
+########  ######   ######   ########  ######    ######  #########    ########  ######   ##   ####  ##  ##     ## ## ## ## ##     ## ##           ######  ##     ## ########  ########  ##     ## ########     ##       ########  ##     ##    ##    ######
+##   ##   ##       ##       ##   ##   ##             ## ##     ##    ##   ##   ##       ##    ##   ##  ##     ## ##  #### ######### ##                ## ##     ## ##        ##        ##     ## ##   ##      ##       ##   ##   #########    ##    ##
+##    ##  ##       ##       ##    ##  ##       ##    ## ##     ##    ##    ##  ##       ##    ##   ##  ##     ## ##   ### ##     ## ##          ##    ## ##     ## ##        ##        ##     ## ##    ##     ##       ##    ##  ##     ##    ##    ##
+##     ## ######## ##       ##     ## ########  ######  ##     ##    ##     ## ########  ######   ####  #######  ##    ## ##     ## ########     ######   #######  ##        ##         #######  ##     ##    ##       ##     ## ##     ##    ##    ########
 
 #刷新全国支持率
 OCF_tax_revenue_civil_factories_correctionresh_national_support_rate = {
@@ -4156,29 +4314,29 @@ OCF_tax_revenue_civil_factories_correctionresh_national_support_rate = {
         }
         OCF = {
             add_to_variable = {
-            OCF_national_support_1 = PREV.OCF_regional_support_rate_1
-        }
-        add_to_variable = {
-            OCF_national_support_2 = PREV.OCF_regional_support_rate_2
-        }
-        add_to_variable = {
-            OCF_national_support_3 = PREV.OCF_regional_support_rate_3
-        }
-        add_to_variable = {
-            OCF_national_support_4 = PREV.OCF_regional_support_rate_4
-        }
-        add_to_variable = {
-            OCF_national_support_5 = PREV.OCF_regional_support_rate_5
-        }
-        add_to_variable = {
-            OCF_national_support_6 = PREV.OCF_regional_support_rate_6
-        }
-        add_to_variable = {
-            OCF_national_support_7 = PREV.OCF_regional_support_rate_7
-        }
-        add_to_variable = {
-            OCF_national_support_8 = PREV.OCF_regional_support_rate_8
-        }
+                OCF_national_support_1 = PREV.OCF_regional_support_rate_1
+            }
+            add_to_variable = {
+                OCF_national_support_2 = PREV.OCF_regional_support_rate_2
+            }
+            add_to_variable = {
+                OCF_national_support_3 = PREV.OCF_regional_support_rate_3
+            }
+            add_to_variable = {
+                OCF_national_support_4 = PREV.OCF_regional_support_rate_4
+            }
+            add_to_variable = {
+                OCF_national_support_5 = PREV.OCF_regional_support_rate_5
+            }
+            add_to_variable = {
+                OCF_national_support_6 = PREV.OCF_regional_support_rate_6
+            }
+            add_to_variable = {
+                OCF_national_support_7 = PREV.OCF_regional_support_rate_7
+            }
+            add_to_variable = {
+                OCF_national_support_8 = PREV.OCF_regional_support_rate_8
+            }
         }
     }
     set_variable = {
@@ -4650,13 +4808,13 @@ OCF_Refreshing_possible_winning_parties = {
     }
 }
 
- ######   ######## ##    ## ######## ########     ###    ##          ######## ##       ########  ######  ######## ####  #######  ##    ## 
-##    ##  ##       ###   ## ##       ##     ##   ## ##   ##          ##       ##       ##       ##    ##    ##     ##  ##     ## ###   ## 
-##        ##       ####  ## ##       ##     ##  ##   ##  ##          ##       ##       ##       ##          ##     ##  ##     ## ####  ## 
-##   #### ######   ## ## ## ######   ########  ##     ## ##          ######   ##       ######   ##          ##     ##  ##     ## ## ## ## 
-##    ##  ##       ##  #### ##       ##   ##   ######### ##          ##       ##       ##       ##          ##     ##  ##     ## ##  #### 
-##    ##  ##       ##   ### ##       ##    ##  ##     ## ##          ##       ##       ##       ##    ##    ##     ##  ##     ## ##   ### 
- ######   ######## ##    ## ######## ##     ## ##     ## ########    ######## ######## ########  ######     ##    ####  #######  ##    ## 
+######   ######## ##    ## ######## ########     ###    ##          ######## ##       ########  ######  ######## ####  #######  ##    ##
+##    ##  ##       ###   ## ##       ##     ##   ## ##   ##          ##       ##       ##       ##    ##    ##     ##  ##     ## ###   ##
+##        ##       ####  ## ##       ##     ##  ##   ##  ##          ##       ##       ##       ##          ##     ##  ##     ## ####  ##
+##   #### ######   ## ## ## ######   ########  ##     ## ##          ######   ##       ######   ##          ##     ##  ##     ## ## ## ##
+##    ##  ##       ##  #### ##       ##   ##   ######### ##          ##       ##       ##       ##          ##     ##  ##     ## ##  ####
+##    ##  ##       ##   ### ##       ##    ##  ##     ## ##          ##       ##       ##       ##    ##    ##     ##  ##     ## ##   ###
+######   ######## ##    ## ######## ##     ## ##     ## ########    ######## ######## ########  ######     ##    ####  #######  ##    ##
 
 #临时大选代码
 OCF_election_results = {
@@ -4841,13 +4999,13 @@ OCF_election_results = {
     }
 }
 
- ######  ##     ## ########  ########  ########  ########  ######   ######  
-##    ## ##     ## ##     ## ##     ## ##     ## ##       ##    ## ##    ## 
-##       ##     ## ##     ## ##     ## ##     ## ##       ##       ##       
- ######  ##     ## ########  ########  ########  ######    ######   ######  
-      ## ##     ## ##        ##        ##   ##   ##             ##       ## 
-##    ## ##     ## ##        ##        ##    ##  ##       ##    ## ##    ## 
- ######   #######  ##        ##        ##     ## ########  ######   ######  
+######  ##     ## ########  ########  ########  ########  ######   ######
+##    ## ##     ## ##     ## ##     ## ##     ## ##       ##    ## ##    ##
+##       ##     ## ##     ## ##     ## ##     ## ##       ##       ##
+######  ##     ## ########  ########  ########  ######    ######   ######
+## ##     ## ##        ##        ##   ##   ##             ##       ##
+##    ## ##     ## ##        ##        ##    ##  ##       ##    ## ##    ##
+######   #######  ##        ##        ##     ## ########  ######   ######
 
 #打压党派
 OCF_suppress_political_parties = {
@@ -4991,13 +5149,13 @@ OCF_suppress_political_parties_8 = {
 }
 
 
- ######  ##     ## ########  ########   #######  ########  ######## 
-##    ## ##     ## ##     ## ##     ## ##     ## ##     ##    ##    
-##       ##     ## ##     ## ##     ## ##     ## ##     ##    ##    
- ######  ##     ## ########  ########  ##     ## ########     ##    
-      ## ##     ## ##        ##        ##     ## ##   ##      ##    
-##    ## ##     ## ##        ##        ##     ## ##    ##     ##    
- ######   #######  ##        ##         #######  ##     ##    ##    
+######  ##     ## ########  ########   #######  ########  ########
+##    ## ##     ## ##     ## ##     ## ##     ## ##     ##    ##
+##       ##     ## ##     ## ##     ## ##     ## ##     ##    ##
+######  ##     ## ########  ########  ##     ## ########     ##
+## ##     ## ##        ##        ##     ## ##   ##      ##
+##    ## ##     ## ##        ##        ##     ## ##    ##     ##
+######   #######  ##        ##         #######  ##     ##    ##
 
 #扶持党派
 OCF_supporting_political_parties = {
@@ -5140,13 +5298,13 @@ OCF_supporting_political_parties_8 = {
     }
 }
 
-##     ##  #######  ##    ## ######## ##     ## ##       ##    ##     ######  ##     ## ########  ########   #######  ########  ########    ########     ###    ######## ######## 
-###   ### ##     ## ###   ##    ##    ##     ## ##        ##  ##     ##    ## ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##   ## ##      ##    ##       
-#### #### ##     ## ####  ##    ##    ##     ## ##         ####      ##       ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##  ##   ##     ##    ##       
-## ### ## ##     ## ## ## ##    ##    ######### ##          ##        ######  ##     ## ########  ########  ##     ## ########     ##       ########  ##     ##    ##    ######   
-##     ## ##     ## ##  ####    ##    ##     ## ##          ##             ## ##     ## ##        ##        ##     ## ##   ##      ##       ##   ##   #########    ##    ##       
-##     ## ##     ## ##   ###    ##    ##     ## ##          ##       ##    ## ##     ## ##        ##        ##     ## ##    ##     ##       ##    ##  ##     ##    ##    ##       
-##     ##  #######  ##    ##    ##    ##     ## ########    ##        ######   #######  ##        ##         #######  ##     ##    ##       ##     ## ##     ##    ##    ######## 
+##     ##  #######  ##    ## ######## ##     ## ##       ##    ##     ######  ##     ## ########  ########   #######  ########  ########    ########     ###    ######## ########
+###   ### ##     ## ###   ##    ##    ##     ## ##        ##  ##     ##    ## ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##   ## ##      ##    ##
+#### #### ##     ## ####  ##    ##    ##     ## ##         ####      ##       ##     ## ##     ## ##     ## ##     ## ##     ##    ##       ##     ##  ##   ##     ##    ##
+## ### ## ##     ## ## ## ##    ##    ######### ##          ##        ######  ##     ## ########  ########  ##     ## ########     ##       ########  ##     ##    ##    ######
+##     ## ##     ## ##  ####    ##    ##     ## ##          ##             ## ##     ## ##        ##        ##     ## ##   ##      ##       ##   ##   #########    ##    ##
+##     ## ##     ## ##   ###    ##    ##     ## ##          ##       ##    ## ##     ## ##        ##        ##     ## ##    ##     ##       ##    ##  ##     ##    ##    ##
+##     ##  #######  ##    ##    ##    ##     ## ########    ##        ######   #######  ##        ##         #######  ##     ##    ##       ##     ## ##     ##    ##    ########
 
 #每月支持率提升
 OCF_monthly_support_rate_increase_1 = {
@@ -5390,13 +5548,13 @@ OCF_monthly_support_rate_increase_8 = {
         }
     }
 }
-########  ######## ######## ########  ########  ######  ##     ##       ###    ##       ##          ########  ########  ######   ####  #######  ##    ##    ###    ##          ########     ###    ########    ###    
-##     ## ##       ##       ##     ## ##       ##    ## ##     ##      ## ##   ##       ##          ##     ## ##       ##    ##   ##  ##     ## ###   ##   ## ##   ##          ##     ##   ## ##      ##      ## ##   
-##     ## ##       ##       ##     ## ##       ##       ##     ##     ##   ##  ##       ##          ##     ## ##       ##         ##  ##     ## ####  ##  ##   ##  ##          ##     ##  ##   ##     ##     ##   ##  
-########  ######   ######   ########  ######    ######  #########    ##     ## ##       ##          ########  ######   ##   ####  ##  ##     ## ## ## ## ##     ## ##          ##     ## ##     ##    ##    ##     ## 
-##   ##   ##       ##       ##   ##   ##             ## ##     ##    ######### ##       ##          ##   ##   ##       ##    ##   ##  ##     ## ##  #### ######### ##          ##     ## #########    ##    ######### 
-##    ##  ##       ##       ##    ##  ##       ##    ## ##     ##    ##     ## ##       ##          ##    ##  ##       ##    ##   ##  ##     ## ##   ### ##     ## ##          ##     ## ##     ##    ##    ##     ## 
-##     ## ######## ##       ##     ## ########  ######  ##     ##    ##     ## ######## ########    ##     ## ########  ######   ####  #######  ##    ## ##     ## ########    ########  ##     ##    ##    ##     ## 
+########  ######## ######## ########  ########  ######  ##     ##       ###    ##       ##          ########  ########  ######   ####  #######  ##    ##    ###    ##          ########     ###    ########    ###
+##     ## ##       ##       ##     ## ##       ##    ## ##     ##      ## ##   ##       ##          ##     ## ##       ##    ##   ##  ##     ## ###   ##   ## ##   ##          ##     ##   ## ##      ##      ## ##
+##     ## ##       ##       ##     ## ##       ##       ##     ##     ##   ##  ##       ##          ##     ## ##       ##         ##  ##     ## ####  ##  ##   ##  ##          ##     ##  ##   ##     ##     ##   ##
+########  ######   ######   ########  ######    ######  #########    ##     ## ##       ##          ########  ######   ##   ####  ##  ##     ## ## ## ## ##     ## ##          ##     ## ##     ##    ##    ##     ##
+##   ##   ##       ##       ##   ##   ##             ## ##     ##    ######### ##       ##          ##   ##   ##       ##    ##   ##  ##     ## ##  #### ######### ##          ##     ## #########    ##    #########
+##    ##  ##       ##       ##    ##  ##       ##    ## ##     ##    ##     ## ##       ##          ##    ##  ##       ##    ##   ##  ##     ## ##   ### ##     ## ##          ##     ## ##     ##    ##    ##     ##
+##     ## ######## ##       ##     ## ########  ######  ##     ##    ##     ## ######## ########    ##     ## ########  ######   ####  #######  ##    ## ##     ## ########    ########  ##     ##    ##    ##     ##
 
 
 #刷新所有地区数据
@@ -5407,7 +5565,7 @@ OCF_refresh_all_regional_data = {
         }
         OCF_refresh_regional_support_rate = yes
     }
- }
+}
 
 
 
@@ -5418,115 +5576,178 @@ OCF_show_all_party_leaders_1 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     every_character = {
         add_to_array = {
-			global.OCF_Party_SubGUI_2_lists_array = THIS
-		}
+            global.OCF_Party_SubGUI_2_lists_array = THIS
+        }
     }
 }
 OCF_show_all_party_leaders_2 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     every_character = {
         add_to_array = {
-			global.OCF_Party_SubGUI_2_lists_array = THIS
-		}
+            global.OCF_Party_SubGUI_2_lists_array = THIS
+        }
     }
 }
 OCF_show_all_party_leaders_3 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     every_character = {
         add_to_array = {
-			global.OCF_Party_SubGUI_2_lists_array = THIS
-		}
+            global.OCF_Party_SubGUI_2_lists_array = THIS
+        }
     }
 }
 OCF_show_all_party_leaders_4 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     every_character = {
         add_to_array = {
-			global.OCF_Party_SubGUI_2_lists_array = THIS
-		}
+            global.OCF_Party_SubGUI_2_lists_array = THIS
+        }
     }
 }
 OCF_show_all_party_leaders_5 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 1
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 1
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 2
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 2
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 3
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 3
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 4
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 4
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 5
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 5
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 6
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 6
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 7
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 7
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 8
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 8
+    }
 }
 OCF_show_all_party_leaders_6 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     every_character = {
         add_to_array = {
-			global.OCF_Party_SubGUI_2_lists_array = THIS
-		}
+            global.OCF_Party_SubGUI_2_lists_array = THIS
+        }
     }
 }
 OCF_show_all_party_leaders_7 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 9
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 9
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 10
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 10
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 11
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 11
+    }
     add_to_array = {
-		global.OCF_Party_SubGUI_2_lists_array = 12
-	}
+        global.OCF_Party_SubGUI_2_lists_array = 12
+    }
 }
 OCF_show_all_party_leaders_8 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     every_character = {
         add_to_array = {
-			global.OCF_Party_SubGUI_2_lists_array = THIS
-		}
+            global.OCF_Party_SubGUI_2_lists_array = THIS
+        }
     }
 }
 
 
 
 
-######## ##       ########  ######  ######## ####  #######  ##    ##     #######  ########  ######## ########     ###    ######## ####  #######  ##    ## 
-##       ##       ##       ##    ##    ##     ##  ##     ## ###   ##    ##     ## ##     ## ##       ##     ##   ## ##      ##     ##  ##     ## ###   ## 
-##       ##       ##       ##          ##     ##  ##     ## ####  ##    ##     ## ##     ## ##       ##     ##  ##   ##     ##     ##  ##     ## ####  ## 
-######   ##       ######   ##          ##     ##  ##     ## ## ## ##    ##     ## ########  ######   ########  ##     ##    ##     ##  ##     ## ## ## ## 
-##       ##       ##       ##          ##     ##  ##     ## ##  ####    ##     ## ##        ##       ##   ##   #########    ##     ##  ##     ## ##  #### 
-##       ##       ##       ##    ##    ##     ##  ##     ## ##   ###    ##     ## ##        ##       ##    ##  ##     ##    ##     ##  ##     ## ##   ### 
-######## ######## ########  ######     ##    ####  #######  ##    ##     #######  ##        ######## ##     ## ##     ##    ##    ####  #######  ##    ## 
+######## ##       ########  ######  ######## ####  #######  ##    ##     #######  ########  ######## ########     ###    ######## ####  #######  ##    ##
+##       ##       ##       ##    ##    ##     ##  ##     ## ###   ##    ##     ## ##     ## ##       ##     ##   ## ##      ##     ##  ##     ## ###   ##
+##       ##       ##       ##          ##     ##  ##     ## ####  ##    ##     ## ##     ## ##       ##     ##  ##   ##     ##     ##  ##     ## ####  ##
+######   ##       ######   ##          ##     ##  ##     ## ## ## ##    ##     ## ########  ######   ########  ##     ##    ##     ##  ##     ## ## ## ##
+##       ##       ##       ##          ##     ##  ##     ## ##  ####    ##     ## ##        ##       ##   ##   #########    ##     ##  ##     ## ##  ####
+##       ##       ##       ##    ##    ##     ##  ##     ## ##   ###    ##     ## ##        ##       ##    ##  ##     ##    ##     ##  ##     ## ##   ###
+######## ######## ########  ######     ##    ####  #######  ##    ##     #######  ##        ######## ##     ## ##     ##    ##    ####  #######  ##    ##
 
 #清除当前执政党
 OCF_eliminate_current_ruling_party = {
-    clr_country_flag = OCF_control_government_flag_1
-    clr_country_flag = OCF_control_government_flag_2
-    clr_country_flag = OCF_control_government_flag_3
-    clr_country_flag = OCF_control_government_flag_4
-    clr_country_flag = OCF_control_government_flag_5
-    clr_country_flag = OCF_control_government_flag_6
-    clr_country_flag = OCF_control_government_flag_7
-    clr_country_flag = OCF_control_government_flag_8
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_1
+        }
+        clr_country_flag = OCF_control_government_flag_1
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2
+        }
+        clr_country_flag = OCF_control_government_flag_2
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3
+        }
+        clr_country_flag = OCF_control_government_flag_3
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4
+        }
+        clr_country_flag = OCF_control_government_flag_4
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5
+        }
+        clr_country_flag = OCF_control_government_flag_5
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6
+        }
+        clr_country_flag = OCF_control_government_flag_6
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7
+        }
+        clr_country_flag = OCF_control_government_flag_7
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8
+        }
+        clr_country_flag = OCF_control_government_flag_8
+    }
 }
+
+#清除所有副领导人
+OCF_clear_all_deputy_leaders = {
+    if = {
+        limit = {
+            has_idea = OCF_idea_parliament
+        }
+        remove_ideas = OCF_idea_parliament
+    }
+    if = {
+        limit = {
+            has_idea = OCF_idea_Hiiragi_Kagami
+        }
+        remove_ideas = OCF_idea_Hiiragi_Kagami
+    }
+    if = {
+        limit = {
+            has_idea = OCF_idea_Reed_The_Flame_Shadow
+        }
+        remove_ideas = OCF_idea_Reed_The_Flame_Shadow
+    }
+}
+
 #选举后重置执政党
 OCF_reset_ruling_party = {
     OCF_eliminate_current_ruling_party = yes
@@ -5602,7 +5823,7 @@ OCF_reset_ruling_party = {
         set_country_flag = OCF_control_government_flag_8
         OCF_elected_faction_8 = yes
     }
-	OCF_party_relations_refresh = yes
+    OCF_party_relations_refresh = yes
 }
 
 #当选派系
@@ -5666,13 +5887,13 @@ OCF_elected_faction_8 = {
     }
 }
 
-   ###     ######  ######## ##     ##    ###    ##       ##       ##    ##     ######   ######## ##    ## ######## ########     ###    ######## ########    ######## ##     ## ########     ######   ########     ###    ########  ##     ##    ##       #### ##    ## ########     ######  ########  ######   ##     ## ######## ##    ## ########  ######  
-  ## ##   ##    ##    ##    ##     ##   ## ##   ##       ##        ##  ##     ##    ##  ##       ###   ## ##       ##     ##   ## ##      ##    ##             ##    ##     ## ##          ##    ##  ##     ##   ## ##   ##     ## ##     ##    ##        ##  ###   ## ##          ##    ## ##       ##    ##  ###   ### ##       ###   ##    ##    ##    ## 
- ##   ##  ##          ##    ##     ##  ##   ##  ##       ##         ####      ##        ##       ####  ## ##       ##     ##  ##   ##     ##    ##             ##    ##     ## ##          ##        ##     ##  ##   ##  ##     ## ##     ##    ##        ##  ####  ## ##          ##       ##       ##        #### #### ##       ####  ##    ##    ##       
-##     ## ##          ##    ##     ## ##     ## ##       ##          ##       ##   #### ######   ## ## ## ######   ########  ##     ##    ##    ######         ##    ######### ######      ##   #### ########  ##     ## ########  #########    ##        ##  ## ## ## ######       ######  ######   ##   #### ## ### ## ######   ## ## ##    ##     ######  
-######### ##          ##    ##     ## ######### ##       ##          ##       ##    ##  ##       ##  #### ##       ##   ##   #########    ##    ##             ##    ##     ## ##          ##    ##  ##   ##   ######### ##        ##     ##    ##        ##  ##  #### ##                ## ##       ##    ##  ##     ## ##       ##  ####    ##          ## 
-##     ## ##    ##    ##    ##     ## ##     ## ##       ##          ##       ##    ##  ##       ##   ### ##       ##    ##  ##     ##    ##    ##             ##    ##     ## ##          ##    ##  ##    ##  ##     ## ##        ##     ##    ##        ##  ##   ### ##          ##    ## ##       ##    ##  ##     ## ##       ##   ###    ##    ##    ## 
-##     ##  ######     ##     #######  ##     ## ######## ########    ##        ######   ######## ##    ## ######## ##     ## ##     ##    ##    ########       ##    ##     ## ########     ######   ##     ## ##     ## ##        ##     ##    ######## #### ##    ## ########     ######  ########  ######   ##     ## ######## ##    ##    ##     ######  
+###     ######  ######## ##     ##    ###    ##       ##       ##    ##     ######   ######## ##    ## ######## ########     ###    ######## ########    ######## ##     ## ########     ######   ########     ###    ########  ##     ##    ##       #### ##    ## ########     ######  ########  ######   ##     ## ######## ##    ## ########  ######
+## ##   ##    ##    ##    ##     ##   ## ##   ##       ##        ##  ##     ##    ##  ##       ###   ## ##       ##     ##   ## ##      ##    ##             ##    ##     ## ##          ##    ##  ##     ##   ## ##   ##     ## ##     ##    ##        ##  ###   ## ##          ##    ## ##       ##    ##  ###   ### ##       ###   ##    ##    ##    ##
+##   ##  ##          ##    ##     ##  ##   ##  ##       ##         ####      ##        ##       ####  ## ##       ##     ##  ##   ##     ##    ##             ##    ##     ## ##          ##        ##     ##  ##   ##  ##     ## ##     ##    ##        ##  ####  ## ##          ##       ##       ##        #### #### ##       ####  ##    ##    ##
+##     ## ##          ##    ##     ## ##     ## ##       ##          ##       ##   #### ######   ## ## ## ######   ########  ##     ##    ##    ######         ##    ######### ######      ##   #### ########  ##     ## ########  #########    ##        ##  ## ## ## ######       ######  ######   ##   #### ## ### ## ######   ## ## ##    ##     ######
+######### ##          ##    ##     ## ######### ##       ##          ##       ##    ##  ##       ##  #### ##       ##   ##   #########    ##    ##             ##    ##     ## ##          ##    ##  ##   ##   ######### ##        ##     ##    ##        ##  ##  #### ##                ## ##       ##    ##  ##     ## ##       ##  ####    ##          ##
+##     ## ##    ##    ##    ##     ## ##     ## ##       ##          ##       ##    ##  ##       ##   ### ##       ##    ##  ##     ##    ##    ##             ##    ##     ## ##          ##    ##  ##    ##  ##     ## ##        ##     ##    ##        ##  ##   ### ##          ##    ## ##       ##    ##  ##     ## ##       ##   ###    ##    ##    ##
+##     ##  ######     ##     #######  ##     ## ######## ########    ##        ######   ######## ##    ## ######## ##     ## ##     ##    ##    ########       ##    ##     ## ########     ######   ##     ## ##     ## ##        ##     ##    ######## #### ##    ## ########     ######  ########  ######   ##     ## ######## ##    ##    ##     ######
 
 #生成派系支持历史折线图
 OCF_generate_factional_support_for_historical_line_charts = {
@@ -5697,26 +5918,26 @@ OCF_generate_factional_support_for_historical_line_charts = {
     set_variable = { OCF_SAMPLE_last_y_position_8 = OCF_SAMPLE_y_position_8 }
     set_variable = { OCF_SAMPLE_y_position_8 = OCF_national_support_8_proportion }
     if = {
-		limit = {
-			check_variable = { OCF_SAMPLE_count > 32 }
-		}
+        limit = {
+            check_variable = { OCF_SAMPLE_count > 32 }
+        }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_1 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_1_frame index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_1_frame index = 0 }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_2 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_2_frame index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_2_frame index = 0 }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_3 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_3_frame index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_3_frame index = 0 }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_4 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_4_frame index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_4_frame index = 0 }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_5 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_5_frame index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_5_frame index = 0 }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_6 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_6_frame index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_6_frame index = 0 }
         remove_from_array = { array = global.OCF_historical_parliament_segmentation_7 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_7_frame index = 0 }
-		remove_from_array = { array = global.OCF_historical_parliament_segmentation_8 index = 0 }
-		remove_from_array = { array = OCF_historical_parliament_segmentation_8_frame index = 0 }
-		remove_from_array = { array = OCF_SAMPLE_numbers index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_7_frame index = 0 }
+        remove_from_array = { array = global.OCF_historical_parliament_segmentation_8 index = 0 }
+        remove_from_array = { array = OCF_historical_parliament_segmentation_8_frame index = 0 }
+        remove_from_array = { array = OCF_SAMPLE_numbers index = 0 }
         remove_from_array = { array = OCF_SAMPLE_TIMEs index = 0 }
         remove_from_array = { array = OCF_Historical_support_ranking_1 index = 0 }
         remove_from_array = { array = OCF_Historical_support_ranking_2 index = 0 }
@@ -5726,88 +5947,88 @@ OCF_generate_factional_support_for_historical_line_charts = {
         remove_from_array = { array = OCF_Historical_support_ranking_6 index = 0 }
         remove_from_array = { array = OCF_Historical_support_ranking_7 index = 0 }
         remove_from_array = { array = OCF_Historical_support_ranking_8 index = 0 }
-	}
+    }
 
     set_temp_variable = { OCF_offset_1 = OCF_SAMPLE_last_y_position_1 }
-	multiply_temp_variable = { OCF_offset_1 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_1 = OCF_offset_1 }
+    multiply_temp_variable = { OCF_offset_1 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_1 = OCF_offset_1 }
 
     set_temp_variable = { OCF_offset_2 = OCF_SAMPLE_last_y_position_2 }
-	multiply_temp_variable = { OCF_offset_2 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_2 = OCF_offset_2 }
+    multiply_temp_variable = { OCF_offset_2 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_2 = OCF_offset_2 }
 
     set_temp_variable = { OCF_offset_3 = OCF_SAMPLE_last_y_position_3 }
-	multiply_temp_variable = { OCF_offset_3 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_3 = OCF_offset_3 }
+    multiply_temp_variable = { OCF_offset_3 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_3 = OCF_offset_3 }
 
     set_temp_variable = { OCF_offset_4 = OCF_SAMPLE_last_y_position_4 }
-	multiply_temp_variable = { OCF_offset_4 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_4 = OCF_offset_4 }
+    multiply_temp_variable = { OCF_offset_4 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_4 = OCF_offset_4 }
 
     set_temp_variable = { OCF_offset_5 = OCF_SAMPLE_last_y_position_5 }
-	multiply_temp_variable = { OCF_offset_5 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_5 = OCF_offset_5 }
+    multiply_temp_variable = { OCF_offset_5 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_5 = OCF_offset_5 }
 
     set_temp_variable = { OCF_offset_6 = OCF_SAMPLE_last_y_position_6 }
-	multiply_temp_variable = { OCF_offset_6 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_6 = OCF_offset_6 }
+    multiply_temp_variable = { OCF_offset_6 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_6 = OCF_offset_6 }
 
     set_temp_variable = { OCF_offset_7 = OCF_SAMPLE_last_y_position_7 }
-	multiply_temp_variable = { OCF_offset_7 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_7 = OCF_offset_7 }
+    multiply_temp_variable = { OCF_offset_7 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_7 = OCF_offset_7 }
 
     set_temp_variable = { OCF_offset_8 = OCF_SAMPLE_last_y_position_8 }
-	multiply_temp_variable = { OCF_offset_8 = -1 }
-	add_to_array = { global.OCF_historical_parliament_segmentation_8 = OCF_offset_8 }
+    multiply_temp_variable = { OCF_offset_8 = -1 }
+    add_to_array = { global.OCF_historical_parliament_segmentation_8 = OCF_offset_8 }
 
 
     set_temp_variable = { OCF_diff_1 = OCF_SAMPLE_y_position_1 }
-	subtract_from_temp_variable = { OCF_diff_1 = OCF_SAMPLE_last_y_position_1 }
-	divide_temp_variable = { OCF_diff_1 = 2 }
-	add_to_temp_variable = { OCF_diff_1 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_1_frame = OCF_diff_1 }
+    subtract_from_temp_variable = { OCF_diff_1 = OCF_SAMPLE_last_y_position_1 }
+    divide_temp_variable = { OCF_diff_1 = 2 }
+    add_to_temp_variable = { OCF_diff_1 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_1_frame = OCF_diff_1 }
 
     set_temp_variable = { OCF_diff_2 = OCF_SAMPLE_y_position_2 }
-	subtract_from_temp_variable = { OCF_diff_2 = OCF_SAMPLE_last_y_position_2 }
-	divide_temp_variable = { OCF_diff_2 = 2 }
-	add_to_temp_variable = { OCF_diff_2 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_2_frame = OCF_diff_2 }
+    subtract_from_temp_variable = { OCF_diff_2 = OCF_SAMPLE_last_y_position_2 }
+    divide_temp_variable = { OCF_diff_2 = 2 }
+    add_to_temp_variable = { OCF_diff_2 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_2_frame = OCF_diff_2 }
 
     set_temp_variable = { OCF_diff_3 = OCF_SAMPLE_y_position_3 }
-	subtract_from_temp_variable = { OCF_diff_3 = OCF_SAMPLE_last_y_position_3 }
-	divide_temp_variable = { OCF_diff_3 = 2 }
-	add_to_temp_variable = { OCF_diff_3 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_3_frame = OCF_diff_3 }
+    subtract_from_temp_variable = { OCF_diff_3 = OCF_SAMPLE_last_y_position_3 }
+    divide_temp_variable = { OCF_diff_3 = 2 }
+    add_to_temp_variable = { OCF_diff_3 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_3_frame = OCF_diff_3 }
 
     set_temp_variable = { OCF_diff_4 = OCF_SAMPLE_y_position_4 }
-	subtract_from_temp_variable = { OCF_diff_4 = OCF_SAMPLE_last_y_position_4 }
-	divide_temp_variable = { OCF_diff_4 = 2 }
-	add_to_temp_variable = { OCF_diff_4 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_4_frame = OCF_diff_4 }
+    subtract_from_temp_variable = { OCF_diff_4 = OCF_SAMPLE_last_y_position_4 }
+    divide_temp_variable = { OCF_diff_4 = 2 }
+    add_to_temp_variable = { OCF_diff_4 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_4_frame = OCF_diff_4 }
 
     set_temp_variable = { OCF_diff_5 = OCF_SAMPLE_y_position_5 }
-	subtract_from_temp_variable = { OCF_diff_5 = OCF_SAMPLE_last_y_position_5 }
-	divide_temp_variable = { OCF_diff_5 = 2 }
-	add_to_temp_variable = { OCF_diff_5 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_5_frame = OCF_diff_5 }
+    subtract_from_temp_variable = { OCF_diff_5 = OCF_SAMPLE_last_y_position_5 }
+    divide_temp_variable = { OCF_diff_5 = 2 }
+    add_to_temp_variable = { OCF_diff_5 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_5_frame = OCF_diff_5 }
 
     set_temp_variable = { OCF_diff_6 = OCF_SAMPLE_y_position_6 }
-	subtract_from_temp_variable = { OCF_diff_6 = OCF_SAMPLE_last_y_position_6 }
-	divide_temp_variable = { OCF_diff_6 = 2 }
-	add_to_temp_variable = { OCF_diff_6 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_6_frame = OCF_diff_6 }
+    subtract_from_temp_variable = { OCF_diff_6 = OCF_SAMPLE_last_y_position_6 }
+    divide_temp_variable = { OCF_diff_6 = 2 }
+    add_to_temp_variable = { OCF_diff_6 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_6_frame = OCF_diff_6 }
 
     set_temp_variable = { OCF_diff_7 = OCF_SAMPLE_y_position_7 }
-	subtract_from_temp_variable = { OCF_diff_7 = OCF_SAMPLE_last_y_position_7 }
-	divide_temp_variable = { OCF_diff_7 = 2 }
-	add_to_temp_variable = { OCF_diff_7 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_7_frame = OCF_diff_7 }
+    subtract_from_temp_variable = { OCF_diff_7 = OCF_SAMPLE_last_y_position_7 }
+    divide_temp_variable = { OCF_diff_7 = 2 }
+    add_to_temp_variable = { OCF_diff_7 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_7_frame = OCF_diff_7 }
 
     set_temp_variable = { OCF_diff_8 = OCF_SAMPLE_y_position_8 }
-	subtract_from_temp_variable = { OCF_diff_8 = OCF_SAMPLE_last_y_position_8 }
-	divide_temp_variable = { OCF_diff_8 = 2 }
-	add_to_temp_variable = { OCF_diff_8 = 50 }
-	add_to_array = { OCF_historical_parliament_segmentation_8_frame = OCF_diff_8 }
+    subtract_from_temp_variable = { OCF_diff_8 = OCF_SAMPLE_last_y_position_8 }
+    divide_temp_variable = { OCF_diff_8 = 2 }
+    add_to_temp_variable = { OCF_diff_8 = 50 }
+    add_to_array = { OCF_historical_parliament_segmentation_8_frame = OCF_diff_8 }
 
     add_to_array = { OCF_SAMPLE_numbers = OCF_SAMPLE_count }
     add_to_array = { OCF_SAMPLE_TIMEs = OCF_SAMPLE_TIME }
@@ -5821,19 +6042,19 @@ OCF_generate_factional_support_for_historical_line_charts = {
     add_to_array = { OCF_Historical_support_ranking_6 = OCF_national_support_6_proportion }
     add_to_array = { OCF_Historical_support_ranking_7 = OCF_national_support_7_proportion }
     add_to_array = { OCF_Historical_support_ranking_8 = OCF_national_support_8_proportion }
-    
-    
-    
+
+
+
 }
 
 
-########     ###    ########  ##       ####    ###    ##     ## ######## ##    ## ########    ###    ########  ##    ##     ######   #######  ########  ######## 
-##     ##   ## ##   ##     ## ##        ##    ## ##   ###   ### ##       ###   ##    ##      ## ##   ##     ##  ##  ##     ##    ## ##     ## ##     ## ##       
-##     ##  ##   ##  ##     ## ##        ##   ##   ##  #### #### ##       ####  ##    ##     ##   ##  ##     ##   ####      ##       ##     ## ##     ## ##       
-########  ##     ## ########  ##        ##  ##     ## ## ### ## ######   ## ## ##    ##    ##     ## ########     ##       ##       ##     ## ########  ######   
-##        ######### ##   ##   ##        ##  ######### ##     ## ##       ##  ####    ##    ######### ##   ##      ##       ##       ##     ## ##   ##   ##       
-##        ##     ## ##    ##  ##        ##  ##     ## ##     ## ##       ##   ###    ##    ##     ## ##    ##     ##       ##    ## ##     ## ##    ##  ##       
-##        ##     ## ##     ## ######## #### ##     ## ##     ## ######## ##    ##    ##    ##     ## ##     ##    ##        ######   #######  ##     ## ######## 
+########     ###    ########  ##       ####    ###    ##     ## ######## ##    ## ########    ###    ########  ##    ##     ######   #######  ########  ########
+##     ##   ## ##   ##     ## ##        ##    ## ##   ###   ### ##       ###   ##    ##      ## ##   ##     ##  ##  ##     ##    ## ##     ## ##     ## ##
+##     ##  ##   ##  ##     ## ##        ##   ##   ##  #### #### ##       ####  ##    ##     ##   ##  ##     ##   ####      ##       ##     ## ##     ## ##
+########  ##     ## ########  ##        ##  ##     ## ## ### ## ######   ## ## ##    ##    ##     ## ########     ##       ##       ##     ## ########  ######
+##        ######### ##   ##   ##        ##  ######### ##     ## ##       ##  ####    ##    ######### ##   ##      ##       ##       ##     ## ##   ##   ##
+##        ##     ## ##    ##  ##        ##  ##     ## ##     ## ##       ##   ###    ##    ##     ## ##    ##     ##       ##    ## ##     ## ##    ##  ##
+##        ##     ## ##     ## ######## #### ##     ## ##     ## ######## ##    ##    ##    ##     ## ##     ##    ##        ######   #######  ##     ## ########
 
 #插入党派位置
 OCF_Insert_Party_Position = {
@@ -5842,7 +6063,7 @@ OCF_Insert_Party_Position = {
         clear_array = OCF_gridbox_seat_array
         clear_array = OCF_gridbox_seat_array_senate
         OCF_government_authority = yes
-		OCF_party_relations_refresh = yes
+        OCF_party_relations_refresh = yes
         #大洋社会主义同盟
         set_variable = {
             OCF_gridbox_seat_array_1 = OCF_gridbox_seat_array_original_1
