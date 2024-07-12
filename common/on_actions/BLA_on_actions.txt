@@ -109,8 +109,15 @@ on_actions = {
 				set_variable = {BLA_nobility_basic_tax = 0.4}
 				set_variable = {BLA_church_basic_tax = 0}
 				set_variable = {BLA_capitalist_basic_tax = 0.5}
-				set_variable = {BLA_revenue = num_of_civilian_factories}
-				multiply_variable = {BLA_revenue = 0.4}
+				set_variable = {BLA_revenue_c = num_of_civilian_factories}
+				multiply_variable = {BLA_revenue_c = 0.6}
+				set_variable = {BLA_revenue_m = num_of_military_factories}
+				multiply_variable = {BLA_revenue_m = 0.2}
+				set_variable = {BLA_revenue_d = num_of_naval_factories}
+				multiply_variable = {BLA_revenue_d = 0.2}
+				add_to_variable = {BLA_revenue = BLA_revenue_c}
+				add_to_variable = {BLA_revenue = BLA_revenue_m}
+				add_to_variable = {BLA_revenue = BLA_revenue_d}
 				set_variable = {BLA_freeman_tax = 60} #自由民税收固定
 				set_variable = {BLA_serf_tax = 50} #农奴税收固定
 				set_variable = {BLA_extra = 10}
@@ -246,6 +253,16 @@ on_actions = {
 							target = WAR
 							transfer_troops = yes
 						}
+						set_autonomy = {
+							target = SVI
+							autonomous_state = autonomy_imperial_march
+						}
+						every_owned_state = {
+							limit = {
+								is_core_of = HBR
+							}
+							transfer_state_to = HBR
+						}
 						remove_ideas = BLA_Second_Rossiya_Revolution
 					}
 					217 = {
@@ -261,14 +278,6 @@ on_actions = {
 							declare_war_on = {
 								target = OPA
 								type = annex_everything
-							}
-						}
-					}
-					else = {
-						FROM = {
-							set_autonomy = {
-								target = OPA
-								autonomous_state = patriarchate
 							}
 						}
 					}
@@ -312,6 +321,15 @@ on_actions = {
 							annex_country = {
 								target = ORE
 								transfer_troops = yes
+							}
+						}
+						if = {
+							limit = {
+								country_exists = HBR
+							}
+							annex_country = {
+								target = HBR
+								transfer_troops = no
 							}
 						}
 						if = {
@@ -361,14 +379,18 @@ on_actions = {
 							country_event = {id = IKR.3}
 						}
 					}
-					OPA = {
-						if = {
-							limit = {
-								NOT = {
-									has_government = NAC
+					if = {
+						limit = {
+							country_exists = OPA
+							OPA = {
+								has_country_leader = {
+									character = OPA_Rasputin
+									ruling_only = yes
 								}
 							}
-							country_event = {id = BLA_rev.999}
+						}
+						OPA = {
+							country_event = {id = BLA_rev.999 days = 3}
 						}
 					}
 					217 = {
@@ -543,6 +565,103 @@ on_actions = {
 						}
 						NAC = {
 							country_event = {id = NAC.35 days = 10}
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					FROM = {
+						tag = OPA
+						has_government = reactionism
+					}
+				}
+				if = {
+					limit = {
+						ROOT = BLA
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						if = {
+							limit = {
+								country_exists = HBR
+							}
+							annex_country = {
+								target = HBR
+								transfer_troops = no
+							}
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_BLA_rasputin
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = ORE
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_ORE_rasputin
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = NAC
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_NAC_rasputin
+						}
+					}
+				}
+				if = {
+					limit = {
+						ROOT = HEL
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+						white_peace  = {
+							tag = FROM
+							message = OPA_defeated_HEL_rasputin
 						}
 					}
 				}
