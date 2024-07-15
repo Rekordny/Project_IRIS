@@ -14,7 +14,6 @@ NAC_unite_russia = {
             controls_state = 191
             controls_state = 163
             controls_state = 118
-            controls_state = 41
             controls_state = 68
             controls_state = 73
             controls_state = 87
@@ -22,8 +21,6 @@ NAC_unite_russia = {
         }
         visible = {
         }
-        cost = 0
-        days_remove = 0
         fire_only_once = yes
         complete_effect = {
         }
@@ -36,6 +33,35 @@ NAC_unite_russia = {
             }
             set_cosmetic_tag = NAC_RSR
             set_country_flag = NAC_united_rossiya
+            if = {
+                limit = {
+                    WAR = {
+                        exists = yes
+                        has_war = no
+                    }
+                }
+                WAR = {
+					transfer_navy = {
+						target = FROM
+					}
+                    WAR_Belorussiya = {
+                        set_nationality = NAC
+                    }
+                    WAR_Chapayev = {
+                        set_nationality = NAC
+                    }
+                    WAR_Gangut = {
+                        set_nationality = NAC
+                    }
+                    WAR_Sevastopol = {
+                        set_nationality = NAC
+                    }
+				}
+                annex_country = {
+					target = WAR
+					transfer_troops = yes
+				}
+            }
             hidden_effect = {
                 set_power_balance = {
                     id = NAC_our_revolution
@@ -65,6 +91,38 @@ NAC_unite_russia = {
 }
 #输出革命
 NAC_liberate_old_world = {
+    NAV_invite_RVA = {
+        available = {
+            country_exists = RVA
+            is_neighbor_of = RVA
+            has_completed_focus = NAC_dip_9
+            NOT = {
+                has_war_with = RVA
+            }
+            NOT = {
+                is_in_faction_with = RVA
+            }
+            RVA = {
+                SRS_complete_unification = yes
+            }
+        }
+        visible = {
+            country_exists = RVA
+            has_completed_focus = NAC_dip_9
+            NOT = {
+                has_war_with = RVA
+            }
+            NOT = {
+                is_in_faction_with = RVA
+            }
+        }
+        fire_only_once = yes
+        complete_effect = {
+            RVA = {
+                country_event = {NAC.996 days = 3}
+            }
+        }
+    }
     NAC_to_south = {
         available = {
             has_completed_focus = NAC_reconstruction_20
@@ -93,6 +151,20 @@ NAC_liberate_old_world = {
                     add_core_of = NAC
                 }
             }
+            if = {
+                limit = {
+                    country_exists = SVI
+                    SVI = {
+                        NOT = {
+                            has_government = NAC
+                        }
+                    }
+                }
+                create_wargoal = {
+                    target = SVI
+                    type = annex_everything
+                }
+            }
             hidden_effect = {
                 add_ai_strategy = {
                     type = conquer
@@ -100,8 +172,8 @@ NAC_liberate_old_world = {
                     value = 1000
                 }
                 add_ai_strategy = {
-                    type = antagonize
-                    id = WPU
+                    type = conquer
+                    id = SVI
                     value = 1000
                 }
             }
@@ -330,8 +402,8 @@ NAC_liberate_old_world = {
                         limit = {
                             is_IRIS_NAS_country = yes
                         }
+                        has_government = communism
                     }
-                    has_government = communism
                 }
             }
         }
@@ -391,32 +463,31 @@ NAC_eastern_issue = {
             if = {
                 limit = {
                     country_exists = OPA
+                    NOT = {
+                        has_war_with = OPA
+                    }
                 }
                 declare_war_on = {
                     target = OPA
                     type = annex_everything
                 }
             }
-            55 = {
-                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
-            }
-            63 = {
-                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
-            }
-            102 = {
-                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
-            }
-            117 = {
-                add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
-            }
-            167 = {
+            every_state = {
+                limit = {
+                    is_controlled_by = OPA
+                }
                 add_dynamic_modifier = {modifier = NAC_liberate_east_land days = 365 scope = NAC}
             }
             hidden_effect = {
                 OPA = {
-                    swap_ideas = {
-                        remove_idea = OPA_oriental_legion
-                        add_idea = OPA_true_oriental_legion
+                    if = {
+                        limit = {
+                            has_idea = OPA_oriental_legion
+                        }
+                        swap_ideas = {
+                            remove_idea = OPA_oriental_legion
+                            add_idea = OPA_true_oriental_legion
+                        }
                     }
                 }
             }
@@ -442,6 +513,9 @@ NAC_eastern_issue = {
             annex_country = {
                 target = OPA
                 transfer_troops = yes
+            }
+            hidden_effect = {
+                country_event = {id = NAC.37 days = 3}
             }
         }
         ai_will_do = {
@@ -1623,6 +1697,263 @@ Rossiya_Revolution = {
             modifier = {
                 add = 5
                 has_opinion = { target = BLA value > 99 }
+            }
+        }
+    }
+}
+Second_Rossiya_Revolution_decisions = {
+    #鼓舞士气
+    Increase_morale = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = Morale_less_than_120
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    NAC = {
+                        check_variable = {NAC_morale < 120}
+                    }
+                }
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    BLA = {
+                        check_variable = {NAC_morale < 120}
+                    }
+                }
+            }
+        }
+        cost = 25
+        days_remove = 30
+        remove_effect = {
+            random_list = {
+                50 = {
+                    custom_effect_tooltip = Morale_increase_by_5
+                    hidden_effect = {
+                        if = {
+                            limit = {
+                                tag = NAC
+                            }
+                            NAC = {
+                                add_to_variable = {NAC_morale = 5}
+                            }
+                        }
+                        if = {
+                            limit = {
+                                tag = BLA
+                            }
+                            BLA = {
+                                add_to_variable = {BLA_morale = 5}
+                            }
+                        }
+                    }
+                }
+                50 = {
+                    custom_effect_tooltip = Morale_increase_by_3
+                    hidden_effect = {
+                        if = {
+                            limit = {
+                                tag = NAC
+                            }
+                            NAC = {
+                                add_to_variable = {NAC_morale = 3}
+                            }
+                        }
+                        if = {
+                            limit = {
+                                tag = BLA
+                            }
+                            BLA = {
+                                add_to_variable = {BLA_morale = 3}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    BLA_mobalise = {
+        available = {
+            has_war_with = NAC
+            surrender_progress < 0.50
+        }
+        visible = {
+            tag = BLA
+        }
+        cost = 30
+        days_remove = var:BLA_mobalise_cost
+        remove_effect = {
+            custom_effect_tooltip = BLA_cost_time_increase_desc
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {BLA_mobalise_cost = 5}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #动员群众
+    NAC_mobalise = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_war_with = BLA
+        }
+        cancel_trigger = {
+            NOT = {
+                has_war_with = BLA
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = NAC_comorades_join_us
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_template = "动员兵"
+                        }
+                    }
+                    division_template = {
+                        name = "动员兵"
+                        is_locked = yes
+                        regiments = {
+                            infantry = { x = 0 y = 0 }
+                            infantry = { x = 0 y = 1 }
+                            infantry = { x = 0 y = 2 }
+                            infantry = { x = 0 y = 3 }
+                            infantry = { x = 0 y = 4 }
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        NOT = {
+                            has_template = "志愿师"
+                        }
+                    }
+                    division_template = {
+                        name = "志愿师"
+                        is_locked = yes
+                        priority = 2
+                        template_counter = 0
+                        regiments = {
+                            infantry = { x = 0 y = 0 }
+                            infantry = { x = 0 y = 1 }
+                            infantry = { x = 0 y = 2 }
+                            infantry = { x = 1 y = 0 }
+                            infantry = { x = 1 y = 1 }
+                            infantry = { x = 1 y = 2 }
+                            artillery_brigade = { x = 2 y = 0 }
+                            artillery_brigade = { x = 2 y = 1 }
+                        }
+                    }
+                }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"志愿师\" division_template = \"志愿师\" start_experience_factor = 0.50"
+                        owner = NAC
+                    }
+                }
+                random_controlled_state = {
+                    limit = {
+                        is_core_of = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                }
+                random_controlled_state = {
+                    limit = {
+                        is_core_of = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                }
+            }
+        }
+    }
+}
+#调试决议
+NAC_debug_decisions = {
+    NAC_win_big_game = {
+        available = {
+            NAC = {
+                NOT = {has_war_with = BLA}
+            }
+            NOT = {
+                has_global_flag = End_Big_Game_flag
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {NAC_W_control_point = 1000}
+                    add_to_variable = {NAC_S_control_point = 1000}
+                    add_to_variable = {NAC_E_control_point = 1000}
+                }
+            }
+        }
+    }
+    NAC_food = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_disable_food_system
+            }
+        }
+        remove_effect = {
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_food_supply = 1000}
+                }
+            }
+        }
+    }
+    NAC_morale = {
+        remove_effect = {
+            hidden_effect = {
+                NAC = {
+                    add_to_variable = {NAC_morale = BLA.party_popularity_100@communism}
+                }
             }
         }
     }

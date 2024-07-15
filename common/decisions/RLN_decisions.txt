@@ -932,7 +932,8 @@ RLN_railroad_shop = {
     }
     #兑换装备
     RLN_gain_equipment = {
-        available = {custom_trigger_tooltip = {
+        available = {
+            custom_trigger_tooltip = {
                 tooltip = RLN_has_4_points
                 RLN = {
                     check_variable = {
@@ -954,73 +955,14 @@ RLN_railroad_shop = {
             }
         }
         remove_effect = {
-            if = {
-                limit = {
-                    has_tech = advanced_infantry_weapons
-                }
-                add_equipment_to_stockpile = {
-                    type = infantry_equipment_3
-                    amount = 5000
-                    producer = RLN
-                }
-            }
-            else_if = {
-                limit = {
-                    has_tech = improved_infantry_weapons
-                }
-                add_equipment_to_stockpile = {
-                    type = infantry_equipment_2
-                    amount = 5000
-                    producer = RLN
-                }
-            }
-            else_if = {
-                limit = {
-                    has_tech = infantry_weapons1
-                }
-                add_equipment_to_stockpile = {
-                    type = infantry_equipment_1
-                    amount = 5000
-                    producer = RLN
-                }
-            }
-            else = {
-                add_equipment_to_stockpile = {
-                    type = infantry_equipment_0
-                    amount = 5000
-                    producer = RLN
-                }
-            }
-            if = {
-                limit = {
-                    has_tech = artillery4
-                }
-                add_equipment_to_stockpile = {
-                    type = artillery_equipment_3
-                    amount = 250
-                    producer = RLN
-                }
-            }
-            else_if = {
-                limit = {
-                    has_tech = artillery1
-                }
-                add_equipment_to_stockpile = {
-                    type = artillery_equipment_2
-                    amount = 250
-                    producer = RLN
-                }
-            }
-            else = {
-                add_equipment_to_stockpile = {
-                    type = artillery_equipment_1
-                    amount = 250
-                    producer = RLN
-                }
-            }
             add_equipment_to_stockpile = {
-                type = motorized_equipment_1
-                amount = 100
+                type = infantry_equipment
+                amount = 2000
+                producer = RLN
+                }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 150
                 producer = RLN
             }
             add_equipment_to_stockpile = {
@@ -1068,8 +1010,8 @@ RLN_railroad_shop = {
             base = 9999
         }
     }
-    #兑换地图外民工
-    RLN_gain_extra_ic = {
+    #兑换民工
+    RLN_gain_ic = {
         available = {
             custom_trigger_tooltip = {
                 tooltip = RLN_has_10_points
@@ -1079,6 +1021,9 @@ RLN_railroad_shop = {
                     }
                 }
             }
+        }
+        visible = {
+            RLN = {check_variable = {RLN_num_of_ic_purchased < 15}}
         }
         days_remove = 60
         complete_effect = {
@@ -1093,21 +1038,16 @@ RLN_railroad_shop = {
         }
         remove_effect = {
             add_offsite_building = { type = industrial_complex level = 1 }
+            hidden_effect = {
+                RLN = {add_to_variable = {RLN_num_of_ic_purchased = 1}}
+            }
         }
         ai_will_do = {
             base = 100
-            modifier = {
-                add = 100
-                num_of_civilian_factories < 30
-            }
-            modifier = {
-                add = -90
-                num_of_civilian_factories > 40
-            }
         }
     }
-    #兑换地图外军工
-    RLN_gain_extra_cc = {
+    #兑换民工
+    RLN_gain_af = {
         available = {
             custom_trigger_tooltip = {
                 tooltip = RLN_has_10_points
@@ -1117,6 +1057,9 @@ RLN_railroad_shop = {
                     }
                 }
             }
+        }
+        visible = {
+            RLN = {check_variable = {RLN_num_of_af_purchased < 15}}
         }
         days_remove = 60
         complete_effect = {
@@ -1131,20 +1074,46 @@ RLN_railroad_shop = {
         }
         remove_effect = {
             add_offsite_building = { type = arms_factory level = 1 }
+            hidden_effect = {
+                RLN = {add_to_variable = {RLN_num_of_af_purchased = 1}}
+            }
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #兑换经济产能
+    RLN_gain_cic = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = RLN_has_8_points
+                RLN = {
+                    check_variable = {
+                        RLN_available_points > 7
+                    }
+                }
+            }
+        }
+        complete_effect = {
+            add_cic = 2000
+            custom_effect_tooltip = RLN_cost_8_desc
+            hidden_effect = {
+                RLN = {
+                    add_to_variable = {
+                        RLN_available_points = -8
+                    }
+                }
+            }
         }
         ai_will_do = {
             base = 100
             modifier = {
                 add = 100
-                num_of_military_factories < 30
+                num_of_civilian_factories < 30
             }
             modifier = {
                 add = -90
-                has_war = no
-            }
-            modifier = {
-                add = 1000
-                has_war = yes
+                num_of_civilian_factories > 40
             }
         }
     }
@@ -1492,6 +1461,286 @@ RLN_maitetsu = {
             }
             clr_country_flag = RLN_use_hachiroku_name
             set_country_flag = RLN_use_suzu_name
+        }
+    }
+}
+BA_Western_Wall = {
+    BA_total_mobalization = {
+        available = {
+            has_war = yes
+            is_faction_leader = yes
+        }
+        visible = {
+            is_faction_leader = yes
+        }
+        fire_only_once = yes
+        days_remove = 10
+        remove_effect = {
+            country_event = {id = BA.3}
+            every_country = {
+                limit = {
+                    is_in_faction_with = RLN
+                    NOT = {
+                        tag = RLN
+                    }
+                }
+                country_event = {id = BA.3}
+            }
+            hidden_effect = {
+                news_event = {id = BA_news.1 days = 4}
+            }
+        }
+    }
+    BA_contribute_infantry_equipment = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 1999
+            }
+        }
+        days_re_enable = 30
+        remove_effect = {
+            army_experience = 5
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = -2000
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {BA_infantry_equipment = 2000}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 20
+                has_war = yes
+            }
+        }
+    }
+    BA_contribute_artillery_equipment = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 99
+            }
+        }
+        days_re_enable = 30
+        remove_effect = {
+            army_experience = 5
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = -100
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {BA_artillery_equipment = 100}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 20
+                has_war = yes
+            }
+        }
+    }
+    BA_contribute_support_equipment = {
+        available = {
+            has_equipment = {
+                support_equipment_1 > 99
+            }
+        }
+        days_re_enable = 30
+        remove_effect = {
+            army_experience = 5
+            add_equipment_to_stockpile = {
+                type = support_equipment_1
+                amount = -100
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {BA_support_equipment = 100}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 20
+                has_war = yes
+            }
+        }
+    }
+    BA_gain_infantry_equipment = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BA_has_enough_in_stockplie
+                ROOT = {
+                    check_variable = {BA_infantry_equipment > 1999}
+                }
+            }
+        }
+        days_remove = 7
+        days_re_enable = 30
+        cost = 5
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 2000
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {BA_infantry_equipment = -2000}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 20
+                has_war = yes
+            }
+            modifier = {
+                add = 20
+                has_equipment = {
+                    infantry_equipment < 10000
+                }
+            }
+        }
+    }
+    BA_gain_artillery_equipment = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BA_has_enough_in_stockplie
+                ROOT = {
+                    check_variable = {BA_artillery_equipment > 99}
+                }
+            }
+        }
+        days_remove = 7
+        days_re_enable = 30
+        cost = 5
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = artillery_equipment_1
+                amount = 100
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {BA_artillery_equipment = -100}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 20
+                has_war = yes
+            }
+            modifier = {
+                add = 20
+                has_equipment = {
+                    artillery_equipment < 1000
+                }
+            }
+        }
+    }
+    BA_gain_support_equipment = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BA_has_enough_in_stockplie
+                ROOT = {
+                    check_variable = {BA_support_equipment > 99}
+                }
+            }
+        }
+        days_remove = 7
+        days_re_enable = 30
+        cost = 5
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = support_equipment_1
+                amount = 100
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {BA_support_equipment = -100}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 20
+                has_war = yes
+            }
+            modifier = {
+                add = 20
+                has_equipment = {
+                    support_equipment_1 < 1000
+                }
+            }
+        }
+    }
+    BA_expand_army = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 899
+            }
+            has_equipment = {
+                artillery_equipment > 199
+            }
+            has_manpower > 9999
+        }
+        days_remove = 60
+        cost = 20
+        complete_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = -900
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = -200
+            }
+            add_manpower = -10000
+        }
+        remove_effect = {
+            division_template = {
+				name = "训练有素的美少女旅"
+				regiments = {
+					infantry = {x = 0 y = 0}
+					infantry = {x = 0 y = 1}
+					infantry = {x = 0 y = 2}
+					infantry = {x = 1 y = 0}
+					infantry = {x = 1 y = 1}
+                    infantry = {x = 1 y = 2}
+                    infantry = {x = 2 y = 0}
+					infantry = {x = 2 y = 1}
+                    infantry = {x = 2 y = 2}
+                    artillery_brigade = {x = 3 y = 0}
+                    artillery_brigade = {x = 3 y = 1}
+                    artillery_brigade = {x = 3 y = 2}
+				}
+				support = {
+					engineer = {x = 0 y = 0}
+					artillery = {x = 1 y = 0}
+				}
+			}
+            capital_scope = {
+				create_unit = {
+					division = "name = \"训练有素的美少女旅\" division_template = \"训练有素的美少女旅\" start_experience_factor = 0.30"
+					owner = ROOT
+				}
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 20
+                has_war = yes
+            }
         }
     }
 }

@@ -1,5 +1,197 @@
 #沙皇之治
 BLA_rule_of_tsar = {
+    #对赫萝西查的最后通牒
+    BLA_last_change = {
+        available = {
+            country_exists = HEL
+            NOT = {
+                has_war_with = HEL
+            }
+        }
+        visible = {
+            NOT = {
+                country_exists = NAC
+            }
+        }
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            HEL = {
+                country_event = {id = BLA_general.44}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #撤销《乌斯基亚协定》
+    BLA_annex_HBR = {
+        available = {
+            country_exists = HBR
+            HBR = {
+                is_puppet_of = BLA
+            }
+        }
+        visible = {
+            NOT = {
+                country_exists = NAC
+            }
+        }
+        cost = 100
+        days_remove = 90
+        fire_only_once = yes
+        remove_effect = {
+            annex_country = {
+                target = HBR
+                transfer_troops = yes
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #撤销南方总督区
+    BLA_annex_SVI = {
+        available = {
+            country_exists = SVI
+            SVI = {
+                is_puppet_of = BLA
+            }
+        }
+        visible = {
+            NOT = {
+                country_exists = NAC
+            }
+        }
+        cost = 20
+        days_remove = 50
+        fire_only_once = yes
+        remove_effect = {
+            annex_country = {
+                target = SVI
+                transfer_troops = yes
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #青年八月党抗议
+    BLA_young_august_protest = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war = no
+            NOT = {
+                has_idea = BLA_PM_Sanya
+            }
+            has_idea = BLA_legacy_of_young_august
+        }
+        cancel_trigger = {
+            NOT = {
+                has_idea = BLA_legacy_of_young_august
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            random_list = {
+                40 = {
+                }
+                10 = {
+                    add_power_balance_value = {
+                        id = BLA_legacy_of_August
+                        value = -0.02
+                        tooltip_side = BLA_voice_of_people
+                    }
+                }
+                10 = {
+                    add_popularity = {
+                        ideology = communism
+                        popularity = 0.01
+                    }
+                }
+                10 = {
+                    add_popularity = {
+                        ideology = democratic
+                        popularity = 0.01
+                    }
+                }
+                10 = {
+                    add_political_power = -5
+                }
+                10 = {
+                    add_stability = -0.01
+                }
+                10 = {
+                    BLA_decrease_freeman_opinion = yes
+                }
+            }
+        }
+    }
+    #保守派抗议
+    BLA_conservative_protest = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war = no
+            has_idea = BLA_PM_Sanya
+            has_idea = BLA_legacy_of_young_august
+        }
+        cancel_trigger = {
+            NOT = {
+                has_idea = BLA_legacy_of_young_august
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            random_list = {
+                40 = {
+                }
+                10 = {
+                    add_power_balance_value = {
+                        id = BLA_legacy_of_August
+                        value = 0.02
+                        tooltip_side = BLA_ice_dream
+                    }
+                }
+                10 = {
+                    add_popularity = {
+                        ideology = reactionism
+                        popularity = 0.01
+                    }
+                }
+                10 = {
+                    add_popularity = {
+                        ideology = fascism
+                        popularity = 0.01
+                    }
+                }
+                10 = {
+                    add_political_power = -5
+                }
+                10 = {
+                    add_stability = -0.01
+                }
+                10 = {
+                    add_war_support = -0.02
+                }
+            }
+        }
+    }
     #废除农奴制
     BLA_end_serfdom = {
         available = {
@@ -60,7 +252,32 @@ BLA_rule_of_tsar = {
         }
         cost = var:BLA_rot_nobility_cost
         days_re_enable = 0
-        days_remove = 30
+        days_remove = 20
+        complete_effect = {
+            set_country_flag = BLA_rot_action_implemented
+        }
+        remove_effect = {
+            BLA_increase_nobility_opinion = yes
+            clr_country_flag = BLA_rot_action_implemented
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 1000
+                BLA = {check_variable = {BLA_nobility_opinion < 0}}
+            }
+        }
+    }
+    #与贵族会谈
+    BLA_siera_conference_with_nobility = {
+        available = {
+            NOT = {has_country_flag = BLA_rot_action_implemented}
+        }
+        visible = {
+            has_idea = BLA_PM_Siera
+        }
+        days_re_enable = 60
+        days_remove = 10
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
@@ -142,9 +359,9 @@ BLA_rule_of_tsar = {
         }
         visible = {
         }
-        cost = 25
+        cost = 20
         days_re_enable = 0
-        days_remove = 30
+        days_remove = 20
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
@@ -227,9 +444,9 @@ BLA_rule_of_tsar = {
         }
         visible = {
         }
-        cost = 25
+        cost = 20
         days_re_enable = 0
-        days_remove = 30
+        days_remove = 20
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
@@ -281,9 +498,9 @@ BLA_rule_of_tsar = {
         }
         visible = {
         }
-        cost = 25
+        cost = 20
         days_re_enable = 0
-        days_remove = 30
+        days_remove = 20
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
@@ -335,14 +552,44 @@ BLA_rule_of_tsar = {
         }
         visible = {
         }
-        cost = 25
+        cost = 20
         days_re_enable = 0
-        days_remove = 30
+        days_remove = 20
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
         remove_effect = {
             BLA_increase_freeman_opinion = yes
+            clr_country_flag = BLA_rot_action_implemented
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 1000
+                BLA = {check_variable = {BLA_freeman_opinion < 0}}
+            }
+        }
+    }
+    #约束过激行为
+    BLA_sanya_conference_with_freeman = {
+        available = {
+            NOT = {has_country_flag = BLA_rot_action_implemented}
+        }
+        visible = {
+            has_idea = BLA_PM_Sanya
+        }
+        days_re_enable = 60
+        days_remove = 10
+        complete_effect = {
+            set_country_flag = BLA_rot_action_implemented
+        }
+        remove_effect = {
+            add_stability = 0.025
+            BLA_increase_freeman_opinion = yes
+            add_popularity = {
+                ideology = communism
+                popularity = -0.02
+            }
             clr_country_flag = BLA_rot_action_implemented
         }
         ai_will_do = {
@@ -360,9 +607,9 @@ BLA_rule_of_tsar = {
         }
         visible = {
         }
-        cost = 25
+        cost = 20
         days_re_enable = 7
-        days_remove = 30
+        days_remove = 20
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
@@ -389,9 +636,9 @@ BLA_rule_of_tsar = {
                 has_completed_focus = BLA_Anna_pol_5
             }
         }
-        cost = 25
+        cost = 20
         days_re_enable = 0
-        days_remove = 30
+        days_remove = 20
         complete_effect = {
             set_country_flag = BLA_rot_action_implemented
         }
@@ -402,6 +649,31 @@ BLA_rule_of_tsar = {
         }
         ai_will_do = {
             base = 10
+            modifier = {
+                add = -1000
+                BLA = {check_variable = {BLA_serf_opinion < -25}}
+            }
+        }
+    }
+    #少量土地改革
+    BLA_land_reform = {
+        available = {
+            NOT = {has_country_flag = BLA_rot_action_implemented}
+        }
+        visible = {
+        }
+        cost = 50
+        days_re_enable = 0
+        days_remove = 30
+        complete_effect = {
+            set_country_flag = BLA_rot_action_implemented
+        }
+        remove_effect = {
+            BLA_increase_serf_opinion = yes
+            clr_country_flag = BLA_rot_action_implemented
+        }
+        ai_will_do = {
+            base = 1000
             modifier = {
                 add = -1000
                 BLA = {check_variable = {BLA_serf_opinion < -25}}
@@ -636,7 +908,6 @@ BLA_secret_police = {
                 ideology = communism
                 popularity = -0.02
             }
-            BLA_decrease_freeman_opinion = yes
             clr_country_flag = BLA_streghten_censorship_flag
         }
         ai_will_do = {
@@ -664,7 +935,7 @@ BLA_secret_police = {
         }
         cost = 30
         days_remove = 30
-        days_re_enable = 30
+        days_re_enable = 40
         ai_will_do = {
             base = 10
             modifier = {
@@ -682,6 +953,11 @@ BLA_secret_police = {
             }
             BLA_increase_freeman_opinion = yes
             BLA_decrease_church_opinion = yes
+            add_power_balance_value = {
+                id = BLA_legacy_of_August
+                value = -0.01
+                tooltip_side = BLA_voice_of_people
+            }
             clr_country_flag = BLA_loosen_censorship_flag
         }
     }
@@ -693,7 +969,7 @@ BLA_secret_police = {
         }
         cost = 30
         days_remove = 30
-        days_re_enable = 30
+        days_re_enable = 40
         complete_effect = {
         }
         remove_effect = {
@@ -705,7 +981,11 @@ BLA_secret_police = {
                 ideology = neutrality
                 popularity = 0.01
             }
-            BLA_decrease_freeman_opinion = yes
+            add_power_balance_value = {
+                id = BLA_legacy_of_August
+                value = 0.01
+                tooltip_side = BLA_ice_dream
+            }
         }
         ai_will_do = {
             base = 1000
@@ -780,6 +1060,82 @@ BLA_secret_police = {
 }
 #工业化
 BLA_industralization = {
+    #外国投资
+    BLA_foreign_investment = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_completed_focus = BLA_Anna_industry_9
+        }
+        cancel_trigger = {
+            always = no
+        }
+        days_mission_timeout = 40
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            if = {
+                limit = {
+                    has_war = no
+                    NOT = {
+                        has_completed_focus = BLA_Anna_industry_10
+                    }
+                }
+                add_cic = 1500
+            }
+            if = {
+                limit = {
+                    has_war = yes
+                    NOT = {
+                        has_completed_focus = BLA_Anna_industry_10
+                    }
+                }
+                add_cic = 750
+            }
+            if = {
+                limit = {
+                    has_war = no
+                    has_completed_focus = BLA_Anna_industry_10
+                }
+                add_cic = 2500
+            }
+            if = {
+                limit = {
+                    has_war = yes
+                    has_completed_focus = BLA_Anna_industry_10
+                }
+                add_cic = 1250
+            }
+        }
+    }
+    BLA_export_grain = {
+        cost = 20
+        days_remove = 20
+        days_re_enable = 60
+        remove_effect = {
+            BLA_decrease_serf_opinion = yes
+            custom_effect_tooltip = BLA_gain_300_desc
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_industralization_fund = 300}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0.1
+                BLA = {
+                    check_variable = {BLA_serf_opinion < -30}
+                }
+            }
+        }
+    }
     #投资基建
     BLA_invest_infrastructure = {
         available = {
@@ -841,7 +1197,7 @@ BLA_industralization = {
         }
         visible = {
             NOT = {
-                BLA = {check_variable = {BLA_num_of_ic_invested > 49}}
+                BLA = {check_variable = {BLA_num_of_ic_invested > 29}}
             }
         }
         cost = 0
@@ -866,8 +1222,12 @@ BLA_industralization = {
 				    instant_build = yes
 			    }
 		    }
+            custom_effect_tooltip = BLA_ic_invest_bonus_desc
             hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_ic_invested = 1}}
+                BLA = {
+                    add_to_variable = {BLA_num_of_ic_invested = 1}
+                    add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.004}
+                }
             }
         }
     }
@@ -884,7 +1244,7 @@ BLA_industralization = {
         }
         visible = {
             NOT = {
-                BLA = {check_variable = {BLA_num_of_af_invested > 44}}
+                BLA = {check_variable = {BLA_num_of_af_invested > 24}}
             }
             BLA = {check_variable = {BLA_industralization_status > 1}}
         }
@@ -898,6 +1258,7 @@ BLA_industralization = {
             hidden_effect = {
                 BLA = {
                     add_to_variable = {BLA_industralization_fund = -700}
+                    
                 }
             }
         }
@@ -910,8 +1271,12 @@ BLA_industralization = {
 				    instant_build = yes
 			    }
 		    }
+            custom_effect_tooltip = BLA_af_invest_bonus_desc
             hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_af_invested = 1}}
+                BLA = {
+                    add_to_variable = {BLA_num_of_af_invested = 1}
+                    add_to_variable = {BLA_dynamic_industrial_capacity_factory = 0.005}
+                }
             }
         }
     }
@@ -929,7 +1294,7 @@ BLA_industralization = {
         }
         visible = {
             NOT = {
-                BLA = {check_variable = {BLA_num_of_dockyard_invested > 39}}
+                BLA = {check_variable = {BLA_num_of_dockyard_invested > 24}}
             }
             BLA = {check_variable = {BLA_industralization_status > 1}}
         }
@@ -958,8 +1323,12 @@ BLA_industralization = {
 				    instant_build = yes
 			    }
 		    }
+            custom_effect_tooltip = BLA_dc_invest_bonus_desc
             hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_dockyard_invested = 1}}
+                BLA = {
+                    add_to_variable = {BLA_num_of_dockyard_invested = 1}
+                    add_to_variable = {BLA_dynamic_industrial_capacity_dockyard = 0.005}
+                }
             }
         }
     }
@@ -992,7 +1361,7 @@ BLA_industralization = {
         }
         remove_effect = {
             add_tech_bonus = {
-                bonus = 0.40
+                bonus = 0.50
                 uses = 1
                 category = industry
             }
@@ -1033,7 +1402,7 @@ BLA_industralization = {
         }
         remove_effect = {
             add_tech_bonus = {
-                bonus = 0.30
+                bonus = 0.50
                 uses = 1
                 category = infantry_weapons
             }
@@ -1074,7 +1443,7 @@ BLA_industralization = {
         }
         remove_effect = {
             add_tech_bonus = {
-                bonus = 0.30
+                bonus = 0.50
                 uses = 1
                 category = artillery
             }
@@ -1115,7 +1484,7 @@ BLA_industralization = {
         }
         remove_effect = {
             add_tech_bonus = {
-                bonus = 0.30
+                bonus = 0.50
                 uses = 1
                 category = armor
             }
@@ -1156,7 +1525,7 @@ BLA_industralization = {
         }
         remove_effect = {
             add_tech_bonus = {
-                bonus = 0.30
+                bonus = 0.50
                 uses = 1
                 category = air_equipment
             }
@@ -1197,7 +1566,7 @@ BLA_industralization = {
         }
         remove_effect = {
             add_tech_bonus = {
-                bonus = 0.30
+                bonus = 0.50
                 uses = 1
                 category = naval_equipment
             }
@@ -1295,7 +1664,6 @@ BLA_debt_management = {
             }
             country_exists = ELN
         }
-        cost = 20
         days_remove = 30
         days_re_enable = 100
         ai_will_do = {
@@ -1528,7 +1896,6 @@ BLA_debt_management = {
             }
             country_exists = ANZ
         }
-        cost = 20
         days_remove = 30
         days_re_enable = 100
         ai_will_do = {
@@ -1761,7 +2128,6 @@ BLA_debt_management = {
             }
             country_exists = USR
         }
-        cost = 20
         days_remove = 30
         days_re_enable = 100
         ai_will_do = {
@@ -1994,7 +2360,6 @@ BLA_debt_management = {
             }
             country_exists = USF
         }
-        cost = 20
         days_remove = 30
         days_re_enable = 100
         ai_will_do = {
@@ -2227,7 +2592,6 @@ BLA_debt_management = {
             }
             country_exists = STG
         }
-        cost = 20
         days_remove = 30
         days_re_enable = 100
         ai_will_do = {
@@ -2457,7 +2821,6 @@ BLA_debt_management = {
                 has_country_flag = BLA_default
             }
         }
-        cost = 10
         days_remove = 30
         days_re_enable = 100
         ai_will_do = {
@@ -2655,7 +3018,7 @@ BLA_purchase_weapons = {
         }
         remove_effect = {
             add_equipment_to_stockpile = {
-                type = infantry_equipment_1
+                type = infantry_equipment
 		        amount = 4000
 		        producer = BLA
             }
@@ -3358,6 +3721,63 @@ Big_Game = {
                     }
                 }
             }
+        }
+    }
+}
+#重返荒原
+Back_to_wasteland = {
+    Annex_NWT = {
+        available = {
+            has_war = no
+            if = {
+                limit = {
+                    tag = NAC
+                }
+                NOT = {
+                    country_exists = BLA
+                }
+                OR = {
+                    NOT = {
+                        country_exists = OPA
+                    }
+                    OPA = {
+                        has_government = NAC
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    tag = BLA
+                }
+                NOT = {
+                    country_exists = NAC
+                }
+                NOT = {
+                    country_exists = OPA
+                }
+            }
+            if = {
+                limit = {
+                    tag = OPA
+                }
+                NOT = {
+                    country_exists = NAC
+                }
+                NOT = {
+                    country_exists = BLA
+                }
+            }
+        }
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            annex_country = {
+                target = NWT
+                transfer_troops = no
+            }
+        }
+        ai_will_do = {
+            base = 1000
         }
     }
 }

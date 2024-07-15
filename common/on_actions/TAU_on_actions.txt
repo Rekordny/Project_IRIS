@@ -4,16 +4,23 @@ on_actions = {
 			TAU = {
 				#女神像数量初始化
 				set_variable = { tau_nsx = 0 }
+				TAU_init_nsx = yes
 				#发展度初始化
 				set_variable = { tau_dev = 0 }
+				set_variable = { tau_vice1_ratio = 0 }
+				set_variable = { tau_vice2_ratio = 0 }
+				set_variable = { tau_vice3_ratio = 0 }
+				set_variable = { tau_vice4_ratio = 0 }
 				#发展度国土基数初始化
 				set_variable = { tau_dev_base_factor = 0 }
 				#发展度奖励基数初始化
 				set_variable = { tau_dev_bonus_factor = 0 }
+				#
+				add_dynamic_modifier = {
+					modifier = TAU_dev_dynamic_modifier
+				}
 				#更新国土基数并更新发展度
 				TAU_update_dev_base_factor = yes
-				#更新女神像获取
-				TAU_update_nsx = yes
 			}
 		}
 	}
@@ -24,8 +31,61 @@ on_actions = {
 				#更新国土基数并更新发展度
 				TAU_update_dev_base_factor = yes
 				#更新女神像获取
-				TAU_update_nsx = yes
+				#TAU_update_nsx = yes
 			}
 		}
+	}
+
+	on_war = {
+		effect = { 
+			if = {
+				limit = { THIS = { tag = TAU } has_idea = TAU_independent_political_status }
+				remove_ideas = TAU_independent_political_status
+			}
+		}
+	}
+
+	on_unit_leader_level_up = {
+		effect = {
+			if = { 
+				limit = { 
+					FROM = { 
+						has_idea = TAU_national_training_programme 
+					} 
+				}
+				character = { 
+					IF = { 
+						limit = { is_army_leader = yes }
+					
+						random_list = { 
+							tau_dm_national_training_chance = { 
+								random_list = {
+									10 = { add_attack = 1 }
+									10 = { add_planning = 1 }
+									10 = { add_defense = 1 }
+									10 = { add_logistics = 1 }
+								}
+							} 
+							tau_dm_national_training_chance_alter = {} 
+						} 
+					}
+				}
+			}
+			if = { 
+				limit = { 
+					FROM = { 
+						tag = TAU
+					} 
+				}
+				character = { 
+					IF = { 
+						limit = { OR = { skill = 3 AND = { skill = 5 has_completed_focus = TAU_maximum_support_schedule } } }
+						add_to_variable = {
+							TAU.tau_nsx = 1
+						}
+					}
+				}
+			}
+		}  
 	}
 }
