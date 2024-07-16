@@ -2,18 +2,258 @@ scripted_gui = {
     PRM_Page_View_Background_window = {
         window_name = "PRM_Page_View_Background_window"
         context_type = decision_category
-        visible = {
-            TAG = PRM
-		}
+
+
+        effects = {
+            PRM_display_current_card_holdings_buttonType_click = {
+                if = {
+                    limit = {
+                        tag = PRM
+                    }
+                    PRM_currently_selected_book_page_copyist = yes
+                }
+                else = {
+                    PRM_currently_selected_book_page_guest = yes
+                }
+            }
+            #来宾点击
+            PRM_guests_2_buttonType_click = {
+                if = {
+                    limit = {
+                        NOT = {
+                            tag = PRM
+                        }
+                    }
+                    PRM_display_current_card_holdings_guest = yes
+                }
+                else = {
+                    #设置进攻目标-司书
+                    PRM_Set_attack_targets_copyist = YES
+                }
+            }
+            #来宾点击
+            PRM_copyist_2_buttonType_click = {
+                if = {
+                    limit = {
+                        tag = PRM
+                    }
+                    PRM_display_current_card_holdings_copyist = yes
+                }
+                else = {
+                    #设置进攻目标-来宾
+                    PRM_Set_attack_targets_guest = YES
+                }
+            }
+        }
+        
+
+        dynamic_lists = {
+            #来宾
+            PRM_guests_lists = {
+                array = global.PRM_guests_array
+                index = i
+                value = v
+                entry_container = PRM_guests
+                change_scope = no
+            }
+            #司书
+            PRM_copyist_lists = {
+                array = global.PRM_copyist_array
+                index = i
+                value = v
+                entry_container = PRM_copyist
+                change_scope = no
+            }
+            #随机抽牌
+            PRM_display_current_card_holdings_lists = {
+                array = ROOT.PRM_display_current_card_holdings_array
+                index = show_all_book_pages_array_i
+                value = show_all_book_pages_array_v
+                entry_container = PRM_display_current_card_holdings
+                change_scope = no
+            }
+        }
+        properties = {
+            PRM_display_current_card_holdings_buttonType = {
+                image = "[GetPrmSelectBookPageimage]"
+            }
+        }
     }
-    
+
     PRM_Burning_Books_window = {
         window_name = "PRM_Burning_Books_window"
         context_type = decision_category
         properties = {
-			PRM_book_LOGO_lock = {
-				image = "[PRM_Burning_Books]"
-			}
-		}
+            PRM_book_LOGO_lock = {
+                image = "[PRM_Burning_Books]"
+            }
+        }
+    }
+
+    PRM_page_window = {
+        window_name = "PRM_page_window"
+        context_type = player_context
+        visible = {
+            has_country_flag = PRM_invited_guests_flag
+        }
+
+        effects = {
+            PRM_page_window_1_lists_container_buttonType_click = {
+                PRM_del_book_pages_to_card_set_book_manager = yes
+            }
+            PRM_page_window_2_lists_container_buttonType_click = {
+                PRM_add_book_pages_to_card_set_book_manager = yes
+            }
+            PRM_page_window_3_lists_container_buttonType_click = {
+                PRM_select_characterset_book_manager = yes
+            }
+            determine_click = {
+                if = {
+                    limit = {
+                        has_global_flag = GetPrmYes_flag
+                    }
+                    clr_global_flag = GetPrmYes_flag
+                    clr_country_flag = GetPrmDetermine_flag
+                }
+                else = {
+                    set_global_flag = GetPrmYes_flag
+                    set_country_flag = GetPrmDetermine_flag
+                }
+                if = {
+                    limit = {
+                        has_global_flag = GetPrmYes_flag
+                        has_global_flag = GetPrmGuestYes_flag
+                    }
+                    PRM_initialize_match_data = yes
+                }
+            }
+        }
+        dynamic_lists = {
+
+            #选择的书页
+            PRM_page_window_1_lists = {
+                array = global.selected_card_set_secretary_array_0
+                index = show_all_book_pages_array_i
+                value = show_all_book_pages_array_v
+                entry_container = PRM_page_window_1_lists_container
+                change_scope = no
+            }
+
+            #书页
+            PRM_page_window_2_lists = {
+                array = global.show_all_book_pages_array
+                index = show_all_book_pages_array_i
+                value = show_all_book_pages_array_v
+                entry_container = PRM_page_window_2_lists_container
+                change_scope = no
+            }
+
+            #当前角色
+            PRM_page_window_3_lists = {
+                array = global.current_role_array
+                index = current_role_array_i
+                value = current_role_array_v
+                entry_container = PRM_page_window_3_lists_container
+                change_scope = no
+            }
+        }
+        properties = {
+            PRM_page_window_1_lists_container_buttonType = {
+                image = "[GetPrmSelectBookPageimage]"
+            }
+            PRM_page_window_2_lists_container_buttonType = {
+                image = "[GetPrmSelectBookPageimage]"
+            }
+            PRM_page_window_3_lists_container_buttonType = {
+                image = "[GetCurrentlySelectedRoleimage]"
+            }
+            determine = {
+                image = "[GetDetermineimage]"
+            }
+        }
+    }
+
+    #来宾使用的
+    PRM_page_guest_window = {
+        window_name = "PRM_page_guest_window"
+        context_type = player_context
+        visible = {
+            has_country_flag = PRM_becoming_guest_flag
+        }
+
+        effects = {
+            PRM_page_window_1_lists_container_guest_buttonType_click = {
+                PRM_del_book_pages_to_card_set_guest = yes
+            }
+            PRM_page_window_2_lists_container_guest_buttonType_click = {
+                PRM_add_book_pages_to_card_set_guest = yes
+            }
+            PRM_page_window_3_lists_container_guest_buttonType_click = {
+                PRM_select_characterset_book_manager_guest = yes
+            }
+            determine_click = {
+                if = {
+                    limit = {
+                        has_global_flag = GetPrmGuestYes_flag
+                    }
+                    clr_global_flag = GetPrmGuestYes_flag
+                    clr_country_flag = GetPrmDetermine_flag
+                }
+                else = {
+                    set_global_flag = GetPrmGuestYes_flag
+                    set_country_flag = GetPrmDetermine_flag
+                }
+                if = {
+                    limit = {
+                        has_global_flag = GetPrmYes_flag
+                        has_global_flag = GetPrmGuestYes_flag
+                    }
+                    PRM_initialize_match_data = yes
+                }
+            }
+        }
+        dynamic_lists = {
+
+            #选择的书页
+            PRM_page_guest_window_1_lists = {
+                array = global.selected_card_set_secretary_array_0_guest
+                index = show_all_book_pages_array_i
+                value = show_all_book_pages_array_v
+                entry_container = PRM_page_window_1_lists_container_guest
+                change_scope = no
+            }
+
+            #书页
+            PRM_page_guest_window_2_lists = {
+                array = global.show_all_book_pages_array_guest
+                index = show_all_book_pages_array_i
+                value = show_all_book_pages_array_v
+                entry_container = PRM_page_window_2_lists_container_guest
+                change_scope = no
+            }
+
+            #当前角色
+            PRM_page_guest_window_3_lists = {
+                array = global.current_role_array_guest
+                index = current_role_array_i
+                value = current_role_array_v
+                entry_container = PRM_page_window_3_lists_container_guest
+                change_scope = no
+            }
+        }
+        properties = {
+            PRM_page_window_1_lists_container_guest_buttonType = {
+                image = "[GetPrmSelectBookPageimage]"
+            }
+            PRM_page_window_2_lists_container_guest_buttonType = {
+                image = "[GetPrmSelectBookPageimage]"
+            }
+            PRM_page_window_3_lists_container_guest_buttonType = {
+                image = "[GetCurrentlySelectedRoleimage]"
+            }
+            determine = {
+                image = "[GetDetermineimage]"
+            }
+        }
     }
 }
