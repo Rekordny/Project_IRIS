@@ -14,209 +14,329 @@ TAU_add_om_deportation_of_humans = {
 	}
 }
 
-#博文外交态度修改
-TAU_dilemma_atti_BOW_rise_1 = {
-	custom_effect_tooltip = TAU_dilemma_atti_BOW_rise_1
-	add_to_variable = { tau_bw_atti = 5 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_BOW = yes
+#计算更新发展度
+#更换领导人时必要手动更新
+#发展度=(1+发展度附加值*0.1)*发展度国土基数/10
+#国土基数在on_action每月更新和必要手动更新
+TAU_update_dev = {
+	set_temp_variable = {
+		TAU_temp_counter1 = tau_dev_bonus_factor
 	}
-}
-TAU_dilemma_atti_BOW_rise_2 = {
-	custom_effect_tooltip = TAU_dilemma_atti_BOW_rise_2
-	add_to_variable = { tau_bw_atti = 10 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_BOW = yes
+	multiply_temp_variable = {
+		TAU_temp_counter1 = 0.1
 	}
-}
-TAU_dilemma_atti_BOW_rise_3 = {
-	custom_effect_tooltip = TAU_dilemma_atti_BOW_rise_3
-	add_to_variable = { tau_bw_atti = 20 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_BOW = yes
+	add_to_temp_variable = {
+		TAU_temp_counter1 = 1
 	}
-}
-TAU_dilemma_atti_BOW_drop_1 = {
-	custom_effect_tooltip = TAU_dilemma_atti_BOW_drop_1
-	add_to_variable = { tau_bw_atti = 20 }
-	add_to_variable = { tau_bw_atti = -5 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_BOW = yes
+	multiply_temp_variable = {
+		TAU_temp_counter1 = tau_dev_base_factor
 	}
-}
-TAU_dilemma_atti_BOW_drop_2 = {
-	custom_effect_tooltip = TAU_dilemma_atti_BOW_drop_2
-	add_to_variable = { tau_bw_atti = -10 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_BOW = yes
+	divide_temp_variable = {
+		TAU_temp_counter1 = 10
 	}
-}
-TAU_dilemma_atti_BOW_drop_3 = {
-	custom_effect_tooltip = TAU_dilemma_atti_BOW_drop_3
-	add_to_variable = { tau_bw_atti = -20 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_BOW = yes
-	}
-}
-
-TAU_dilemma_reassign_opinion_modifier_BOW = {
-	BOW = {
-		remove_opinion_modifier = {
-			target = TAU
-			modifier = TAU_satisfied_with_dipatti
-		}
-		remove_opinion_modifier = {
-			target = TAU
-			modifier = TAU_unsatisfied_with_dipatti
-		}
-	}
-	
+	# 乘算计算MODIFIERS
 	if = {
-		limit = { check_variable = { tau_bw_atti > 30 } } 
-		BOW = { add_opinion_modifier = {
-			target = TAU
-			modifier = TAU_satisfied_with_dipatti
+		limit = { check_variable = {
+			modifier@tau_dev_stability_contribute > 0.5
 		} }
-	}
-	else_if = {
-		limit = { check_variable = { tau_bw_atti < 0 } }
-		BOW = { add_opinion_modifier = {
-			target = TAU
-			modifier = TAU_unsatisfied_with_dipatti
-		} }
-	}
-	else_if = {
-		limit = { check_variable = { tau_bw_atti < -30 } }
-		BOW = { add_opinion_modifier = {
-			target = TAU
-			modifier = TAU_unsatisfied_with_dipatti
-		} }
-
-	}
-}
-
-
-#理事会外交态度修改
-TAU_dilemma_atti_PCC_rise_1 = {
-	custom_effect_tooltip = TAU_dilemma_atti_PCC_rise_1
-	add_to_variable = { tau_lsh_atti = 5 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_PCC = yes
-	}
-}
-TAU_dilemma_atti_PCC_rise_2 = {
-	custom_effect_tooltip = TAU_dilemma_atti_PCC_rise_2
-	add_to_variable = { tau_lsh_atti = 10 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_PCC = yes
-	}
-}
-TAU_dilemma_atti_PCC_rise_3 = {
-	custom_effect_tooltip = TAU_dilemma_atti_PCC_rise_3
-	add_to_variable = { tau_lsh_atti = 20 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_PCC = yes
-	}
-}
-TAU_dilemma_atti_PCC_drop_1 = {
-	custom_effect_tooltip = TAU_dilemma_atti_PCC_drop_1
-	add_to_variable = { tau_lsh_atti = -5 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_PCC = yes
-	}
-}
-TAU_dilemma_atti_PCC_drop_2 = {
-	custom_effect_tooltip = TAU_dilemma_atti_PCC_drop_2
-	add_to_variable = { tau_lsh_atti = -10 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_PCC = yes
-	}
-}
-TAU_dilemma_atti_PCC_drop_3 = {
-	custom_effect_tooltip = TAU_dilemma_atti_PCC_drop_3
-	add_to_variable = { tau_lsh_atti = -20 }
-	hidden_effect = {
-		TAU_dilemma_reassign_opinion_modifier_PCC = yes
-	}
-}
-
-TAU_dilemma_reassign_opinion_modifier_PCC = {
-	PCC = {
-		remove_opinion_modifier = {
-			target = TAU
-			modifier = TAU_satisfied_with_dipatti
+		set_temp_variable = {
+			TAU_temp_counter2 = TAU.stability
 		}
-		remove_opinion_modifier = {
-			target = TAU
-			modifier = TAU_unsatisfied_with_dipatti
+		add_to_temp_variable = {
+			TAU_temp_counter2 = 0.5
+		}
+		clamp_temp_variable = {
+			var = TAU_temp_counter2
+			min = 0.5
+			max = 1.5
+		}
+		multiply_temp_variable = {
+			TAU_temp_counter1 = TAU_temp_counter2
 		}
 	}
 	if = {
-		limit = { check_variable = { tau_lsh_atti > 30 } } 
-		PCC = { add_opinion_modifier = {
-			target = TAU
-			modifier = TAU_satisfied_with_dipatti
+		limit = { check_variable = {
+			modifier@tau_dev_war_support_contribute > 0.5
 		} }
+		set_temp_variable = {
+			TAU_temp_counter2 = TAU.has_war_support
+		}
+		add_to_temp_variable = {
+			TAU_temp_counter2 = 0.5
+		}
+		clamp_temp_variable = {
+			var = TAU_temp_counter2
+			min = 0.5
+			max = 1.5
+		}
+		multiply_temp_variable = {
+			TAU_temp_counter1 = TAU_temp_counter2
+		}
 	}
-	else_if = {
-		limit = { check_variable = { tau_lsh_atti < 0 } }
-		PCC = { add_opinion_modifier = {
-			target = TAU
-			modifier = TAU_unsatisfied_with_dipatti
-		} }
+	# 加成计算MODIFIERS
+	set_temp_variable = {
+		TAU_temp_counter2 = num_of_civilian_factories
 	}
-	else_if = {
-		limit = { check_variable = { tau_lsh_atti < -30 } }
-		PCC = { add_opinion_modifier = {
-			target = TAU
-			modifier = TAU_unsatisfied_with_dipatti
-		} }
+	multiply_temp_variable = {
+		TAU_temp_counter2 = modifier@tau_dev_industrial_complex_contribute
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter2
+	}
 
+	set_temp_variable = {
+		TAU_temp_counter2 = num_of_military_factories
+	}
+	multiply_temp_variable = {
+		TAU_temp_counter2 = modifier@tau_dev_arms_factory_contribute
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter2
+	}
+
+	set_variable = {
+		TAU.tau_dev_counter1 = 0
+	}
+	every_controlled_state = {
+		limit = { is_controlled_by = ROOT }
+		add_to_variable = {
+			TAU.tau_dev_counter1 = building_level@radar_station
+		}
+	}
+	set_temp_variable = {
+		TAU_temp_counter2 = TAU.tau_dev_counter1
+	}
+	multiply_temp_variable = {
+		TAU_temp_counter2 = modifier@tau_dev_radar_station_contribute
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter2
+	}
+	
+	set_variable = {
+		TAU.tau_dev_counter1 = 0
+	}
+	every_controlled_state = {
+		limit = { is_controlled_by = ROOT }
+		add_to_variable = {
+			TAU.tau_dev_counter1 = building_level@anti_air_building
+		}
+	}
+	set_temp_variable = {
+		TAU_temp_counter2 = TAU.tau_dev_counter1
+	}
+	multiply_temp_variable = {
+		TAU_temp_counter2 = modifier@tau_dev_anti_air_building_contribute
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter2
+	}
+	
+	set_temp_variable = {
+		TAU_temp_counter2 = num_battalions_with_type@cavalry
+	}
+	multiply_temp_variable = {
+		TAU_temp_counter2 = modifier@tau_dev_battlion_cavalry_contribute
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter2
+	}
+	
+	set_temp_variable = {
+		TAU_temp_counter2 = num_battalions_with_type@motorized
+	}
+	multiply_temp_variable = {
+		TAU_temp_counter2 = modifier@tau_dev_battlion_motorized_contribute
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter2
+	}
+	# 加成计算COUNTRYLEADER
+	if = {
+		limit = { has_country_leader_with_trait = TAU_personal_agenda_SymboliRudolf check_variable = {
+			num_of_military_factories < num_of_civilian_factories
+		} }
+		multiply_temp_variable = {
+			TAU_temp_counter1 = 0.65
+		}
+	}
+	else_if = {
+		limit = { has_country_leader_with_trait = TAU_personal_agenda_NaritaBrian has_war = yes }
+		multiply_temp_variable = {
+			TAU_temp_counter1 = 0.65
+		}
+	}
+	else_if = {
+		limit = { has_country_leader_with_trait = TAU_personal_agenda_TokaiTeio has_stability < 1 }
+		multiply_temp_variable = {
+			TAU_temp_counter1 = 0.65
+		}
+	}
+	#@tau_dev_multiplier
+	set_temp_variable = {
+		TAU_temp_counter3 = 1
+	}
+	add_to_temp_variable = {
+		TAU_temp_counter3 = modifier@tau_dev_multiplier
+	}
+	multiply_temp_variable = {
+		TAU_temp_counter1 = TAU_temp_counter3
+	}
+	set_variable = {
+		tau_dev = TAU_temp_counter1
+	}
+	TAU_update_dev_dynamic_modifier = yes
+}
+
+#计算国土基数发展度并更新总发展度
+#国土基数发展度 = 全省份战略值*
+TAU_update_dev_base_factor = {
+	set_temp_variable = {
+		TAU_temp_counter1 = 0
+	}
+	for_each_scope_loop = {
+		array = TAU.owned_states
+		if = {
+			limit = {
+				is_core_of = PREV
+			}
+			add_to_temp_variable = {
+				TAU_temp_counter1 = this.state_strategic_value
+			}
+		}
+		else = {
+			set_temp_variable = {
+				TAU_temp_counter2 = this.state_strategic_value
+			}
+			#边际效应
+			divide_temp_variable = {
+				TAU_temp_counter2 = 1.3
+			}
+			if = {
+				limit = {
+					PREV = {
+						controls_state > 20
+					}
+				}
+				divide_temp_variable = {
+					TAU_temp_counter2 = 1.8
+				}
+			}
+			if = {
+				limit = {
+					PREV = {
+						controls_state > 40
+					}
+				}
+				divide_temp_variable = {
+					TAU_temp_counter2 = 3.3
+				}
+			}
+			add_to_temp_variable = {
+				TAU_temp_counter1 = TAU_temp_counter2
+			}
+		}
+	}
+	set_variable = {
+		tau_dev_base_factor = TAU_temp_counter1
+	}
+	TAU_update_dev = yes
+}
+
+
+#根据发展度更新DM
+TAU_update_dev_dynamic_modifier ={
+	#COUNTRY LEADERS
+	set_variable = {
+		tau_dev_dm_SymboliRudolf = 0
+	}
+	set_variable = {
+		tau_dev_dm_TokaiTeio = 0
+	}
+	set_variable = {
+		tau_dev_dm_NaritaBrian = 0
+	}
+	if = {
+		#~4%
+		limit = { has_country_leader_with_trait = TAU_personal_agenda_SymboliRudolf }
+		set_variable = {
+			tau_dev_dm_SymboliRudolf = tau_dev
+		}
+		divide_variable = {
+			tau_dev_dm_SymboliRudolf = 2500
+		}
+	}
+	else_if = {
+		#~2.2%
+		limit = { has_country_leader_with_trait = TAU_personal_agenda_NaritaBrian }
+		set_variable = {
+			tau_dev_dm_NaritaBrian = tau_dev
+		}
+		divide_variable = {
+			tau_dev_dm_NaritaBrian = 4000
+		}
+	}
+	else_if = {
+		#~3.3%
+		limit = { has_country_leader_with_trait = TAU_personal_agenda_TokaiTeio }
+		set_variable = {
+			tau_dev_dm_TokaiTeio = tau_dev
+		}
+		divide_variable = {
+			tau_dev_dm_TokaiTeio = 3000
+		}
+	}
+	#OTHER DMS
+	set_variable = {
+		tau_dm_flexible_army = tau_dev
+	}
+	divide_variable = {
+		tau_dm_flexible_army = 2500
+	}
+
+	set_variable = {
+		tau_dm_concentrate_fire = tau_dev
+	}
+	divide_variable = {
+		tau_dm_concentrate_fire = 3500
+	}
+
+	set_variable = {
+		tau_dm_national_training_chance = tau_dev
+	}
+	divide_variable = {
+		tau_dm_national_training_chance = 4
+	}
+	add_to_variable = {
+		tau_dm_national_training_chance = 5
+	}
+	clamp_variable = {
+		var = tau_dm_national_training_chance
+		min = 0
+		max = 100
+	}
+	set_variable = {
+		tau_dm_national_training_chance_alter = 100
+	}
+	subtract_from_variable = {
+		tau_dm_national_training_chance_alter = tau_dm_national_training_chance
 	}
 }
 
-#美乐蒂大陆天平已经倾斜
-TAU_dilemma_abandon = {
-	custom_effect_tooltip = TAU_dilemma_abandon
-	#关闭整个deilemma决议组
-	hidden_effect = {
-		set_country_flag = TAU_ABANDON_DILEMA
-		PCC = {
-			if = {
-				limit = { has_opinion_modifier = TAU_satisfied_with_dipatti }
-				remove_opinion_modifier = {
-					target = TAU
-					modifier = TAU_satisfied_with_dipatti
-				}
+
+#初始化女神像数量
+TAU_init_nsx = {
+	for_each_scope_loop = {
+		array = TAU.army_leaders
+		if = {
+			limit = {
+				skill > 2
 			}
-			if = {
-				limit = { has_opinion_modifier = TAU_unsatisfied_with_dipatti }
-				remove_opinion_modifier = {
-					target = TAU
-					modifier = TAU_unsatisfied_with_dipatti
-				}
+			TAU = {
+				add_to_variable = { tau_nsx = 1 }
 			}
 		}
-		BOW = {
-			if = {
-				limit = { has_opinion_modifier = TAU_satisfied_with_dipatti }
-				remove_opinion_modifier = {
-					target = TAU
-					modifier = TAU_satisfied_with_dipatti
-				}
-			}
-			if = {
-				limit = { has_opinion_modifier = TAU_unsatisfied_with_dipatti }
-				remove_opinion_modifier = {
-					target = TAU
-					modifier = TAU_unsatisfied_with_dipatti
-				}
-			}
-		}
-		# news_event = tau_news.4
-		
 	}
-	
 }
 
 #移除副领导人
@@ -226,8 +346,8 @@ TAU_retire_vice_country_leader = {
 		remove_ideas = TAU_another_leader_AirGroove
 	}
 	if = {
-		limit = { has_idea = TAU_another_leader_Urara }
-		remove_ideas = TAU_another_leader_Urara
+		limit = { has_idea = TAU_another_leader_HaruUrara }
+		remove_ideas = TAU_another_leader_HaruUrara
 	}
 	if = {
 		limit = { has_idea = TAU_another_leader_OguriCap }
@@ -238,7 +358,27 @@ TAU_retire_vice_country_leader = {
 		remove_ideas = TAU_another_leader_SatonoDiamond
 	}
 	if = {
-		limit = { has_idea = TAU_another_leader_SatonoDiamond }
-		remove_ideas = TAU_another_leader_SatonoDiamond
+		limit = { has_idea = TAU_another_leader_KitasanBlack }
+		remove_ideas = TAU_another_leader_KitasanBlack
+	}
+	if = {
+		limit = { has_idea = TAU_another_leader_MayanoTopGun }
+		remove_ideas = TAU_another_leader_MayanoTopGun
+	}
+	if = {
+		limit = { has_idea = TAU_another_leader_DaiwaScarlet }
+		remove_ideas = TAU_another_leader_DaiwaScarlet
+	}
+	if = {
+		limit = { has_idea = TAU_another_leader_Maruzensky }
+		remove_ideas = TAU_another_leader_Maruzensky
+	}
+	if = {
+		limit = { has_idea = TAU_another_leader_RiceShower }
+		remove_ideas = TAU_another_leader_RiceShower
+	}
+	if = {
+		limit = { has_idea = TAU_another_leader_MihonoBourbon }
+		remove_ideas = TAU_another_leader_MihonoBourbon
 	}
 }

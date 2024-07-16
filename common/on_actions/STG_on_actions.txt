@@ -4,12 +4,12 @@ on_actions = {
 			STG = {set_country_flag = STG_conservative_controls_par}
 			STG = {country_event = {id = STG_intro.1 days = 2}}
 			STG = {country_event = {id = STG_general.3 days = 10}}
-			STG = {country_event = {id = STG_general.5 days = 150}}
+			STG = {country_event = {id = STG_general.5 days = 15}}
 			STG = {country_event = {id = STG_general.6 days = 250}}
 			STG = {country_event = {id = STG_general.7 days = 30}}
 			STG = {country_event = {id = STG_general.15 days = 20}}
 			#政府稳定初始化
-			STG = { set_variable = { STG_global_unrest = 20 } }
+			STG = { set_variable = { STG_global_unrest = 15 } }
 			#卡美洛派威胁初始化
 			STG = { set_variable = { STG_cam_unrest = 10 } }
 			#乌斯拉尔裔不满初始化
@@ -22,6 +22,12 @@ on_actions = {
 			STG = { set_variable = { STG_supporter_needed = 20 } }
 			#军队不满初始化
 			STG = { set_variable = { STG_army_discontent = 40 } }
+			#工团修正初始化
+			STG = { 
+				set_variable = {STG_rev_production_speed_buildings_factor = 0.10}
+				set_variable = {STG_rev_industrial_capacity_factory = 0.05}
+				set_variable = {STG_production_factory_max_efficiency_factor = 0.05}
+			}
 		}
 	}
 	on_weekly_STG = {
@@ -69,173 +75,156 @@ on_actions = {
 			if = {
 				limit = {
 					tag = STG
-					has_country_flag = STG_is_usr_puppet
-				}
-				remove_ideas = STG_unrest_1
-                remove_ideas = STG_unrest_2
-                remove_ideas = STG_unrest_3
-                remove_ideas = STG_unrest_4
-                remove_ideas = STG_unrest_5
-                remove_ideas = STG_unrest_6
-				remove_ideas = STG_usr_discontent_low
-                remove_ideas = STG_usr_discontent_middle
-                remove_ideas = STG_usr_discontent_high
-                remove_ideas = STG_usr_discontent_very_high
-                remove_ideas = STG_usr_unrest_end
-                remove_ideas = STG_cam_discontent_low
-                remove_ideas = STG_cam_discontent_middle
-                remove_ideas = STG_cam_discontent_high
-                remove_ideas = STG_cam_discontent_very_high
-			}
-		}
-		
-		effect = {
-			if = {
-				limit = {
-					tag = STG
 					NOT = {
 						has_country_flag = STG_is_usr_puppet
 					}
 				}
 				#每周卡美洛派威胁增长
-			    if = {
-			        limit = {
-				        NOT = {
-					        has_country_flag = STG_cam_curshed
-				        }
-				    }
-				    add_to_variable = {STG_cam_unrest = 1}    
-			    }
-				#每周乌斯拉尔裔威胁增长
-			    if = {
-			        limit = {
-				        NOT = {
-					        has_country_flag = STG_usr_curshed
-				        }
-				    }
-				    add_to_variable = {STG_usr_unrest = 1}    
-			    }
-				#政府稳定度变化
-				if ={
-					limit = {
-						stability > 0.99
-				    }
-				    add_to_variable = {STG_global_unrest = -0.5}
-				}
-				if ={
-					limit = {
-						stability > 0.89
-				    }
-				    add_to_variable = {STG_global_unrest = -0.25}
-				}
-				if ={
-					limit = {
-						stability > 0.79
-				    }
-				    add_to_variable = {STG_global_unrest = -0.25}
-				}
-				if ={
-					limit = {
-						has_war = no
-					    NOT = {
-							has_stability = 0.50
+				STG = {
+					if = {
+						limit = {
+							NOT = {
+								has_country_flag = STG_cam_curshed
+							}
 						}
-				    }
-				    add_to_variable = {STG_global_unrest = 0.25}
-				}
-				if ={
-					limit = {
-						has_war = no
-					    NOT = {
-							has_stability = 0.40
-						}
-				    }
-				    add_to_variable = {STG_global_unrest = 0.25}
-				}
-				if ={
-					limit = {
-						has_war = no
-					    NOT = {
-							has_stability = 0.30
-						}
-				    }
-				    add_to_variable = {STG_global_unrest = 0.25}
-				}
-				if ={
-					limit = {
-						has_war = no
-					    NOT = {
-							has_stability = 0.20
-						}
-				    }
-				    add_to_variable = {STG_global_unrest = 0.25}
-				}
-			    if = {
-				    limit = {
-					    has_idea = STG_usr_discontent_low
-				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
-			    }
-			    if = {
-				    limit = {
-					    has_idea = STG_usr_discontent_middle
-				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
-			    }    
-			    if = {
-				    limit = {
-					    has_idea = STG_usr_discontent_high
-				    }
-				    add_to_variable = {STG_global_unrest = 1}
-			    }
-			    if = {
-				    limit = {
-					    has_idea = STG_usr_discontent_very_high
-				    }
-				    add_to_variable = {STG_global_unrest = 2}
-			    }
-			    if = {
-				    limit = {
-					    has_idea = STG_cam_discontent_low
-				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
-			    }
-			    if = {
-				    limit = {
-					    has_idea = STG_cam_discontent_middle
-				    }
-				    add_to_variable = {STG_global_unrest = 0.5}
-			    }
-			    if = {
-				    limit = {
-						has_idea = STG_cam_discontent_high
-				    }
-				    add_to_variable = {STG_global_unrest = 1}
-			    }
-			    if = {
-				    limit = {
-					    has_idea = STG_cam_discontent_very_high
-				    }
-				    add_to_variable = {STG_global_unrest = 2}
-			    }
-				if = {
-					limit = {
-						has_idea = STG_investigation
+						add_to_variable = {STG_cam_unrest = 0.50}    
 					}
-					add_to_variable = {STG_global_unrest = 0.5}
-				}	
-				if = {
-					limit = {
-						has_country_flag = STG_cam_curshed
+					#每周乌斯拉尔裔威胁增长
+					if = {
+						limit = {
+							NOT = {
+								has_country_flag = STG_usr_curshed
+							}
+						}
+						add_to_variable = {STG_usr_unrest = 0.50}    
 					}
-					add_to_variable = {STG_global_unrest = -0.25}
-				}		
-				if = {
-					limit = {
-						has_country_flag = STG_usr_curshed
+					#政府稳定度变化
+					if = {
+						limit = {
+							is_ai = yes
+							check_variable = {STG_global_unrest > 49}
+						}
+						add_to_variable = {STG_global_unrest = -1}
 					}
-					add_to_variable = {STG_global_unrest = -0.25}
-				}	
+					if = {
+						limit = {
+							has_idea = STG_fort_of_industralist
+						}
+						add_to_variable = {STG_global_unrest = -0.15}
+					}
+					if = {
+						limit = {
+							has_idea = STG_heaven_of_industralist
+						}
+						add_to_variable = {STG_global_unrest = -0.3}
+					}
+					if = {
+						limit = {
+							has_stability > 0.99
+						}
+						add_to_variable = {STG_global_unrest = -0.5}
+					}
+					if ={
+						limit = {
+							has_stability > 0.89
+						}
+						add_to_variable = {STG_global_unrest = -0.25}
+					}
+					if ={
+						limit = {
+							has_stability > 0.79
+						}
+						add_to_variable = {STG_global_unrest = -0.25}
+					}
+					if ={
+						limit = {
+							has_stability > 0.69
+						}
+						add_to_variable = {STG_global_unrest = -0.1}
+					}
+					if ={
+						limit = {
+							has_stability > 0.59
+						}
+						add_to_variable = {STG_global_unrest = -0.05}
+					}
+					if ={
+						limit = {
+							has_stability > 0.49
+						}
+						add_to_variable = {STG_global_unrest = -0.05}
+					}
+					if = {
+						limit = {
+							has_idea = STG_usr_discontent_low
+						}
+						add_to_variable = {STG_global_unrest = 0.25}
+					}
+					if = {
+						limit = {
+							has_idea = STG_usr_discontent_middle
+						}
+						add_to_variable = {STG_global_unrest = 0.50}
+					}    
+					if = {
+						limit = {
+							has_idea = STG_usr_discontent_high
+						}
+						add_to_variable = {STG_global_unrest = 0.75}
+					}
+					if = {
+						limit = {
+							has_idea = STG_usr_discontent_very_high
+						}
+						add_to_variable = {STG_global_unrest = 1}
+					}
+					if = {
+						limit = {
+							has_idea = STG_cam_discontent_low
+						}
+						add_to_variable = {STG_global_unrest = 0.15}
+					}
+					if = {
+						limit = {
+							has_idea = STG_cam_discontent_middle
+						}
+						add_to_variable = {STG_global_unrest = 0.35}
+					}
+					if = {
+						limit = {
+							has_idea = STG_cam_discontent_high
+						}
+						add_to_variable = {STG_global_unrest = 0.55}
+					}
+					if = {
+						limit = {
+							has_idea = STG_cam_discontent_very_high
+						}
+						add_to_variable = {STG_global_unrest = 1}
+					}
+					if = {
+						limit = {
+							has_idea = STG_investigation
+						}
+						add_to_variable = {STG_global_unrest = 0.5}
+					}	
+					if = {
+						limit = {
+							has_country_flag = STG_cam_curshed
+						}
+						add_to_variable = {STG_global_unrest = -0.5}
+					}		
+					if = {
+						limit = {
+							has_country_flag = STG_usr_curshed
+						}
+						add_to_variable = {STG_global_unrest = -0.5}
+					}
+					clamp_variable = {
+						var = STG_global_unrest
+						min = 0
+					}	
+				}
 			}
 			STG = {
 				if = {
@@ -307,6 +296,202 @@ on_actions = {
 			    }
 				STG = {
 					set_country_flag = STG_usr_got_cb
+				}
+			}
+		}
+	}
+	#战败CG
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							tag = UNG
+							tag = FNG
+							tag = MSA
+						}
+					}
+					has_global_flag = WAR_FOR_ANGLIA
+					FROM = {
+						tag = STG
+						is_puppet = no
+					}
+				}
+				ROOT = {
+					transfer_navy = {
+						target = FROM
+					}
+					if = {
+						limit = {
+							tag = UNG
+						}
+						white_peace  = {
+							tag = FROM
+							message = STG_Defeated_UNG
+						}
+					}
+					if = {
+						limit = {
+							tag = FNG
+						}
+						white_peace  = {
+							tag = FROM
+							message = STG_Defeated_FNG
+						}
+					}
+					if = {
+						limit = {
+							tag = MSA
+						}
+						white_peace  = {
+							tag = FROM
+							message = STG_Defeated_MSA
+						}
+					}
+				}
+				FROM = {
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = STG
+					}
+					has_global_flag = WAR_FOR_ANGLIA
+				}
+				if = {
+					limit = {
+						FROM = {
+							OR = {
+								tag = UNG
+								tag = MSA
+								tag = FNG
+							}
+							is_puppet = no
+						}
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+						if = {
+							limit = {
+								FROM = {
+									tag = UNG
+								}
+							}
+							white_peace  = {
+								tag = FROM
+								message = UNG_Defeated_STG
+							}
+						}
+						if = {
+							limit = {
+								FROM = {
+									tag = MSA
+								}
+							}
+							white_peace  = {
+								tag = FROM
+								message = MSA_Defeated_STG
+							}
+						}
+						if = {
+							limit = {
+								FROM = {
+									tag = FNG
+								}
+							}
+							white_peace  = {
+								tag = FROM
+								message = FNG_Defeated_STG
+							}
+						}
+					}
+					FROM = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+			}
+		}
+	}
+	on_capitulation_immediate = {
+		effect = {
+			if = {
+				limit = {
+					has_global_flag = STG_civ_war_started
+					ROOT = {
+						tag = STG
+					}
+					FROM = {
+						OR = {
+							tag = STR
+							tag = UNG
+							tag = FNG
+						}
+					}
+				}
+				FROM = {
+					country_event = {id = STG_civ_war.8}
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = STG_civ_war_started
+					ROOT = {
+						tag = STR
+					}
+					FROM = {
+						OR = {
+							tag = STG
+							tag = USR
+						}
+					}
+				}
+				USR = {country_event = {id = STG_civ_war.7}}
+				if = {
+					limit = {
+						USR = {
+							has_war_with = UNG
+						}
+					}
+					STG = {
+						white_peace = {
+							tag = UNG
+							message = STG_CIV_ENDED_STG
+						}
+					}
+					USR = {
+						white_peace = {
+							tag = UNG
+						}
+					}
+				}
+				if = {
+					limit = {
+						USR = {
+							has_war_with = FNG
+						}
+					}
+					STG = {
+						white_peace = {
+							tag = FNG
+							message = STG_CIV_ENDED_STG
+						}
+					}
+					USR = {
+						white_peace = {
+							tag = FNG
+						}
+					}
 				}
 			}
 		}

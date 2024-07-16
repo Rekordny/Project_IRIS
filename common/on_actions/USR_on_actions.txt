@@ -1,8 +1,63 @@
 on_actions = {
+	on_war = {
+		effect = {
+			USR ={
+				if = {
+					limit = { has_war_with_major = yes is_ai = no }
+					play_song = "Uslar_on_war_1"
+				}
+			}
+			
+		}
+	}
+	on_daily_USR = {
+		effect ={
+			if = {
+				limit = { 
+					USR = { 
+						NOT = { 
+							has_country_flag = USR_HK416_EVENTS_STARTED 
+						}
+					} 
+				}
+				USR = {
+					if = {
+						limit = {
+							has_completed_focus = USR_next_gen_weapon_project
+							OR = {
+								date = 3094.4.16
+								date = 3095.4.16
+								date = 3096.4.16
+								date = 3097.4.16
+								date = 3098.4.16
+								date = 3099.4.16
+								date = 3100.4.16
+								date = 3101.4.16
+								date = 3102.4.16
+								date = 3103.4.16
+							}
+						}
+						country_event = { id = usr.76 }
+					}
+				}
+			}
+		}
+	}
 	on_startup = {
 		effect = {
+			#邮票dm初始化
 			#共和议会进程初始化
 			USR = {
+				if = {
+					limit = {
+						is_ai = no
+					}
+					play_song = "Uslar_on_peace_1"
+				}
+				
+				add_dynamic_modifier = {
+					modifier = USR_post_stamp_dynamic_modifier
+				}
 				set_variable = { usr_congress = 1 }
 				
 				#state modifier
@@ -29,14 +84,21 @@ on_actions = {
 			}
 		}
 	}
-	on_offer_join_faction = {
+	on_weekly_USR = {
 		effect = {
-			USR_refresh_SSD_alliance_members = yes
-		}
-	}
-	on_monthly_USR = {
-		effect = {
-			USR_refresh_faction_effect = yes
+			USR = {
+				if = {
+					limit = { 
+						OR = {
+							has_idea = USR_milestone_of_nation_and_will_1
+							has_idea = USR_milestone_of_nation_and_will_2
+							has_idea = USR_milestone_of_nation_and_will_3
+						}
+					}
+					USR_refresh_milestone = yes
+				}
+			}
+			
 		}
 	}
 	on_justifying_wargoal_pulse = {
@@ -62,6 +124,72 @@ on_actions = {
 					has_war_with = BGT
 				}
 				country_event = { id = usr.38 }
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { state = 218 }
+				}
+				if =  {
+					limit = {
+						tag = USR
+					}
+					if = {
+						limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 10 } } }
+						add_to_array = { USR.Stamp_ID_list = 10 }
+						USR_add_stamp_utility = yes
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM.FROM = { state_id = 127 }
+				}
+				if =  {
+					limit = {
+						tag = USR
+					}
+					if = {
+						limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 11 } } }
+						add_to_array = { USR.Stamp_ID_list = 11 }
+						USR_add_stamp_utility = yes
+					}
+				}
+			}
+		}
+	}
+	on_offer_join_faction = {
+		effect = {
+			USR = {
+				if = {
+					limit = {
+						num_faction_members > 5
+					}
+					if = {
+						limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 12 } } }
+						add_to_array = { USR.Stamp_ID_list = 12 }
+						USR_add_stamp_utility = yes
+					}
+				}
+			}
+			FROM = {
+				if = {
+					limit = {
+						is_in_faction_with = USR
+						USR = { is_faction_leader = yes has_government = fascism }
+					}
+					add_ideas = USR_senshado_alliance_idea
+				}
+			}
+		}
+	}
+	on_leave_faction = {
+		effect = {
+			FROM = {
+				remove_ideas = USR_senshado_alliance_idea
 			}
 		}
 	}
