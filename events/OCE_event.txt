@@ -14,12 +14,6 @@ country_event = {
 	is_triggered_only = yes
 	#fire_only_once = yes
 	trigger = {
-		OR = {
-			tag = OCE
-			tag = OCF
-			tag = EIA
-			tag = INP
-		}
 	}
 	option = {
 		name = OCE.0.a
@@ -558,11 +552,7 @@ country_event = {
             OCF = {
                 set_nationality = {
                     target_country = INP
-                    character = OCF_Eblana_Dublinn
-                }
-                set_nationality = {
-                    target_country = INP
-                    character = OCF_Reed_The_Flame_Shadow
+                    character = INP_Reed_The_Flame_Shadow
                 }
                 add_ideas = OCF_civil_war
                 transfer_state = 773
@@ -793,7 +783,7 @@ country_event = {
             }
             INP = {
 				set_cosmetic_tag = INP_civil_war
-                add_ideas = OCF_idea_Reed_The_Flame_Shadow
+                add_ideas = INP_idea_Reed_The_Flame_Shadow
                 set_politics = {
                     ruling_party = fascism
                 }
@@ -804,9 +794,15 @@ country_event = {
                     fascism = 70
                     reactionism = 8
                 }
-                OCF_Eblana_Dublinn = {
-                    promote_character = yes
-                }
+				transfer_state = 137
+				promote_character = {
+            		character = INP_Eblana_Dublinn
+            		ideology = sub_Facism
+        		}
+				promote_character = {
+            		character = INP_Eblana_Dublinn
+            		ideology = sub_Regressivism
+        		}
             }
         }
     }
@@ -1110,6 +1106,13 @@ country_event =  {
 			}
 			TFD = { transfer_state = PREV }
 		}
+		every_state = {
+            limit = {
+                is_core_of = DOC
+            }
+            remove_core_of = DOC
+			set_state_flag = regions_belonging_DOC_flag
+        }
 		TFD = {
 			set_party_name = {
     			ideology = neutrality
@@ -1479,13 +1482,24 @@ country_event =  {
 	option = {
 		name = OCE_expansion.2.a
 		ai_chance = {
-			base = 1
+			base = 10
+			modifier = {
+				FROM = {
+					TAG = OCF
+				}
+				add = -10
+			}
 		}
-		OCE = {
+		FROM = {
 			transfer_state = 226
 			#country_event = { id = OCE_expansion.21 days = 1 }
 		}
-		remove_ideas = OCE_idea_pressure
+		if = {
+			limit = {
+				has_idea = OCE_idea_pressure
+			}
+			remove_ideas = OCE_idea_pressure
+		}
 		add_timed_idea = { idea = OCE_Compensation_from_oce_idea days = 180 }
 		news_event = { id = ocenews.10 days = 1 }
 	}
@@ -1494,12 +1508,18 @@ country_event =  {
 		name = OCE_expansion.2.b
 		ai_chance = {
 			base = 0
+			modifier = {
+				FROM = {
+					TAG = OCF
+				}
+				add = 10
+			}
 		}
 		news_event = { id = ocenews.9 days = 1 }
 		hidden_effect = {
-			#OCE = {
-				#country_event = { id = OCE_expansion.22 days = 1 }
-			#}
+			FROM = {
+				country_event = { id = OCE_expansion.22 days = 1 }
+			}
 		}
 	}
 }
@@ -1529,11 +1549,11 @@ country_event =  {
 		limit = {
 			owns_state = 226
 			NOT = {
-				is_in_faction_with = OCE
+				is_in_faction_with = ROOT
 			}
 		}
 		ROOT = {
-			create_wargoal = { target = PREV  type = annex_everything }
+			declare_war_on = { target = PREV  type = annex_everything }
 			}
 		}
 	}
