@@ -1216,6 +1216,10 @@ STG_parliament_issues = {
                 ideology = communism
                 popularity = 0.05
             }
+            swap_ideas = {
+                remove_idea = xiaoshi12
+                add_idea = xiaoshi8
+            }
             random_owned_controlled_state = {
 			    add_extra_state_shared_building_slots = 2
 			    add_building_construction = {
@@ -1316,8 +1320,8 @@ STG_parliament_issues = {
             set_country_flag = STG_issue_passed_flag
 		}
     }
-    #《共和国劳动法》
-    STG_syn_issue_1 = {
+    #《社会保障法》
+    STG_com_issue_1 = {
         available = {
             NOT = {
                 has_country_flag = STG_debate_in_process
@@ -1326,10 +1330,9 @@ STG_parliament_issues = {
             STG_can_pass_issue_important_trigger = yes
         }
         visible = {
-            has_completed_focus = STG_com_13
+            has_completed_focus = STG_com_12
         }
         cost = 70
-        days_remove = 0
         fire_only_once = yes
         ai_will_do = {
 			factor = 1
@@ -1337,15 +1340,11 @@ STG_parliament_issues = {
         complete_effect = {
         }
         remove_effect = {
-			add_popularity = {
-                ideology = communism
-                popularity = 0.05
+			add_ideas = STG_social_security
+            swap_ideas = {
+                remove_idea = xiaoshi12
+                add_idea = xiaoshi8
             }
-            custom_effect_tooltip = STG_upgrade_rev_modifier_desc
-            custom_effect_tooltip = STG_syn_issue_1_bonus_desc
-            add_to_variable = {STG_production_factory_max_efficiency_factor = 0.05}
-            add_to_variable = {STG_rev_consumer_goods_factor = 0.05}
-            set_country_flag = STG_syn_issue_1_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 90}
             clr_country_flag = STG_issue_passed_flag
             set_country_flag = STG_issue_passed_flag
@@ -1778,7 +1777,7 @@ STG_the_sword_of_Damocles = {
             NOT = {
                 OR = {
                     has_country_flag = STG_army_takeover
-                    has_completed_focus = STG_com_26
+                    has_completed_focus = STG_com_61
                     has_country_flag = STG_disable_the_sword_of_Damocles_decisions
                 }
             }
@@ -1786,7 +1785,7 @@ STG_the_sword_of_Damocles = {
         cancel_trigger = {
             OR = {
                 has_country_flag = STG_army_takeover
-                has_completed_focus = STG_com_26
+                has_completed_focus = STG_com_61
                 has_country_flag = STG_disable_the_sword_of_Damocles_decisions
             }
         }
@@ -3619,13 +3618,19 @@ STG_national_emergency = {
     STG_end_emergency = {
         available = {
             has_stability > 0.50
-            has_idea = STG_emergency_law
+            OR = {
+                has_idea = STG_emergency_law
+                has_idea = STG_emergency_law_2
+            }
             reactionism < 0.05
             fascism < 0.05
         }
         visible = {
             tag = STG
-            has_idea = STG_emergency_law
+            OR = {
+                has_idea = STG_emergency_law
+                has_idea = STG_emergency_law_2
+            }
         }
         cost = 100
         days_remove = 10
@@ -3633,7 +3638,19 @@ STG_national_emergency = {
         complete_effect = {
         }
         remove_effect = {
-            remove_ideas = STG_emergency_law
+            if = {
+                limit = {
+                    has_idea STG_emergency_law
+                }
+                remove_ideas = STG_emergency_law
+            }
+            if = {
+                limit = {
+                    has_idea STG_emergency_law_2
+                }
+                remove_ideas = STG_emergency_law_2
+            }
+            clr_country_flag = STG_national_emergency_flag
         }
         ai_will_do = {
 			factor = 1
@@ -3670,8 +3687,8 @@ STG_national_emergency = {
 }
 #工团主义革命
 STG_revolution = {
-    #革命热情增长
-    STG_rev_zeal_change = {
+    #触发随机事件
+    STG_random_rev_event = {
         icon = mission_icon
         is_good = no
         available = {
@@ -3681,9 +3698,40 @@ STG_revolution = {
             has_country_flag = STG_rev_started
         }
         cancel_trigger = {
-            has_country_flag = STG_army_takeover
+            OR = {
+                has_country_flag = STG_army_takeover
+                NOT = {
+                    has_country_flag = STG_rev_started
+                }
+            }
         }
-        days_mission_timeout = 15
+        days_mission_timeout = 20
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            STG_rev_random_event_effect = yes
+        }
+    }
+    #革命热情增长
+    STG_rev_zeal_change = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            has_country_flag = STG_rev_started
+        }
+        cancel_trigger = {
+            OR = {
+                has_country_flag = STG_army_takeover
+                NOT = {
+                    has_country_flag = STG_rev_started
+                }
+            }
+        }
+        days_mission_timeout = 21
         selectable_mission = no
         complete_effect = {
         }
@@ -3702,7 +3750,12 @@ STG_revolution = {
             has_country_flag = STG_rev_started
         }
         cancel_trigger = {
-            has_country_flag = STG_army_takeover
+            OR = {
+                has_country_flag = STG_army_takeover
+                NOT = {
+                    has_country_flag = STG_rev_started
+                }
+            }
         }
         days_mission_timeout = 20
         selectable_mission = no
@@ -3775,24 +3828,14 @@ STG_revolution = {
         remove_effect = {
             add_stability = -0.30
             add_political_power = 200
-            complete_national_focus = STG_com_5
             set_politics = {
                 ruling_party = communism
             }
-            custom_effect_tooltip = STG_reset_par_desc
-            hidden_effect = {
-                set_country_flag = STG_syn_controls_par
-                set_country_flag = STG_com_par
-                clr_country_flag = STG_conservative_controls_par
-                clr_country_flag = STG_rev_started
-                clr_country_flag = STG_enbale_revolution_decisions
-                remove_ideas = STG_full_of_corruption
-                set_party_name = {ideology = democratic long_name = STG_democratic_party_sd_long name = STG_democratic_party_sd}
-                STG = {set_variable = {STG_supporter = 20}}
-            }
+            remove_ideas = STG_full_of_corruption
+            set_country_flag = STG_overthrow_gov_flag
         }
         ai_will_do = {
-			factor = 10
+			factor = 1000
 		}
     }
     #团结学生
@@ -3802,7 +3845,7 @@ STG_revolution = {
         visible = {
             OR = {
                 has_completed_focus = STG_com_3
-                has_completed_focus = STG_com_4
+                has_completed_focus = STG_com_2
             }
         }
         cost = 50
@@ -3817,6 +3860,7 @@ STG_revolution = {
                 ideology = communism
                 popularity = 0.04
             }
+            set_country_flag = STG_sutdents_join_rev
         }
         ai_will_do = {
 			factor = 10
@@ -3829,7 +3873,7 @@ STG_revolution = {
         visible = {
             OR = {
                 has_completed_focus = STG_com_3
-                has_completed_focus = STG_com_4
+                has_completed_focus = STG_com_2
             }
         }
         cost = 50
@@ -3844,6 +3888,9 @@ STG_revolution = {
                 ideology = communism
                 popularity = 0.04
             }
+            hidden_effect = {
+                country_event = {id = STG_rev.30}
+            }
         }
         ai_will_do = {
 			factor = 10
@@ -3854,10 +3901,7 @@ STG_revolution = {
         available = {
         }
         visible = {
-            OR = {
-                has_completed_focus = STG_com_3
-                has_completed_focus = STG_com_4
-            }
+            has_completed_focus = STG_com_3
         }
         cost = 50
         days_remove = 20
@@ -3876,6 +3920,63 @@ STG_revolution = {
 			factor = 10
 		}
     }
+    #格蕾元帅的斡旋
+    STG_gerys_mediate = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = STG_rev_grey_only_has_one_chance
+            STG_reduce_mil_doubt_big = yes
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #军中同情者的阻拦
+    STG_sympathizer_in_army = {
+        available = {
+        }
+        visible = {
+            has_completed_focus = STG_com_3
+        }
+        cost = 15
+        days_re_enable = 20
+        complete_effect = {
+        }
+        remove_effect = {
+            STG_reduce_mil_doubt = yes
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
+    #武装工人纠察队
+    STG_arms_workers = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_gov_strength_less_than_50
+                STG = {check_variable = {STG_gov_strength < 50}}
+            }
+        }
+        cost = 10
+        days_remove = 20
+        fire_only_once = yes
+        remove_effect = {
+            custom_effect_tooltip = STG_avoid_bloody_suppress
+            set_country_flag = STG_armed_workers
+        }
+        ai_will_do = {
+			factor = 10
+		}
+    }
     #抨击政府
     STG_criticize_gov = {
         available = {
@@ -3886,9 +3987,8 @@ STG_revolution = {
         }
         visible = {
         }
-        cost = 0
-        days_remove = 7
-        days_re_enable = 10
+        days_remove = 10
+        days_re_enable = 15
         complete_effect = {
             STG_reduce_rev_zeal = yes
         }
@@ -3914,8 +4014,8 @@ STG_revolution = {
         visible = {
         }
         cost = 15
-        days_remove = 10
-        days_re_enable = 20
+        days_remove = 15
+        days_re_enable = 30
         complete_effect = {
             STG_reduce_rev_zeal = yes
         }
@@ -3970,7 +4070,7 @@ STG_revolution = {
         }
         cost = 0
         days_remove = 7
-        days_re_enable = 10
+        days_re_enable = 20
         complete_effect = {
         }
         remove_effect = {
@@ -3990,7 +4090,7 @@ STG_revolution = {
         }
         cost = 0
         days_remove = 7
-        days_re_enable = 10
+        days_re_enable = 20
         complete_effect = {
         }
         remove_effect = {
@@ -4079,8 +4179,8 @@ STG_revolution = {
             has_completed_focus = STG_com_3
         }
         cost = 10
-        days_remove = 10
-        days_re_enable = 20
+        days_remove = 20
+        days_re_enable = 60
         complete_effect = {
         }
         remove_effect = {
@@ -4170,7 +4270,7 @@ STG_syn_union = {
             controls_state = 214
         }
         visible = {
-            has_completed_focus = STG_com_30
+            has_completed_focus = STG_com_56
             NOT = {
                 has_global_flag = ANGLIA_UNITED_FLAG
             }
@@ -4205,7 +4305,7 @@ STG_syn_union = {
             controls_state = 723
         }
         visible = {
-            has_completed_focus = STG_com_30
+            has_completed_focus = STG_com_56
         }
         cost = 100
         days_remove = 40
@@ -5418,6 +5518,211 @@ STG_capital = {
                 popularity = 0.10
             }
             set_country_flag = STG_new_capital_selected
+        }
+    }
+}
+STG_UNG_civ_war_reaction = {
+    STG_send_infantry_equipment = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 1999
+            }
+            NOT = {
+                has_war_with = FNG
+            }
+            country_exists = FNG
+            FNG = {
+                OR = {
+                    has_war_with = UNG
+                    has_war_with = MSA
+                }
+            }
+        }
+        visible = {
+            country_exists = FNG
+            has_completed_focus = STG_UNG_civ_war_reaction_2
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 2000
+                target = FNG
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    STG_send_artillery_equipment = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 99
+            }
+            NOT = {
+                has_war_with = FNG
+            }
+            country_exists = FNG
+            FNG = {
+                OR = {
+                    has_war_with = UNG
+                    has_war_with = MSA
+                }
+            }
+        }
+        visible = {
+            country_exists = FNG
+            has_completed_focus = STG_UNG_civ_war_reaction_2
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 100
+                target = FNG
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    STG_send_air_force = {
+        available = {
+            command_power > 19
+            NOT = {
+                has_war_with = FNG
+            }
+            country_exists = FNG
+            FNG = {
+                OR = {
+                    has_war_with = UNG
+                    has_war_with = MSA
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = UNG
+                }
+                UNG = {
+                    NOT = {
+                        has_idea = STG_air_strike
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = MSA
+                }
+                MSA = {
+                    NOT = {
+                        has_idea = STG_air_strike
+                    }
+                }
+            }
+        }
+        visible = {
+            country_exists = FNG
+            has_completed_focus = STG_UNG_civ_war_reaction_2
+        }
+        days_remove = 7
+        complete_effect = {
+            add_command_power = -20
+        }
+        remove_effect = {
+            if = {
+                limit = {
+                    country_exists = UNG
+                }
+                UNG = {add_timed_idea = {idea = STG_air_strike days = 45}}
+            }
+            if = {
+                limit = {
+                    country_exists = MSA
+                }
+                MSA = {add_timed_idea = {idea = STG_air_strike days = 45}}
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    STG_send_navy = {
+        available = {
+            command_power > 19
+            NOT = {
+                has_war_with = FNG
+            }
+            country_exists = FNG
+            FNG = {
+                OR = {
+                    has_war_with = UNG
+                    has_war_with = MSA
+                }
+            }
+            any_state = {
+                is_coastal = yes
+                controller = {
+                    tag = FNG
+                }
+                NOT = {
+                    has_dynamic_modifier = {
+                        modifier = STG_naval_support
+                        scope = FNG
+                    }
+                }
+            }
+        }
+        visible = {
+            country_exists = FNG
+            has_completed_focus = STG_UNG_civ_war_reaction_2
+        }
+        days_remove = 7
+        complete_effect = {
+            add_command_power = -20
+        }
+        remove_effect = {
+            every_state = {
+                limit = {
+                    controller = {
+                        tag = FNG
+                    }
+                    is_coastal = yes
+                }
+                add_dynamic_modifier = {modifier = STG_naval_support scope = FNG days = 60}
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    STG_operation_long_bow = {
+        available = {
+            country_exists = MSA
+            NOT = {
+                has_war_with = MSA
+            }
+        }
+        visible = {
+            has_completed_focus = STG_UNG_civ_war_reaction_8
+        }
+        days_remove = 7
+        remove_effect = {
+            declare_war_on = {
+                target = MSA
+                type = annex_everything
+            }
+            add_ideas = STG_liberate_anglia
+            set_global_flag = STG_operation_long_bow
+            hidden_effect = {
+                news_event = {id = STG_news.10 days = 3}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+            modifier = {
+                factor = 0
+                has_war = yes
+            }
         }
     }
 }

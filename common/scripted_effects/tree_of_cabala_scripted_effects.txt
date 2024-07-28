@@ -105,3 +105,44 @@ tree_of_cabala_gui_initial = {
 		add_to_array = { global.tree_of_cabala_state_array = v }
 	}
 }
+remove_claim_by_ROOT_and_add_core_of_ROOT = {
+	if = {
+		limit = { is_claimed_by = ROOT }
+		remove_claim_by = ROOT
+	}
+	if = {
+		limit = { NOT = { is_core_of = ROOT } }
+		add_core_of = ROOT
+	}
+}
+remove_cores_of_dead_tags = {
+	hidden_effect = {
+		every_state = {
+			limit = {
+				any_of = {
+					array = global.seirei_tags_array
+					OR = {
+						is_claimed_by = var:v
+						is_core_of = var:v
+					}
+					var:v = {
+						exists = no
+					}
+				}
+			}
+			for_each_scope_loop = {
+				array = global.seirei_tags_array
+				if = {
+					limit = {
+						exists = no
+					}
+					remove_state_claim = PREV
+					if = {
+						limit = { check_variable = { PREV.core_countries^num > 1 } }
+						remove_state_core = PREV
+					}
+				}
+			}
+		}
+	}
+}
