@@ -212,20 +212,20 @@ OCF_After_collapse_government = {
         OCF = {
             set_nationality = {
                 target_country = INP
-                character = OCF_Eblana_Dublinn
+                character = INP_Eblana_Dublinn
             }
             set_nationality = {
                 target_country = INP
-                character = OCF_Reed_The_Flame_Shadow
+                character = INP_Reed_The_Flame_Shadow
             }
         }
         if = {
             limit = {
                 NOT = {
-                    has_idea = OCF_idea_Reed_The_Flame_Shadow
+                    has_idea = INP_idea_Reed_The_Flame_Shadow
                 }
             }
-            add_ideas = OCF_idea_Reed_The_Flame_Shadow
+            add_ideas = INP_idea_Reed_The_Flame_Shadow
         }
         set_politics = {
             ruling_party = fascism
@@ -237,8 +237,13 @@ OCF_After_collapse_government = {
             fascism = 70
             reactionism = 8
         }
-        OCF_Eblana_Dublinn = {
-            promote_character = yes
+        promote_character = {
+            character = INP_Eblana_Dublinn
+            ideology = sub_Facism
+        }
+        promote_character = {
+            character = INP_Eblana_Dublinn
+            ideology = sub_Regressivism
         }
         division_template = {
             name = "内战玛娜教导师"
@@ -440,6 +445,12 @@ OCF_After_collapse_government_Declare_war = {
     every_country = {
         limit = {
             has_country_flag = OCF_After_collapse_government_countries_flag
+            NOT = {
+                has_war_with = ROOT
+            }
+            NOT = {
+                tag = ROOT
+            }
         }
         declare_war_on = {
             target = PREV type = annex_everything
@@ -487,6 +498,7 @@ OCF_end_of_civil_war = {
         country_event = {
             id = OCF.2 days = 4
         }
+        load_focus_tree = NO_focus_tree
     }
 
     ROOT = {
@@ -507,7 +519,7 @@ OCF_end_of_civil_war = {
             }
         }
         every_unit_leader = {
-            set_nationality = ROOT
+            set_nationality = OCF
         }
     }
     ROOT = {
@@ -515,27 +527,27 @@ OCF_end_of_civil_war = {
             set_nationality = OCF
         }
     }
-    set_global_flag = OCF_civil_war_so_it_was_unified_flag
+
     if = {
         limit = {
             tag = INP
         }
         if = {
             limit = {
-                has_character = OCF_Eblana_Dublinn
+                has_character = INP_Eblana_Dublinn
             }
             set_nationality = {
                 target_country = OCF
-                character = OCF_Eblana_Dublinn
+                character = INP_Eblana_Dublinn
             }
         }
         if = {
             limit = {
-                has_character = OCF_Reed_The_Flame_Shadow
+                has_character = INP_Reed_The_Flame_Shadow
             }
             set_nationality = {
                 target_country = OCF
-                character = OCF_Reed_The_Flame_Shadow
+                character = INP_Reed_The_Flame_Shadow
             }
         }
         OCF = {
@@ -547,10 +559,15 @@ OCF_end_of_civil_war = {
                 ideology = fascism
                 popularity = 1
             }
-            OCF_Eblana_Dublinn = {
-                promote_character = yes
-            }
-            add_ideas = OCF_idea_Reed_The_Flame_Shadow
+            promote_character = {
+            	character = INP_Eblana_Dublinn
+            	ideology = sub_Regressivism
+        	}
+            promote_character = {
+            	character = INP_Eblana_Dublinn
+            	ideology = sub_Facism
+        	}
+            add_ideas = INP_idea_Reed_The_Flame_Shadow
             annex_country = {
                 target = ROOT transfer_troops = yes
             }
@@ -567,6 +584,12 @@ OCF_end_of_civil_war = {
                 tag = KGF
                 tag = BRI
             }
+        }
+        if = {
+            limit = {
+                TAG = KEZ
+            }
+            set_global_flag = OCF_civil_war_so_it_was_unified_flag_KEZ
         }
         OCF = {
             set_cosmetic_tag = OCF_fourth
@@ -605,8 +628,21 @@ OCF_end_of_civil_war = {
             has_state_flag = regions_belonging_OCF_flag
         }
         remove_core_of = ANA
+        remove_core_of = OFC
+        remove_core_of = KEZ
+        remove_core_of = SIE
+        remove_core_of = FLA
+        remove_core_of = KCL
+        remove_core_of = KGF
+        remove_core_of = ROM
+        remove_core_of = TKD
+        remove_core_of = GFZ
+        remove_core_of = BRI
+        remove_core_of = INP
+        remove_core_of = EIA
         add_core_of = OCF
         transfer_state = OCF
+
     }
 }
 
@@ -1266,14 +1302,8 @@ OCF_obtain_banknotes_threshold = {
         OCF_obtain_banknotes_threshold_variable = 70
     }
     #计算修正（税收上限修正）
-    set_variable = {
-        ocf_tax_cap_correction_2 = 1
-    }
     add_to_variable = {
-        ocf_tax_cap_correction_2 = modifier@ocf_tax_cap_correction
-    }
-    multiply_variable = {
-        OCF_obtain_banknotes_threshold_variable = ocf_tax_cap_correction_2
+        OCF_obtain_banknotes_threshold_variable = modifier@ocf_tax_cap_correction
     }
 
     if = {
@@ -1295,6 +1325,9 @@ OCF_obtain_banknotes_threshold = {
         set_variable = {
             OCF_obtain_banknotes_variable = 2
         }
+    }
+    add_to_variable = {
+        OCF_bill = modifier@ocf_capital_monthly_additional_funds
     }
 }
 
@@ -1592,7 +1625,7 @@ OCE_Rub_cards_new = {
             OCF_gridbox_seat_array_senate_yes_del = yes
             OCF_gridbox_seat_array_senate_no_add = yes
         }
-        15 = {
+        5 = {
             custom_effect_tooltip = OCE_Rub_cards_new_4
             OCF_gridbox_seat_array_senate_yes_del = yes
             OCF_gridbox_seat_array_senate_no_add = yes
@@ -5574,35 +5607,15 @@ OCF_refresh_all_regional_data = {
 
 OCF_show_all_party_leaders_1 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
-    }
 }
 OCF_show_all_party_leaders_2 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
-    }
 }
 OCF_show_all_party_leaders_3 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
-    }
 }
 OCF_show_all_party_leaders_4 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
-    }
 }
 OCF_show_all_party_leaders_5 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
@@ -5633,11 +5646,6 @@ OCF_show_all_party_leaders_5 = {
 }
 OCF_show_all_party_leaders_6 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
-    }
 }
 OCF_show_all_party_leaders_7 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
@@ -5656,11 +5664,6 @@ OCF_show_all_party_leaders_7 = {
 }
 OCF_show_all_party_leaders_8 = {
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
-    }
 }
 
 
@@ -5742,9 +5745,9 @@ OCF_clear_all_deputy_leaders = {
     }
     if = {
         limit = {
-            has_idea = OCF_idea_Reed_The_Flame_Shadow
+            has_idea = INP_idea_Reed_The_Flame_Shadow
         }
-        remove_ideas = OCF_idea_Reed_The_Flame_Shadow
+        remove_ideas = INP_idea_Reed_The_Flame_Shadow
     }
 }
 
