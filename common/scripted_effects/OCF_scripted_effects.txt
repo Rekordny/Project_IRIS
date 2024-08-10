@@ -965,7 +965,7 @@ OCF_obtain_banknotes_effect_estimation = {
     multiply_variable = {
         OCF_obtain_banknotes_variable = ocf_tax_revenue_correction_2
     }
-    OCF_obtain_banknotes_threshold = yes
+    OCF_obtain_banknotes_threshold_estimate = yes
     set_variable = {
         OCF_spending_funds_variable = 2
     }
@@ -1296,6 +1296,38 @@ OCF_obtain_banknotes = {
     OCF_spending_funds = yes
 }
 
+
+#获取资金阈值（预估）
+OCF_obtain_banknotes_threshold_estimate = {
+    set_variable = {
+        OCF_obtain_banknotes_threshold_variable = 70
+    }
+    #计算修正（税收上限修正）
+    add_to_variable = {
+        OCF_obtain_banknotes_threshold_variable = modifier@ocf_tax_cap_correction
+    }
+
+    if = {
+        limit = {
+            check_variable = {
+                OCF_obtain_banknotes_variable > OCF_obtain_banknotes_threshold_variable
+            }
+        }
+        set_variable = {
+            OCF_obtain_banknotes_variable = OCF_obtain_banknotes_threshold_variable
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {
+                OCF_obtain_banknotes_variable < 2
+            }
+        }
+        set_variable = {
+            OCF_obtain_banknotes_variable = 2
+        }
+    }
+}
 
 #获取资金阈值
 OCF_obtain_banknotes_threshold = {
@@ -5791,6 +5823,9 @@ OCF_show_all_party_leaders_3 = {
         OCF_show_all_party_leaders = 3
     }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 20
+    }
 }
 OCF_show_all_party_leaders_4 = {
     set_variable = {
@@ -5839,11 +5874,25 @@ OCF_show_all_party_leaders_7 = {
         OCF_show_all_party_leaders = 7
     }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    add_to_array = {
-        global.OCF_Party_SubGUI_2_lists_array = 9
+    if = {
+        limit = {
+            NOT = {
+                has_country_flag = OCF_topic_7033_a_flag
+            }
+        }
+        add_to_array = {
+            global.OCF_Party_SubGUI_2_lists_array = 9
+        }
     }
-    add_to_array = {
-        global.OCF_Party_SubGUI_2_lists_array = 10
+    if = {
+        limit = {
+            NOT = {
+                has_country_flag = OCF_topic_7024_flag
+            }
+        }
+        add_to_array = {
+            global.OCF_Party_SubGUI_2_lists_array = 10
+        }
     }
     add_to_array = {
         global.OCF_Party_SubGUI_2_lists_array = 11
