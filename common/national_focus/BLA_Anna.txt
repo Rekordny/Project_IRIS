@@ -293,7 +293,7 @@ focus_tree = {
             }
 		}
     }
-##########工业化#########
+    ##########工业化#########
     #重组工业部
     focus = {
         id = BLA_Anna_industry_1
@@ -433,6 +433,10 @@ focus_tree = {
         available_if_capitulated = yes
         ai_will_do = {
             factor = 100
+            modifier = {
+                factor = 0
+                has_idea = BLA_PM_Sanya
+            }
 		}
         available = {
             has_country_leader = {
@@ -1978,7 +1982,7 @@ focus_tree = {
             BLA_increase_all_opinion = yes
 		}
     }
-##########农奴制#########
+    ##########农奴制#########
     #帝国的顽疾
     focus = {
         id = BLA_Anna_pol_1
@@ -2033,6 +2037,16 @@ focus_tree = {
                     rule = BLA_ai_behavior
                     option = BLA_radical_route_TT
                 }
+            }
+            modifier = {
+                factor = 0
+                NOT = {
+                    has_game_rule = {
+                        rule = BLA_ai_behavior
+                        option = BLA_conservative_route_TT
+                    }
+                }
+                has_idea = BLA_PM_Sanya
             }
 		}
         available = {
@@ -3025,6 +3039,7 @@ focus_tree = {
         }
         completion_reward = {
             add_manpower = -2000
+            add_stability = -0.20
             if = {
                 limit = {
                     has_idea = BLA_nobility_unrest
@@ -3090,7 +3105,7 @@ focus_tree = {
         prerequisite = {focus = BLA_Anna_pol_27 focus = BLA_Anna_pol_32}
         available_if_capitulated = yes
         ai_will_do = {
-            factor = 100
+            factor = 1000
 		}
         available = {
             NOT = {country_exists = NAC}
@@ -3150,7 +3165,7 @@ focus_tree = {
         prerequisite = {focus = BLA_Anna_TE_1}
         available_if_capitulated = yes
         ai_will_do = {
-            factor = 100
+            factor = 1000
 		}
         available = {
             has_country_leader = {
@@ -3850,7 +3865,7 @@ focus_tree = {
             }
 		}
     }
-##########撤军#########
+    ##########撤军#########
     #艰难的抉择
     focus = {
         id = BLA_Anna_kam
@@ -3920,7 +3935,7 @@ focus_tree = {
             }
 		}
     }
-##########陆军#########
+    ##########陆军#########
     #沙皇的左右手
     focus = {
         id = BLA_Anna_mil_1
@@ -4071,8 +4086,6 @@ focus_tree = {
                 division_template = {
                     name = "近卫新军步兵师"
                     priority = 2
-                    force_allow_recruiting = yes
-                    division_cap = 10
                     regiments = {
                         infantry = {x = 0 y = 0}
                         infantry = {x = 0 y = 1}
@@ -4099,6 +4112,34 @@ focus_tree = {
                         field_hospital = {x = 0 y = 3}
                     }
                 }
+                division_template = {
+                    name = "新制军团"
+                    force_allow_recruiting = yes
+                    division_cap = 12
+                    regiments = {
+                        infantry = {x = 0 y = 0}
+                        infantry = {x = 0 y = 1}
+                        infantry = {x = 0 y = 2}
+                        infantry = {x = 1 y = 0}
+                        infantry = {x = 1 y = 1}
+                        infantry = {x = 1 y = 2}
+                        infantry = {x = 2 y = 0}
+                        infantry = {x = 2 y = 1}
+                        infantry = {x = 2 y = 2}
+                        artillery_brigade = {x = 3 y = 0}
+                        artillery_brigade = {x = 3 y = 1}
+                        artillery_brigade = {x = 3 y = 2}
+                        anti_air_brigade = {x = 3 y = 3}
+                        light_armor = {x = 4 y = 0}
+                        light_armor = {x = 4 y = 1}
+                        light_armor = {x = 4 y = 2}
+                    }
+                    support = {
+                        artillery = {x = 0 y = 0}
+                        engineer = {x = 0 y = 1}
+                        recon = {x = 0 y = 2}
+                    }
+                }
                 every_country_division = {
                     limit = {
                         division_has_battalion_in_template = military_police
@@ -4122,6 +4163,18 @@ focus_tree = {
                 delete_unit_template_and_units = {
                     division_template = "近卫常备步兵师"
                     disband = yes
+                }
+                capital_scope = {
+                    for_loop_effect = {
+                        start = 0
+                        end = 4
+                        capital_scope = {
+                            create_unit = {
+                                division = "name = \"新制军团\" division_template = \"新制军团\" start_experience_factor = 1.0"
+                                owner = BLA
+                            }
+                        }
+                    }
                 }
             }
 		}
@@ -4809,6 +4862,17 @@ focus_tree = {
 					category = special_forces_doctrine
 				}
 			}
+            hidden_effect = {
+                clear_division_template_cap = {
+                    division_template = "常备步兵师"
+                }
+                clear_division_template_cap = {
+                    division_template = "新军步兵师"
+                }
+                clear_division_template_cap = {
+                    division_template = "新制军团"
+                }
+            }
 		}
     }
     #成立帝国空降兵
@@ -4904,11 +4968,11 @@ focus_tree = {
             }
             capital_scope = {
                 create_unit = {
-                    division = "name = \"帝国装甲师\" division_template = \"帝国装甲师\" start_experience_factor = 0.25"
+                    division = "name = \"帝国装甲师\" division_template = \"帝国装甲师\" start_experience_factor = 0.50"
                     owner = BLA
                 }
                 create_unit = {
-                    division = "name = \"帝国装甲师\" division_template = \"帝国装甲师\" start_experience_factor = 0.25"
+                    division = "name = \"帝国装甲师\" division_template = \"帝国装甲师\" start_experience_factor = 0.50"
                     owner = BLA
                 }
             }
@@ -5060,13 +5124,14 @@ focus_tree = {
                 character = BLA_anna
                 ruling_only = yes
             }
+            controls_state = 126
         }
         completion_reward = {
             126 = {
-                add_extra_state_shared_building_slots = 3
+                add_extra_state_shared_building_slots = 4
 			    add_building_construction = {
 				    type = arms_factory
-				    level = 3
+				    level = 4
 				    instant_build = yes
 			    }
             }
@@ -5133,14 +5198,30 @@ focus_tree = {
                     cavalry = { x = 1 y = 1 }
                     cavalry = { x = 1 y = 2 }
                     cavalry = { x = 2 y = 0 }
-                    cavalry = { x = 2 y = 1}
-                    cavalry = { x = 2 y = 2}
+                    cavalry = { x = 2 y = 1 }
+                    cavalry = { x = 2 y = 2 }
                     cavalry = { x = 3 y = 0 }
-                    cavalry = { x = 3 y = 1}
-                    cavalry = { x = 3 y = 2}
+                    cavalry = { x = 3 y = 1 }
+                    cavalry = { x = 3 y = 2 }
                 }
             }
             capital_scope = {
+                create_unit = {
+                    division = "name = \"骑兵师\" division_template = \"骑兵师\" start_experience_factor = 0.50"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"骑兵师\" division_template = \"骑兵师\" start_experience_factor = 0.50"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"骑兵师\" division_template = \"骑兵师\" start_experience_factor = 0.50"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"骑兵师\" division_template = \"骑兵师\" start_experience_factor = 0.50"
+                    owner = BLA
+                }
                 create_unit = {
                     division = "name = \"骑兵师\" division_template = \"骑兵师\" start_experience_factor = 0.50"
                     owner = BLA
@@ -5192,7 +5273,7 @@ focus_tree = {
             }
         }
     }
-########革命############
+    ########革命############
     #赤色浪潮
     focus = {
         id = BLA_Anna_rev_1
@@ -5230,6 +5311,7 @@ focus_tree = {
                         NOT = {
                             tag = USR
                             tag = OCF
+                            tag = ELN
                             has_war_with = BLA
                             has_government = communism
                         }
@@ -5641,7 +5723,7 @@ focus_tree = {
             }
 		}
     }
-########外交############
+    ########外交############
     #重返世界舞台
     focus = {
         id = BLA_Anna_dip_1
@@ -5836,6 +5918,15 @@ focus_tree = {
                 create_wargoal = {
                     target = IKR
                     type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    has_guaranteed = MZL
+                }
+                set_autonomy = {
+                    target = MZL
+	                autonomous_state = autonomy_imperial_march
                 }
             }
             hidden_effect = {
@@ -6139,29 +6230,25 @@ focus_tree = {
                     is_puppet_of = BLA
                 }
             }
+            MZL = {
+                OR = {
+                    exists = no
+                    is_puppet_of = BLA
+                }
+            }
             269 = {
                 OR = {
                     is_controlled_by = BLA
-                    AND = {
-                        is_controlled_by = KAM
-                        KAM = {is_puppet_of = BLA}
-                    }
-                    AND = {
-                        is_controlled_by = IKR
-                        IKR = {is_puppet_of = BLA}
-                        }
+                    controller = {
+                        is_puppet_of = BLA
                     }
                 }
+            }
             271 = {
                 OR = {
                     is_controlled_by = BLA
-                    AND = {
-                        is_controlled_by = KAM
-                        KAM = {is_puppet_of = BLA}
-                    }
-                    AND = {
-                        is_controlled_by = IKR
-                        IKR = {is_puppet_of = BLA}
+                    controller = {
+                        is_puppet_of = BLA
                     }
                 }
             }
@@ -6206,6 +6293,17 @@ focus_tree = {
                             }
                         }
                     }
+                    if = {
+                        limit = {
+                            MZL = {is_puppet_of = BLA}
+                        }
+                        KAM = {
+                            annex_country = {
+                                target = MZL
+                                transfer_troops = yes
+                            }
+                        }
+                    }
                     KAM = {
                         set_cosmetic_tag = KAM_Pasha
                         promote_character = {
@@ -6246,6 +6344,17 @@ focus_tree = {
                         }
                         add_core_of = IKR
                     }
+                    if = {
+                        limit = {
+                            MZL = {is_puppet_of = BLA}
+                        }
+                        IKR = {
+                            annex_country = {
+                                target = MZL
+                                transfer_troops = yes
+                            }
+                        }
+                    }
                     IKR = {
                         set_cosmetic_tag = KAM_Pasha
                         promote_character = {
@@ -6282,6 +6391,17 @@ focus_tree = {
                             is_core_of = IKR
                         }
                         add_core_of = KAM
+                    }
+                    if = {
+                        limit = {
+                            MZL = {is_puppet_of = BLA}
+                        }
+                        KAM = {
+                            annex_country = {
+                                target = MZL
+                                transfer_troops = yes
+                            }
+                        }
                     }
                     KAM = {
                         set_cosmetic_tag = KAM_Pasha
@@ -6501,7 +6621,7 @@ focus_tree = {
             }
 		}
     }
-####首相动态国策####
+    ####首相动态国策####
     #沙皇的钦点
     focus = {
         id = BLA_PM_general
@@ -6595,6 +6715,7 @@ focus_tree = {
         }
         completion_reward = {
             BLA_bop_move_rightward = yes
+            add_stability = 0.025
             add_popularity = {
                 ideology = neutrality
                 popularity = 0.05
@@ -6676,7 +6797,7 @@ focus_tree = {
             has_political_power > 99
         }
         completion_reward = {
-            add_political_power = -100
+            add_political_power = -30
             add_ideas = BLA_equal_inheritance
             hidden_effect = {
                 BLA = {add_to_variable = {BLA_nobility_opinion_change = 0.1}}
@@ -6700,6 +6821,7 @@ focus_tree = {
         }
         completion_reward = {
             add_stability = 0.05
+            add_political_power = 45
 		}
     }
     #沙皇格勒的新城区
@@ -6719,7 +6841,12 @@ focus_tree = {
         }
         completion_reward = {
             capital_scope = {
-                add_extra_state_shared_building_slots = 2
+                add_extra_state_shared_building_slots = 4
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
             }
 		}
     }
@@ -6758,7 +6885,8 @@ focus_tree = {
         available = {
         }
         completion_reward = {
-            BLA_increase_freeman_opinion = yes
+            BLA_increase_freeman_opinion_big = yes
+            add_political_power = 15
 		}
     }
     #帝国的新鲜血液
@@ -6777,9 +6905,9 @@ focus_tree = {
         available = {
         }
         completion_reward = {
-            army_experience = 15
-            navy_experience = 15
-            air_experience = 15
+            army_experience = 65
+            navy_experience = 65
+            air_experience = 65
             custom_effect_tooltip =  BLA_rot_bonus_desc
             BLA_decrease_nobility_opinion = yes
             hidden_effect = {
@@ -6853,6 +6981,14 @@ focus_tree = {
         }
         completion_reward = {
             add_ideas = BLA_Sieras_reform_1
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
 		}
     }
     #国家主导
@@ -6932,6 +7068,14 @@ focus_tree = {
             BLA_decrease_serf_opinion = yes
             add_cic = 5000
             add_stability = -0.05
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 1
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+		    }
 		}
     }
     #发展金融业
@@ -6980,6 +7124,14 @@ focus_tree = {
                 remove_idea = BLA_Sieras_reform_3
                 add_idea = BLA_Sieras_reform_4
             }
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 2
+			    add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+		    }
 		}
     }
     #罗西亚，我们的祖国
@@ -7095,7 +7247,7 @@ focus_tree = {
             }
 		}
     }
-    ###萨尼娅####
+    ###萨妮娅####
     #夜航魔女的歌声
     focus = {
         id = BLA_PM_Sanya_1
@@ -7108,6 +7260,7 @@ focus_tree = {
         allow_branch = {
             OR = {
                 has_idea = BLA_PM_Sanya
+                has_country_flag = BLA_HEL_crisis_failed
                 has_country_flag = BLA_debug_display_sanya_success_focus_flag
                 has_country_flag = BLA_debug_display_sanya_fail_focus_flag
             }
@@ -8222,7 +8375,7 @@ focus_tree = {
                     is_IRIS_NAS_state = yes
                     NOT = {is_core_of = ROOT}
                 }
-                custom_effect_tooltip = add_integrable_core_tooltip
+                add_core_of = BLA
             }
             hidden_effect = {
                 add_ideas = BLA_ciallo_empire_hidden
@@ -8262,7 +8415,7 @@ focus_tree = {
             }
 		}
     }
-####空军####
+    ####空军####
     #加强飞行员培训
     focus = {
         id = BLA_Anna_af_1
