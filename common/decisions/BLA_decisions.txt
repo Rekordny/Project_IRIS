@@ -361,6 +361,9 @@ BLA_rule_of_tsar = {
                 }
             }
         }
+        ai_will_do = {
+            base = 1000
+        }
     }
     #安抚贵族
     BLA_prefer_nobility = {
@@ -4068,6 +4071,42 @@ BLA_Sanyas_dream = {
             base = 1000
         }
     }
+    #限制资本
+    BLA_restrict_cpitalist = {
+        available = {
+            has_idea = BLA_command_economy
+        }
+        visible = {
+            has_completed_focus = BLA_Anna_reform_17
+        }
+        cost = 100
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            swap_ideas = {
+                remove_idea = BLA_command_economy
+                add_idea = BLA_command_economy_reformed
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #基本福利政策
+    BLA_basic_welfare_policy = {
+        visible = {
+            has_completed_focus = BLA_Anna_reform_17
+        }
+        cost = 150
+        days_remove = 70
+        fire_only_once = yes
+        remove_effect = {
+            add_ideas = BLA_basic_welfare_policy_idea
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
 }
 #赫萝西查危机
 HEL_crisis = {
@@ -4103,8 +4142,8 @@ HEL_crisis = {
             }
         }
     }
-    #反对派破坏谈判
-    BLA_damage_negotiation = {
+    #事件杀
+    HEL_ALL_GONE_2 = {
         icon = mission_icon
         is_good = no
         available = {
@@ -4112,11 +4151,41 @@ HEL_crisis = {
         }
         activation = {
             tag = BLA
+            has_war_with = HEL
+            has_country_flag = BLA_HEL_crisis_failed
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = HEL
+            }
+        }
+        days_mission_timeout = 30
+        selectable_mission = no
+        fire_only_once = yes
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                country_event = {id = BLA_general.64}
+            }
+        }
+    }
+    #反对派破坏谈判
+    BLA_damage_negotiation = {
+        icon = mission_icon
+        is_good = no
+        available = {
+        }
+        complete_effect = {
+            add_political_power = -30
+        }
+        activation = {
+            tag = BLA
             has_country_flag = BLA_HEL_crisis
             hidden_trigger = {
                 BLA = {
                     check_variable = {
-                        BLA_negotiation_barrier > 49
+                        BLA_negotiation_barrier > 39
                     }
                 }
             }
@@ -4127,17 +4196,16 @@ HEL_crisis = {
                     has_war_with = HEL
                 }
                 custom_trigger_tooltip = {
-                    tooltip = BLA_negotiation_barrier_less_than_50
+                    tooltip = BLA_negotiation_barrier_less_than_40
                     BLA = {
                         check_variable = {
-                            BLA_negotiation_barrier < 50
+                            BLA_negotiation_barrier < 40
                         }
                     }
                 }
             }
         }
         days_mission_timeout = 20
-        selectable_mission = no
         complete_effect = {
         }
         timeout_effect = {
@@ -4194,6 +4262,7 @@ HEL_crisis = {
             has_war_with = HEL
         }
         remove_effect = {
+            BLA_weaken_gov_sanya = yes
             BLA_increase_negotiation_progress_10 = yes
             BLA_increase_negotiation_barrier_5 = yes
         }
