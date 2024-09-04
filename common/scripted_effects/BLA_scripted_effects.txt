@@ -327,12 +327,30 @@ BLA_check_serf_opinion = {
 #每周变化
 BLA_opinion_weekly_change = {
     BLA = {
+        set_variable = {BLA_nobility_opinion_change_t = 0}
+        set_variable = {BLA_church_opinion_change_t = 0}
+        set_variable = {BLA_army_opinion_change_t = 0}
+        set_variable = {BLA_capitalist_opinion_change_t = 0}
+        set_variable = {BLA_freeman_opinion_change_t = 0}
+        set_variable = {BLA_serf_opinion_change_t = 0}
+        add_to_variable = {BLA_nobility_opinion_change_t = modifier@BLA_nobility_opinion_modifier}
+        add_to_variable = {BLA_church_opinion_change_t = modifier@BLA_church_opinion_modifier}
+        add_to_variable = {BLA_army_opinion_change_t = modifier@BLA_army_opinion_modifier}
+        add_to_variable = {BLA_capitalist_opinion_change_t = modifier@BLA_capitalist_opinion_modifier}
+        add_to_variable = {BLA_freeman_opinion_change_t = modifier@BLA_freeman_opinion_modifier}
+        add_to_variable = {BLA_serf_opinion_change_t = modifier@BLA_serf_opinion_modifier}
         add_to_variable = {BLA_nobility_opinion = BLA_nobility_opinion_change}
+        add_to_variable = {BLA_nobility_opinion = BLA_nobility_opinion_change_t}
         add_to_variable = {BLA_church_opinion = BLA_church_opinion_change}
+        add_to_variable = {BLA_church_opinion = BLA_church_opinion_change_t}
         add_to_variable = {BLA_army_opinion = BLA_army_opinion_change}
+        add_to_variable = {BLA_army_opinion = BLA_army_opinion_change_t}
         add_to_variable = {BLA_capitalist_opinion = BLA_capitalist_opinion_change}
+        add_to_variable = {BLA_capitalist_opinion = BLA_capitalist_opinion_change_t}
         add_to_variable = {BLA_freeman_opinion = BLA_freeman_opinion_change}
+        add_to_variable = {BLA_freeman_opinion = BLA_freeman_opinion_change_t}
         add_to_variable = {BLA_serf_opinion = BLA_serf_opinion_change}
+        add_to_variable = {BLA_serf_opinion = BLA_serf_opinion_change_t}
         BLA_check_nobility_opinion = yes
         BLA_check_church_opinion = yes
         BLA_check_army_opinion = yes
@@ -351,6 +369,7 @@ BLA_update_rot = {
 			set_variable = {BLA_dynamic_army_attack_factor = BLA_army_attack_factor}
 			set_variable = {BLA_dynamic_army_defence_factor = BLA_army_defence_factor}
 			set_variable = {BLA_dynamic_consumer_goods_factor = BLA_consumer_goods_factor}
+            set_variable = {BLA_dynamic_industrial_capacity_factory_2 = BLA_industrial_capacity_factory}
 			set_variable = {BLA_dynamic_conscription_factor = BLA_conscription_factor}
 			set_variable = {BLA_dynamic_communism_drift = BLA_communism_drift}
 			set_variable = {BLA_dynamic_democratic_drift = BLA_democratic_drift}
@@ -360,6 +379,7 @@ BLA_update_rot = {
 			multiply_variable = { BLA_dynamic_army_attack_factor = BLA_army_opinion} #军队
 			multiply_variable = { BLA_dynamic_army_defence_factor = BLA_army_opinion} #军队
 			multiply_variable = { BLA_dynamic_consumer_goods_factor = BLA_capitalist_opinion} #实业家
+            multiply_variable = { BLA_dynamic_industrial_capacity_factory_2 = BLA_capitalist_opinion} #实业家
 			multiply_variable = { BLA_dynamic_conscription_factor = BLA_freeman_opinion} #自由民
 			multiply_variable = { BLA_dynamic_democratic_drift = BLA_serf_opinion} #农奴
 			multiply_variable = { BLA_dynamic_communism_drift = BLA_serf_opinion} #农奴
@@ -459,14 +479,45 @@ BLA_calculate_capitalist_tax = {
 BLA_calculate_reinvest = {
     BLA = {
         set_variable = {BLA_revenue = 0}
-        set_variable = {BLA_revenue = num_of_civilian_factories}
-		multiply_variable = {BLA_revenue = 0.4}
+        set_variable = {BLA_revenue_c = num_of_civilian_factories}
+		multiply_variable = {BLA_revenue_c = 0.6}
+		set_variable = {BLA_revenue_m = num_of_military_factories}
+		multiply_variable = {BLA_revenue_m = 0.2}
+		set_variable = {BLA_revenue_d = num_of_naval_factories}
+		multiply_variable = {BLA_revenue_d = 0.2}
+		add_to_variable = {BLA_revenue = BLA_revenue_c}
+		add_to_variable = {BLA_revenue = BLA_revenue_m}
+		add_to_variable = {BLA_revenue = BLA_revenue_d}
     }
 }
 #计算总体债务
 BLA_calculate_total_debt = {
     BLA = {
         set_variable = {BLA_debt = 0}
+        clamp_variable = {
+            var = BLA_other_debt
+            min = 0
+        }
+        clamp_variable = {
+            var = BLA_ELN_debt
+            min = 0
+        }
+        clamp_variable = {
+            var = BLA_ANZ_debt
+            min = 0
+        }
+        clamp_variable = {
+            var = BLA_USR_debt
+            min = 0
+        }
+        clamp_variable = {
+            var = BLA_USF_debt
+            min = 0
+        }
+        clamp_variable = {
+            var = BLA_STG_debt
+            min = 0
+        }
         add_to_variable = {BLA_debt = BLA_other_debt}
         add_to_variable = {BLA_debt = BLA_ELN_debt}
         add_to_variable = {BLA_debt = BLA_ANZ_debt}
@@ -516,6 +567,18 @@ BLA_upgrade_industralization = {
         add_to_variable = {BLA_dynamic_local_resources_factor = 0.065}
         add_to_variable = {BLA_freeman_tax = 5}
         add_to_variable = {BLA_capitalist_basic_tax = 0.03}
+        if = {
+            limit = {
+                check_variable = {BLA_industralization_status = 5}
+            }
+            country_event = {id = BLA_general.59}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_industralization_status = 10}
+            }
+            country_event = {id = BLA_general.60}
+        }
     }
 }
 #大博弈的结果
@@ -772,13 +835,13 @@ Big_Game_result_effect = {
         if = {
             limit = {
                 BLA = {
-                    communism < 0.10
+                    communism < 0.05
                 }
-                every_country = {
-                    add_to_variable = {BLA_E_control_point = 0.60}
-                    add_to_variable = {BLA_W_control_point = 0.60}
-                    add_to_variable = {BLA_S_control_point = 0.60}
-                }
+            }
+            every_country = {
+                add_to_variable = {BLA_E_control_point = 0.20}
+                add_to_variable = {BLA_W_control_point = 0.20}
+                add_to_variable = {BLA_S_control_point = 0.20}
             }
         }
         if = {
@@ -786,11 +849,11 @@ Big_Game_result_effect = {
                 BLA = {
                     communism > 0.30
                 }
-                every_country = {
-                    add_to_variable = {NAC_E_control_point = 0.75}
-                    add_to_variable = {NAC_W_control_point = 0.75}
-                    add_to_variable = {NAC_S_control_point = 0.75}
-                }
+            }
+            every_country = {
+                add_to_variable = {NAC_E_control_point = 0.30}
+                add_to_variable = {NAC_W_control_point = 0.30}
+                add_to_variable = {NAC_S_control_point = 0.30}
             }
         }
         else_if = {
@@ -798,11 +861,11 @@ Big_Game_result_effect = {
                 BLA = {
                     communism > 0.25
                 }
-                every_country = {
-                    add_to_variable = {NAC_E_control_point = 0.50}
-                    add_to_variable = {NAC_W_control_point = 0.50}
-                    add_to_variable = {NAC_S_control_point = 0.50}
-                }
+            }
+            every_country = {
+                add_to_variable = {NAC_E_control_point = 0.25}
+                add_to_variable = {NAC_W_control_point = 0.25}
+                add_to_variable = {NAC_S_control_point = 0.25}
             }
         }
         else_if = {
@@ -810,11 +873,11 @@ Big_Game_result_effect = {
                 BLA = {
                     communism > 0.20
                 }
-                every_country = {
-                    add_to_variable = {NAC_E_control_point = 0.33}
-                    add_to_variable = {NAC_W_control_point = 0.33}
-                    add_to_variable = {NAC_S_control_point = 0.33}
-                }
+            }
+            every_country = {
+                add_to_variable = {NAC_E_control_point = 0.20}
+                add_to_variable = {NAC_W_control_point = 0.20}
+                add_to_variable = {NAC_S_control_point = 0.20}
             }
         }
         else_if = {
@@ -822,11 +885,35 @@ Big_Game_result_effect = {
                 BLA = {
                     communism > 0.15
                 }
-                every_country = {
-                    add_to_variable = {NAC_E_control_point = 0.25}
-                    add_to_variable = {NAC_W_control_point = 0.25}
-                    add_to_variable = {NAC_S_control_point = 0.25}
+            }
+            every_country = {
+                add_to_variable = {NAC_E_control_point = 0.15}
+                add_to_variable = {NAC_W_control_point = 0.15}
+                add_to_variable = {NAC_S_control_point = 0.15}
+            }
+        }
+        else_if = {
+            limit = {
+                BLA = {
+                    communism > 0.10
                 }
+            }
+            every_country = {
+                add_to_variable = {NAC_E_control_point = 0.10}
+                add_to_variable = {NAC_W_control_point = 0.10}
+                add_to_variable = {NAC_S_control_point = 0.10}
+            }
+        }
+        else_if = {
+            limit = {
+                BLA = {
+                    communism > 0.05
+                }
+            }
+            every_country = {
+                add_to_variable = {NAC_E_control_point = 0.05}
+                add_to_variable = {NAC_W_control_point = 0.05}
+                add_to_variable = {NAC_S_control_point = 0.05}
             }
         }
         every_country = {
@@ -889,6 +976,8 @@ Rossiya_Revolution_NAC_army_effect = {
                         infantry = { x = 0 y = 1 }
                         infantry = { x = 1 y = 0 }
                         infantry = { x = 1 y = 1 }
+                        infantry = { x = 2 y = 0 }
+                        infantry = { x = 2 y = 1 }
                     }
                 }
             }
@@ -904,9 +993,11 @@ Rossiya_Revolution_NAC_army_effect = {
                         infantry = { x = 0 y = 0 }
                         infantry = { x = 0 y = 1 }
                         infantry = { x = 0 y = 2 }
-                        infantry = { x = 0 y = 3 }
-                        infantry = { x = 0 y = 4 }
-                        artillery_brigade = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                        artillery_brigade = { x = 2 y = 0 }
+                        artillery_brigade = { x = 2 y = 1 }
                     }
                 }
             }
@@ -957,6 +1048,89 @@ Rossiya_Revolution_NAC_army_effect = {
             create_unit = {
                 division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.25"
                 owner = NAC
+            }
+        }
+    }
+}
+Rossiya_Revolution_ORE_army_effect = {
+    hidden_effect = {
+        ORE = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_template = "奥伦堡民兵"
+                    }
+                }
+                division_template = {
+                    name = "奥伦堡民兵"
+                    is_locked = no
+                    priority = 0
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 2 y = 0 }
+                        infantry = { x = 2 y = 1 }
+                        artillery_brigade = {x = 3 y = 0}
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    NOT = {
+                        has_template = "自由农民旅"
+                    }
+                }
+                division_template = {
+                    name = "自由农民旅"
+                    is_locked = no
+                    priority = 0
+                    template_counter = 0
+                    regiments = {
+                        militia = { x = 0 y = 0 }
+                        militia = { x = 0 y = 1 }
+                        militia = { x = 0 y = 2 }
+                        militia = { x = 1 y = 0 }
+                    }
+                }
+            }
+        }
+        create_unit = {
+            division = "name = \"奥伦堡民兵\" division_template = \"奥伦堡民兵\" start_experience_factor = 0.75"
+            owner = ORE
+        }
+        create_unit = {
+            division = "name = \"奥伦堡民兵\" division_template = \"奥伦堡民兵\" start_experience_factor = 0.75"
+            owner = ORE
+        }
+        create_unit = {
+            division = "name = \"奥伦堡民兵\" division_template = \"奥伦堡民兵\" start_experience_factor = 0.75"
+            owner = ORE
+        }
+        create_unit = {
+            division = "name = \"奥伦堡民兵\" division_template = \"奥伦堡民兵\" start_experience_factor = 0.75"
+            owner = ORE
+        }
+        create_unit = {
+            division = "name = \"奥伦堡民兵\" division_template = \"奥伦堡民兵\" start_experience_factor = 0.75"
+            owner = ORE
+        }
+		create_unit = {
+            division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.15"
+            owner = ORE
+        }
+        create_unit = {
+            division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.15"
+            owner = ORE
+        }
+        if = {
+            limit = {
+                BLA = {has_idea = BLA_serfdom}
+            }
+            create_unit = {
+                division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.15"
+                owner = ORE
             }
         }
     }
@@ -1020,6 +1194,7 @@ Rossiya_Revolution_Map_effect = {
             265 = {
                 transfer_state_to = NAC
                 Rossiya_Revolution_NAC_army_effect = yes
+                Rossiya_Revolution_NAC_army_effect = yes
             }
             256 = {
                 transfer_state_to = NAC
@@ -1029,14 +1204,11 @@ Rossiya_Revolution_Map_effect = {
                 transfer_state_to = NAC
                 Rossiya_Revolution_NAC_army_effect = yes
             }
-            219 = {
-                transfer_state_to = NAC
-                Rossiya_Revolution_NAC_army_effect = yes
-            }
         }
         else = {
             265 = {
                 transfer_state_to = NAC
+                Rossiya_Revolution_NAC_army_effect = yes
                 Rossiya_Revolution_NAC_army_effect = yes
             }
             256 = {
@@ -1055,18 +1227,21 @@ Rossiya_Revolution_Map_effect = {
                 }
             }
             106 = {
-                transfer_state_to = NAC
-                Rossiya_Revolution_NAC_army_effect = yes
+                transfer_state_to = ORE
+                add_core_of = ORE
+                Rossiya_Revolution_ORE_army_effect = yes
             }
             111 = {
-                transfer_state_to = NAC
-                Rossiya_Revolution_NAC_army_effect = yes
+                transfer_state_to = ORE
+                add_core_of = ORE
+                Rossiya_Revolution_ORE_army_effect = yes
             }
         }
         else = {
             106 = {
-                transfer_state_to = NAC
-                Rossiya_Revolution_NAC_army_effect = yes
+                transfer_state_to = ORE
+                add_core_of = ORE
+                Rossiya_Revolution_ORE_army_effect = yes
             }
         }
         NAC = {
@@ -1124,6 +1299,20 @@ Rossiya_Revolution_Map_effect = {
                     BLA = {check_variable = {BLA_freeman_opinion < 0}}
                 }
                 NAC = {add_to_variable = {NAC_morale = 10}}
+            }
+        }
+        ORE = {
+            add_ideas = ORE_revolution_in_city
+            set_politics = {
+                ruling_party = communism
+            }
+            set_political_party = {
+                ideology = communism
+                popularity = 100
+            }
+            promote_character = {
+                character = ORE_Valeri
+                ideology = sub_democratic_socialism
             }
         }
     }
@@ -1236,6 +1425,9 @@ End_Big_Game = {
                 amount = 900
                 producer = BLA
             }
+            capital_scope = {
+                Rossiya_Revolution_NAC_army_effect = yes
+            }
         }
         else = {
             add_ideas = Big_Game_Total_Winner
@@ -1249,29 +1441,101 @@ End_Big_Game = {
                 amount = 1500
                 producer = BLA
             }
+            capital_scope = {
+                Rossiya_Revolution_NAC_army_effect = yes
+                Rossiya_Revolution_NAC_army_effect = yes
+            }
         }
     }
     BLA = {
         if = {
             limit = {
+                NOT = {
+                    has_template = "帝国步兵师"
+                }
+            }
+            division_template = {
+                name = "帝国步兵师"
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    infantry = { x = 0 y = 2 }
+                    infantry = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                    infantry = { x = 1 y = 2 }
+                    artillery_brigade = { x = 2 y = 0 }
+                    artillery_brigade = { x = 2 y = 1 }
+                }
+            }
+        }
+        if = {
+            limit = {
                 check_variable = {BLA_VP = 0}
             }
             add_ideas = Big_Game_Total_Loser
+            118 = {
+                for_loop_effect = {
+                    start = 0
+                    end = 6
+                    capital_scope = {
+                        create_unit = {
+                            division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                            owner = BLA
+                        }
+                    }
+                }
+            }
         }
         else_if = {
             limit = {
-                check_variable = {BLA _VP = 1}
+                check_variable = {BLA_VP = 1}
             }
             add_ideas = Big_Game_Loser
+            118 = {
+                for_loop_effect = {
+                    start = 0
+                    end = 12
+                    capital_scope = {
+                        create_unit = {
+                            division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                            owner = BLA
+                        }
+                    }
+                }
+            }
         }
         else_if = {
             limit = {
                 check_variable = {BLA_VP = 2}
             }
             add_ideas = Big_Game_Winner
+            118 = {
+                for_loop_effect = {
+                    start = 0
+                    end = 18
+                    capital_scope = {
+                        create_unit = {
+                            division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                            owner = BLA
+                        }
+                    }
+                }
+            }
         }
         else = {
             add_ideas = Big_Game_Total_Winner
+            118 = {
+                for_loop_effect = {
+                    start = 0
+                    end = 24
+                    capital_scope = {
+                        create_unit = {
+                            division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                            owner = BLA
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -1291,6 +1555,33 @@ Big_Game_Test = {
             add_to_variable = {NAC_E_control_point = 100}
         }
     }
+}
+Big_game_Propaganda_effect = {
+        if = {
+            limit = {
+                    BLA = {
+                        check_variable = {
+                        var = NAC_propaganda_counter
+                        value = BLA_propaganda_counter
+                        compare = greater_than_or_equals
+                    }
+                }
+            }
+            NAC = {
+                country_event = {id = Rossiya_Propaganda.9}
+            }
+            BLA = {
+                country_event = {id = Rossiya_Propaganda.11}
+            }
+        }
+        else = {
+            NAC = {
+                country_event = {id = Rossiya_Propaganda.10}
+            }
+            BLA = {
+                country_event = {id = Rossiya_Propaganda.12}
+            }
+        }
 }
 BLA_bop_move_leftward = {
     add_power_balance_value = {
@@ -1413,5 +1704,512 @@ BLA_update_revolution_dynamic_modifier = {
         multiply_variable = {BLA_revolution_dynamic_army_morale_factor = BLA_morale}
         multiply_variable = {BLA_revolution_dynamic_army_org_factor = BLA_morale}
         multiply_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_morale}
+    }
+}
+BLA_calculate_youth_agenda = {
+    BLA = {
+        set_variable = {BLA_youth_unity_factor = 0}
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion > 74}
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.1}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion > 49}
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.1}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion > 24}
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.1}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion < 0}
+            }
+            add_to_variable = {BLA_youth_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion < -24}
+            }
+            add_to_variable = {BLA_youth_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion < -49}
+            }
+            add_to_variable = {BLA_youth_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                check_variable = {BLA_freeman_opinion < -74}
+            }
+            add_to_variable = {BLA_youth_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                has_country_flag = BLA_recent_arrest_flag
+            }
+            add_to_variable = {BLA_youth_unity_factor = -0.25}
+        }
+        if = {
+            limit = {
+                has_country_flag = BLA_recent_censorship_flag
+            }
+            add_to_variable = {BLA_youth_unity_factor = -0.25}
+        }
+        if = {
+            limit = {
+                has_country_flag = BLA_recent_loosen_censorship_flag
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.25}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_PM_Sanya_3
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_PM_Sanya_5
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_PM_Sanya_9
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_PM_Sanya_13
+            }
+            add_to_variable = {BLA_youth_unity_factor = 0.05}
+        }
+    }
+}
+BLA_calculate_labor_agenda = {
+    BLA = {
+        set_variable = {BLA_labor_unity_factor = 0}
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_industry_5
+            }
+            add_to_variable = {BLA_labor_unity_factor = -0.15}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_industry_15
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_industry_20
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_industry_23
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_pol_24
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_PM_Sanya_6
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_idea = xiaoshi12
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                NOT = {
+                    has_idea = BLA_serfdom
+                }
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.15}
+        }
+        if = {
+            limit = {
+                has_country_flag = BLA_serfdom_abolished
+            }
+            add_to_variable = {BLA_labor_unity_factor = 0.15}
+        }
+    }
+}
+BLA_calculate_officier_agenda = {
+    BLA = {
+        set_variable = {BLA_officier_unity_factor = 0}
+        if = {
+            limit = {
+                has_war = no
+            }
+            if = {
+                limit = {
+                    has_stability > 0.74
+                }
+                add_to_variable = {BLA_officier_unity_factor = 0.1}
+            }
+            if = {
+                limit = {
+                    has_stability > 0.49
+                }
+                add_to_variable = {BLA_officier_unity_factor = 0.1}
+            }
+            if = {
+                limit = {
+                    has_stability > 0.24
+                }
+                add_to_variable = {BLA_officier_unity_factor = 0.1}
+            }
+            if = {
+                limit = {
+                    has_stability < 0
+                }
+                add_to_variable = {BLA_officier_unity_factor = -0.1}
+            }
+            if = {
+                limit = {
+                    has_stability < -0.25
+                }
+                add_to_variable = {BLA_officier_unity_factor = -0.1}
+            }
+            if = {
+                limit = {
+                    has_stability < 0.49
+                }
+                add_to_variable = {BLA_officier_unity_factor = -0.1}
+            }
+            if = {
+                limit = {
+                    has_stability < 0.74
+                }
+                add_to_variable = {BLA_officier_unity_factor = -0.1}
+            }
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_mil_21
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_PM_Sanya_12
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_industry_32
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_mil_2
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_mil_7
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_mil_10
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_mil_11
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_completed_focus = BLA_Anna_mil_30
+            }
+            add_to_variable = {BLA_officier_unity_factor = 0.05}
+        }
+        if = {
+            limit = {
+                has_idea = BLA_graveyard
+            }
+            add_to_variable = {BLA_officier_unity_factor = -0.10}
+        }
+        if = {
+            limit = {
+                has_idea = BLA_graveyard_2
+            }
+            add_to_variable = {BLA_officier_unity_factor = -0.10}
+        }
+        if = {
+            limit = {
+                has_idea = BLA_graveyard_3
+            }
+            add_to_variable = {BLA_officier_unity_factor = -0.10}
+        }
+    }
+}
+BLA_calculate_loyalist_agenda = {
+    BLA = {
+        set_variable = {BLA_loyalist_unity_factor = 0}
+        if = {
+            limit = {
+                communism > 0.15
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                communism > 0.25
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                communism > 0.35
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = -0.1}
+        }
+        if = {
+            limit = {
+                democratic > 0.25
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = -0.05}
+        }
+        if = {
+            limit = {
+                democratic > 0.35
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = -0.05}
+        }
+        if = {
+            limit = {
+                democratic > 0.45
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = -0.05}
+        }
+        if = {
+            limit = {
+                communism < 0.05
+            }
+            add_to_variable = {BLA_loyalist_unity_factor = 0.1}
+        }
+    }
+}
+BLA_increase_unity = {
+    custom_effect_tooltip = BLA_increase_unity_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_unity = 3}
+        }
+    }
+}
+BLA_increase_church_preference = {
+    custom_effect_tooltip = BLA_increase_church_preference_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_church_preference = 1}
+        }
+    }
+}
+BLA_increase_army_preference = {
+    custom_effect_tooltip = BLA_increase_army_preference_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_army_preference = 1}
+        }
+    }
+}
+BLA_increase_royal_guard_preference = {
+    custom_effect_tooltip = BLA_increase_royal_guard_preference_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_royal_guard_preference = 1}
+        }
+    }
+}
+BLA_increase_navy_preference = {
+    custom_effect_tooltip = BLA_increase_navy_preference_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_navy_preference = 1}
+        }
+    }
+}
+BLA_increase_sp_preference = {
+    custom_effect_tooltip = BLA_increase_sp_preference_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_sp_preference = 1}
+        }
+    }
+}
+BLA_increase_army_preference_small = {
+    custom_effect_tooltip = BLA_increase_army_preference_small_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_army_preference = 0.5}
+        }
+    }
+}
+BLA_increase_royal_guard_preference_small = {
+    custom_effect_tooltip = BLA_increase_royal_guard_preference_small_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_royal_guard_preference = 0.5}
+        }
+    }
+}
+BLA_increase_navy_preference_small = {
+    custom_effect_tooltip = BLA_increase_navy_preference_small_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_navy_preference = 0.5}
+        }
+    }
+}
+BLA_increase_sp_preference_small = {
+    custom_effect_tooltip = BLA_increase_sp_preference_small_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_sp_preference = 0.5}
+        }
+    }
+}
+BLA_weaken_gov_sanya = {
+    custom_effect_tooltip = BLA_weaken_gov_sanya_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_gov_sanya_strength = -2}
+        }
+    }
+}
+BLA_strengthen_gov_sanya = {
+    custom_effect_tooltip = BLA_strengthen_gov_sanya_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_gov_sanya_strength = 2}
+        }
+    }
+}
+BLA_strengthen_gov_sanya_6 = {
+    custom_effect_tooltip = BLA_strengthen_gov_sanya_6_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_gov_sanya_strength = 6}
+        }
+    }
+}
+BLA_increase_negotiation_progress_20 = {
+    custom_effect_tooltip = BLA_increase_negotiation_progress_20_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_progress = 20}
+        }
+    }
+}
+BLA_increase_negotiation_progress_10 = {
+    custom_effect_tooltip = BLA_increase_negotiation_progress_10_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_progress = 10}
+        }
+    }
+}
+BLA_increase_negotiation_progress_5 = {
+    custom_effect_tooltip = BLA_increase_negotiation_progress_5_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_progress = 5}
+        }
+    }
+}
+BLA_decrease_negotiation_progress_3 = {
+    custom_effect_tooltip = BLA_decrease_negotiation_progress_3_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_progress = -3}
+        }
+    }
+}
+BLA_decrease_negotiation_progress_5 = {
+    custom_effect_tooltip = BLA_decrease_negotiation_progress_5_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_progress = -5}
+        }
+    }
+}
+BLA_decrease_negotiation_progress_15 = {
+    custom_effect_tooltip = BLA_decrease_negotiation_progress_15_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_progress = -15}
+        }
+    }
+}
+BLA_increase_negotiation_barrier_25 = {
+    custom_effect_tooltip = BLA_increase_negotiation_barrier_25_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_barrier = 25}
+        }
+    }
+}
+BLA_increase_negotiation_barrier_3 = {
+    custom_effect_tooltip = BLA_increase_negotiation_barrier_3_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_barrier = 3}
+        }
+    }
+}
+BLA_increase_negotiation_barrier_5 = {
+    custom_effect_tooltip = BLA_increase_negotiation_barrier_5_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_barrier = 5}
+        }
+    }
+}
+BLA_decrease_negotiation_barrier_5 = {
+    custom_effect_tooltip = BLA_decrease_negotiation_barrier_5_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_barrier = -5}
+        }
+    }
+}
+BLA_decrease_negotiation_barrier_15 = {
+    custom_effect_tooltip = BLA_decrease_negotiation_barrier_15_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_negotiation_barrier = -15}
+        }
     }
 }

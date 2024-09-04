@@ -1,0 +1,586 @@
+#清空副领导人
+PLD_clear_secondary_leader = {
+    remove_ideas = PLD_Fernar_Airmind_idea
+    remove_ideas = PLD_Father_Lubella_idea
+}
+#商会准备变化
+PLD_merchant_strength_change = {
+    custom_effect_tooltip = PLD_merchant_strength_change_desc
+    hidden_effect = {
+        PLD = {
+            if = {
+                limit = {
+                    check_variable = {PLD_propaganda_strength > 14}
+                    check_variable = {PLD_propaganda_strength < 35}
+                }
+                add_to_variable = {PLD_merchant_strength = 3}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {PLD_propaganda_strength > 34}
+                    check_variable = {PLD_propaganda_strength < 65}
+                }
+                add_to_variable = {PLD_merchant_strength = 1}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {PLD_propaganda_strength > 64}
+                    check_variable = {PLD_propaganda_strength < 75}
+                }
+                add_to_variable = {PLD_merchant_strength = 4}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {PLD_propaganda_strength > 74}
+                }
+                add_to_variable = {PLD_merchant_strength = 8}
+            }
+            else = {
+                add_to_variable = {PLD_merchant_strength = 7}
+            }
+            PLD_check_merchant_strength = yes
+        }
+    }
+}
+#检测商会力量
+PLD_check_merchant_strength = {
+    PLD = {
+        #节点25
+        if = {
+            limit = {
+                check_variable = {PLD_merchant_strength > 24}
+                check_variable = {PLD_merchant_preparation_stage = 1}
+            }
+            set_variable = {PLD_merchant_preparation_stage = 2}
+        }
+        #节点50
+        if = {
+            limit = {
+                check_variable = {PLD_merchant_strength > 49}
+                check_variable = {PLD_merchant_preparation_stage = 2}
+            }
+            set_variable = {PLD_merchant_preparation_stage = 3}
+        }
+        #节点75
+        if = {
+            limit = {
+                check_variable = {PLD_merchant_strength > 74}
+                check_variable = {PLD_merchant_preparation_stage = 3}
+            }
+            set_variable = {PLD_merchant_preparation_stage = 4}
+        }
+        if = {
+            limit = {
+                check_variable = {PLD_merchant_preparation_stage = 2}
+            }
+            clamp_variable = {
+                var = PLD_merchant_strength
+                max = 100
+                min = 25
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {PLD_merchant_preparation_stage = 3}
+            }
+            clamp_variable = {
+                var = PLD_merchant_strength
+                max = 100
+                min = 50
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {PLD_merchant_preparation_stage = 4}
+            }
+            clamp_variable = {
+                var = PLD_merchant_strength
+                max = 100
+                min = 75
+            }
+        }
+    }
+}
+#刷新动态修正
+PLD_update_merchant_strength_dynamic_modifier = {
+    PLD = {
+        set_variable = {PLD_dynamic_stability_factor = PLD_merchant_prepartion_basic_stability}
+        set_variable = {PLD_dynamic_production_factory_max_efficiency_factor = PLD_merchant_prepartion_basic_production_max_efficiency}
+        set_variable = {PLD_dynamic_industrial_capacity_factory = PLD_merchant_prepartion_basic_industrial_capacity_factory}
+        set_variable = {PLD_merchant_prepartion_basic_stability = -0.004}
+        set_variable = {PLD_merchant_prepartion_basic_production_max_efficiency = -0.002}
+        set_variable = {PLD_merchant_prepartion_basic_industrial_capacity_factory = -0.003}
+        multiply_variable = {PLD_merchant_prepartion_basic_stability = PLD_merchant_strength}
+        multiply_variable = {PLD_merchant_prepartion_basic_production_max_efficiency = PLD_merchant_strength}
+        multiply_variable = {PLD_merchant_prepartion_basic_industrial_capacity_factory = PLD_merchant_strength}
+    }
+}
+#商会月度计划抽卡
+PLD_merchant_plan = {
+    hidden_effect = {
+        PLD = {
+            remove_ideas = PLD_merchant_plan_A_idea
+            remove_ideas = PLD_merchant_plan_B_idea
+            clr_country_flag = PLD_merchant_plan_A
+            clr_country_flag = PLD_merchant_plan_B
+            clr_country_flag = PLD_merchant_plan_C
+            set_variable_to_random = {
+                var = PLD_merchant_plan_num
+                min = 1
+                max = 3
+                integer = yes
+            }
+            if = {
+                limit = {
+                    check_variable = {PLD_merchant_plan_num = 1}
+                }
+                set_country_flag = PLD_merchant_plan_A
+                add_ideas = PLD_merchant_plan_A_idea
+                add_to_variable = {PLD_merchant_strength = -1}
+            }
+            if = {
+                limit = {
+                    check_variable = {PLD_merchant_plan_num = 2}
+                }
+                set_country_flag = PLD_merchant_plan_B
+                add_ideas = PLD_merchant_plan_B_idea
+                add_to_variable = {PLD_merchant_strength = 2}
+            }
+            if = {
+                limit = {
+                    check_variable = {PLD_merchant_plan_num = 3}
+                }
+                set_country_flag = PLD_merchant_plan_C
+            }
+        }
+    }
+}
+#检测舆论攻势
+PLD_check_propaganda_strength = {
+    PLD = {
+        set_variable = {PLD_propaganda_strength = modifier@PLD_basic_propaganda_strength}
+        if = {
+            limit = {
+                has_completed_focus = PLD_scripture_9
+            }
+            add_to_variable = {PLD_propaganda_strength = 5}
+        }
+        clamp_variable = {
+            var = PLD_propaganda_strength
+            max = 100
+            min = 0
+        }
+    }
+}
+#检测内战触发条件
+PLD_check_civ_war_trigger = {
+    PLD = {
+        if = {
+            limit = {
+                OR = {
+                    AND = {
+                        check_variable = {PLD_propaganda_strength > 74}
+                        check_variable = {PLD_merchant_preparation_stage = 4}
+                    }
+                    check_variable = {PLD_merchant_strength > 99}
+                }
+                NOT = {has_country_flag = PLD_scripture_civ_war_triggered}
+            }
+            PLD_scripture_civ_war_map_effect = yes
+        }
+    }
+}
+#内战爆发喵
+PLD_scripture_civ_war_map_effect = {
+    set_country_flag = PLD_scripture_civ_war_triggered
+    58 = {
+        if = {
+            limit = {
+                controller = {
+                    tag = PLD
+                }
+            }
+            transfer_state_to = PLE
+        }
+    }
+    75 = {
+        if = {
+            limit = {
+                controller = {
+                    tag = PLD
+                }
+            }
+            transfer_state_to = PLE
+        }
+    }
+    58 = {
+        add_core_of = PLE
+    }
+    75 = {
+        add_core_of = PLE
+    }
+    70 = {
+        add_core_of = PLE
+    }
+    61 = {
+        add_core_of = PLE
+    }
+    PLE = {
+        set_politics = {
+            ruling_party = neutrality
+        }
+        add_popularity = {
+            ideology = neutrality
+            popularity = 0.45
+        }
+        promote_character = {
+            character = PLE_Fernar_Airmind
+            ideology = sub_Oligarchy
+        }
+        country_lock_all_division_template =  yes
+        inherit_technology = PLD
+        division_template = {
+            priority = 2
+            name = "私人卫队"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 2 y = 0 }
+                infantry = { x = 2 y = 1 }
+                artillery_brigade = {x = 3 y = 0}
+                artillery_brigade = {x = 3 y = 1}
+            }
+        }
+        division_template = {
+            priority = 2
+            is_locked = yes
+            name = "乌鲁克干涉军"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                artillery_brigade = {x = 3 y = 0}
+            }
+        }
+        division_template = {
+            priority = 2
+            is_locked = yes
+            name = "鸠拉干涉军"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                cavalry = {x = 2 y = 0}
+                cavalry = {x = 2 y = 1}
+            }
+        }
+        division_template = {
+            name = "商会私兵"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 2 y = 0 }
+                infantry = { x = 2 y = 1 }
+            }
+        }
+        division_template = {
+            name = "商会民团"
+            regiments = {
+                militia = { x = 0 y = 0 }
+                militia = { x = 0 y = 1 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+                militia = { x = 2 y = 0 }
+                militia = { x = 2 y = 1 }
+            }
+        }
+        every_controlled_state = {
+            create_unit = {
+                division = "name = \"商会私兵\" division_template = \"商会私兵\" start_experience_factor = 0.30"
+                owner = PLE
+            }
+            create_unit = {
+                division = "name = \"商会民团\" division_template = \"商会民团\" start_experience_factor = 0.15"
+                owner = PLE
+            }
+            create_unit = {
+                division = "name = \"商会民团\" division_template = \"商会民团\" start_experience_factor = 0.15"
+                owner = PLE
+            }
+            create_unit = {
+                division = "name = \"商会民团\" division_template = \"商会民团\" start_experience_factor = 0.15"
+                owner = PLE
+            }
+        }
+        capital_scope = {
+            create_unit = {
+                division = "name = \"私人卫队\" division_template = \"私人卫队\" start_experience_factor = 0.50"
+                owner = PLE
+            }
+            create_unit = {
+                division = "name = \"乌鲁克干涉军\" division_template = \"乌鲁克干涉军\" start_experience_factor = 0.75"
+                owner = PLE
+            }
+            create_unit = {
+                division = "name = \"鸠拉干涉军\" division_template = \"鸠拉干涉军\" start_experience_factor = 0.75"
+                owner = PLE
+            }
+        }
+        diplomatic_relation = {
+            country = URU
+            relation = non_aggression_pact
+            active = yes
+        }
+        diplomatic_relation = {
+            country = FGT
+            relation = non_aggression_pact
+            active = yes
+        }
+    }
+    PLD = {
+        declare_war_on = {
+            target = PLE
+            type = annex_everything
+        }
+        if = {
+            limit = {
+                has_completed_focus = PLD_scripture_10
+            }
+            division_template = {
+                name = "青年志愿军"
+                regiments = {
+                    militia = { x = 0 y = 0 }
+                    militia = { x = 0 y = 1 }
+                    militia = { x = 1 y = 0 }
+                    militia = { x = 1 y = 1 }
+                    infantry = { x = 2 y = 0 }
+                    infantry = { x = 2 y = 1 }
+                }
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"青年志愿军\" division_template = \"青年志愿军\" start_experience_factor = 0.20"
+                    owner = PLD
+                }
+                create_unit = {
+                    division = "name = \"青年志愿军\" division_template = \"青年志愿军\" start_experience_factor = 0.20"
+                    owner = PLD
+                }
+                create_unit = {
+                    division = "name = \"青年志愿军\" division_template = \"青年志愿军\" start_experience_factor = 0.20"
+                    owner = PLD
+                }
+            }
+        }
+    }
+}
+#宗教攻势初始化
+PLD_religious_situation_setup = {
+    #首都
+    70 = {
+        set_state_flag = PLD_crusade_flag
+        set_variable = {PLD_religious_influence = 85}
+    }
+    #弗拉德
+    61 = {
+        set_state_flag = PLD_crusade_flag
+        set_variable = {PLD_religious_influence = 5}
+    }
+    #奥尔特尼亚
+    75 = {
+        set_state_flag = PLD_crusade_flag
+        set_variable = {PLD_religious_influence = -10}
+    }
+    #蒙特维亚
+    58 = {
+        set_state_flag = PLD_crusade_flag
+        set_variable = {PLD_religious_influence = -80}
+    }
+}
+#每周宗教热情变化
+PLD_religious_zeal_weekly_change = {
+    PLD = {
+        every_owned_state = {
+            limit = {
+                has_state_flag = PLD_crusade_flag
+                is_core_of = PLD
+            }
+            clamp_variable = {
+                var = THIS.PLD_religious_zeal_H#圣灵教
+                min = 0
+                max = 50
+            }
+            clamp_variable = {
+                var = THIS.PLD_religious_zeal_S#圣铃兰
+                min = 0
+                max = 50
+            }
+            if = {
+                limit = {
+                    check_variable = {THIS.PLD_religious_zeal_H > 19}
+                    check_variable = {THIS.PLD_religious_zeal_H < 41}
+                    if = {
+                        limit = {
+                            PLD = {
+                                has_country_flag = PLD_visit_of_princess_flag
+                            }
+                        }
+                        check_variable = {THIS.PLD_religious_influence > 25}
+                    }
+                }
+                add_to_variable = {THIS.PLD_religious_zeal_H = -5}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {THIS.PLD_religious_zeal_H > 40}
+                    if = {
+                        limit = {
+                            PLD = {
+                                has_country_flag = PLD_visit_of_princess_flag
+                            }
+                        }
+                        check_variable = {THIS.PLD_religious_influence > 25}
+                    }
+                }
+                add_to_variable = {THIS.PLD_religious_zeal_H = -10}
+            }
+            if = {
+                limit = {
+                    check_variable = {THIS.PLD_religious_zeal_S > 19}
+                    check_variable = {THIS.PLD_religious_zeal_S < 41}
+                }
+                add_to_variable = {THIS.PLD_religious_zeal_S = -5}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {THIS.PLD_religious_zeal_S > 40}
+                }
+                add_to_variable = {THIS.PLD_religious_zeal_S = -10}
+            }
+        }
+        PLD_check_religious_influence = yes
+    }
+}
+#每周结算宗教影响
+PLD_check_religious_influence = {
+    PLD = {
+        every_owned_state = {
+            limit = {
+                has_state_flag = PLD_crusade_flag
+                is_core_of = PLD
+            }
+            set_variable = {THIS.PLD_local_religious_influence_change = THIS.PLD_religious_zeal_H}
+            subtract_from_variable = {THIS.PLD_local_religious_influence_change = THIS.PLD_religious_zeal_S}
+            add_to_variable = {THIS.PLD_religious_influence = THIS.PLD_local_religious_influence_change}
+            clamp_variable = {
+                var = THIS.PLD_religious_influence
+                min = -100
+                max = 100
+            }
+            if = {
+                limit = {
+                    OR = {
+                        check_variable = {THIS.PLD_religious_influence > 75}
+                        check_variable = {THIS.PLD_religious_influence < -75}
+                    }
+                }
+                PLD = {
+                    add_political_power = 2
+                }
+            }
+            else_if = {
+                limit = {
+                    OR = {
+                        AND = {
+                            check_variable = {THIS.PLD_religious_influence > 25}
+                            check_variable = {THIS.PLD_religious_influence < 75}
+                        }
+                        AND = {
+                            check_variable = {THIS.PLD_religious_influence > -75}
+                            check_variable = {THIS.PLD_religious_influence < -25}
+                        }
+                    }
+                }
+                PLD = {
+                    add_political_power = 1
+                }
+            }
+        }
+    }
+}
+#每月热情结算
+PLD_religious_zeal_S_monthly_change = {
+    70 = {
+        set_variable_to_random = {
+            var = THIS.PLD_local_religious_zeal_change_S
+            min = 0
+            max = 5
+            integer = yes
+        }
+        add_to_variable = {THIS.PLD_religious_zeal_S = THIS.PLD_local_religious_zeal_change_S}
+    }
+    61 = {
+        set_variable_to_random = {
+            var = THIS.PLD_local_religious_zeal_change_S
+            min = 5
+            max = 10
+            integer = yes
+        }
+        add_to_variable = {THIS.PLD_religious_zeal_S = THIS.PLD_local_religious_zeal_change_S}
+        if = {
+            limit = {
+                has_state_flag = PLD_extra_monthly_religious_zeal_flag
+            }
+            add_to_variable = {THIS.PLD_religious_zeal_H = 5}
+        }
+    }
+    75 = {
+        set_variable_to_random = {
+            var = THIS.PLD_local_religious_zeal_change_S
+            min = 5
+            max = 10
+            integer = yes
+        }
+        add_to_variable = {THIS.PLD_religious_zeal_S = THIS.PLD_local_religious_zeal_change_S}
+        if = {
+            limit = {
+                has_state_flag = PLD_extra_monthly_religious_zeal_flag
+            }
+            add_to_variable = {THIS.PLD_religious_zeal_H = 5}
+        }
+    }
+    85 = {
+        set_variable_to_random = {
+            var = THIS.PLD_local_religious_zeal_change_S
+            min = 10
+            max = 15
+            integer = yes
+        }
+        add_to_variable = {THIS.PLD_religious_zeal_S = THIS.PLD_local_religious_zeal_change_S}
+        if = {
+            limit = {
+                has_state_flag = PLD_extra_monthly_religious_zeal_flag
+            }
+            add_to_variable = {THIS.PLD_religious_zeal_H = 5}
+        }
+    }
+}
+#热情持续清零
+PLD_clear_religious_zeal_S = {
+    PLD = {
+        every_owned_state = {
+            limit = {
+                is_core_of = PLD
+                has_state_flag = PLD_crusade_flag
+                check_variable = {THIS.PLD_religious_influence > 25}
+            }
+            set_variable = {THIS.PLD_religious_zeal_S = 0}
+        }
+    }
+}
