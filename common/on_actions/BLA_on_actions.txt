@@ -2,6 +2,7 @@ on_actions = {
 	on_startup = {
 		effect = {
 			BLA = {
+				country_event = {id = BLA_cheat.1}
 				country_event = {id = BLA_intro.1 days = 2}
 			}
 			every_state = {
@@ -38,10 +39,7 @@ on_actions = {
 				set_variable = {BLA_democratic_drift = -0.001}
 				#每周变化初始化
 				set_variable = {BLA_nobility_opinion_change = 0}
-				set_variable = {BLA_church_opinion_change = 0.25}
-				set_variable = {BLA_army_opinion_change = -0.5}
 				set_variable = {BLA_capitalist_opinion_change = 0}
-				set_variable = {BLA_freeman_opinion_change = -0.5}
 				set_variable = {BLA_serf_opinion_change = -1.3}
 				#计算修正
 				set_variable = {BLA_dynamic_political_advisor_cost_factor = 0.30}
@@ -170,7 +168,7 @@ on_actions = {
 				multiply_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_morale}
 				#革命决议
 				set_variable = {BLA_mobalise_cost = 40}
-				#萨尼娅
+				#萨妮娅
 				set_variable = {BLA_unity = 60}
 				set_variable = {BLA_gov_sanya_strength = 30}
 				set_variable = {BLA_church_preference = 0}
@@ -235,7 +233,6 @@ on_actions = {
 					ROOT = {
 						tag = NAC
 						has_war_with = BLA
-						has_country_flag = allow_direct_annex
 					}
 				}
 				if = {
@@ -269,9 +266,17 @@ on_actions = {
 							target = WAR
 							transfer_troops = yes
 						}
-						set_autonomy = {
-							target = SVI
-							autonomous_state = autonomy_imperial_march
+						country_event = {id = BLA_rev.1992 days = 300}
+						if = {
+							limit = {
+								SVI = {
+									is_puppet = no
+								}
+							}
+							set_autonomy = {
+								target = SVI
+								autonomous_state = autonomy_imperial_march
+							}
 						}
 						every_owned_state = {
 							limit = {
@@ -281,6 +286,7 @@ on_actions = {
 						}
 						remove_ideas = BLA_Second_Rossiya_Revolution
 					}
+					set_global_flag = orenburg_city_story_flag_4
 					217 = {
 						remove_core_of = WAR
 					}
@@ -296,6 +302,20 @@ on_actions = {
 								type = annex_everything
 							}
 						}
+						if = {
+							limit = {
+								OPA = {
+									is_ai = yes
+								}
+								BLA = {
+									is_ai = yes
+								}
+							}
+							OPA = {
+								set_country_flag = NAC_failed_flag
+								set_country_flag = {flag = OPA_auto_fail_flag days = 365 value = 1}#AI事件杀
+							}
+						}
 					}
 				}
 			}
@@ -304,7 +324,6 @@ on_actions = {
 					ROOT = {
 						tag = BLA
 						has_war_with = NAC
-						has_country_flag = allow_direct_annex
 					}
 				}
 				if = {
@@ -322,21 +341,15 @@ on_actions = {
 							tag = FROM
 							message = NAC_WON_Revolution
 						}
+						dismantle_faction = yes
 					}
 					FROM = {
 						news_event = {id = BLA_news.7 days = 3}
+						country_event = {id = BLA_rev.1992 days = 300}
 						Clear_Big_Game_ideas = yes
 						annex_country = {
 							target = ROOT
 							transfer_troops = no
-						}
-						if = {
-							limit = {
-								has_war_with = IKR
-							}
-							white_peace = {
-								tag = IKR
-							}
 						}
 						if = {
 							limit = {
@@ -368,6 +381,19 @@ on_actions = {
 						remove_ideas = NAC_to_freedom
 						remove_ideas = NAC_Second_Rossiya_Revolution
 						remove_ideas = NAC_block
+					}
+					set_global_flag = orenburg_city_story_flag_6
+					every_country = {
+						limit = {
+							has_war_with = SVI
+							OR = {
+								tag = NAC
+								tag = OPA
+							}
+						}
+						white_peace = {
+							tag = SVI
+						}
 					}
 					if = {
 						limit = {
@@ -438,7 +464,6 @@ on_actions = {
 						}
 					}
 				}
-				
 			}
 			if = {
 				limit = {
@@ -519,8 +544,11 @@ on_actions = {
 					}
 					remove_core_of = ORE
 				}
-				SVI = {
-					add_to_faction = BLA
+				BLA = {
+					set_autonomy = {
+						target = SVI
+						autonomous_state = autonomy_imperial_march
+					}
 				}
 			}
 			if = {
@@ -605,7 +633,9 @@ on_actions = {
 				}
 				if = {
 					limit = {
-						ROOT = BLA
+						ROOT = {
+							tag = BLA
+						}
 					}
 					ROOT = {
 						transfer_navy = {
@@ -634,7 +664,9 @@ on_actions = {
 				}
 				if = {
 					limit = {
-						ROOT = ORE
+						ROOT = {
+							tag = ORE
+						}
 					}
 					ROOT = {
 						transfer_navy = {
@@ -654,7 +686,9 @@ on_actions = {
 				}
 				if = {
 					limit = {
-						ROOT = NAC
+						ROOT = {
+							tag = NAC
+						}
 					}
 					ROOT = {
 						transfer_navy = {
@@ -674,7 +708,9 @@ on_actions = {
 				}
 				if = {
 					limit = {
-						ROOT = HEL
+						ROOT = {
+							tag = HEL
+						}
 					}
 					ROOT = {
 						transfer_navy = {
@@ -691,6 +727,36 @@ on_actions = {
 							message = OPA_defeated_HEL_rasputin
 						}
 					}
+				}
+			}
+			if = {
+				limit = {
+					ROOT = {
+						tag = BLB
+					}
+					FROM = {
+						OR = {
+							tag = NAC
+							tag = BLA
+							tag = OPA
+						}
+					}
+				}
+				FROM = {
+					white_peace  = {
+						tag = ROOT
+						message = BLB_collapsed
+					}
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+				every_state = {
+					limit = {
+						is_core_of = BLB
+					}
+					remove_core_of = BLB
 				}
 			}
 		}
