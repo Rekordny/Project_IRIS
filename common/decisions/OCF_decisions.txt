@@ -2044,6 +2044,9 @@ OCF_Federal_Parliament = {
     OCE_Rub_cards = {
         fire_only_once = no
 		days_re_enable = 0
+		activation = {
+			always = no
+		}
         visible = {
 		    tag = OCF
 				NOT = { 
@@ -2073,6 +2076,9 @@ OCF_Federal_Parliament = {
     OCE_amidst_intense_discussions_parliament = {
         fire_only_once = no
 		days_re_enable = 0
+		activation = {
+			always = no
+		}
         visible = {
 		    tag = OCF
 				NOT = { 
@@ -2101,6 +2107,9 @@ OCF_Federal_Parliament = {
     OCE_allocation_seats_House_Representatives = {
         fire_only_once = no
 		days_re_enable = 0
+		activation = {
+			always = no
+		}
         visible = {
 		    tag = OCF
 				NOT = { 
@@ -2884,6 +2893,88 @@ OCF_building_coffee_shop = {
 		}
 		modifier = {
 			consumer_goods_factor = 0.075
+		}
+	}
+}
+
+OCF_federal_film_company = {
+	OCE_establish_international_channel = {
+        visible = {
+           NOT = {
+            	has_global_flag = OCF_establish_international_channel_flag
+        	}
+        }
+		complete_effect = {
+			subtract_from_variable = { OCF_bill = 60 }
+		}
+		custom_cost_text = OCF_spending_funds_60
+		custom_cost_trigger = {
+			check_variable = { OCF_bill > 60 } 
+		}
+        days_remove = 120
+        ai_will_do = {
+			base = 10
+		}
+		remove_effect = {
+			set_global_flag = OCF_establish_international_channel_flag
+			add_ideas = OCF_international_channel
+		}
+	}
+	#延长播放周期
+	OCE_extend_playback_cycle = {
+		cost = 15
+		visible = {
+			has_country_flag = OCF_federal_film_company_flag
+		}
+		complete_effect = {
+			add_days_mission_timeout = {
+				mission = OCE_play_cycle
+				days = 30
+			}
+		}
+	}
+	#缩短播放周期
+	OCE_shorten_playback_cycle = {
+		cost = 15
+		visible = {
+			has_country_flag = OCF_federal_film_company_flag
+		}
+		complete_effect = {
+			add_days_mission_timeout = {
+				mission = OCE_play_cycle
+				days = -30
+			}
+		}
+	}
+	#播放周期
+	OCE_play_cycle = {
+        fire_only_once = no
+		days_re_enable = 0
+		activation = {
+			always = no
+		}
+		available = {
+			NOT = {
+				has_country_flag = OCF_federal_film_company_flag
+			}
+		}
+        is_good = yes
+		days_mission_timeout = 80
+		timeout_effect = {
+			hidden_effect = {
+                activate_mission = OCE_play_cycle
+            }
+			OCF_federal_film_company_update = yes
+		}
+	}
+	#刷新播放周期-debug
+	debug_OCE_play_cycle = {
+		visible = {
+			is_testing = yes
+		}
+		complete_effect = {
+			activate_mission = OCE_play_cycle
+			OCF_federal_film_company_update = yes
 		}
 	}
 }
@@ -3678,6 +3769,39 @@ IRIS_debug_decisions_OCF = {
 		}
 		complete_effect = {
 			OCE_amidst_intense_discussions_parliament_pack = yes
+		}
+	}
+	#建立联邦放映公司-debug
+    debug_OCE_establish_federal_screening_company = {
+        visible = {
+			is_testing = yes
+			NOT = {
+				has_country_flag = OCF_federal_film_company_flag
+			}
+		}
+		fire_only_once = no
+		available = {
+		}
+		complete_effect = {
+			set_country_flag = OCF_federal_film_company_flag
+			activate_mission = OCE_play_cycle
+			OCF_federal_film_company_initialization = yes
+		}
+	}
+	#建立国际信道-debug
+    debug_OCE_establish_international_channel = {
+        visible = {
+			is_testing = yes
+			has_country_flag = OCF_federal_film_company_flag
+			NOT = {
+				has_global_flag = OCF_establish_international_channel_flag
+			}
+		}
+		fire_only_once = no
+		available = {
+		}
+		complete_effect = {
+			set_global_flag = OCF_establish_international_channel_flag
 		}
 	}
 }
