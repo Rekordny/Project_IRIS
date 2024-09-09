@@ -15,6 +15,7 @@ country_event = {
     #is_triggered_only = yes
     picture = GFX_OCF_PWR_210
     trigger = {
+        always = no #暂时关闭
         tag = OCF
         communism > 0.5
         NOT = { has_government = communism }
@@ -353,7 +354,7 @@ country_event = {
                 desc = FNC_Kongou_desc
                 expire = "3999.1.1.1"
                 traits = {
-                    grand_fleet_proponent naval_theorist great_construction_admiral
+                    grand_fleet_proponent naval_theorist great_construction_admiral mine_craft big_guns_expert
                 }
             }
         }
@@ -364,7 +365,7 @@ country_event = {
             Character = FNC_Kongou
             desc = FNC_Kongou_desc
             traits = {
-                air_controller mine_sweeper superior_tactician green_water_expert ironside spotter blockade_runner
+                superior_tactician blue_water_expert ironside spotter blockade_runner mine_craft big_guns_expert
             }
             skill = 6
             attack_skill = 7
@@ -388,7 +389,7 @@ country_event = {
         add_naval_commander_role = {
             Character = FNC_Hiei
             traits = {
-                air_controller mine_sweeper superior_tactician green_water_expert ironside spotter blockade_runner
+                superior_tactician blue_water_expert spotter blockade_runner mine_craft big_guns_expert
             }
             desc = FNC_Hiei_desc
             skill = 5
@@ -410,6 +411,68 @@ country_event = {
                 desc = FNC_Hiei_desc
             }
         }
+        add_naval_commander_role = {
+            Character = FNC_repulse
+            traits = {
+                mine_sweeper craven blockade_runner destroyer_leader lone_wolf battleship_adherent OCF_low_core_computing_power_repulse
+            }
+            desc = FNC_repulse_desc
+            skill = 4
+            attack_skill = 4
+            defense_skill = 4
+            maneuvering_skill = 4
+            coordination_skill = 4
+        }
+        add_advisor_role = {
+            character = FNC_repulse
+            activate = yes
+            advisor = {
+                slot = navy_chief
+                cost = 75
+                idea_token = FNC_repulse
+                traits = {
+                    navy_chief_old_guard
+                }
+                desc = FNC_repulse_desc
+            }
+        }
+        add_naval_commander_role = {
+            Character = FNC_vampire
+            traits = {
+                mine_sweeper green_water_expert spotter blockade_runner bold smoke_screen_expert destroyer_leader OCF_low_core_computing_power_vampire
+            }
+            desc = FNC_vampire_desc
+            skill = 3
+            attack_skill = 1
+            defense_skill = 1
+            maneuvering_skill = 6
+            coordination_skill = 1
+        }
+        add_naval_commander_role = {
+            Character = FNC_yukikaze
+            traits = {
+                mine_sweeper green_water_expert spotter blockade_runner bold smoke_screen_expert destroyer_leader
+            }
+            desc = FNC_yukikaze_desc
+            skill = 3
+            attack_skill = 1
+            defense_skill = 2
+            maneuvering_skill = 4
+            coordination_skill = 1
+        }
+        add_advisor_role = {
+            character = FNC_vampire
+            activate = yes
+            advisor = {
+                slot = navy_chief
+                cost = 50
+                idea_token = FNC_vampire
+                traits = {
+                    navy_chief_maneuver_1
+                }
+                desc = FNC_vampire_desc
+            }
+        }
         every_state = {
             limit = {
                 OR = {
@@ -428,11 +491,133 @@ country_event = {
                 scope = FNC
             }
         }
+        country_event = {
+            id = FNC.2
+            days = 120
+        }
         OCF = {
             add_ideas = FNC_idea_Fleet_support
         }
     }
 }
+
+#反击加入大洋
+country_event = {
+    id = FNC.2
+    title = FNC.2.title
+    desc = FNC.2.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    immediate = {
+        FNC = {
+            set_nationality = {
+                target_country = OCF
+                character = FNC_repulse
+            }
+            set_nationality = {
+                target_country = OCF
+                character = FNC_vampire
+            }
+        }
+    }
+    option = {
+        name = FNC.2.a
+        ai_chance = {
+            base = 10
+        }
+        OCF = {
+            FNC_repulse = {
+                unit_leader_event = {
+                    id = FNC.3
+                    days = 1
+                }
+            }
+        }
+        country_event = {
+            id = FNC.4
+            days = 4
+        }
+    }
+}
+#反击加入大洋
+unit_leader_event = {
+    id = FNC.3
+    title = FNC.3.title
+    desc = FNC.3.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    option = {
+        name = FNC.3.a
+        ai_chance = {
+            base = 10
+        }
+        load_oob = "FNC_3091_Naval"
+        navy_experience = 50
+        add_tech_bonus = {
+            bonus = 2
+            ahead_reduction = 1
+            uses = 1
+            category = dd_tech
+        }
+        add_tech_bonus = {
+            bonus = 2
+            ahead_reduction = 1
+            uses = 1
+            category = bc_tech
+        }
+    }
+}
+#雪风加入大洋
+country_event = {
+    id = FNC.4
+    title = FNC.4.title
+    desc = FNC.4.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    immediate = {
+        FNC = {
+            set_nationality = {
+                target_country = OCF
+                character = FNC_yukikaze
+            }
+        }
+    }
+    option = {
+        name = FNC.4.a
+        ai_chance = {
+            base = 10
+        }
+        OCF = {
+            FNC_yukikaze = {
+                unit_leader_event = {
+                    id = FNC.5
+                    days = 1
+                }
+            }
+        }
+    }
+}
+#雪风加入大洋
+unit_leader_event = {
+    id = FNC.5
+    title = FNC.5.title
+    desc = FNC.5.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    option = {
+        name = FNC.5.a
+        ai_chance = {
+            base = 10
+        }
+        load_oob = "FNC_3091_Naval_2"
+        add_ideas = OCF_auspicious_sign
+    }
+}
+
 #政府崩溃
 country_event = {
     id = ANA.1
@@ -499,6 +684,14 @@ country_event = {
                     set_nationality = {
                         target_country = FNC
                         character = FNC_Hiei
+                    }
+                    set_nationality = {
+                        target_country = FNC
+                        character = FNC_repulse
+                    }
+                    set_nationality = {
+                        target_country = FNC
+                        character = FNC_vampire
                     }
                 }
                 FNC = {
