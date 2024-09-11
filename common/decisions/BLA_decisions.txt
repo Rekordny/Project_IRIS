@@ -1,5 +1,52 @@
 #沙皇之治
 BLA_rule_of_tsar = {
+    #扑灭贵族叛乱
+    BLA_destory_BLA_asap = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war_with = BLB
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BLB
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = BLB_gain_more_power
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_core_of = BLB
+                    }
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+				}
+            }
+        }
+    }
     #对赫萝西查的最后通牒
     BLA_last_change = {
         available = {
@@ -57,6 +104,12 @@ BLA_rule_of_tsar = {
             annex_country = {
                 target = HBR
                 transfer_troops = yes
+            }
+            every_state = {
+                limit = {
+                    is_core_of = HBR
+                }
+                add_core_of = BLA
             }
         }
         ai_will_do = {
@@ -307,6 +360,9 @@ BLA_rule_of_tsar = {
                     set_variable = {BLA_serf_opinion_change = 0}
                 }
             }
+        }
+        ai_will_do = {
+            base = 1000
         }
     }
     #安抚贵族
@@ -3941,7 +3997,6 @@ BLA_Sanyas_dream = {
         days_remove = 90
         days_re_enable = 90
         remove_effect = {
-            add_political_power = 25
             add_stability = 0.01
             add_war_support = 0.01
             BLA_strengthen_gov_sanya = yes
@@ -3982,7 +4037,7 @@ BLA_Sanyas_dream = {
             }
         }
         ai_will_do = {
-            base = 0
+            base = 100
             modifier = {
                 add = 100
                 has_political_power > 150
@@ -4016,6 +4071,42 @@ BLA_Sanyas_dream = {
             base = 1000
         }
     }
+    #限制资本
+    BLA_restrict_cpitalist = {
+        available = {
+            has_idea = BLA_command_economy
+        }
+        visible = {
+            has_completed_focus = BLA_Anna_reform_17
+        }
+        cost = 100
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            swap_ideas = {
+                remove_idea = BLA_command_economy
+                add_idea = BLA_command_economy_reformed
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #基本福利政策
+    BLA_basic_welfare_policy = {
+        visible = {
+            has_completed_focus = BLA_Anna_reform_17
+        }
+        cost = 150
+        days_remove = 70
+        fire_only_once = yes
+        remove_effect = {
+            add_ideas = BLA_basic_welfare_policy_idea
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
 }
 #赫萝西查危机
 HEL_crisis = {
@@ -4033,6 +4124,7 @@ HEL_crisis = {
         cancel_trigger = {
             OR = {
                 has_war_with = HEL
+                has_country_flag = BLA_HEL_crisis_solved
             }
         }
         days_mission_timeout = 100
@@ -4050,8 +4142,8 @@ HEL_crisis = {
             }
         }
     }
-    #反对派破坏谈判
-    BLA_damage_negotiation = {
+    #事件杀
+    HEL_ALL_GONE_2 = {
         icon = mission_icon
         is_good = no
         available = {
@@ -4059,11 +4151,41 @@ HEL_crisis = {
         }
         activation = {
             tag = BLA
+            has_war_with = HEL
+            has_country_flag = BLA_HEL_crisis_failed
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = HEL
+            }
+        }
+        days_mission_timeout = 30
+        selectable_mission = no
+        fire_only_once = yes
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                country_event = {id = BLA_general.64}
+            }
+        }
+    }
+    #反对派破坏谈判
+    BLA_damage_negotiation = {
+        icon = mission_icon
+        is_good = no
+        available = {
+        }
+        complete_effect = {
+            add_political_power = -30
+        }
+        activation = {
+            tag = BLA
             has_country_flag = BLA_HEL_crisis
             hidden_trigger = {
                 BLA = {
                     check_variable = {
-                        BLA_negotiation_barrier > 49
+                        BLA_negotiation_barrier > 39
                     }
                 }
             }
@@ -4074,17 +4196,16 @@ HEL_crisis = {
                     has_war_with = HEL
                 }
                 custom_trigger_tooltip = {
-                    tooltip = BLA_negotiation_barrier_less_than_50
+                    tooltip = BLA_negotiation_barrier_less_than_40
                     BLA = {
                         check_variable = {
-                            BLA_negotiation_barrier < 50
+                            BLA_negotiation_barrier < 40
                         }
                     }
                 }
             }
         }
         days_mission_timeout = 20
-        selectable_mission = no
         complete_effect = {
         }
         timeout_effect = {
@@ -4141,6 +4262,7 @@ HEL_crisis = {
             has_war_with = HEL
         }
         remove_effect = {
+            BLA_weaken_gov_sanya = yes
             BLA_increase_negotiation_progress_10 = yes
             BLA_increase_negotiation_barrier_5 = yes
         }
@@ -4392,20 +4514,24 @@ SVI_reintegration = {
         }
         fire_only_once = yes
         cost = 20
+        days_remove = 730
         remove_effect = {
             every_state = {
                 limit = {
                     is_core_of = WPU
                 }
-                add_compliance = 30
-                custom_effect_tooltip = add_integrable_core_tooltip
-                set_country_flag = territorial_integration_WPU_flag
+                add_core_of = SVI
             }
         }
     }
 }
 #罗西亚调试决议
 BLA_debug_decisions = {
+    BLA_test = {
+        complete_effect = {
+            clr_country_flag = BLA_HEL_crisis_failed
+        }
+    }
     #加载第二次罗西亚革命国策
     BLA_load_rev_focus = {
         complete_effect = {
@@ -4432,7 +4558,7 @@ BLA_debug_decisions = {
             }
         }
     }
-    #加载萨尼娅真结局国策
+    #加载萨妮娅真结局国策
     BLA_load_sanya_success_focus = {
         complete_effect = {
             hidden_effect = {
@@ -4445,7 +4571,7 @@ BLA_debug_decisions = {
             }
         }
     }
-    #加载萨尼娅坏结局
+    #加载萨妮娅坏结局
     BLA_load_sanya_fail_focus = {
         complete_effect = {
             hidden_effect = {
