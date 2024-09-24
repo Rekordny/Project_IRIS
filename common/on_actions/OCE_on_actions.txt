@@ -1,6 +1,24 @@
 on_actions = {
     on_startup = {
         effect = {
+            #载入历代领导人
+            every_possible_country = {
+                limit = {
+                    OR = {
+                        tag = OCF
+                        tag = OCE
+                    }
+                }
+                OCE_record_leaders_past_dynasties = YES
+            }
+
+            every_state = {
+                limit = {
+                    is_core_of = OCE
+                }
+                #给寒岛做成就的
+                set_state_flag = Cold_Island_Federation_flag
+            }
             BFS = {
                 add_manpower = 90000
                 add_offsite_building = {
@@ -24,7 +42,20 @@ on_actions = {
                 activate_mission = OCE_TO_yugoslavia
                 activate_mission = OCE_Please_end_the_war_as_soon_as_possible
                 OCE_oceania_faction_array = yes
+                #设置不会被清洗的人物
+                OCE_Heaven = {
+                    set_character_flag = OCE_targeted_for_purge_flag_no
+                }
+                OCE_Vienna = {
+                    set_character_flag = OCE_targeted_for_purge_flag_no
+                }
+                OCE_Oktyabrina = {
+                    set_character_flag = OCE_targeted_for_purge_flag_no
+                }
             }
+            #这里的代码事实上写的很让人忍俊不禁，因为是我早期作品，以后将会翻新
+            #这里的代码事实上写的很让人忍俊不禁，因为是我早期作品，以后将会翻新
+            #这里的代码事实上写的很让人忍俊不禁，因为是我早期作品，以后将会翻新
             every_country = {
                 #动态战争修正
                 #p社沙比， 运算只可以一个一个算， 还计算报错
@@ -64,7 +95,7 @@ on_actions = {
                         }
                     }
                     set_variable = {
-                        OCE_morale = -35
+                        OCE_morale = -55
                     }
                 }
                 if = {
@@ -102,6 +133,7 @@ on_actions = {
                             is_ai = yes
                         }
                         OR = {
+                            is_historical_focus_on = no
                             has_game_rule = {
                                 rule = OCE_ai_behavior
                                 option = OCE_victory_party_TT
@@ -250,7 +282,7 @@ on_actions = {
                     OCE_idea_ministry_of_peace_army_morale_factor = -0.15
                 }
                 set_variable = {
-                    OCE_idea_ministry_of_peace_generate_wargoal_tension = -0.5
+                    OCE_idea_ministry_of_peace_generate_wargoal_tension = -0.15
                 }
                 set_variable = {
                     OCE_idea_ministry_of_peace_ai_focus_peaceful_factor = -0.5
@@ -307,6 +339,9 @@ on_actions = {
                 set_variable = {
                     OCE_gross_domestic_product = 0
                 }
+                #这下面应该是没用了，但是怕报错，暂时不要动
+                #这下面应该是没用了，但是怕报错，暂时不要动
+                #这下面应该是没用了，但是怕报错，暂时不要动
                 #生产总值初始
                 add_to_variable = {
                     OCE_gross_domestic_product = ROOT.resource_produced @oil
@@ -449,7 +484,7 @@ on_actions = {
         }
     }
 
-    on_weekly_OCE = {
+    on_weekly_OCE = {#这里的代码事实上写的很让人忍俊不禁，因为是我早期作品，以后将会翻新
         effect = {
             OCE = {
                 if = {
@@ -490,12 +525,58 @@ on_actions = {
                 if = {
                     limit = {
                         FROM = {
-                            original_tag = OCF
+                            or = {
+                                original_tag = OCF
+                                original_tag = EIA
+                                original_tag = INP
+                            }
                         }
                     }
-                    set_global_flag = OCE_oceania_faction_collapse_flag
-                    clear_array = global.oceania_faction_array
-                    OCE = { 
+                    #设置大洋协约崩溃
+                    OCE_oceania_faction_collapse = yes
+                    country_event = {
+                        id = ocfnews.4
+                    }
+                    OCF = {
+                        add_ideas = OCF_idea_fleet_blockade
+                    }
+                    156 = {
+                        add_dynamic_modifier = {
+                            modifier = OCF_fleet_blockade
+                            scope = OCF
+                        }
+                    }
+                    116 = {
+                        add_dynamic_modifier = {
+                            modifier = OCF_fleet_blockade
+                            scope = OCF
+                        }
+                    }
+                    771 = {
+                        add_dynamic_modifier = {
+                            modifier = OCF_fleet_blockade
+                            scope = OCF
+                        }
+                    }
+                    772 = {
+                        add_dynamic_modifier = {
+                            modifier = OCF_fleet_blockade
+                            scope = OCF
+                        }
+                    }
+                    129 = {
+                        add_dynamic_modifier = {
+                            modifier = OCF_fleet_blockade
+                            scope = OCF
+                        }
+                    }
+                    71 = {
+                        add_dynamic_modifier = {
+                            modifier = OCF_fleet_blockade
+                            scope = OCF
+                        }
+                    }
+                    OCE = {
                         set_nationality = {
                             target_country = FNC
                             character = OCE_Jaylynn
@@ -525,6 +606,10 @@ on_actions = {
                         }
                     }
                     FNC = {
+                        add_named_threat = {
+                            threat = 2.5
+                            name = ocfnews.4.t
+                        }
                         inherit_technology = OCE
                         add_state_core = 91
                         transfer_state = 91
@@ -580,46 +665,44 @@ on_actions = {
                                 owner = FNC
                                 count = 1
                             }
+                            create_unit = {
+                                division = "division_template = \"联邦登陆军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+                                owner = FNC
+                                count = 1
+                            }
+                            create_unit = {
+                                division = "division_template = \"联邦登陆军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+                                owner = FNC
+                                count = 1
+                            }
+                            create_unit = {
+                                division = "division_template = \"联邦登陆军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+                                owner = FNC
+                                count = 1
+                            }
+                            create_unit = {
+                                division = "division_template = \"联邦登陆军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+                                owner = FNC
+                                count = 1
+                            }
+                            create_unit = {
+                                division = "division_template = \"联邦登陆军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+                                owner = FNC
+                                count = 1
+                            }
+                            create_unit = {
+                                division = "division_template = \"联邦登陆军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+                                owner = FNC
+                                count = 1
+                            }
                         }
                     }
                     OCE = {
                         transfer_navy = {
                             target = FNC
                         }
-                        retire_character = OCE_osia
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Facism
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver el_jefe_maximo
-                                }
-                            }
-                        }
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Junta
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver el_jefe_maximo
-                                }
-                            }
-                        }
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Regressivism
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver el_jefe_maximo
-                                }
-                            }
-                        }
+                        #让维也纳上台
+                        OCE_bring_vienna_stage = YES
                     }
                     FROM = {
                         white_peace = {
@@ -780,17 +863,49 @@ on_actions = {
                     INP = {
                         set_nationality = {
                             target_country = OCF
-                            character = OCF_Eblana_Dublinn
+                            character = INP_Eblana_Dublinn
                         }
                         set_nationality = {
                             target_country = OCF
-                            character = OCF_Reed_The_Flame_Shadow
+                            character = INP_Reed_The_Flame_Shadow
                         }
                     }
                 }
             }
         }
     }
+
+    #地区丢失(不在这触发通用新闻)
+    on_state_control_changed = {
+        effect = {
+            #克拉达斯
+            if = {
+                limit = {
+                    FROM.FROM = { state = 115 }
+                    FROM = { TAG = OCE }
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            TAG = OCF
+                        }
+                    }
+                    FROM = {
+                        #让维也纳上台
+                        OCE_bring_vienna_stage = yes
+                        #设置大洋协约崩溃
+                        OCE_oceania_faction_collapse = yes
+                    }
+                    OCF = {
+                        country_event = {
+                            id = OCF.14
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     on_daily_OCE = {
         effect = {
             if = {
@@ -805,81 +920,16 @@ on_actions = {
             #OCE_Nuclear_bomb_schedule_sudu_jisuan = yes
             #OCE_Nuclear_bomb_schedule_2_qingli = yes
             #OCE_refresh_seat = yes
-            if = {
-                limit = {
-                    NOT = {
-                        has_country_flag = OCE_Vienna_flag
-                    }
-                    NOT = {
-                        115 = {
-                            is_controlled_by = OCE
-                        }
-                    }
-                }
-                set_global_flag = OCE_oceania_faction_collapse_flag
-                clear_array = global.oceania_faction_array
-                OCF = {
-                    country_event = {
-                        id = OCF.7
-                    }
-                }
-                news_event = {
-                    id = IRIS_news.162
-                }
-                retire_character = OCE_osia
-                add_country_leader_role = {
-                    character = OCE_Vienna
-                    promote_leader = yes
-                    country_leader = {
-                        ideology = sub_Facism
-                        expire = "3100.1.1.1"
-                        traits = {
-                            archon_basileus polemarch arkhigos professional_crisis_solver
-                        }
-                    }
-                }
-                add_country_leader_role = {
-                    character = OCE_Vienna
-                    promote_leader = yes
-                    country_leader = {
-                        ideology = sub_Junta
-                        expire = "3100.1.1.1"
-                        traits = {
-                            archon_basileus polemarch arkhigos professional_crisis_solver
-                        }
-                    }
-                }
-                add_country_leader_role = {
-                    character = OCE_Vienna
-                    promote_leader = yes
-                    country_leader = {
-                        ideology = sub_Regressivism
-                        expire = "3100.1.1.1"
-                        traits = {
-                            archon_basileus polemarch arkhigos professional_crisis_solver
-                        }
-                    }
-                }
-                add_country_leader_role = {
-                    character = OCE_Vienna
-                    promote_leader = yes
-                    country_leader = {
-                        ideology = sub_Commission_System
-                        expire = "3100.1.1.1"
-                        traits = {
-                            archon_basileus polemarch arkhigos professional_crisis_solver
-                        }
-                    }
-                }
-                set_country_flag = OCE_Vienna_flag
-            }
+
+            #让他直接爆内战
             if = {
                 limit = {
                     OCE = {
                         surrender_progress > 0.5 NOT = {
                             has_war_with = OCF has_war_with = EIA has_war_with = INP
                         }
-                        has_civil_war = no OR = {
+                        has_civil_war = no
+                        OR = {
                             has_government = neutrality has_government = fascism has_government = reactionism
                         }
                     }
@@ -926,59 +976,8 @@ on_actions = {
                         ideology = sub_Left_Wing_Communism
                     }
 
-                    if = {
-                        limit = {
-                            NOT = {
-                                has_country_flag = OCE_Vienna_flag
-                            }
-                        }
-                        retire_character = OCE_osia
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Facism
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver
-                                }
-                            }
-                        }
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Junta
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver
-                                }
-                            }
-                        }
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Regressivism
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver
-                                }
-                            }
-                        }
-                        add_country_leader_role = {
-                            character = OCE_Vienna
-                            promote_leader = yes
-                            country_leader = {
-                                ideology = sub_Commission_System
-                                expire = "3100.1.1.1"
-                                traits = {
-                                    archon_basileus polemarch arkhigos professional_crisis_solver
-                                }
-                            }
-                        }
-                        set_country_flag = OCE_Vienna_flag
-                    }
+                    #让维也纳上台
+                    OCE_bring_vienna_stage = yes
 
                     start_civil_war = {
                         ideology = neutrality

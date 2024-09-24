@@ -1,141 +1,196 @@
 #计算影响力
 IRIS_impact_settlement = {
-	#清空影响力
-	clear_array = global.IRIS_effect_list
-	#添加所有国家
-	every_country = {
-		limit = {
-			NOT = {
-				OR = {
-					TAG = WRQ
-					TAG = ANA
-					TAG = WST
-				}
-			}
-			is_IRIS_TOUHOU_country = no
-			is_IRIS_UB_country = no
-			is_IRIS_LB_country = no
-		}
-		set_variable = {
+    #清空影响力
+    clear_array = global.IRIS_effect_list
+    #添加所有国家
+    every_country = {
+        limit = {
+            NOT = {
+                OR = {
+                    TAG = WRQ
+                    TAG = ANA
+                    TAG = WST
+                }
+            }
+            is_IRIS_TOUHOU_country = no
+            is_IRIS_UB_country = no
+            is_IRIS_LB_country = no
+        }
+        set_variable = {
             THIS.national_influence = THIS.num_of_factories
         }
-		set_variable = {
+        set_variable = {
             THIS.national_influence_2 = THIS.num_subjects
         }
-		multiply_variable = {
-			THIS.national_influence_2 = 0.1
-		}
-		set_variable = {
+        multiply_variable = {
+            THIS.national_influence_2 = 0.1
+        }
+        set_variable = {
             THIS.national_influence_3 = THIS.num_owned_controlled_states
         }
-		multiply_variable = {
-			THIS.national_influence_3 = 0.01
-		}
-		set_variable = {
+        multiply_variable = {
+            THIS.national_influence_3 = 0.01
+        }
+        set_variable = {
             THIS.national_influence_4 = THIS.national_influence_2
         }
-		add_to_variable = {
+        add_to_variable = {
             THIS.national_influence_4 = THIS.national_influence_3
         }
-		if = {
-			limit = {
-				is_major = yes
-			}
-			multiply_variable = {
-            	THIS.national_influence_4 = 1.05
-        	}
-		}
-		if = {
-			limit = {
-				is_faction_leader = yes
-			}
-			multiply_variable = {
-            	THIS.national_influence_4 = 1.1
-        	}
-		}
-		if = {
-			limit = {
-				is_in_faction = yes
-			}
-			multiply_variable = {
-            	THIS.national_influence_4 = 1.05
-        	}
-		}
-		if = {
-			limit = {
-				is_puppet = yes
-			}
-			multiply_variable = {
-            	THIS.national_influence_4 = 0.7
-        	}
-		}
-		set_variable = {
-        	THIS.effect_tax_cap_2 = 1
-    	}
-   		add_to_variable = {
-        	THIS.effect_tax_cap_2 = modifier@effect_tax_cap
-    	}
-    	multiply_variable = {
-        	THIS.national_influence_4 = effect_tax_cap_2
-    	}
-		multiply_variable = {
-			THIS.national_influence = THIS.national_influence_4
-		}
-		multiply_variable = {
-			THIS.national_influence = 100
-		}
-		add_to_array = {
-			global.IRIS_effect_list = THIS
-		}
-	}
-	#计算得分器
-	get_sorted_scored_countries = {
-		scorer = IRIS_effect_list_scorer
-		array = global.IRIS_effect_list
-	}
-	#循环计算排名
-	for_each_scope_loop = {
-		array = global.IRIS_effect_list
-		add_to_variable = {
-			global.IRIS_effect_list_index = 1
-		}
-		set_variable = {
-			IRIS_effect_list_2 = global.IRIS_effect_list_index
-		}
-	}
-	clear_variable = global.IRIS_effect_list_index
+        if = {
+            limit = {
+                is_major = yes
+            }
+            multiply_variable = {
+                THIS.national_influence_4 = 1.05
+            }
+        }
+        if = {
+            limit = {
+                is_faction_leader = yes
+            }
+            multiply_variable = {
+                THIS.national_influence_4 = 1.1
+            }
+        }
+        if = {
+            limit = {
+                is_in_faction = yes
+            }
+            multiply_variable = {
+                THIS.national_influence_4 = 1.05
+            }
+        }
+        if = {
+            limit = {
+                is_puppet = yes
+            }
+            multiply_variable = {
+                THIS.national_influence_4 = 0.7
+            }
+        }
+        set_variable = {
+            THIS.effect_tax_cap_2 = 1
+        }
+        add_to_variable = {
+            THIS.effect_tax_cap_2 = modifier@effect_tax_cap
+        }
+        multiply_variable = {
+            THIS.national_influence_4 = effect_tax_cap_2
+        }
+        multiply_variable = {
+            THIS.national_influence = THIS.national_influence_4
+        }
+        multiply_variable = {
+            THIS.national_influence = 100
+        }
+        add_to_array = {
+            global.IRIS_effect_list = THIS
+        }
+    }
+    #计算得分器
+    get_sorted_scored_countries = {
+        scorer = IRIS_effect_list_scorer
+        array = global.IRIS_effect_list
+    }
+    #循环计算排名
+    for_each_scope_loop = {
+        array = global.IRIS_effect_list
+        add_to_variable = {
+            global.IRIS_effect_list_index = 1
+        }
+        set_variable = {
+            IRIS_effect_list_2 = global.IRIS_effect_list_index
+        }
+    }
+    clear_variable = global.IRIS_effect_list_index
 }
 
 
 #计算核心整合
 Integration_computing_cores = {
-	every_state = {
-		limit = {
-			occupation_law = territorial_integration
+    every_state = {
+        limit = {
+            occupation_law = territorial_integration
             compliance > 80
-		}
-		every_country = {
-			limit = {
-				controls_state = PREV
-			}
-			add_state_core = PREV
-		}
-	}
+        }
+        every_country = {
+            limit = {
+                controls_state = PREV
+            }
+            add_state_core = PREV
+        }
+    }
 }
 
-#添加可整合核心
+#添加可整合核心 废除
 add_integrable_core = {
-	custom_effect_tooltip = integratable_regions
-    set_variable = {
-        ROOT.integratable_regions@PREV = PREV.compliance
+    custom_effect_tooltip = integratable_regions
+
+    add_to_array = {
+        FROM.add_integrable_core = PREV
     }
-	
-	FROM.FROM = {
-		custom_effect_tooltip = add_integrable_core_tooltip
-		every_controlled_state = {
-			set_occupation_law = integratable_regions
-		}
-	}
+
+    FROM = {
+        set_country_flag = integratable_regions_yes
+    }
+
+    FROM.FROM = {
+        custom_effect_tooltip = add_integrable_core_tooltip
+        every_controlled_state = {
+            set_occupation_law = integratable_regions
+        }
+    }
+}
+
+#添加可整合核心(废除)
+add_integrable_core_xx = {
+    custom_effect_tooltip = integratable_regions
+
+    set_state_flag = integratable_regions_@FROM
+
+    FROM.FROM = {
+        custom_effect_tooltip = add_integrable_core_tooltip
+        every_controlled_state = {
+            set_occupation_law = integratable_regions
+        }
+    }
+}
+
+#再废弃
+add_integrable_core_80 = {
+    FROM = {
+        set_temp_variable = { integrator_target = THIS }
+    }
+    if = {
+        limit = { has_variable = integratable_regions_tag }
+        if = {
+            limit = { NOT = { check_variable = { can_integratable_regions@var:integratable_regions_tag = 80 } } }
+            set_variable = { can_integratable_regions@var:integratable_regions_tag = 80 }
+            if = {
+                limit = {
+                    is_controlled_by = var:integratable_regions_tag
+                    compliance > 80
+                }
+                add_core_of = var:integratable_regions_tag
+            }
+        }
+    }
+    else = {
+        if = {
+            limit = {
+                is_controlled_by = PREV
+                compliance > 80
+            }
+            add_core_of = PREV
+        }
+    }
+    FROM.FROM = {
+        custom_effect_tooltip = add_integrable_core_tooltip
+        every_controlled_state = {
+            set_occupation_law = integratable_regions
+        }
+    }
 }
 
 #添加默认政策
@@ -151,7 +206,7 @@ default_policy = {
                     has_idea = xiaoshi8
                     has_idea = xiaoshi4
                     has_idea = kaibai
-				}
+                }
             }
             add_ideas = xiaoshi12
         }

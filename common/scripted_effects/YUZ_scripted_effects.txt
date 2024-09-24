@@ -238,7 +238,10 @@ YUZ_sell_game_effect = {
                     }
                     every_country = {
                         limit = {
-                            is_IRIS_eu_country = yes
+                            OR = {
+                                is_IRIS_eu_country = yes
+                                is_IRIS_GBA_country = yes
+                            }
                             NOT = {has_war_with = YUZ}
                             NOT = {tag = YUZ}
                             NOT = {tag = DOC}
@@ -251,7 +254,7 @@ YUZ_sell_game_effect = {
                                 } 
                             }
                         }
-                        country_event = {id = YUZ_galgame.6}
+                        country_event = {id = YUZ_game.6}
                     }
                     YUZ = {
                         set_country_flag = YUZ_eu_market_effect
@@ -279,7 +282,7 @@ YUZ_sell_game_effect = {
                                 } 
                             }
                         }
-                        country_event = {id = YUZ_galgame.6}
+                        country_event = {id = YUZ_game.6}
                     }
                     YUZ = {
                         set_country_flag = YUZ_mel_market_effect
@@ -307,7 +310,7 @@ YUZ_sell_game_effect = {
                                 } 
                             }
                         }
-                        country_event = {id = YUZ_galgame.6}
+                        country_event = {id = YUZ_game.6}
                     }
                     YUZ = {
                         set_country_flag = YUZ_nas_market_effect
@@ -335,7 +338,7 @@ YUZ_sell_game_effect = {
                                 } 
                             }
                         }
-                        country_event = {id = YUZ_galgame.6}
+                        country_event = {id = YUZ_game.6}
                     }
                     YUZ = {
                         set_country_flag = YUZ_sas_market_effect
@@ -363,7 +366,7 @@ YUZ_sell_game_effect = {
                                 } 
                             }
                         }
-                        country_event = {id = YUZ_galgame.6}
+                        country_event = {id = YUZ_game.6}
                     }
                     YUZ = {
                         set_country_flag = YUZ_voy_market_effect
@@ -404,6 +407,7 @@ YUZ_initialize_all = {
         YUZ_initialize_program_quality = yes
         YUZ_initialize_expectation_quality = yes
         YUZ_calculate_quality = yes
+        set_variable = {YUZ_cost = 5000}
     }
 }
 #剧本质量初始化
@@ -416,7 +420,7 @@ YUZ_initialize_plot_quality = {
             set_variable_to_random = {
                 var = YUZ_plot
                 max = 70
-                min = 40
+                min = 30
             }
         }
         else = {
@@ -428,40 +432,57 @@ YUZ_initialize_plot_quality = {
         }
         if = {
             limit = {
-                has_country_flag = YUZ_select_short_game
+                has_completed_focus = YUZ_gal_11
             }
-            YUZ = {
-                add_to_variable = {YUZ_plot = 10}
-            }
+            add_to_variable = {YUZ_plot = 3}
         }
-        if = {
-            limit = {
-                has_country_flag = YUZ_select_long_game
-            }
-            YUZ = {
-                add_to_variable = {YUZ_plot = -10}
-            }
-        }
+        add_to_variable = {YUZ_plot = YUZ_plot_extra_bonus}
     }
 }
 #CG质量初始化
 YUZ_initialize_cg_quality = {
     YUZ = {
-        set_variable_to_random = {
-            var = YUZ_cg
-            max = 80
-            min = 40
+        if = {
+            limit = {
+                has_completed_focus = YUZ_gal_4
+            }
+            set_variable_to_random = {
+                var = YUZ_cg
+                max = 80
+                min = 40
+            }
         }
+        else = {
+            set_variable_to_random = {
+                var = YUZ_cg
+                max = 80
+                min = 45
+            }
+        }
+        add_to_variable = {YUZ_cg = YUZ_cg_extra_bonus}
     }
 }
 #音乐质量初始化
 YUZ_initialize_music_quality = {
     YUZ = {
-        set_variable_to_random = {
-            var = YUZ_music
-            max = 90
-            min = 40
+        if = {
+            limit = {
+                has_completed_focus = YUZ_gal_3
+            }
+            set_variable_to_random = {
+                var = YUZ_music
+                max = 90
+                min = 45
+            }
         }
+        else = {
+            set_variable_to_random = {
+                var = YUZ_music
+                max = 90
+                min = 40
+            }
+        }
+        add_to_variable = {YUZ_music = YUZ_music_extra_bonus}
     }
 }
 #程序质量初始化
@@ -472,15 +493,28 @@ YUZ_initialize_program_quality = {
             max = 80
             min = 50
         }
+        add_to_variable = {YUZ_program = YUZ_program_extra_bonus}
     }
 }
 #期望初始化
 YUZ_initialize_expectation_quality = {
     YUZ = {
-        set_variable_to_random = {
-            var = YUZ_expectation
-            max = 100
-            min = 50
+        if = {
+            limit = {
+                has_completed_focus = YUZ_gal_12
+            }
+            set_variable_to_random = {
+                var = YUZ_expectation
+                max = 90
+                min = 50
+            }
+        }
+        else = {
+            set_variable_to_random = {
+                var = YUZ_expectation
+                max = 90
+                min = 55
+            }
         }
         if = {
             limit = {
@@ -489,6 +523,18 @@ YUZ_initialize_expectation_quality = {
             YUZ = {
                 add_to_variable = {YUZ_expectation = 7}
             }
+        }
+        if = {
+            limit = {
+                has_country_flag = YUZ_promotion_flag
+            }
+            set_variable_to_random = {
+                var = YUZ_promotion_bonus
+                max = 20
+                min = 1
+            }
+            add_to_variable = {YUZ_expectation = YUZ_promotion_bonus}
+            clr_country_flag = YUZ_promotion_flag
         }
     }
 }
@@ -573,6 +619,16 @@ YUZ_improve_program_small = {
     }
 }
 #提高市场预期
+YUZ_improve_expectation_big = {
+    custom_effect_tooltip = YUZ_improve_expectation_big_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = { YUZ_expectation = 6}
+            YUZ_calculate_quality = yes
+        }
+    }
+}
+#提高市场预期
 YUZ_improve_expectation = {
     custom_effect_tooltip = YUZ_improve_expectation_desc
     hidden_effect = {
@@ -633,37 +689,57 @@ YUZ_final_result = {
         YUZ = {
             if = {
                 limit = {
-                    check_variable = {YUZ_game_total_quality > 84}
+                    check_variable = {YUZ_game_total_quality > 79}
                 }
                 country_event = {id = YUZ_game.1 days = 3}
             }
-            if = {
+            else_if = {
                 limit = {
-                    check_variable = {YUZ_game_total_quality > 74}
-                    check_variable = {YUZ_game_total_quality < 85}
+                    check_variable = {YUZ_game_total_quality > 69}
+                    check_variable = {YUZ_game_total_quality < 80}
                 }
                 country_event = {id = YUZ_game.2 days = 3}
             }
-            if = {
+            else_if = {
                 limit = {
-                    check_variable = {YUZ_game_total_quality > 64}
-                    check_variable = {YUZ_game_total_quality < 75}
+                    check_variable = {YUZ_game_total_quality > 59}
+                    check_variable = {YUZ_game_total_quality < 70}
                 }
                 country_event = {id = YUZ_game.3 days = 3}
             }
-            if = {
+            else_if = {
                 limit = {
                     check_variable = {YUZ_game_total_quality > 49}
-                    check_variable = {YUZ_game_total_quality < 65}
+                    check_variable = {YUZ_game_total_quality < 60}
                 }
                 country_event = {id = YUZ_game.4 days = 3}
             }
-            if = {
+            else_if = {
                 limit = {
                     check_variable = {YUZ_game_total_quality < 50}
                 }
                 country_event = {id = YUZ_game.5 days = 3}
             }
+        }
+    }
+}
+#提高成本-500
+YUZ_increase_cost_200 = {
+    custom_effect_tooltip = YUZ_increase_cost_200_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = {YUZ_cost = 200}
+            YUZ_calculate_profit = yes
+        }
+    }
+}
+#提高成本-300
+YUZ_increase_cost_100 = {
+    custom_effect_tooltip = YUZ_increase_cost_100_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = {YUZ_cost = 100}
+            YUZ_calculate_profit = yes
         }
     }
 }
@@ -675,6 +751,15 @@ YUZ_calculate_income = {
             multiply_variable = {YUZ_income = 200}
             set_variable = {YUZ_expected_income = YUZ_income}
             set_variable = {YUZ_income_f = YUZ_income}
+        }
+    }
+}
+#结算预期利润
+YUZ_calculate_profit = {
+    YUZ = {
+        hidden_effect = {
+            set_variable = {YUZ_expected_profit = YUZ_income_f}
+            subtract_from_variable = {YUZ_expected_profit = YUZ_cost}
         }
     }
 }
@@ -725,6 +810,12 @@ YUZ_income = {
                     multiply_variable = {YUZ_income_f = YUZ_market_uncertainty}
                 }
             }
+            if = {
+                limit = {
+                    has_completed_focus = YUZ_gal_16
+                }
+                multiply_variable = {YUZ_income_f = 1.05}
+            }
         }
         if = {
             limit = {
@@ -758,6 +849,12 @@ YUZ_income = {
                     }
                     multiply_variable = {YUZ_income_f = YUZ_market_uncertainty}
                 }
+            }
+            if = {
+                limit = {
+                    has_completed_focus = YUZ_gal_16
+                }
+                multiply_variable = {YUZ_income_f = 1.05}
             }
         }
         if = {
@@ -793,6 +890,12 @@ YUZ_income = {
                     multiply_variable = {YUZ_income_f = YUZ_market_uncertainty}
                 }
             }
+            if = {
+                limit = {
+                    has_completed_focus = YUZ_gal_16
+                }
+                multiply_variable = {YUZ_income_f = 1.05}
+            }
         }
         if = {
             limit = {
@@ -826,6 +929,12 @@ YUZ_income = {
                     }
                     multiply_variable = {YUZ_income_f = YUZ_market_uncertainty}
                 }
+            }
+            if = {
+                limit = {
+                    has_completed_focus = YUZ_gal_16
+                }
+                multiply_variable = {YUZ_income_f = 1.05}
             }
         }
         if = {
@@ -861,12 +970,241 @@ YUZ_income = {
                     multiply_variable = {YUZ_income_f = YUZ_market_uncertainty}
                 }
             }
+            if = {
+                limit = {
+                    has_completed_focus = YUZ_gal_16
+                }
+                multiply_variable = {YUZ_income_f = 1.05}
+            }
         }
-        add_cic = YUZ_income_f
-        clr_country_flag = YUZ_eu_market_effect
-        clr_country_flag = YUZ_mel_market_effect
-        clr_country_flag = YUZ_sas_market_effect
-        clr_country_flag = YUZ_nas_market_effect
-        clr_country_flag = YUZ_voy_market_effect
+        hidden_effect = {
+            YUZ_calculate_final_profit = yes
+            add_to_variable = {YUZ_fund = YUZ_fund_t}
+            add_cic = YUZ_income_g
+            clr_country_flag = YUZ_eu_market_effect
+            clr_country_flag = YUZ_mel_market_effect
+            clr_country_flag = YUZ_sas_market_effect
+            clr_country_flag = YUZ_nas_market_effect
+            clr_country_flag = YUZ_voy_market_effect
+        }
+        custom_effect_tooltip = YUZ_final_profit_desc
+    }
+}
+#结算收益以及上缴 
+YUZ_calculate_final_profit = {
+    YUZ = {
+        subtract_from_variable = {YUZ_income_f = YUZ_cost}
+        set_variable = {YUZ_income_g = YUZ_income_f}
+        multiply_variable = {YUZ_income_g = 0.45}
+        set_variable = {YUZ_fund_t = YUZ_income_f}
+        multiply_variable = {YUZ_fund_t = 0.55}
+    }
+}
+#搞金融
+YUZ_investment_effect = {
+    YUZ = {
+        set_variable = {YUZ_principal = 1000}
+        set_variable_to_random = {
+            var = YUZ_investment_ramdom_var
+            max = 3
+            min = 0
+        }
+        set_variable = {YUZ_investment_gain = YUZ_principal}
+        multiply_variable = {YUZ_investment_gain = YUZ_investment_ramdom_var}
+        if = {
+            limit = {
+                check_variable = {YUZ_investment_ramdom_var < 1}
+            }
+            country_event = {id = YUZ.3 days = 60}
+        }
+        else = {
+            country_event = {id = YUZ.2 days = 60}
+        }
+    }
+}
+YUZ_refresh_dynamic_modifier = {
+    hidden_effect = {
+        YUZ = {
+            set_variable = {YUZ_industrial_capacity_factory_t = 0.002}
+            set_variable = {YUZ_industrial_capacity_dockyard_t = 0.002}
+            set_variable = {YUZ_production_speed_buildings_factor_t = 0.002}
+            set_variable = {YUZ_consumer_goods_factor_t = -0.002}
+            set_variable = {YUZ_political_power_factor_t = 0.003}
+            set_variable = {YUZ_industrial_capacity_factory = YUZ_industrial_capacity_factory_t}
+            set_variable = {YUZ_industrial_capacity_dockyard = YUZ_industrial_capacity_dockyard_t}
+            set_variable = {YUZ_production_speed_buildings_factor = YUZ_production_speed_buildings_factor_t}
+            set_variable = {YUZ_consumer_goods_factor = YUZ_consumer_goods_factor_t}
+            set_variable = {YUZ_political_power_factor = YUZ_political_power_factor_t}
+            multiply_variable = {YUZ_industrial_capacity_factory = YUZ_game_total_quality}
+            multiply_variable = {YUZ_industrial_capacity_dockyard = YUZ_game_total_quality}
+            multiply_variable = {YUZ_production_speed_buildings_factor = YUZ_game_total_quality}
+            multiply_variable = {YUZ_consumer_goods_factor = YUZ_game_total_quality}
+            multiply_variable = {YUZ_political_power_factor = YUZ_game_total_quality}
+        }
+    }
+    add_dynamic_modifier = {modifier = YUZ_galgame_income_dynamic_modifier days = 120}
+}
+#提高特区经济开发度
+YUZ_decrease_crime_rate_10 = {
+    custom_effect_tooltip = YUZ_decrease_crime_rate_10_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = {YUZ_crime_rate = 10}
+        }
+    }
+}
+#提高特区经济开发度
+YUZ_increase_econ_dev_5 = {
+    custom_effect_tooltip = YUZ_increase_econ_dev_5_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = {YUZ_econ_dev = 5}
+        }
+    }
+}
+#提高特区经济开发度
+YUZ_increase_econ_dev_10 = {
+    custom_effect_tooltip = YUZ_increase_econ_dev_10_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = {YUZ_econ_dev = 10}
+        }
+    }
+}
+#提高特区经济开发度
+YUZ_increase_econ_dev_20 = {
+    custom_effect_tooltip = YUZ_increase_econ_dev_20_desc
+    hidden_effect = {
+        YUZ = {
+            add_to_variable = {YUZ_econ_dev = 20}
+        }
+    }
+}
+#结算犯罪度
+YUZ_calculate_crime_rate = {
+    YUZ = {
+        set_variable_to_random = {
+            var = YUZ_crime_rate_random_change
+            max = 5
+            min = 1
+        }
+        add_to_variable = {YUZ_crime_rate = YUZ_crime_rate_random_change}
+        set_variable = {YUZ_crime_rate_c = modifier@YUZ_crime_rate_modifier}
+        add_to_variable = {YUZ_crime_rate = YUZ_crime_rate_c}
+        clamp_variable = {
+            var = YUZ_crime_rate
+            max = 100
+            min = 0
+        }
+        set_variable = {YUZ_crime_rate_t = YUZ_crime_rate}
+        multiply_variable = {YUZ_crime_rate_t = 0.01}
+    }
+}
+#结算开发度
+YUZ_calculate_econ_dev = {
+    YUZ = {
+        YUZ_calculate_crime_rate = yes
+        set_variable = {YUZ_econ_dev_t = modifier@YUZ_econ_dev_modifier}
+        set_variable = {YUZ_econ_dev_change = YUZ_econ_dev_t}
+        subtract_from_variable = {YUZ_econ_dev_change = YUZ_crime_rate_t}
+        add_to_variable = {YUZ_econ_dev = YUZ_econ_dev_change}
+        clamp_variable = {
+            var = YUZ_econ_dev
+            max = 100
+            min = 0
+        }
+        add_cic = YUZ_econ_dev
+    }
+}
+#计算开发度变化（显示用）
+YUZ_calculate_econ_dev_change = {
+    YUZ = {
+        set_variable = {YUZ_crime_rate_d = modifier@YUZ_crime_rate_modifier}
+        set_variable = {YUZ_crime_rate_v = YUZ_crime_rate}
+        add_to_variable = {YUZ_crime_rate_v = YUZ_crime_rate_d}
+        clamp_variable = {
+            var = YUZ_crime_rate_v
+            max = 100
+            min = 0
+        }
+        set_variable = {YUZ_crime_rate_vt = YUZ_crime_rate_v}
+        multiply_variable = {YUZ_crime_rate_vt = 0.01}
+        set_variable = {YUZ_econ_dev_d = modifier@YUZ_econ_dev_modifier}
+        subtract_from_variable = {YUZ_econ_dev_d = YUZ_crime_rate_vt}
+    }
+}
+#检测经济发展等级
+YUZ_check_econ_dev_level = {
+    YUZ = {
+        if = {
+            limit = {
+                check_variable = {YUZ_econ_dev < 21}
+            }
+            add_ideas = YUZ_econ_dev_bonus_1
+            remove_ideas = YUZ_econ_dev_bonus_2
+            remove_ideas = YUZ_econ_dev_bonus_3
+            remove_ideas = YUZ_econ_dev_bonus_4
+            remove_ideas = YUZ_econ_dev_bonus_5
+        }
+        if = {
+            limit = {
+                check_variable = {YUZ_econ_dev > 20}
+                check_variable = {YUZ_econ_dev < 41}
+            }
+            add_ideas = YUZ_econ_dev_bonus_2
+            remove_ideas = YUZ_econ_dev_bonus_1
+            remove_ideas = YUZ_econ_dev_bonus_3
+            remove_ideas = YUZ_econ_dev_bonus_4
+            remove_ideas = YUZ_econ_dev_bonus_5
+        }
+        if = {
+            limit = {
+                check_variable = {YUZ_econ_dev > 40}
+                check_variable = {YUZ_econ_dev < 61}
+            }
+            add_ideas = YUZ_econ_dev_bonus_3
+            remove_ideas = YUZ_econ_dev_bonus_1
+            remove_ideas = YUZ_econ_dev_bonus_2
+            remove_ideas = YUZ_econ_dev_bonus_4
+            remove_ideas = YUZ_econ_dev_bonus_5
+        }
+        if = {
+            limit = {
+                check_variable = {YUZ_econ_dev > 60}
+                check_variable = {YUZ_econ_dev < 81}
+            }
+            add_ideas = YUZ_econ_dev_bonus_4
+            remove_ideas = YUZ_econ_dev_bonus_1
+            remove_ideas = YUZ_econ_dev_bonus_2
+            remove_ideas = YUZ_econ_dev_bonus_3
+            remove_ideas = YUZ_econ_dev_bonus_5
+        }
+        if = {
+            limit = {
+                check_variable = {YUZ_econ_dev > 80}
+            }
+            add_ideas = YUZ_econ_dev_bonus_5
+            remove_ideas = YUZ_econ_dev_bonus_1
+            remove_ideas = YUZ_econ_dev_bonus_2
+            remove_ideas = YUZ_econ_dev_bonus_3
+            remove_ideas = YUZ_econ_dev_bonus_4
+        }
+    }
+}
+YUZ_reduce_aftermath_of_crisis = {
+    if = {
+        limit = {
+            has_idea = YUZ_aftermath_of_crisis
+        }
+        swap_ideas = {
+            remove_idea = YUZ_aftermath_of_crisis
+            add_idea = YUZ_aftermath_of_crisis_2
+        }
+    }
+    else_if = {
+        limit = {
+            has_idea = YUZ_aftermath_of_crisis_2
+        }
+        remove_ideas = YUZ_aftermath_of_crisis_2
     }
 }

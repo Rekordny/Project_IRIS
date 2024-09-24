@@ -1,3 +1,18 @@
+#大洋联邦代码的大本营
+#当你看到这个时，我估计差不多不怎么做了
+#如果你看了下面的代码就会发现大量bug和冗余代码
+#因为我就是用OCE,OCF作为练手TAG
+#从而导致有代码很傻
+#有且不限于
+#1、FLAG检测执政党
+#2、非数组编写政党支持之类，用的8个变量（包括56个关系变量）
+#3、作用域导致的溢出检测多数情况不起效
+#4、逻辑混乱
+#5、不写注释
+#6、以及我个人的作风方面
+#以后，如果有时间的话，我将会尝试修复代码
+#                                   -by白衣
+
 ########     ###    ######## ########
 ##     ##   ## ##      ##    ##
 ##     ##  ##   ##     ##    ##
@@ -48,7 +63,9 @@ OCF_After_collapse_government = {
     }
     KEZ = {
         transfer_state = 115
+        transfer_state = 826
         add_state_core = 115
+        add_state_core = 826
         if = {
             limit = {
                 FNC = {
@@ -79,7 +96,7 @@ OCF_After_collapse_government = {
             desc = "OCF_Herman_Douglas_desc"
             promote_leader = yes
             picture = "gfx/leaders/OCF/赫尔曼·道尔科斯.png"
-            ideology = sub_Social_Liberalism
+            ideology = sub_ocf_Social_Liberalism
             traits = {
                 OCF_enlightened
             }
@@ -212,20 +229,20 @@ OCF_After_collapse_government = {
         OCF = {
             set_nationality = {
                 target_country = INP
-                character = OCF_Eblana_Dublinn
+                character = INP_Eblana_Dublinn
             }
             set_nationality = {
                 target_country = INP
-                character = OCF_Reed_The_Flame_Shadow
+                character = INP_Reed_The_Flame_Shadow
             }
         }
         if = {
             limit = {
                 NOT = {
-                    has_idea = OCF_idea_Reed_The_Flame_Shadow
+                    has_idea = INP_idea_Reed_The_Flame_Shadow
                 }
             }
-            add_ideas = OCF_idea_Reed_The_Flame_Shadow
+            add_ideas = INP_idea_Reed_The_Flame_Shadow
         }
         set_politics = {
             ruling_party = fascism
@@ -237,8 +254,13 @@ OCF_After_collapse_government = {
             fascism = 70
             reactionism = 8
         }
-        OCF_Eblana_Dublinn = {
-            promote_character = yes
+        promote_character = {
+            character = INP_Eblana_Dublinn
+            ideology = sub_Facism
+        }
+        promote_character = {
+            character = INP_Eblana_Dublinn
+            ideology = sub_Regressivism
         }
         division_template = {
             name = "内战玛娜教导师"
@@ -441,8 +463,15 @@ OCF_After_collapse_government_Declare_war = {
         limit = {
             has_country_flag = OCF_After_collapse_government_countries_flag
         }
-        declare_war_on = {
-            target = PREV type = annex_everything
+        if = {
+            limit = {
+                NOT = {
+                    tag = ROOT
+                }
+            }
+            declare_war_on = {
+                target = PREV type = annex_everything
+            }
         }
     }
     every_state = {
@@ -487,6 +516,7 @@ OCF_end_of_civil_war = {
         country_event = {
             id = OCF.2 days = 4
         }
+        load_focus_tree = NO_focus_tree
     }
 
     ROOT = {
@@ -507,7 +537,7 @@ OCF_end_of_civil_war = {
             }
         }
         every_unit_leader = {
-            set_nationality = ROOT
+            set_nationality = OCF
         }
     }
     ROOT = {
@@ -515,27 +545,27 @@ OCF_end_of_civil_war = {
             set_nationality = OCF
         }
     }
-    set_global_flag = OCF_civil_war_so_it_was_unified_flag
+
     if = {
         limit = {
             tag = INP
         }
         if = {
             limit = {
-                has_character = OCF_Eblana_Dublinn
+                has_character = INP_Eblana_Dublinn
             }
             set_nationality = {
                 target_country = OCF
-                character = OCF_Eblana_Dublinn
+                character = INP_Eblana_Dublinn
             }
         }
         if = {
             limit = {
-                has_character = OCF_Reed_The_Flame_Shadow
+                has_character = INP_Reed_The_Flame_Shadow
             }
             set_nationality = {
                 target_country = OCF
-                character = OCF_Reed_The_Flame_Shadow
+                character = INP_Reed_The_Flame_Shadow
             }
         }
         OCF = {
@@ -547,10 +577,15 @@ OCF_end_of_civil_war = {
                 ideology = fascism
                 popularity = 1
             }
-            OCF_Eblana_Dublinn = {
-                promote_character = yes
+            promote_character = {
+                character = INP_Eblana_Dublinn
+                ideology = sub_Regressivism
             }
-            add_ideas = OCF_idea_Reed_The_Flame_Shadow
+            promote_character = {
+                character = INP_Eblana_Dublinn
+                ideology = sub_Facism
+            }
+            add_ideas = INP_idea_Reed_The_Flame_Shadow
             annex_country = {
                 target = ROOT transfer_troops = yes
             }
@@ -567,6 +602,12 @@ OCF_end_of_civil_war = {
                 tag = KGF
                 tag = BRI
             }
+        }
+        if = {
+            limit = {
+                TAG = KEZ
+            }
+            set_global_flag = OCF_civil_war_so_it_was_unified_flag_KEZ
         }
         OCF = {
             set_cosmetic_tag = OCF_fourth
@@ -605,8 +646,21 @@ OCF_end_of_civil_war = {
             has_state_flag = regions_belonging_OCF_flag
         }
         remove_core_of = ANA
+        remove_core_of = OFC
+        remove_core_of = KEZ
+        remove_core_of = SIE
+        remove_core_of = FLA
+        remove_core_of = KCL
+        remove_core_of = KGF
+        remove_core_of = ROM
+        remove_core_of = TKD
+        remove_core_of = GFZ
+        remove_core_of = BRI
+        remove_core_of = INP
+        remove_core_of = EIA
         add_core_of = OCF
         transfer_state = OCF
+
     }
 }
 
@@ -805,6 +859,62 @@ OCF_Random_infrastructure = {
 
 
 
+#联邦放映公司初始化
+OCF_federal_film_company_initialization = {
+    OCF_federal_film_company_initialization_variable = yes
+    set_variable = { OCF_poster_iconType_variable_1 = variable }
+    OCF_federal_film_company_initialization_variable = yes
+    set_variable = { OCF_poster_iconType_variable_2 = variable }
+
+    OCF_federal_film_company_bonus = yes
+}
+
+#联邦放映公司更新
+OCF_federal_film_company_update = {
+    set_variable = { OCF_poster_iconType_variable_1 = OCF_poster_iconType_variable_2 }
+    OCF_federal_film_company_initialization_variable = yes
+    set_variable = { OCF_poster_iconType_variable_2 = variable }
+
+    OCF_federal_film_company_bonus = yes
+}
+
+#设置加成
+OCF_federal_film_company_bonus = {
+    set_variable = { OCF_federal_film_company_stability_factor = 0 } #稳定
+    set_variable = { OCF_federal_film_company_industrial_capacity_factory = 0 } #产出
+    set_variable = { OCF_federal_film_company_industrial_capacity_dockyard = 0 } #船坞
+    set_variable = { OCF_federal_film_company_research_speed_factor = 0 } #科研
+    set_variable = { OCF_federal_film_company_production_speed_buildings_factor = 0 } #建造
+    set_variable = { OCF_federal_film_company_army_attack_factor = 0 } #攻击
+    if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 2 } } set_variable = { OCF_federal_film_company_production_speed_buildings_factor = 0.07 } }#幸运星
+    else_if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 3 } } set_variable = { OCF_federal_film_company_research_speed_factor = 0.05 } set_variable = { OCF_federal_film_company_industrial_capacity_factory = 0.03 } }#石之门
+    else_if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 6 } } set_variable = { OCF_federal_film_company_stability_factor = 0.1 } }#猫咪日常
+    else_if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 7 } } set_variable = { OCF_federal_film_company_research_speed_factor = 0.12 } set_variable = { OCF_federal_film_company_stability_factor = -0.08 } }#快要坏掉的八音盒
+    else_if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 8 } } set_variable = { OCF_federal_film_company_industrial_capacity_dockyard = 0.1 } }#苍蓝钢铁
+    else_if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 9 } } set_variable = { OCF_federal_film_company_research_speed_factor = 0.08 } }#笨拙至极的上野
+    else_if = { limit = { check_variable = { OCF_poster_iconType_variable_1 = 10 } } set_variable = { OCF_federal_film_company_army_attack_factor = 0.07 } }#爱杀宝贝
+}
+
+#变量随机
+#输出 variable
+OCF_federal_film_company_initialization_variable = {
+    hidden_effect = {
+        random_list = {
+            1 = { set_temp_variable = { variable = 2 } }
+            1 = { set_temp_variable = { variable = 3 } }
+            1 = { set_temp_variable = { variable = 4 } }
+            1 = { set_temp_variable = { variable = 5 } }
+            1 = { set_temp_variable = { variable = 6 } }
+            1 = { set_temp_variable = { variable = 7 } }
+            1 = { set_temp_variable = { variable = 8 } }
+            1 = { set_temp_variable = { variable = 9 } }
+            1 = { set_temp_variable = { variable = 10 } }
+            1 = { set_temp_variable = { variable = 11 } }
+        }
+    }
+}
+
+
 ########  ######   #######  ##    ##  #######  ##     ## ####  ######      ######     ###    ##        ######  ##     ## ##          ###    ######## ####  #######  ##    ##
 ##       ##    ## ##     ## ###   ## ##     ## ###   ###  ##  ##    ##    ##    ##   ## ##   ##       ##    ## ##     ## ##         ## ##      ##     ##  ##     ## ###   ##
 ##       ##       ##     ## ####  ## ##     ## #### ####  ##  ##          ##        ##   ##  ##       ##       ##     ## ##        ##   ##     ##     ##  ##     ## ####  ##
@@ -928,7 +1038,7 @@ OCF_obtain_banknotes_effect_estimation = {
     multiply_variable = {
         OCF_obtain_banknotes_variable = ocf_tax_revenue_correction_2
     }
-    OCF_obtain_banknotes_threshold = yes
+    OCF_obtain_banknotes_threshold_estimate = yes
     set_variable = {
         OCF_spending_funds_variable = 2
     }
@@ -1260,20 +1370,14 @@ OCF_obtain_banknotes = {
 }
 
 
-#获取资金阈值
-OCF_obtain_banknotes_threshold = {
+#获取资金阈值（预估）
+OCF_obtain_banknotes_threshold_estimate = {
     set_variable = {
         OCF_obtain_banknotes_threshold_variable = 70
     }
     #计算修正（税收上限修正）
-    set_variable = {
-        ocf_tax_cap_correction_2 = 1
-    }
     add_to_variable = {
-        ocf_tax_cap_correction_2 = modifier@ocf_tax_cap_correction
-    }
-    multiply_variable = {
-        OCF_obtain_banknotes_threshold_variable = ocf_tax_cap_correction_2
+        OCF_obtain_banknotes_threshold_variable = modifier@ocf_tax_cap_correction
     }
 
     if = {
@@ -1295,6 +1399,41 @@ OCF_obtain_banknotes_threshold = {
         set_variable = {
             OCF_obtain_banknotes_variable = 2
         }
+    }
+}
+
+#获取资金阈值
+OCF_obtain_banknotes_threshold = {
+    set_variable = {
+        OCF_obtain_banknotes_threshold_variable = 70
+    }
+    #计算修正（税收上限修正）
+    add_to_variable = {
+        OCF_obtain_banknotes_threshold_variable = modifier@ocf_tax_cap_correction
+    }
+
+    if = {
+        limit = {
+            check_variable = {
+                OCF_obtain_banknotes_variable > OCF_obtain_banknotes_threshold_variable
+            }
+        }
+        set_variable = {
+            OCF_obtain_banknotes_variable = OCF_obtain_banknotes_threshold_variable
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {
+                OCF_obtain_banknotes_variable < 2
+            }
+        }
+        set_variable = {
+            OCF_obtain_banknotes_variable = 2
+        }
+    }
+    add_to_variable = {
+        OCF_bill = modifier@ocf_capital_monthly_additional_funds
     }
 }
 
@@ -1592,7 +1731,7 @@ OCE_Rub_cards_new = {
             OCF_gridbox_seat_array_senate_yes_del = yes
             OCF_gridbox_seat_array_senate_no_add = yes
         }
-        15 = {
+        5 = {
             custom_effect_tooltip = OCE_Rub_cards_new_4
             OCF_gridbox_seat_array_senate_yes_del = yes
             OCF_gridbox_seat_array_senate_no_add = yes
@@ -3761,6 +3900,21 @@ OCF_Prevent_spillage = {
 #参议院老爷们的喜怒无常
 OCF_randomly_changing_support = {
     random_list = {
+        300 = {
+            random_list = {
+                1 = { country_event = { id = OCF_topic_other.1 } }
+                1 = { country_event = { id = OCF_topic_other.2 } }
+                1 = { country_event = { id = OCF_topic_other.3 } }
+                1 = { country_event = { id = OCF_topic_other.4 } }
+                1 = { country_event = { id = OCF_topic_other.5 } }
+                1 = { country_event = { id = OCF_topic_other.6 } }
+                1 = { country_event = { id = OCF_topic_other.7 } }
+                1 = { country_event = { id = OCF_topic_other.8 } }
+                1 = { country_event = { id = OCF_topic_other.9 } }
+                1 = { country_event = { id = OCF_topic_other.10 } }
+                1 = { country_event = { id = OCF_topic_other.11 } }
+            }
+        }
         OCF_gridbox_seat_array_original_1 = {
             custom_effect_tooltip = OCE_amidst_intense_discussions_parliament_1
             country_event = {
@@ -3921,52 +4075,184 @@ OCF_randomly_changing_support = {
 
 #裁员
 OCF_Layoffs = {
-    random_list = {
-        OCF_gridbox_seat_array_original_1 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_1 = -1
+    custom_effect_tooltip = OCF_randomly_reduce_senator_1_tt
+    hidden_effect = {
+        random_list = {
+            OCF_gridbox_seat_array_original_1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_1 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_2 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_2 = -1
+            OCF_gridbox_seat_array_original_2 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_2 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_3 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_3 = -1
+            OCF_gridbox_seat_array_original_3 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_3 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_4 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_4 = -1
+            OCF_gridbox_seat_array_original_4 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_4 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_5 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_5 = -1
+            OCF_gridbox_seat_array_original_5 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_5 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_6 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_6 = -1
+            OCF_gridbox_seat_array_original_6 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_6 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_7 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_7 = -1
+            OCF_gridbox_seat_array_original_7 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_7 = -1
+                }
             }
-        }
-        OCF_gridbox_seat_array_original_8 = {
-            add_to_variable = {
-                OCF_gridbox_seat_array_original_8 = -1
+            OCF_gridbox_seat_array_original_8 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_8 = -1
+                }
             }
         }
     }
     OCF_Insert_Party_Position = yes
 }
-
-
+#随机减少两个议员
+OCF_randomly_reduce_senator_2 = {
+    custom_effect_tooltip = OCF_randomly_reduce_senator_2_tt
+    hidden_effect = {
+        OCF_Layoffs = yes
+        OCF_Layoffs = yes
+    }
+}
+#随机减少三个议员
+OCF_randomly_reduce_senator_3 = {
+    custom_effect_tooltip = OCF_randomly_reduce_senator_3_tt
+    hidden_effect = {
+        OCF_randomly_reduce_senator_2 = yes
+        OCF_Layoffs = yes
+    }
+}
+#随机减少四个议员
+OCF_randomly_reduce_senator_4 = {
+    custom_effect_tooltip = OCF_randomly_reduce_senator_4_tt
+    hidden_effect = {
+        OCF_randomly_reduce_senator_2 = yes
+        OCF_randomly_reduce_senator_2 = yes
+    }
+}
+#随机减少五个议员
+OCF_randomly_reduce_senator_5 = {
+    custom_effect_tooltip = OCF_randomly_reduce_senator_5_tt
+    hidden_effect = {
+        OCF_randomly_reduce_senator_2 = yes
+        OCF_randomly_reduce_senator_2 = yes
+        OCF_Layoffs = yes
+    }
+}
+#随机减少十个议员
+OCF_randomly_reduce_senator_10 = {
+    custom_effect_tooltip = OCF_randomly_reduce_senator_10_tt
+    hidden_effect = {
+        OCF_randomly_reduce_senator_5 = yes
+        OCF_randomly_reduce_senator_5 = yes
+    }
+}
+#随机增加一个议员
+OCF_randomly_add_member_parliament_1 = {
+    custom_effect_tooltip = OCF_randomly_add_member_parliament_1_tt
+    hidden_effect = {
+        random_list = {
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_1 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_2 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_3 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_4 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_5 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_6 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_7 = 1
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    OCF_gridbox_seat_array_original_8 = 1
+                }
+            }
+        }
+    }
+    OCF_Insert_Party_Position = yes
+}
+#随机增加两个议员
+OCF_randomly_add_member_parliament_2 = {
+    custom_effect_tooltip = OCF_randomly_add_member_parliament_2_tt
+    hidden_effect = {
+        OCF_randomly_add_member_parliament_1 = yes
+        OCF_randomly_add_member_parliament_1 = yes
+    }
+}
+#随机增加三个议员
+OCF_randomly_add_member_parliament_3 = {
+    custom_effect_tooltip = OCF_randomly_add_member_parliament_3_tt
+    hidden_effect = {
+        OCF_randomly_add_member_parliament_2 = yes
+        OCF_randomly_add_member_parliament_1 = yes
+    }
+}
+#随机增加四个议员
+OCF_randomly_add_member_parliament_4 = {
+    custom_effect_tooltip = OCF_randomly_add_member_parliament_4_tt
+    hidden_effect = {
+        OCF_randomly_add_member_parliament_2 = yes
+        OCF_randomly_add_member_parliament_2 = yes
+    }
+}
+#随机增加五个议员
+OCF_randomly_add_member_parliament_5 = {
+    custom_effect_tooltip = OCF_randomly_add_member_parliament_5_tt
+    hidden_effect = {
+        OCF_randomly_add_member_parliament_2 = yes
+        OCF_randomly_add_member_parliament_2 = yes
+        OCF_randomly_add_member_parliament_1 = yes
+    }
+}
+#随机增加十个议员
+OCF_randomly_add_member_parliament_10 = {
+    custom_effect_tooltip = OCF_randomly_add_member_parliament_10_tt
+    hidden_effect = {
+        OCF_randomly_add_member_parliament_5 = yes
+        OCF_randomly_add_member_parliament_5 = yes
+    }
+}
 ######## ######## ######## ########  ######  ########
 ##       ##       ##       ##       ##    ##    ##
 ##       ##       ##       ##       ##          ##
@@ -4175,7 +4461,7 @@ OCF_calculate_government_influence = {
         OCF_calculate_government_influence_variable_100 = OCF_calculate_government_influence_variable
     }
     divide_variable = {
-        OCF_calculate_government_influence_variable_100 = 600
+        OCF_calculate_government_influence_variable_100 = OCF_gridbox_seat_array_6
     }
     OCF_Prevent_spillage = yes
 }
@@ -4281,6 +4567,180 @@ OCF_government_authority = {
 ##   ##   ##       ##       ##   ##   ##             ## ##     ##    ##   ##   ##       ##    ##   ##  ##     ## ##  #### ######### ##                ## ##     ## ##        ##        ##     ## ##   ##      ##       ##   ##   #########    ##    ##
 ##    ##  ##       ##       ##    ##  ##       ##    ## ##     ##    ##    ##  ##       ##    ##   ##  ##     ## ##   ### ##     ## ##          ##    ## ##     ## ##        ##        ##     ## ##    ##     ##       ##    ##  ##     ##    ##    ##
 ##     ## ######## ##       ##     ## ########  ######  ##     ##    ##     ## ########  ######   ####  #######  ##    ## ##     ## ########     ######   #######  ##        ##         #######  ##     ##    ##       ##     ## ##     ##    ##    ########
+
+
+#输入变量 pie_chart_angle 角度
+#输出变量 coordinate_x x坐标
+OCF_calculation_x_position = {
+    if = { limit = { check_variable = { pie_chart_angle > 180 } }
+        subtract_from_temp_variable = { pie_chart_angle = 180 }
+        set_temp_variable = { decreased = 1 }
+    }
+
+    set_temp_variable = { up_s = pie_chart_angle }
+    multiply_temp_variable = { up_s = 7 }
+    set_temp_variable = { up_s_2 = 180 }
+    subtract_from_temp_variable = { up_s_2 = pie_chart_angle }
+    multiply_temp_variable = { up_s = up_s_2 }
+
+    set_temp_variable = { down_s = 50000 }
+    set_temp_variable = { down_s_2 = 180 }
+    subtract_from_temp_variable = { down_s_2 = pie_chart_angle }
+    multiply_temp_variable = { down_s_2 = pie_chart_angle }
+    subtract_from_temp_variable = { down_s = down_s_2 }
+
+    set_temp_variable = { coordinate_x = up_s }
+    divide_temp_variable = { coordinate_x = down_s }
+
+    if = { limit = { check_variable = { decreased = 1 } }
+        multiply_temp_variable = { coordinate_x = -1 }
+        add_to_temp_variable = { pie_chart_angle = 180 }
+        set_temp_variable = { decreased = 0 }
+    }
+}
+
+#输入变量 pie_chart_angle 角度
+#输出变量 coordinate_y y坐标
+OCF_calculation_y_position = {
+    set_temp_variable = { angle_init = pie_chart_angle }
+    add_to_temp_variable = { pie_chart_angle = 90 }
+
+    if = { limit = { check_variable = { pie_chart_angle > 180 } }
+        subtract_from_temp_variable = { pie_chart_angle = 180 }
+        set_temp_variable = { decreased = 1 }
+    }
+    if = { limit = { check_variable = { pie_chart_angle > 180 } }
+        subtract_from_temp_variable = { pie_chart_angle = 180 }
+        set_temp_variable = { decreased = 0 }
+    }
+
+    set_temp_variable = { up_s = pie_chart_angle }
+    multiply_temp_variable = { up_s = 7 }
+    set_temp_variable = { up_s_2 = 180 }
+    subtract_from_temp_variable = { up_s_2 = pie_chart_angle }
+    multiply_temp_variable = { up_s = up_s_2 }
+
+    set_temp_variable = { down_s = 50000 }
+    set_temp_variable = { down_s_2 = 180 }
+    subtract_from_temp_variable = { down_s_2 = pie_chart_angle }
+    multiply_temp_variable = { down_s_2 = pie_chart_angle }
+    subtract_from_temp_variable = { down_s = down_s_2 }
+
+    set_temp_variable = { coordinate_y = up_s }
+    divide_temp_variable = { coordinate_y = down_s }
+
+    if = { limit = { check_variable = { decreased = 1 } }
+        multiply_temp_variable = { coordinate_y = -1 }
+        set_temp_variable = { decreased = 0 }
+    }
+    set_temp_variable = { pie_chart_angle = angle_init }
+}
+
+#饼图百分比坐标刷新
+OCF_refresh_pie_chart_percentage_coordinates = {
+    set_temp_variable = { pie_chart_angle = factions_region_1 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_1 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_1 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_2 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_2 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_2 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_3 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_3 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_3 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_4 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_4 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_4 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_5 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_5 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_5 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_6 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_6 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_6 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_7 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_7 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_7 = coordinate_y }
+
+
+    set_temp_variable = { pie_chart_angle = factions_region_8 }
+    multiply_temp_variable = { pie_chart_angle = 3.4 }
+
+    OCF_calculation_x_position = yes
+    multiply_temp_variable = { coordinate_x = 30 }
+    set_variable = { coordinate_x_8 = coordinate_x }
+
+    OCF_calculation_y_position = yes
+    multiply_temp_variable = { coordinate_y = -30 }
+    add_to_temp_variable = { coordinate_y = 60 }
+    set_variable = { coordinate_y_8 = coordinate_y }
+}
 
 #刷新全国支持率
 OCF_tax_revenue_civil_factories_correctionresh_national_support_rate = {
@@ -4457,18 +4917,25 @@ OCF_refresh_regional_support_rate = {
 
     #计算占比
     set_variable = {
-        THIS.OCF_regional_support_rate_proportion_1 = THIS.OCF_regional_support_rate_1
-    }
-
-    set_variable = {
-        THIS.OCF_regional_support_rate_proportion_2 = THIS.OCF_regional_support_rate_proportion_1
-    }
-    add_to_variable = {
         THIS.OCF_regional_support_rate_proportion_2 = THIS.OCF_regional_support_rate_2
     }
 
     set_variable = {
-        THIS.OCF_regional_support_rate_proportion_3 = THIS.OCF_regional_support_rate_proportion_2
+        THIS.OCF_regional_support_rate_proportion_1 = THIS.OCF_regional_support_rate_proportion_2
+    }
+    add_to_variable = {
+        THIS.OCF_regional_support_rate_proportion_1 = THIS.OCF_regional_support_rate_1
+    }
+
+    set_variable = {
+        THIS.OCF_regional_support_rate_proportion_5 = THIS.OCF_regional_support_rate_proportion_1
+    }
+    add_to_variable = {
+        THIS.OCF_regional_support_rate_proportion_5 = THIS.OCF_regional_support_rate_5
+    }
+
+    set_variable = {
+        THIS.OCF_regional_support_rate_proportion_3 = THIS.OCF_regional_support_rate_proportion_5
     }
     add_to_variable = {
         THIS.OCF_regional_support_rate_proportion_3 = THIS.OCF_regional_support_rate_3
@@ -4482,24 +4949,24 @@ OCF_refresh_regional_support_rate = {
     }
 
     set_variable = {
-        THIS.OCF_regional_support_rate_proportion_5 = THIS.OCF_regional_support_rate_proportion_4
-    }
-    add_to_variable = {
-        THIS.OCF_regional_support_rate_proportion_5 = THIS.OCF_regional_support_rate_5
-    }
-
-    set_variable = {
-        THIS.OCF_regional_support_rate_proportion_6 = THIS.OCF_regional_support_rate_proportion_5
-    }
-    add_to_variable = {
-        THIS.OCF_regional_support_rate_proportion_6 = THIS.OCF_regional_support_rate_6
-    }
-
-    set_variable = {
-        THIS.OCF_regional_support_rate_proportion_7 = THIS.OCF_regional_support_rate_proportion_6
+        THIS.OCF_regional_support_rate_proportion_7 = THIS.OCF_regional_support_rate_proportion_4
     }
     add_to_variable = {
         THIS.OCF_regional_support_rate_proportion_7 = THIS.OCF_regional_support_rate_7
+    }
+
+    set_variable = {
+        THIS.OCF_regional_support_rate_proportion_8 = THIS.OCF_regional_support_rate_proportion_7
+    }
+    add_to_variable = {
+        THIS.OCF_regional_support_rate_proportion_8 = THIS.OCF_regional_support_rate_8
+    }
+
+    set_variable = {
+        THIS.OCF_regional_support_rate_proportion_6 = THIS.OCF_regional_support_rate_proportion_8
+    }
+    add_to_variable = {
+        THIS.OCF_regional_support_rate_proportion_6 = THIS.OCF_regional_support_rate_6
     }
 
     divide_variable = {
@@ -4523,6 +4990,27 @@ OCF_refresh_regional_support_rate = {
     divide_variable = {
         THIS.OCF_regional_support_rate_proportion_7 = THIS.regional_support_rate_100
     }
+    divide_variable = {
+        THIS.OCF_regional_support_rate_proportion_8 = THIS.regional_support_rate_100
+    }
+
+    set_variable = { THIS.OCF_regional_support_rate_1_storage = THIS.OCF_regional_support_rate_1 }
+    set_variable = { THIS.OCF_regional_support_rate_2_storage = THIS.OCF_regional_support_rate_2 }
+    set_variable = { THIS.OCF_regional_support_rate_3_storage = THIS.OCF_regional_support_rate_3 }
+    set_variable = { THIS.OCF_regional_support_rate_4_storage = THIS.OCF_regional_support_rate_4 }
+    set_variable = { THIS.OCF_regional_support_rate_5_storage = THIS.OCF_regional_support_rate_5 }
+    set_variable = { THIS.OCF_regional_support_rate_6_storage = THIS.OCF_regional_support_rate_6 }
+    set_variable = { THIS.OCF_regional_support_rate_7_storage = THIS.OCF_regional_support_rate_7 }
+    set_variable = { THIS.OCF_regional_support_rate_8_storage = THIS.OCF_regional_support_rate_8 }
+
+    divide_variable = { THIS.OCF_regional_support_rate_1_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_2_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_3_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_4_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_5_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_6_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_7_storage = THIS.regional_support_rate_100 }
+    divide_variable = { THIS.OCF_regional_support_rate_8_storage = THIS.regional_support_rate_100 }
 
     #把数据传入后端， 显示饼图
     OCF = {
@@ -4547,6 +5035,19 @@ OCF_refresh_regional_support_rate = {
         set_variable = {
             factions_region_7 = PREV.OCF_regional_support_rate_proportion_7
         }
+        set_variable = {
+            factions_region_8 = PREV.OCF_regional_support_rate_proportion_8
+        }
+
+        #储存真实百分比
+        set_variable = { THIS.OCF_regional_support_rate_1_storage = PREV.OCF_regional_support_rate_1_storage }
+        set_variable = { THIS.OCF_regional_support_rate_2_storage = PREV.OCF_regional_support_rate_2_storage }
+        set_variable = { THIS.OCF_regional_support_rate_3_storage = PREV.OCF_regional_support_rate_3_storage }
+        set_variable = { THIS.OCF_regional_support_rate_4_storage = PREV.OCF_regional_support_rate_4_storage }
+        set_variable = { THIS.OCF_regional_support_rate_5_storage = PREV.OCF_regional_support_rate_5_storage }
+        set_variable = { THIS.OCF_regional_support_rate_6_storage = PREV.OCF_regional_support_rate_6_storage }
+        set_variable = { THIS.OCF_regional_support_rate_7_storage = PREV.OCF_regional_support_rate_7_storage }
+        set_variable = { THIS.OCF_regional_support_rate_8_storage = PREV.OCF_regional_support_rate_8_storage }
     }
 
     #计算当前最高值和计算可能胜选党派
@@ -4846,54 +5347,182 @@ OCF_election_results = {
         limit = {
             is_core_of = OCF is_owned_and_controlled_by = OCF
         }
-        random_list = {
-            THIS.OCF_regional_support_rate_1 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_1 = 1
+        set_variable = {
+            OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_1
+        }
+        set_variable = {
+            OCF.OCF_election_results_state_winning = 1
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_2
                 }
-                custom_effect_tooltip = OCF_election_results_tt
             }
-            THIS.OCF_regional_support_rate_2 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_2 = 1
-                }
-                custom_effect_tooltip = OCF_election_results_tt
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_2
             }
-            THIS.OCF_regional_support_rate_3 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_3 = 1
-                }
-                custom_effect_tooltip = OCF_election_results_tt
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 2
             }
-            THIS.OCF_regional_support_rate_4 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_4 = 1
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_3
                 }
-                custom_effect_tooltip = OCF_election_results_tt
             }
-            THIS.OCF_regional_support_rate_5 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_5 = 1
-                }
-                custom_effect_tooltip = OCF_election_results_tt
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_3
             }
-            THIS.OCF_regional_support_rate_6 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_6 = 1
-                }
-                custom_effect_tooltip = OCF_election_results_tt
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 3
             }
-            THIS.OCF_regional_support_rate_7 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_7 = 1
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_4
                 }
-                custom_effect_tooltip = OCF_election_results_tt
             }
-            THIS.OCF_regional_support_rate_8 = {
-                add_to_variable = {
-                    OCF.OCF_election_results_8 = 1
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_4
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 4
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_5
                 }
-                custom_effect_tooltip = OCF_election_results_tt
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_5
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 5
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_6
+                }
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_6
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 6
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_7
+                }
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_7
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 7
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_MAX < THIS.OCF_regional_support_rate_8
+                }
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_MAX = THIS.OCF_regional_support_rate_8
+            }
+            set_variable = {
+                OCF.OCF_election_results_state_winning = 8
+            }
+        }
+
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 1
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_1 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 2
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_2 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 3
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_3 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 4
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_4 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 5
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_5 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 6
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_6 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 7
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_7 = 1
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_election_results_state_winning = 8
+                }
+            }
+            add_to_variable = {
+                OCF.OCF_election_results_8 = 1
             }
         }
     }
@@ -5548,6 +6177,106 @@ OCF_monthly_support_rate_increase_8 = {
         }
     }
 }
+
+#将增加随机派系支持
+OCF_random_region_supports_changes_add = {
+    custom_effect_tooltip = OCF_random_region_supports_changes_add_tt
+    hidden_effect = {
+        random_list = {
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_1 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_2 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_3 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_4 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_5 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_6 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_7 = 20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_8 = 20
+                }
+            }
+        }
+    }
+
+}
+
+#将减少随机派系支持
+OCF_random_region_supports_changes_del = {
+    custom_effect_tooltip = OCF_random_region_supports_changes_del_tt
+    hidden_effect = {
+        random_list = {
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_1 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_2 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_3 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_4 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_5 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_6 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_7 = -20
+                }
+            }
+            1 = {
+                add_to_variable = {
+                    THIS.OCF_regional_support_rate_8 = -20
+                }
+            }
+        }
+    }
+}
+
 ########  ######## ######## ########  ########  ######  ##     ##       ###    ##       ##          ########  ########  ######   ####  #######  ##    ##    ###    ##          ########     ###    ########    ###
 ##     ## ##       ##       ##     ## ##       ##    ## ##     ##      ## ##   ##       ##          ##     ## ##       ##    ##   ##  ##     ## ###   ##   ## ##   ##          ##     ##   ## ##      ##      ## ##
 ##     ## ##       ##       ##     ## ##       ##       ##     ##     ##   ##  ##       ##          ##     ## ##       ##         ##  ##     ## ####  ##  ##   ##  ##          ##     ##  ##   ##     ##     ##   ##
@@ -5567,44 +6296,85 @@ OCF_refresh_all_regional_data = {
     }
 }
 
+#切换党魁
+OCF_switching_party_leaders = {
+    OCF = {
+        set_variable = {
+            OCF_party_opened_tab = 1
+        }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF.OCF_show_all_party_leaders = 5
+                }
+            }
+            remove_ideas = OCF_idea_Izumi_Sojiro
+            if = {
+                check_variable = {
+                    OCF_Party_SubGUI_2_lists_v = 1
+                }
+                add_ideas = OCF_idea_Izumi_Sojiro
+            }
+            if = {
+                check_variable = {
+                    OCF_Party_SubGUI_2_lists_v = 4
+                }
+                add_ideas = OCF_idea_Hiiragi_Tsukasa
+            }
+            if = {
+                check_variable = {
+                    OCF_Party_SubGUI_2_lists_v = 5
+                }
+                add_ideas = OCF_idea_Kuroi_Nanako
+            }
+            set_variable = {
+                OCF_party_leader_5_variable = OCF_Party_SubGUI_2_lists_v
+            }
+        }
+    }
 
+}
 
 
 #显示所有党魁
 
 OCF_show_all_party_leaders_1 = {
+    set_variable = {
+        OCF_show_all_party_leaders = 1
+    }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 25
     }
 }
 OCF_show_all_party_leaders_2 = {
-    clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
+    set_variable = {
+        OCF_show_all_party_leaders = 2
     }
+    clear_array = global.OCF_Party_SubGUI_2_lists_array
 }
 OCF_show_all_party_leaders_3 = {
+    set_variable = {
+        OCF_show_all_party_leaders = 3
+    }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 20
     }
 }
 OCF_show_all_party_leaders_4 = {
+    set_variable = {
+        OCF_show_all_party_leaders = 4
+    }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 13
     }
 }
 OCF_show_all_party_leaders_5 = {
+    set_variable = {
+        OCF.OCF_show_all_party_leaders = 5
+    }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
     add_to_array = {
         global.OCF_Party_SubGUI_2_lists_array = 1
@@ -5630,22 +6400,43 @@ OCF_show_all_party_leaders_5 = {
     add_to_array = {
         global.OCF_Party_SubGUI_2_lists_array = 8
     }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 21
+    }
 }
 OCF_show_all_party_leaders_6 = {
+    set_variable = {
+        OCF_show_all_party_leaders = 6
+    }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 24
     }
 }
 OCF_show_all_party_leaders_7 = {
-    clear_array = global.OCF_Party_SubGUI_2_lists_array
-    add_to_array = {
-        global.OCF_Party_SubGUI_2_lists_array = 9
+    set_variable = {
+        OCF_show_all_party_leaders = 7
     }
-    add_to_array = {
-        global.OCF_Party_SubGUI_2_lists_array = 10
+    clear_array = global.OCF_Party_SubGUI_2_lists_array
+    if = {
+        limit = {
+            NOT = {
+                has_country_flag = OCF_topic_7033_a_flag
+            }
+        }
+        add_to_array = {
+            global.OCF_Party_SubGUI_2_lists_array = 9
+        }
+    }
+    if = {
+        limit = {
+            NOT = {
+                has_country_flag = OCF_topic_7024_flag
+            }
+        }
+        add_to_array = {
+            global.OCF_Party_SubGUI_2_lists_array = 10
+        }
     }
     add_to_array = {
         global.OCF_Party_SubGUI_2_lists_array = 11
@@ -5655,11 +6446,15 @@ OCF_show_all_party_leaders_7 = {
     }
 }
 OCF_show_all_party_leaders_8 = {
+    set_variable = {
+        OCF_show_all_party_leaders = 8
+    }
     clear_array = global.OCF_Party_SubGUI_2_lists_array
-    every_character = {
-        add_to_array = {
-            global.OCF_Party_SubGUI_2_lists_array = THIS
-        }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 22
+    }
+    add_to_array = {
+        global.OCF_Party_SubGUI_2_lists_array = 23
     }
 }
 
@@ -5674,7 +6469,7 @@ OCF_show_all_party_leaders_8 = {
 ##       ##       ##       ##    ##    ##     ##  ##     ## ##   ###    ##     ## ##        ##       ##    ##  ##     ##    ##     ##  ##     ## ##   ###
 ######## ######## ########  ######     ##    ####  #######  ##    ##     #######  ##        ######## ##     ## ##     ##    ##    ####  #######  ##    ##
 
-#清除当前执政党
+#清除当前执政党-结盟
 OCF_eliminate_current_ruling_party = {
     if = {
         limit = {
@@ -5724,6 +6519,55 @@ OCF_eliminate_current_ruling_party = {
         }
         clr_country_flag = OCF_control_government_flag_8
     }
+
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_1_yes
+        }
+        clr_country_flag = OCF_control_government_flag_1_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_2_yes
+        }
+        clr_country_flag = OCF_control_government_flag_2_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_3_yes
+        }
+        clr_country_flag = OCF_control_government_flag_3_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_4_yes
+        }
+        clr_country_flag = OCF_control_government_flag_4_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_5_yes
+        }
+        clr_country_flag = OCF_control_government_flag_5_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_6_yes
+        }
+        clr_country_flag = OCF_control_government_flag_6_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_7_yes
+        }
+        clr_country_flag = OCF_control_government_flag_7_yes
+    }
+    if = {
+        limit = {
+            has_country_flag = OCF_control_government_flag_8_yes
+        }
+        clr_country_flag = OCF_control_government_flag_8_yes
+    }
 }
 
 #清除所有副领导人
@@ -5742,9 +6586,9 @@ OCF_clear_all_deputy_leaders = {
     }
     if = {
         limit = {
-            has_idea = OCF_idea_Reed_The_Flame_Shadow
+            has_idea = INP_idea_Reed_The_Flame_Shadow
         }
-        remove_ideas = OCF_idea_Reed_The_Flame_Shadow
+        remove_ideas = INP_idea_Reed_The_Flame_Shadow
     }
 }
 
@@ -5830,60 +6674,143 @@ OCF_reset_ruling_party = {
 OCF_elected_faction_1 = {
     set_party_name = {
         ideology = communism
-        long_name = OCF_parliamentary_parties_1
-        name = OCF_parliamentary_parties_1
+        long_name = OCF_parties_1_long
+        name = OCF_parties_1
     }
 }
 
 OCF_elected_faction_2 = {
     set_party_name = {
         ideology = communism
-        long_name = OCF_parliamentary_parties_2
-        name = OCF_parliamentary_parties_2
+        long_name = OCF_parties_2_long
+        name = OCF_parties_2
     }
 }
 
 OCF_elected_faction_3 = {
     set_party_name = {
         ideology = democratic
-        long_name = OCF_parliamentary_parties_3
-        name = OCF_parliamentary_parties_3
+        long_name = OCF_parties_3_long
+        name = OCF_parties_3
     }
 }
 
 OCF_elected_faction_4 = {
     set_party_name = {
         ideology = democratic
-        long_name = OCF_parliamentary_parties_4
-        name = OCF_parliamentary_parties_4
+        long_name = OCF_parties_4_long
+        name = OCF_parties_4
     }
 }
 OCF_elected_faction_5 = {
     set_party_name = {
         ideology = democratic
-        long_name = OCF_parliamentary_parties_5
-        name = OCF_parliamentary_parties_5
+        long_name = OCF_parties_5_long
+        name = OCF_parties_5
     }
+    country_event = {
+        id = ocfnews.3
+    }
+    complete_national_focus = OCF_politics_79
+    complete_national_focus = OCF_politics_66
+    OCF_eliminate_current_ruling_party = yes
+    set_country_flag = OCF_control_government_flag_5
+    set_variable = {
+        OCF_gridbox_seat_array_original_1 = 77
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_2 = 28
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_3 = 122
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_4 = 117
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_5 = 125
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_6 = 30
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_7 = 51
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_8 = 50
+    }
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    custom_effect_tooltip = OCF.100.b_tt
+    add_to_array = {
+        global.OCF_changes_in_parliamentary_history_change_record_array = 0 index = 0
+    }
+    OCF_changes_in_parliamentary_history_list_dates_add = yes
 }
 OCF_elected_faction_6 = {
     set_party_name = {
         ideology = fascism
-        long_name = OCF_parliamentary_parties_6
-        name = OCF_parliamentary_parties_6
+        long_name = OCF_parties_6_long
+        name = OCF_parties_6
     }
 }
 OCF_elected_faction_7 = {
     set_party_name = {
         ideology = democratic
-        long_name = OCF_parliamentary_parties_7
-        name = OCF_parliamentary_parties_7
+        long_name = OCF_parties_7_long
+        name = OCF_parties_7
     }
+    country_event = {
+        id = ocfnews.1
+    }
+    complete_national_focus = OCF_politics_25
+    OCF_eliminate_current_ruling_party = yes
+    set_country_flag = OCF_control_government_flag_7
+    set_variable = {
+        OCF_gridbox_seat_array_original_1 = 42
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_2 = 38
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_3 = 102
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_4 = 97
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_5 = 73
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_6 = 30
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_7 = 148
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_8 = 40
+    }
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    custom_effect_tooltip = OCF.100.b_tt
+    add_to_array = {
+        global.OCF_changes_in_parliamentary_history_change_record_array = 0 index = 0
+    }
+    OCF_changes_in_parliamentary_history_list_dates_add = yes
 }
 OCF_elected_faction_8 = {
     set_party_name = {
         ideology = democratic
-        long_name = OCF_parliamentary_parties_8
-        name = OCF_parliamentary_parties_8
+        long_name = OCF_parties_8_long
+        name = OCF_parties_8
     }
 }
 
@@ -6056,36 +6983,93 @@ OCF_generate_factional_support_for_historical_line_charts = {
 ##        ##     ## ##    ##  ##        ##  ##     ## ##     ## ##       ##   ###    ##    ##     ## ##    ##     ##       ##    ## ##     ## ##    ##  ##
 ##        ##     ## ##     ## ######## #### ##     ## ##     ## ######## ##    ##    ##    ##     ## ##     ##    ##        ######   #######  ##     ## ########
 
+#众议院席位重新划分
+OCE_amidst_intense_discussions_parliament_pack = {
+    OCF_tax_revenue_civil_factories_correctionresh_national_support_rate = yes
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_1 = OCF_national_support_1_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_2 = OCF_national_support_2_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_3 = OCF_national_support_3_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_4 = OCF_national_support_4_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_5 = OCF_national_support_5_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_6 = OCF_national_support_6_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_7 = OCF_national_support_7_proportion }
+    set_variable = { OCE_amidst_intense_discussions_parliament_pack_8 = OCF_national_support_8_proportion }
+
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_1
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_2
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_3
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_4
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_5
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_6
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_7
+    round_variable = OCE_amidst_intense_discussions_parliament_pack_8
+
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_1 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_2 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_3 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_4 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_5 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_6 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_7 = 6 }
+    multiply_variable = { OCE_amidst_intense_discussions_parliament_pack_8 = 6 }
+
+    set_variable = { OCF_gridbox_seat_array_original_1 = OCE_amidst_intense_discussions_parliament_pack_1 }
+    set_variable = { OCF_gridbox_seat_array_original_2 = OCE_amidst_intense_discussions_parliament_pack_2 }
+    set_variable = { OCF_gridbox_seat_array_original_3 = OCE_amidst_intense_discussions_parliament_pack_3 }
+    set_variable = { OCF_gridbox_seat_array_original_4 = OCE_amidst_intense_discussions_parliament_pack_4 }
+    set_variable = { OCF_gridbox_seat_array_original_5 = OCE_amidst_intense_discussions_parliament_pack_5 }
+    set_variable = { OCF_gridbox_seat_array_original_6 = OCE_amidst_intense_discussions_parliament_pack_6 }
+    set_variable = { OCF_gridbox_seat_array_original_7 = OCE_amidst_intense_discussions_parliament_pack_7 }
+    set_variable = { OCF_gridbox_seat_array_original_8 = OCE_amidst_intense_discussions_parliament_pack_8 }
+    OCF_Insert_Party_Position = yes
+}
+
+
 #插入党派位置
 OCF_Insert_Party_Position = {
     OCF = {
         OCF_calculate_government_influence = yes
+        clear_array = OCF_seat_x_array
+        clear_array = OCF_seat_y_array
         clear_array = OCF_gridbox_seat_array
         clear_array = OCF_gridbox_seat_array_senate
         OCF_government_authority = yes
         OCF_party_relations_refresh = yes
-        #大洋社会主义同盟
-        set_variable = {
-            OCF_gridbox_seat_array_1 = OCF_gridbox_seat_array_original_1
-        }
 
-        #大洋联邦社会联盟党
+        #下方议会排列被修改过1-8将不会按照顺序排列
+        #下方议会排列被修改过1-8将不会按照顺序排列
+        #下方议会排列被修改过1-8将不会按照顺序排列
+
+        #大洋联邦社会先锋党
         set_variable = {
             OCF_gridbox_seat_array_2 = OCF_gridbox_seat_array_original_2
         }
+
+        #大洋联邦共产党
+        set_variable = {
+            OCF_gridbox_seat_array_1 = OCF_gridbox_seat_array_original_1
+        }
         add_to_variable = {
-            OCF_gridbox_seat_array_2 = OCF_gridbox_seat_array_1
+            OCF_gridbox_seat_array_1 = OCF_gridbox_seat_array_2
         }
 
-        #改组派民主保全会
+        #大洋联邦社会民主党
+        set_variable = {
+            OCF_gridbox_seat_array_5 = OCF_gridbox_seat_array_original_5
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_5 = OCF_gridbox_seat_array_1
+        }
+
+        #大洋联邦民主党
         set_variable = {
             OCF_gridbox_seat_array_3 = OCF_gridbox_seat_array_original_3
         }
         add_to_variable = {
-            OCF_gridbox_seat_array_3 = OCF_gridbox_seat_array_2
+            OCF_gridbox_seat_array_3 = OCF_gridbox_seat_array_5
         }
 
-        #大洋联邦同盟党
+        #大洋联邦自由党
         set_variable = {
             OCF_gridbox_seat_array_4 = OCF_gridbox_seat_array_original_4
         }
@@ -6093,31 +7077,15 @@ OCF_Insert_Party_Position = {
             OCF_gridbox_seat_array_4 = OCF_gridbox_seat_array_3
         }
 
-        #党外人士
-        set_variable = {
-            OCF_gridbox_seat_array_5 = OCF_gridbox_seat_array_original_5
-        }
-        add_to_variable = {
-            OCF_gridbox_seat_array_5 = OCF_gridbox_seat_array_4
-        }
-
-        #民族党
-        set_variable = {
-            OCF_gridbox_seat_array_6 = OCF_gridbox_seat_array_original_6
-        }
-        add_to_variable = {
-            OCF_gridbox_seat_array_6 = OCF_gridbox_seat_array_5
-        }
-
-        #自由党
+        #大洋联邦自治城邦党
         set_variable = {
             OCF_gridbox_seat_array_7 = OCF_gridbox_seat_array_original_7
         }
         add_to_variable = {
-            OCF_gridbox_seat_array_7 = OCF_gridbox_seat_array_6
+            OCF_gridbox_seat_array_7 = OCF_gridbox_seat_array_4
         }
 
-        #玛娜维护协会
+        #圣铃兰教保守党
         set_variable = {
             OCF_gridbox_seat_array_8 = OCF_gridbox_seat_array_original_8
         }
@@ -6125,11 +7093,19 @@ OCF_Insert_Party_Position = {
             OCF_gridbox_seat_array_8 = OCF_gridbox_seat_array_7
         }
 
+        #大洋联邦民族共和党
+        set_variable = {
+            OCF_gridbox_seat_array_6 = OCF_gridbox_seat_array_original_6
+        }
+        add_to_variable = {
+            OCF_gridbox_seat_array_6 = OCF_gridbox_seat_array_8
+        }
+
         set_variable = {
             OCF_gridbox_seat_array_waiver = 600
         }
         subtract_from_variable = {
-            OCF_gridbox_seat_array_waiver = OCF_gridbox_seat_array_8
+            OCF_gridbox_seat_array_waiver = OCF_gridbox_seat_array_6
         }
 
         #支持
@@ -6164,10 +7140,18 @@ OCF_Insert_Party_Position = {
         }
         resize_array = {
             array = OCF_gridbox_seat_array_senate
-            value = 5
+            value = 9
             size = 100
         }
-
+        #下方议会排列被修改过1-8将不会按照顺序排列
+        #下方议会排列被修改过1-8将不会按照顺序排列
+        #下方议会排列被修改过1-8将不会按照顺序排列
+        #21534786
+        resize_array = {
+            array = OCF_gridbox_seat_array
+            value = 2
+            size = OCF_gridbox_seat_array_2
+        }
         resize_array = {
             array = OCF_gridbox_seat_array
             value = 1
@@ -6175,8 +7159,8 @@ OCF_Insert_Party_Position = {
         }
         resize_array = {
             array = OCF_gridbox_seat_array
-            value = 2
-            size = OCF_gridbox_seat_array_2
+            value = 5
+            size = OCF_gridbox_seat_array_5
         }
         resize_array = {
             array = OCF_gridbox_seat_array
@@ -6190,16 +7174,6 @@ OCF_Insert_Party_Position = {
         }
         resize_array = {
             array = OCF_gridbox_seat_array
-            value = 5
-            size = OCF_gridbox_seat_array_5
-        }
-        resize_array = {
-            array = OCF_gridbox_seat_array
-            value = 6
-            size = OCF_gridbox_seat_array_6
-        }
-        resize_array = {
-            array = OCF_gridbox_seat_array
             value = 7
             size = OCF_gridbox_seat_array_7
         }
@@ -6207,6 +7181,11 @@ OCF_Insert_Party_Position = {
             array = OCF_gridbox_seat_array
             value = 8
             size = OCF_gridbox_seat_array_8
+        }
+        resize_array = {
+            array = OCF_gridbox_seat_array
+            value = 6
+            size = OCF_gridbox_seat_array_6
         }
         resize_array = {
             array = OCF_gridbox_seat_array

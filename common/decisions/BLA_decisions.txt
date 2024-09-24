@@ -1,5 +1,52 @@
 #沙皇之治
 BLA_rule_of_tsar = {
+    #扑灭贵族叛乱
+    BLA_destory_BLA_asap = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war_with = BLB
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BLB
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            custom_effect_tooltip = BLB_gain_more_power
+            hidden_effect = {
+                every_controlled_state = {
+                    limit = {
+                        is_core_of = BLB
+                    }
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+					create_unit = {
+						division = "name = \"爱国军\" division_template = \"爱国军\" start_experience_factor = 0.3"
+						owner = BLB
+					}
+				}
+            }
+        }
+    }
     #对赫萝西查的最后通牒
     BLA_last_change = {
         available = {
@@ -16,8 +63,18 @@ BLA_rule_of_tsar = {
         days_remove = 7
         fire_only_once = yes
         remove_effect = {
-            HEL = {
-                country_event = {id = BLA_general.44}
+            if = {
+                limit = {
+                    has_idea = BLA_PM_Sanya
+                }
+                hidden_effect = {
+                    country_event = {id = BLA_general.54}
+                }
+            }
+            else = {
+                HEL = {
+                    country_event = {id = BLA_general.44}
+                }
             }
         }
         ai_will_do = {
@@ -36,6 +93,9 @@ BLA_rule_of_tsar = {
             NOT = {
                 country_exists = NAC
             }
+            NOT = {
+                has_global_flag = IKR_treaty_of_Istabul_revised
+            }
         }
         cost = 100
         days_remove = 90
@@ -44,6 +104,55 @@ BLA_rule_of_tsar = {
             annex_country = {
                 target = HBR
                 transfer_troops = yes
+            }
+            every_state = {
+                limit = {
+                    is_core_of = HBR
+                }
+                add_core_of = BLA
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    BLA_expand_SVI = {
+        available = {
+            country_exists = SVI
+            SVI = {
+                is_puppet_of = BLA
+            }
+            NOT = {
+                country_exists = WPU
+            }
+            any_controlled_state = {
+                is_core_of = WPU
+            }
+        }
+        visible = {
+            NOT = {
+                country_exists = NAC
+            }
+        }
+        fire_only_once = yes
+        remove_effect = {
+            custom_effect_tooltip = BLA_can_annex_SVI_after_reintegration
+            every_controlled_state = {
+                limit = {
+                    is_core_of = WPU
+                    NOT = {
+                        is_core_of = BLA
+                    }
+                }
+                transfer_state_to = SVI
+            }
+            SVI = {
+                if = {
+                    limit = {
+                        has_idea = SVI_abandoned_viceroyalty
+                    }
+                    remove_ideas = SVI_abandoned_viceroyalty
+                }
             }
         }
         ai_will_do = {
@@ -56,6 +165,17 @@ BLA_rule_of_tsar = {
             country_exists = SVI
             SVI = {
                 is_puppet_of = BLA
+            }
+            NOT = {
+                country_exists = WPU
+            }
+            all_state = {
+                if = {
+                    limit = {
+                        is_core_of = WPU
+                    }
+                    is_core_of = SVI
+                }
             }
         }
         visible = {
@@ -70,6 +190,12 @@ BLA_rule_of_tsar = {
             annex_country = {
                 target = SVI
                 transfer_troops = yes
+            }
+            every_state = {
+                limit = {
+                    is_core_of = SVI
+                }
+                add_core_of = BLA
             }
         }
         ai_will_do = {
@@ -241,6 +367,9 @@ BLA_rule_of_tsar = {
                     set_variable = {BLA_serf_opinion_change = 0}
                 }
             }
+        }
+        ai_will_do = {
+            base = 1000
         }
     }
     #安抚贵族
@@ -909,6 +1038,14 @@ BLA_secret_police = {
                 popularity = -0.02
             }
             clr_country_flag = BLA_streghten_censorship_flag
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = BLA_recent_censorship_flag
+                    }
+                }
+                set_country_flag = {flag = BLA_recent_censorship_flag days = 60 value = 1}
+            }
         }
         ai_will_do = {
             base = 1000
@@ -959,6 +1096,14 @@ BLA_secret_police = {
                 tooltip_side = BLA_voice_of_people
             }
             clr_country_flag = BLA_loosen_censorship_flag
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = BLA_recent_loosen_censorship_flag
+                    }
+                }
+                set_country_flag = {flag = BLA_recent_loosen_censorship_flag days = 60 value = 1}
+            }
         }
     }
     #改编革命歌曲
@@ -969,10 +1114,11 @@ BLA_secret_police = {
         }
         cost = 30
         days_remove = 30
-        days_re_enable = 40
+        days_re_enable = 60
         complete_effect = {
         }
         remove_effect = {
+            custom_effect_tooltip = Rossiya_Propaganda_desc
             add_popularity = {
                 ideology = communism
                 popularity = -0.01
@@ -985,6 +1131,53 @@ BLA_secret_police = {
                 id = BLA_legacy_of_August
                 value = 0.01
                 tooltip_side = BLA_ice_dream
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 0}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.1}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 1}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.2}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 2}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.3}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 3}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.4}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else = {
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
             }
         }
         ai_will_do = {
@@ -1040,6 +1233,14 @@ BLA_secret_police = {
             }
             BLA_decrease_freeman_opinion = yes
             clr_country_flag = BLA_secret_action_implemented
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = BLA_recent_arrest_flag
+                    }
+                }
+                set_country_flag = {flag = BLA_recent_arrest_flag days = 60 value = 1}
+            }
         }
         ai_will_do = {
             base = 1000
@@ -1086,7 +1287,7 @@ BLA_industralization = {
                         has_completed_focus = BLA_Anna_industry_10
                     }
                 }
-                add_cic = 1500
+                add_cic = 1000
             }
             if = {
                 limit = {
@@ -1095,21 +1296,21 @@ BLA_industralization = {
                         has_completed_focus = BLA_Anna_industry_10
                     }
                 }
-                add_cic = 750
+                add_cic = 500
             }
             if = {
                 limit = {
                     has_war = no
                     has_completed_focus = BLA_Anna_industry_10
                 }
-                add_cic = 2500
+                add_cic = 1500
             }
             if = {
                 limit = {
                     has_war = yes
                     has_completed_focus = BLA_Anna_industry_10
                 }
-                add_cic = 1250
+                add_cic = 750
             }
         }
     }
@@ -1142,10 +1343,7 @@ BLA_industralization = {
             has_completed_focus = BLA_Anna_industry_1
             custom_trigger_tooltip = {
                 tooltip = BLA_has_200_fund
-                OR = {
-                    BLA = {check_variable = {BLA_industralization_fund > 199}}
-                    is_ai = yes
-                }
+                BLA = {check_variable = {BLA_industralization_fund > 199}}
             }
         }
         visible = {
@@ -1190,9 +1388,7 @@ BLA_industralization = {
             has_completed_focus = BLA_Anna_industry_1
             custom_trigger_tooltip = {
                 tooltip = BLA_has_750_fund
-                OR = {
-                    BLA = {check_variable = {BLA_industralization_fund > 749}}
-                }
+                BLA = {check_variable = {BLA_industralization_fund > 749}}
             }
         }
         visible = {
@@ -1201,7 +1397,7 @@ BLA_industralization = {
             }
         }
         cost = 0
-        days_remove = 90
+        days_remove = 150
         days_re_enable = 0
         ai_will_do = {
             base = 1000
@@ -1237,9 +1433,7 @@ BLA_industralization = {
             has_completed_focus = BLA_Anna_industry_1
             custom_trigger_tooltip = {
                 tooltip = BLA_has_700_fund
-                OR = {
-                    BLA = {check_variable = {BLA_industralization_fund > 699}}
-                }
+                BLA = {check_variable = {BLA_industralization_fund > 699}}
             }
         }
         visible = {
@@ -1249,7 +1443,7 @@ BLA_industralization = {
             BLA = {check_variable = {BLA_industralization_status > 1}}
         }
         cost = 0
-        days_remove = 80
+        days_remove = 150
         days_re_enable = 0
         ai_will_do = {
             base = 100
@@ -1286,10 +1480,7 @@ BLA_industralization = {
             has_completed_focus = BLA_Anna_industry_1
             custom_trigger_tooltip = {
                 tooltip = BLA_has_700_fund
-                OR = {
-                    BLA = {check_variable = {BLA_industralization_fund > 699}}
-                    is_ai = yes
-                }
+                BLA = {check_variable = {BLA_industralization_fund > 699}}
             }
         }
         visible = {
@@ -1299,7 +1490,7 @@ BLA_industralization = {
             BLA = {check_variable = {BLA_industralization_status > 1}}
         }
         cost = 0
-        days_remove = 80
+        days_remove = 120
         days_re_enable = 0
         ai_will_do = {
             base = 5
@@ -1346,9 +1537,8 @@ BLA_industralization = {
                 BLA = {check_variable = {BLA_num_of_tech_invested > 5}}
             }
         }
-        cost = 0
-        days_remove = 50
-        days_re_enable = 50
+        days_remove = 120
+        days_re_enable = 60
         ai_will_do = {
             base = 100
         }
@@ -3032,118 +3222,6 @@ BLA_purchase_weapons = {
 }
 #帝国外交
 BLA_diplomacy = {
-    #加入乌斯拉尔
-    BLA_support_USR = {
-        available = {
-            country_exists = USR
-            NOT = {has_war_with = USR}
-            is_in_faction = no
-            USR = {
-                is_faction_leader = yes
-            }
-            has_completed_focus = BLA_Anna_dip_3
-        }
-        visible = {
-            country_exists = USR
-            NOT = {has_war_with = USR}
-            USR = {
-                is_faction_leader = yes
-            }
-            is_in_faction = no
-        }
-        cost = 0 
-        days_remove = 10
-        fire_only_once = yes
-        complete_effect = {
-        }
-        remove_effect = {
-            USR = {
-                country_event = {id = BLA_dip.1}
-            }
-        }
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                add = 10
-                has_idea = BLA_PM_Sanya
-            }
-            modifier = {
-                add = var:BLA_USR_favor
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_USR_debt > 0}}
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_USR_debt > 199}}
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_USR_debt > 399}}
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_USR_debt > 599}}
-            }
-        }
-    }
-    #加入爱丽诺
-    BLA_support_ELN = {
-        available = {
-            has_government = ELN
-            country_exists = ELN
-            NOT = {has_war_with = ELN}
-            is_in_faction = no
-            ELN = {
-                is_faction_leader = yes
-            }
-            has_completed_focus = BLA_Anna_dip_3
-        }
-        visible = {
-            country_exists = ELN
-            NOT = {has_war_with = ELN}
-            ELN = {
-                is_faction_leader = yes
-            }
-            BLA = {
-                has_government = ELN
-                is_in_faction = no
-            }
-        }
-        cost = 0 
-        days_remove = 10
-        fire_only_once = yes
-        complete_effect = {
-        }
-        remove_effect = {
-            ELN = {
-                country_event = {id = BLA_dip.1}
-            }
-        }
-        ai_will_do = {
-            factor = 10
-            modifier = {
-                add = var:BLA_ELN_favor
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_ELN_debt > 0}}
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_ELN_debt > 199}}
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_ELN_debt > 399}}
-            }
-            modifier = {
-                add = -5
-                BLA = {check_variable = {BLA_ELN_debt > 599}}
-            }
-        }
-    }
     #柚子厨同盟
     BLA_ciallo = {
         available = {
@@ -3778,6 +3856,771 @@ Back_to_wasteland = {
         }
         ai_will_do = {
             base = 1000
+        }
+    }
+}
+#夜航魔女与自由之梦
+BLA_Sanyas_dream = {
+    #青年派议程
+    BLA_youth_agenda = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war = no
+            has_idea = BLA_PM_Sanya
+        }
+        cancel_trigger = {
+            hidden_trigger = {
+                has_country_flag = BLA_Young_August_collapsed
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        timeout_effect = {
+            custom_effect_tooltip = BLA_calculate_youth_agenda_desc
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_unity = BLA_youth_unity_factor}
+                }
+            }
+        }
+    }
+    #劳工派议程
+    BLA_labor_agenda = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war = no
+            has_idea = BLA_PM_Sanya
+        }
+        cancel_trigger = {
+            hidden_trigger = {
+                has_country_flag = BLA_Young_August_collapsed
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        timeout_effect = {
+            custom_effect_tooltip = BLA_calculate_labor_agenda_desc
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_unity = BLA_labor_unity_factor}
+                }
+            }
+        }
+    }
+    #军官派议程
+    BLA_officier_agenda = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war = no
+            has_idea = BLA_PM_Sanya
+        }
+        cancel_trigger = {
+            hidden_trigger = {
+                has_country_flag = BLA_Young_August_collapsed
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        timeout_effect = {
+            custom_effect_tooltip = BLA_calculate_officier_agenda_desc
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_unity = BLA_officier_unity_factor}
+                }
+            }
+        }
+    }
+    #效忠派议程
+    BLA_loyalist_agenda = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war = no
+            has_idea = BLA_PM_Sanya
+        }
+        cancel_trigger = {
+            hidden_trigger = {
+                has_country_flag = BLA_Young_August_collapsed
+            }
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        timeout_effect = {
+            custom_effect_tooltip = BLA_calculate_loyalist_agenda_desc
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_unity = BLA_loyalist_unity_factor}
+                }
+            }
+        }
+    }
+    BLA_hold_meeting = {
+        cost = 50
+        days_remove = 7
+        days_re_enable = 180
+        remove_effect = {
+            BLA_increase_unity = yes
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 150
+            }
+        }
+    }
+    BLA_promote_officials = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_60_unity
+                BLA = {
+                    check_variable = {BLA_unity > 60}
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = BLA_PM_Sanya_1
+        }
+        cost = 20
+        days_remove = 90
+        days_re_enable = 90
+        remove_effect = {
+            add_stability = 0.01
+            add_war_support = 0.01
+            BLA_strengthen_gov_sanya = yes
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 150
+            }
+        }
+    }
+    BLA_promote_officier = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_60_unity
+                BLA = {
+                    check_variable = {BLA_unity > 60}
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = BLA_PM_Sanya_1
+        }
+        cost = 20
+        days_remove = 90
+        days_re_enable = 90
+        remove_effect = {
+            army_experience = 25
+            BLA_strengthen_gov_sanya = yes
+            custom_effect_tooltip = BLA_increase_preference_all_desc
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_army_preference = 0.5}
+                    add_to_variable = {BLA_royal_guard_preference = 0.5}
+                    add_to_variable = {BLA_navy_preference = 0.5}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 100
+            modifier = {
+                add = 100
+                has_political_power > 150
+            }
+        }
+    }
+    BLA_12hours_decision = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_60_unity
+                BLA = {
+                    check_variable = {BLA_unity > 60}
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = BLA_PM_Sanya_17
+        }
+        cost = 100
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            BLA_decrease_nobility_opinion_big = yes
+            BLA_decrease_capitalist_opinion_big = yes
+            swap_ideas = {
+                remove_idea = xiaoshi16
+                add_idea = xiaoshi12
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #限制资本
+    BLA_restrict_cpitalist = {
+        available = {
+            has_idea = BLA_command_economy
+        }
+        visible = {
+            has_completed_focus = BLA_Anna_reform_17
+        }
+        cost = 100
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            swap_ideas = {
+                remove_idea = BLA_command_economy
+                add_idea = BLA_command_economy_reformed
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #基本福利政策
+    BLA_basic_welfare_policy = {
+        visible = {
+            has_completed_focus = BLA_Anna_reform_17
+        }
+        cost = 150
+        days_remove = 70
+        fire_only_once = yes
+        remove_effect = {
+            add_ideas = BLA_basic_welfare_policy_idea
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+#赫萝西查危机
+HEL_crisis = {
+    #完辣！
+    HEL_ALL_GONE = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_country_flag = BLA_HEL_crisis
+        }
+        cancel_trigger = {
+            OR = {
+                has_war_with = HEL
+                has_country_flag = BLA_HEL_crisis_solved
+            }
+        }
+        days_mission_timeout = 100
+        selectable_mission = no
+        fire_only_once = yes
+        complete_effect = {
+        }
+        timeout_effect = {
+            clr_country_flag = BLA_HEL_crisis
+            set_country_flag = BLA_HEL_crisis_failed
+            custom_effect_tooltip = HEL_crisis_failed
+            declare_war_on = {
+                target = HEL
+                type = annex_everything
+            }
+        }
+    }
+    #事件杀
+    HEL_ALL_GONE_2 = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            tag = BLA
+            has_war_with = HEL
+            has_country_flag = BLA_HEL_crisis_failed
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = HEL
+            }
+        }
+        days_mission_timeout = 30
+        selectable_mission = no
+        fire_only_once = yes
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                country_event = {id = BLA_general.64}
+            }
+        }
+    }
+    #反对派破坏谈判
+    BLA_damage_negotiation = {
+        icon = mission_icon
+        is_good = no
+        available = {
+        }
+        complete_effect = {
+            add_political_power = -30
+        }
+        activation = {
+            tag = BLA
+            has_country_flag = BLA_HEL_crisis
+            hidden_trigger = {
+                BLA = {
+                    check_variable = {
+                        BLA_negotiation_barrier > 29
+                    }
+                }
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    has_war_with = HEL
+                }
+                custom_trigger_tooltip = {
+                    tooltip = BLA_negotiation_barrier_less_than_30
+                    BLA = {
+                        check_variable = {
+                            BLA_negotiation_barrier < 30
+                        }
+                    }
+                }
+            }
+        }
+        days_mission_timeout = 15
+        complete_effect = {
+        }
+        timeout_effect = {
+            BLA_decrease_negotiation_progress_3 = yes
+        }
+    }
+    #沙皇御准
+    BLA_approve_by_tsar = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            NOT = {
+                has_war_with = HEL
+            }
+            custom_trigger_tooltip = {
+                tooltip = BLA_negotiation_progress_greater_than_79
+                BLA = {
+                    check_variable = {BLA_negotiation_progress > 79}
+                }
+            }
+        }
+        fire_only_once = yes
+        remove_effect = {
+            clr_country_flag = BLA_HEL_crisis
+            set_country_flag = BLA_HEL_crisis_solved
+            custom_effect_tooltip = BLA_HEL_crisis_solved
+            hidden_effect = {
+                country_event = {id = BLA_general.56 days = 3}
+                annex_country = {
+                    target = HEL
+                    transfer_troops = no
+                }
+                if = {
+                    limit = {
+                        has_country_flag = BLA_guarantee_autonomy
+                    }
+                    126 = {
+                        add_dynamic_modifier = {modifier = HEL_autonomus_region scope = BLA}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    BLA_apologize = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+        }
+        cost = 20
+        fire_only_once = yes
+        days_remove = 7
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        remove_effect = {
+            BLA_weaken_gov_sanya = yes
+            BLA_increase_negotiation_progress_10 = yes
+            BLA_increase_negotiation_barrier_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    BLA_retreat = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            NOT = {
+                has_war_with = HEL
+            }
+            custom_trigger_tooltip = {
+                tooltip = BLA_armed_force_support_us
+                BLA = {
+                    OR = {
+                        check_variable = {BLA_royal_guard_preference > 4}
+                        check_variable = {BLA_army_preference > 4}
+                        check_variable = {BLA_navy_preference > 4}
+                    }
+                }
+            }
+        }
+        cost = 20
+        fire_only_once = yes
+        days_remove = 3
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        remove_effect = {
+            BLA_increase_negotiation_progress_10 = yes
+            add_days_mission_timeout = {
+                mission = HEL_ALL_GONE
+                days = 20
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #承诺赫萝西查自治
+    BLA_promise_to_guarantee_autonomy = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            NOT = {
+                has_war_with = HEL
+            }
+            NOT = {
+                has_country_flag = BLA_tough_poisition
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_tough_poisition
+            }
+            BLA = {
+                check_variable = {BLA_negotiation_progress > 14}
+            }
+        }
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        cost = 20
+        days_remove = 14
+        fire_only_once = yes
+        complete_effect = {
+            set_country_flag = BLA_guarantee_autonomy
+        }
+        remove_effect = {
+            BLA_increase_negotiation_progress_20 = yes
+            BLA_increase_negotiation_barrier_25 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #采取强硬姿态
+    BLA_threat = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            NOT = {
+                has_war_with = HEL
+            }
+            NOT = {
+                has_country_flag = BLA_guarantee_autonomy
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_guarantee_autonomy
+            }
+            BLA = {
+                check_variable = {BLA_negotiation_progress > 14}
+            }
+        }
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        cost = 20
+        days_remove = 14
+        fire_only_once = yes
+        complete_effect = {
+            set_country_flag = BLA_tough_poisition
+        }
+        remove_effect = {
+            BLA_decrease_negotiation_barrier_15 = yes
+            random_list = {
+                65 = {
+                    BLA_increase_negotiation_progress_20 = yes
+                }
+                35 = {
+                    BLA_decrease_negotiation_progress_15 = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    #尝试谈判
+    BLA_general_negotiation = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            NOT = {
+                has_war_with = HEL
+            }
+        }
+        cost = 10
+        days_remove = 10
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        remove_effect = {
+            BLA_increase_negotiation_progress_5 = yes
+            BLA_increase_negotiation_barrier_3 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #政治让步
+    BLA_step_back = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            NOT = {
+                has_war_with = HEL
+            }
+        }
+        cost = 30
+        days_remove = 10
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        remove_effect = {
+            BLA_decrease_negotiation_barrier_5 = yes
+            BLA_weaken_gov_sanya = yes
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 1000
+                BLA = {
+                    check_variable = {BLA_negotiation_barrier > 49}
+                }
+            }
+        }
+    }
+    #团结在首相身边
+    BLA_rally_effect = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_70_unity
+                BLA = {
+                    check_variable = {BLA_unity > 69}
+                }
+            }
+            NOT = {
+                has_war_with = HEL
+            }
+        }
+        cost = 50
+        days_remove = 50
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        remove_effect = {
+            BLA_decrease_negotiation_barrier_5 = yes
+            random_list = {
+                25 = {
+                    BLA_increase_army_preference_small = yes
+                }
+                25 = {
+                    BLA_increase_navy_preference_small = yes
+                }
+                25 = {
+                    BLA_increase_royal_guard_preference_small = yes
+                }
+                25 = {
+                    BLA_increase_sp_preference_small = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #让反对派闭嘴
+    BLA_shut_up = {
+        available = {
+            has_country_flag = BLA_HEL_crisis
+            custom_trigger_tooltip = {
+                tooltip = BLA_sp_support_us
+                BLA = {
+                    check_variable = {BLA_sp_preference > 4}
+                }
+            }
+            NOT = {
+                has_war_with = HEL
+            }
+        }
+        cost = 20
+        days_remove = 30
+        cancel_trigger = {
+            has_war_with = HEL
+        }
+        remove_effect = {
+            BLA_increase_negotiation_progress_5 = yes
+            BLA_decrease_negotiation_barrier_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+SVI_reintegration = {
+    SVI_reintegrate_WPU = {
+        available = {
+            any_controlled_state = {
+                is_core_of = WPU
+                NOT = {
+                    is_core_of = ROOT
+                }
+            }
+            NOT = {
+                country_exists = WPU
+            }
+        }
+        fire_only_once = yes
+        cost = 20
+        days_remove = 730
+        remove_effect = {
+            every_state = {
+                limit = {
+                    is_core_of = WPU
+                }
+                add_core_of = SVI
+            }
+        }
+    }
+}
+#罗西亚调试决议
+BLA_debug_decisions = {
+    BLA_test = {
+        complete_effect = {
+            clr_country_flag = BLA_HEL_crisis_failed
+        }
+    }
+    #加载第二次罗西亚革命国策
+    BLA_load_rev_focus = {
+        complete_effect = {
+            hidden_effect = {
+                set_country_flag = BLA_debug_display_rev_focus_flag
+                load_focus_tree = {
+                    tree = BLA_Anna
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
+        }
+    }
+    #加载革命后通用国策
+    BLA_load_afterwar_focus = {
+        complete_effect = {
+            hidden_effect = {
+                set_country_flag = BLA_debug_display_afterwar_focus_flag
+                load_focus_tree = {
+                    tree = BLA_Anna
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
+        }
+    }
+    #加载萨妮娅真结局国策
+    BLA_load_sanya_success_focus = {
+        complete_effect = {
+            hidden_effect = {
+                set_country_flag = BLA_debug_display_sanya_success_focus_flag
+                load_focus_tree = {
+                    tree = BLA_Anna
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
+        }
+    }
+    #加载萨妮娅坏结局
+    BLA_load_sanya_fail_focus = {
+        complete_effect = {
+            hidden_effect = {
+                set_country_flag = BLA_debug_display_sanya_fail_focus_flag
+                load_focus_tree = {
+                    tree = BLA_Anna
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
+        }
+    }
+    #加载希拉国策
+    BLA_load_siera_focus = {
+        complete_effect = {
+            hidden_effect = {
+                remove_ideas = BLA_PM_Elina
+                remove_ideas = BLA_PM_Sanya
+                add_ideas = BLA_PM_Siera
+                set_country_flag = BLA_debug_display_afterwar_focus_flag
+                load_focus_tree = {
+                    tree = BLA_Anna
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
+        }
+    }
+    #加载艾莉娜国策
+    BLA_load_elina_focus = {
+        complete_effect = {
+            hidden_effect = {
+                remove_ideas = BLA_PM_Siera
+                remove_ideas = BLA_PM_Sanya
+                add_ideas = BLA_PM_Elina
+                set_country_flag = BLA_debug_display_afterwar_focus_flag
+                load_focus_tree = {
+                    tree = BLA_Anna
+                    keep_completed = yes
+                }
+                mark_focus_tree_layout_dirty = yes
+            }
         }
     }
 }
