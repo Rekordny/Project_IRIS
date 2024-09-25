@@ -516,70 +516,23 @@ focus_tree = {
 
 		}
 		completion_reward = {
-			USF = {
-				end_puppet = ROOT
-			}
+			add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 3500
+                producer = BRG
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 200
+                producer = BRG
+            }
+            add_equipment_to_stockpile = {
+                type = anti_tank_equipment
+                amount = 100
+                producer = BRG
+            }
 			remove_ideas = BRG_deviation_tendency
-			ROOT = {
-				start_civil_war = {#分离的是 道格拉斯·麦克阿瑟
-					ruling_party = ROOT
-					ideology = neutrality #分离
-					army_ratio = 0.1
-					navy_ratio = 0
-					air_ratio = 0
-					capital = 825
-					states = {
-						825
-					}
-					set_country_flag = BRG_civil_war_General_Douglas_MacArthur_flag #标记为 道格拉斯·麦克阿瑟
-					effect_tooltip = {
-						create_country_leader = {
-							name = "道格拉斯·麦克阿瑟"
-							desc = "BRG_General_Douglas_MacArthur_desc"
-							picture = GFX_BRG_General_Douglas_MacArthur
-							expire = "3100.1.1"
-							ideology = sub_Junta
-							traits = {
-								BRG_General_Douglas_MacArthur_traits
-							}
-						}
-						create_field_marshal = {
-							name = "道格拉斯·麦克阿瑟"
-							desc = "BRG_General_Douglas_MacArthur_desc"
-							portrait_path = "GFX_BRG_General_Douglas_MacArthur"
-							traits = { offensive_doctrine inspirational_leader panzer_leader }
-							skill = 6
-							attack_skill = 7
-							defense_skill = 6
-							planning_skill = 8
-							logistics_skill = 5
-						}
-					}
-					hidden_effect = {
-						create_country_leader = {
-							name = BRG_General_Douglas_MacArthur
-							desc = "BRG_General_Douglas_MacArthur_desc"
-							picture = GFX_BRG_General_Douglas_MacArthur
-							expire = "3100.1.1"
-							ideology = sub_Junta
-							traits = {
-								BRG_General_Douglas_MacArthur_traits
-							}
-						}
-						create_field_marshal = {
-							name = BRG_General_Douglas_MacArthur
-							desc = "BRG_General_Douglas_MacArthur_desc"
-							portrait_path = "GFX_BRG_General_Douglas_MacArthur"
-							traits = { offensive_doctrine inspirational_leader panzer_leader }
-							skill = 6
-							attack_skill = 7
-							defense_skill = 6
-							planning_skill = 8
-							logistics_skill = 5
-						}
-					}
-				}
-			}
+			remove_ideas = BRG_arms_limitation
 		}
 	}
 	focus = {
@@ -810,6 +763,11 @@ focus_tree = {
 				has_civil_war = no
 			}
 		}
+		bypass = {
+            NOT = {
+                country_exists = OCE
+            }
+        }
 		mutually_exclusive = {
 
 		}
@@ -1431,37 +1389,40 @@ focus_tree = {
 			focus = BRG_focus_tree_33
 		}
 		available = {
-			is_puppet = no
 			OR = {
-				OCF = {
-					has_war = yes
+				AND = {
+					OCE = {
+						has_war = yes
+					}
+					custom_trigger_tooltip = {
+						tooltip = BRG_prerequisite_2
+						check_variable = {
+							BRG_incita_ribellione_variable > 2
+						}
+					}
 				}
-				OCE = {
-					has_war = yes
-				}
-				EIA = {
-					has_war = yes
-				}
-				INP = {
-					has_war = yes
-				}
+				#AND = {
+				#	is_puppet_of = USF
+				#	country_exists = OCF
+				#	OCF = {
+				#		is_puppet = no
+				#	}
+				#}
 			}
-			custom_trigger_tooltip = {
-				tooltip = BRG_prerequisite_2
-				check_variable = {
-					BRG_incita_ribellione_variable > 2
-				}
-			}
+			
 		}
 		mutually_exclusive = {
 
 		}
-		will_lead_to_war_with = OCF
 		will_lead_to_war_with = OCE
-		will_lead_to_war_with = INP
-		will_lead_to_war_with = EIA
 		completion_reward = {
-			division_template = {
+			if = {
+				limit = {
+					OCE = {
+						has_war = yes
+					}
+				}
+				division_template = {
 				name = "自行车部队"
 				division_names_group = BRG_INF_01
 				regiments = {
@@ -1503,43 +1464,13 @@ focus_tree = {
 				}
 				declare_war_on = { target = OCE type = annex_everything }
 				OCE = {
-					add_timed_idea = { idea = BRG_shocked_surprise_attack days = 5 }
-				}
-			}
-			if = {
-				limit = {
-					country_exists = OCF
-				}
-				declare_war_on = { target = OCF type = annex_everything }
-				OCF = {
-					add_timed_idea = { idea = BRG_shocked_surprise_attack days = 15 }
-				}
-			}
-			if = {
-				limit = {
-					country_exists = INP
-				}
-				declare_war_on = { target = INP type = annex_everything }
-				INP = {
-					add_timed_idea = { idea = BRG_shocked_surprise_attack days = 15 }
-				}
-			}
-			if = {
-				limit = {
-					country_exists = EIA
-				}
-				declare_war_on = { target = EIA type = annex_everything }
-				EIA = {
 					add_timed_idea = { idea = BRG_shocked_surprise_attack days = 15 }
 				}
 			}
 			every_state = {
 				limit = {
 					OR = {
-						is_controlled_by = OCF
 						is_controlled_by = OCE
-						is_controlled_by = INP
-						is_controlled_by = EIA
 					}
 					OR = {
 						has_state_flag = BRG_incita_ribellione_flag
@@ -1560,6 +1491,10 @@ focus_tree = {
 				}
 			}
 			add_timed_idea = { idea = BRG_charge_towards_kradas days = 20 }
+			}
+			else = {
+				
+			}
 			add_mines = { region = 124 amount = 50 }
 			add_mines = { region = 141 amount = 50 }
 			add_mines = { region = 129 amount = 50 }
