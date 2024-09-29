@@ -15,6 +15,14 @@ ideas = {
 						character = OCF_Makise_Kurisu
 						ruling_only = yes
 					}
+					# has_country_leader = {
+					# 	character = OCF_Executive_Committee_House_Representatives
+					# 	ruling_only = yes
+					# }
+					has_country_leader = {
+						character = OCF_tanya_von_degurechaff
+						ruling_only = yes
+					}
 				}
 			}
 			modifier = {
@@ -39,6 +47,7 @@ ideas = {
 			modifier = {
 				stability_factor = 0.05
 				production_factory_efficiency_gain_factor = 0.1
+				ocf_capital_medical_expenses_correction = -0.35
 			}
 		}
 		#泉宗次郎
@@ -118,8 +127,8 @@ ideas = {
 			allowed_civil_war = { always = yes }
 			cancel = {
 				NOT = {
-					has_country_flag = OCF_control_government_flag_2
-					has_country_flag = OCF_control_government_flag_2_yes
+					has_country_flag = OCF_control_government_flag_1
+					has_country_flag = OCF_control_government_flag_1_yes
 				}
 			}
 			modifier = {
@@ -302,7 +311,18 @@ ideas = {
 			}
 			picture = DOC_osia_naval_blockade
 			modifier = {
+				invasion_preparation = 0.1
+				min_export = -1
+				trade_opinion_factor = -1
 				custom_modifier_tooltip = OCF_idea_fleet_blockade_tooltip
+			}
+			rule = {
+				can_access_market = no
+				can_create_factions = no
+				can_join_factions = no
+				can_create_collaboration_government = no
+				can_not_declare_war = yes
+				can_send_volunteers = no
 			}
 		}
 
@@ -332,7 +352,19 @@ ideas = {
 			}
 			picture = DOC_osia_naval_blockade
 			modifier = {
+				invasion_preparation = 0.5
+				navy_max_range_factor = -0.6
+				min_export = -1
+				trade_opinion_factor = -1
 				custom_modifier_tooltip = FNC_idea_Fleet_support_tooltip
+			}
+			rule = {
+				can_access_market = no
+				can_create_factions = no
+				can_join_factions = no
+				can_create_collaboration_government = no
+				can_not_declare_war = yes
+				can_send_volunteers = no
 			}
 		}
 
@@ -357,11 +389,15 @@ ideas = {
 			on_remove = { }
 			allowed_civil_war = { always = yes }
 			modifier = {
+				land_bunker_effectiveness_factor = -0.8
 				breakthrough_factor = 0.2
 				supply_consumption_factor = -0.2
-				no_supply_grace = -0.2
+				army_defence_factor = -0.5
+				experience_loss_factor = 0.25
+				experience_gain_army_factor = -0.95
 				no_supply_grace = 168
-				ai_focus_aggressive_factor = 10
+				ai_focus_aggressive_factor = 99
+				ai_focus_defense_factor = -99
 			}
 		}
 		OCF_lujun_4_ideas = {
@@ -402,6 +438,7 @@ ideas = {
 				coordination_bonus = 0.02
 				training_time_army_factor = -0.1
 				COMBAT_WIDTH_FACTOR = -0.1
+				experience_loss_factor = 0.1
 			}
 		}
 
@@ -473,7 +510,7 @@ ideas = {
 
 			equipment_bonus = {
 				motorized_equipment = {
-					build_cost_ic = -0.5
+					build_cost_ic = -0.2
 				}
 				mechanized_equipment = {
 					build_cost_ic = -0.1
@@ -625,6 +662,7 @@ ideas = {
 			}
 		}
 
+		#重建
 		OCF_zhengzhi_2_ideas = {
 			allowed = {
 				always = yes
@@ -632,15 +670,13 @@ ideas = {
 			#picture =
 			modifier = {
 				political_power_cost = 0.2
-				production_speed_arms_factory_factor = -0.1
+				production_speed_arms_factory_factor = -0.25
 				production_speed_industrial_complex_factor = 0.3
 				production_speed_infrastructure_factor = 0.25
-				production_speed_dockyard_factor = -0.1
 				industrial_capacity_factory = -0.1
-				industrial_capacity_dockyard = -0.05
 				consumer_goods_factor = -0.3
 				mobilization_speed = -0.5
-				stability_weekly = 0.002
+				stability_weekly = 0.001
 				ocf_capital_expenditure_correction = 0.3
 			}
 		}
@@ -1438,8 +1474,8 @@ ideas = {
 				always = yes
 			}
 			modifier = {
-				production_speed_infrastructure_factor = 0.25
-				production_speed_rail_way_factor = 0.25
+				production_speed_infrastructure_factor = 0.35
+				production_speed_rail_way_factor = 0.35
 			}
 		}
 
@@ -1453,9 +1489,9 @@ ideas = {
 				always = yes
 			}
 			modifier = {
-				production_speed_arms_factory_factor = 0.15
-				production_speed_synthetic_refinery_factor = 0.2
-				production_speed_dockyard_factor = 0.15
+				production_speed_arms_factory_factor = 0.25
+				production_speed_synthetic_refinery_factor = 0.25
+				production_speed_dockyard_factor = 0.25
 				command_power_gain_mult = 0.25
 			}
 		}
@@ -1495,6 +1531,171 @@ ideas = {
 				industrial_capacity_factory = 0.07
 				production_speed_buildings_factor = 0.1
 				local_resources_factor = 0.07
+			}
+		}
+
+		#宝珠稳定优化
+		OCF_stable_optimization = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			equipment_bonus = {
+				magic_gemstone = {
+					instant = yes
+					build_cost_ic = 0.06
+					reliability = 0.05
+					soft_attack = 0.12
+					breakthrough = 0.08
+					defense = 0.08
+					hardness = 0.1
+				}
+				#category_mages = {
+				#	instant = yes
+				#	hardness = 0.06
+				#}
+			}
+		}
+
+		#财政赤字
+		OCF_fiscal_deficit = {
+			allowed = { }
+			on_remove = { }
+			cancel = { check_variable = { ROOT.OCF_bill > -30 } }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				stability_weekly = -0.05
+				war_support_weekly = -0.025
+				political_power_cost = 0.5
+				production_speed_buildings_factor = -0.5
+				industrial_capacity_factory = -0.5
+				industrial_capacity_dockyard = -0.5
+				army_attack_factor = -0.2
+				army_defence_factor = -0.2
+				ocf_tax_revenue_stability_correction = 1
+				ocf_tax_cap_correction = 25
+				ocf_tax_revenue_civil_factories_correction = 0.25
+				ocf_capital_expenditure_correction = -0.25
+			}
+		}
+
+		#酒水供应
+		OCF_alcohol_supply = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				consumer_goods_factor = 0.02
+				ocf_capital_military_expenses_correction = 0.1
+				land_reinforce_rate = 0.01
+				mobilization_speed = 0.1
+				breakthrough_factor = 0.03
+			}
+		}
+
+		#茶水供应
+		OCF_tea_supply = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				consumer_goods_factor = 0.02
+				ocf_capital_military_expenses_correction = 0.1
+				org_loss_when_moving = -0.05
+				attrition = -0.03 
+				army_org_factor = 0.05
+				army_morale_factor = 0.05
+			}
+		}
+
+		#技官社团
+		OCF_technical_officer_club = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				political_power_factor = 0.1
+				local_resources_factor = 0.05
+				monthly_population = 0.06
+				ocf_capital_monthly_additional_funds = 3
+				production_factory_max_efficiency_factor = 0.1
+			}
+		}
+
+		#技官委员会
+		OCF_technical_officer_council = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				min_export = -0.25
+				line_change_production_efficiency_factor = 0.1
+				production_factory_efficiency_gain_factor = 0.05
+				consumer_goods_factor = 0.05
+				political_advisor_cost_factor = -0.25
+			}
+		}
+
+		#技官委员会
+		OCF_technical_officer_council_2 = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				min_export = -0.25
+				political_advisor_cost_factor = -0.25
+				line_change_production_efficiency_factor = 0.1
+				production_factory_efficiency_gain_factor = 0.1
+				consumer_goods_factor = 0.05
+				political_power_cost = 0.15
+				drift_defence_factor = -0.1
+				research_speed_factor = 0.03
+			}
+		}
+
+		#技官委员会
+		OCF_technical_officer_council_3 = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				min_export = -0.35
+				political_advisor_cost_factor = -0.25
+				line_change_production_efficiency_factor = 0.15
+				production_factory_efficiency_gain_factor = 0.15
+				research_speed_factor = 0.03
+				local_resources_factor = 0.03
+				consumer_goods_factor = 0.075
+				political_power_cost = 0.15
+				drift_defence_factor = -0.1
+				research_speed_factor = 0.03
+			}
+		}
+
+		#工业红利
+		OCF_industrial_dividend = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				consumer_goods_factor = -0.25
+				ocf_tax_revenue_correction = 0.25
+				ocf_tax_cap_correction = 25
+				ocf_capital_expenditure_correction = -0.25
+			}
+		}
+
+		#科技胜利
+		OCF_technological_victory = {
+			allowed = { }
+			on_remove = { }
+			allowed_civil_war = { always = yes }
+			modifier = {
+				research_speed_factor = 0.06
+				local_building_slots_factor = 0.1
+				stability_factor = 0.15
+				production_factory_max_efficiency_factor = 0.1
+				production_factory_efficiency_gain_factor = 0.15
+				production_speed_buildings_factor = 0.05
 			}
 		}
 	}
