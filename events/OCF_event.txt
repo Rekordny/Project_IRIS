@@ -1,5 +1,6 @@
 add_namespace = OCF
-add_namespace = OCF_topic
+add_namespace = OCF_topic #议会随机（党派）
+add_namespace = OCF_topic_other #议会随机（其他）
 add_namespace = FNC
 add_namespace = ANA
 add_namespace = OCF_PWR #战后议会重组
@@ -14,6 +15,7 @@ country_event = {
     #is_triggered_only = yes
     picture = GFX_OCF_PWR_210
     trigger = {
+        always = no #暂时关闭
         tag = OCF
         communism > 0.5
         NOT = { has_government = communism }
@@ -290,6 +292,31 @@ country_event = {
         activate_mission = OCE_amidst_intense_discussions_parliament
         activate_mission = OCE_Rub_cards
         activate_mission = OCE_allocation_seats_House_Representatives
+        clear_array = OCF_Party_grid_array
+        add_to_array = {
+            OCF_Party_grid_array = 2
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 1
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 5
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 3
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 4
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 7
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 8
+        }
+        add_to_array = {
+            OCF_Party_grid_array = 6
+        }
     }
 }
 
@@ -327,7 +354,7 @@ country_event = {
                 desc = FNC_Kongou_desc
                 expire = "3999.1.1.1"
                 traits = {
-                    grand_fleet_proponent naval_theorist great_construction_admiral
+                    grand_fleet_proponent naval_theorist great_construction_admiral mine_craft big_guns_expert
                 }
             }
         }
@@ -338,7 +365,7 @@ country_event = {
             Character = FNC_Kongou
             desc = FNC_Kongou_desc
             traits = {
-                air_controller mine_sweeper superior_tactician green_water_expert ironside spotter blockade_runner
+                superior_tactician blue_water_expert ironside spotter blockade_runner mine_craft big_guns_expert
             }
             skill = 6
             attack_skill = 7
@@ -362,7 +389,7 @@ country_event = {
         add_naval_commander_role = {
             Character = FNC_Hiei
             traits = {
-                air_controller mine_sweeper superior_tactician green_water_expert ironside spotter blockade_runner
+                superior_tactician blue_water_expert spotter blockade_runner mine_craft big_guns_expert
             }
             desc = FNC_Hiei_desc
             skill = 5
@@ -384,6 +411,68 @@ country_event = {
                 desc = FNC_Hiei_desc
             }
         }
+        add_naval_commander_role = {
+            Character = FNC_repulse
+            traits = {
+                mine_sweeper craven blockade_runner destroyer_leader lone_wolf battleship_adherent OCF_low_core_computing_power_repulse
+            }
+            desc = FNC_repulse_desc
+            skill = 4
+            attack_skill = 4
+            defense_skill = 4
+            maneuvering_skill = 4
+            coordination_skill = 4
+        }
+        add_advisor_role = {
+            character = FNC_repulse
+            activate = yes
+            advisor = {
+                slot = navy_chief
+                cost = 75
+                idea_token = FNC_repulse
+                traits = {
+                    navy_chief_old_guard
+                }
+                desc = FNC_repulse_desc
+            }
+        }
+        add_naval_commander_role = {
+            Character = FNC_vampire
+            traits = {
+                mine_sweeper green_water_expert spotter blockade_runner bold smoke_screen_expert destroyer_leader OCF_low_core_computing_power_vampire
+            }
+            desc = FNC_vampire_desc
+            skill = 3
+            attack_skill = 1
+            defense_skill = 1
+            maneuvering_skill = 6
+            coordination_skill = 1
+        }
+        add_naval_commander_role = {
+            Character = FNC_yukikaze
+            traits = {
+                mine_sweeper green_water_expert spotter blockade_runner bold smoke_screen_expert destroyer_leader
+            }
+            desc = FNC_yukikaze_desc
+            skill = 3
+            attack_skill = 1
+            defense_skill = 2
+            maneuvering_skill = 4
+            coordination_skill = 1
+        }
+        add_advisor_role = {
+            character = FNC_vampire
+            activate = yes
+            advisor = {
+                slot = navy_chief
+                cost = 50
+                idea_token = FNC_vampire
+                traits = {
+                    navy_chief_maneuver_1
+                }
+                desc = FNC_vampire_desc
+            }
+        }
         every_state = {
             limit = {
                 OR = {
@@ -402,11 +491,133 @@ country_event = {
                 scope = FNC
             }
         }
+        country_event = {
+            id = FNC.2
+            days = 120
+        }
         OCF = {
             add_ideas = FNC_idea_Fleet_support
         }
     }
 }
+
+#反击加入大洋
+country_event = {
+    id = FNC.2
+    title = FNC.2.title
+    desc = FNC.2.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    immediate = {
+        FNC = {
+            set_nationality = {
+                target_country = OCF
+                character = FNC_repulse
+            }
+            set_nationality = {
+                target_country = OCF
+                character = FNC_vampire
+            }
+        }
+    }
+    option = {
+        name = FNC.2.a
+        ai_chance = {
+            base = 10
+        }
+        OCF = {
+            FNC_repulse = {
+                unit_leader_event = {
+                    id = FNC.3
+                    days = 1
+                }
+            }
+        }
+        country_event = {
+            id = FNC.4
+            days = 4
+        }
+    }
+}
+#反击加入大洋
+unit_leader_event = {
+    id = FNC.3
+    title = FNC.3.title
+    desc = FNC.3.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    option = {
+        name = FNC.3.a
+        ai_chance = {
+            base = 10
+        }
+        load_oob = "FNC_3091_Naval"
+        navy_experience = 50
+        add_tech_bonus = {
+            bonus = 2
+            ahead_reduction = 1
+            uses = 1
+            category = dd_tech
+        }
+        add_tech_bonus = {
+            bonus = 2
+            ahead_reduction = 1
+            uses = 1
+            category = bc_tech
+        }
+    }
+}
+#雪风加入大洋
+country_event = {
+    id = FNC.4
+    title = FNC.4.title
+    desc = FNC.4.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    immediate = {
+        FNC = {
+            set_nationality = {
+                target_country = OCF
+                character = FNC_yukikaze
+            }
+        }
+    }
+    option = {
+        name = FNC.4.a
+        ai_chance = {
+            base = 10
+        }
+        OCF = {
+            FNC_yukikaze = {
+                unit_leader_event = {
+                    id = FNC.5
+                    days = 1
+                }
+            }
+        }
+    }
+}
+#雪风加入大洋
+unit_leader_event = {
+    id = FNC.5
+    title = FNC.5.title
+    desc = FNC.5.desc
+    is_triggered_only = yes
+    #picture =
+    trigger = {}
+    option = {
+        name = FNC.5.a
+        ai_chance = {
+            base = 10
+        }
+        load_oob = "FNC_3091_Naval_2"
+        add_ideas = OCF_auspicious_sign
+    }
+}
+
 #政府崩溃
 country_event = {
     id = ANA.1
@@ -473,6 +684,14 @@ country_event = {
                     set_nationality = {
                         target_country = FNC
                         character = FNC_Hiei
+                    }
+                    set_nationality = {
+                        target_country = FNC
+                        character = FNC_repulse
+                    }
+                    set_nationality = {
+                        target_country = FNC
+                        character = FNC_vampire
                     }
                 }
                 FNC = {
@@ -773,6 +992,16 @@ country_event = {
         91 = {
             remove_core_of = FNC
         }
+        FNC_repulse = {
+            remove_trait = {
+                trait = OCF_low_core_computing_power_repulse
+            }
+        }
+        FNC_vampire = {
+            remove_trait = {
+                trait = OCF_low_core_computing_power_vampire
+            }
+        }
         set_global_flag = FNC_Submissive_OCF_flag
         country_event = {
             id = ocfnews.6
@@ -817,46 +1046,8 @@ country_event = {
             base = 10
         }
         hidden_effect = {
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
-            OCF_Layoffs = yes
+            OCF_randomly_reduce_senator_10 = yes
+            OCF_randomly_reduce_senator_10 = yes
             add_to_array = {
                 global.OCF_changes_in_parliamentary_history_change_record_array = 59 index = 0
             }
@@ -944,6 +1135,8 @@ country_event = {
         set_variable = {
             OCF_election_season_is_underway = 5
         }
+        custom_effect_tooltip = OCF_Izumi_Konata_dress_decisions_1_tt
+        custom_effect_tooltip = OCF_Hiiragi_Kagami_dress_decisions_1_tt
     }
 }
 
@@ -1190,12 +1383,34 @@ country_event = {
         country_event = {
             id = OCF.7
         }
-        news_event = {
-            id = IRIS_news.162
-        }
         115 = {
             add_manpower = -115
         }
+    }
+}
+
+
+#议案作废？
+country_event = {
+    id = OCF.15
+    title = OCF.15.title
+    desc = OCF.15.desc
+    is_triggered_only = yes
+    fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {}
+    immediate = {
+
+    }
+    option = {
+        name = OCF.15.a
+        ai_chance = {
+            base = 10
+        }
+        country_event = {
+            id = ocfnews.9
+        }
+        set_country_flag = OCF_adjournment_caused_protests_flag
     }
 }
 
@@ -1330,6 +1545,7 @@ country_event = {
     desc = OCF_topic.11.desc
     is_triggered_only = yes
     #fire_only_once = yes
+    picture = GFX_OCF_parliament
     trigger = {}
     option = {
         name = OCF_topic.81.a
@@ -1376,6 +1592,7 @@ country_event = {
     title = OCF_topic.21.title
     desc = OCF_topic.21.desc
     is_triggered_only = yes
+    picture = GFX_OCF_parliament
     #fire_only_once = yes
     trigger = {}
     option = {
@@ -1442,6 +1659,7 @@ country_event = {
     title = OCF_topic.71.title
     desc = OCF_topic.71.desc
     is_triggered_only = yes
+    picture = GFX_OCF_parliament
     #fire_only_once = yes
     trigger = {}
     option = {
@@ -1495,6 +1713,7 @@ country_event = {
     title = OCF_topic.81.title
     desc = OCF_topic.81.desc
     is_triggered_only = yes
+    picture = GFX_OCF_parliament
     #fire_only_once = yes
     trigger = {}
     option = {
@@ -1578,6 +1797,7 @@ country_event = {
     desc = OCF_topic.82.desc
     is_triggered_only = yes
     #fire_only_once = yes
+    picture = GFX_OCF_parliament
     trigger = {}
     option = {
         name = OCF_topic.81.a
@@ -2382,7 +2602,7 @@ country_event = {
             character = OCF_Clonine
             promote_leader = yes
             country_leader = {
-                ideology = sub_Market_Liberalism
+                ideology = sub_ocf_Market_Liberalism
                 traits = {
                     OCF_egoist
                 }
@@ -2396,34 +2616,347 @@ country_event = {
 }
 
 
+#议会随机非党派事件(包括议会吵架)
+
+#捐赠
+country_event = {
+    id = OCF_topic_other.1
+    title = OCF_topic_other.1.title
+    desc = OCF_topic_other.1.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+        controls_state = 108
+    }
+    option = {
+        name = OCF_topic_other.1.a
+        108 = {
+            OCF_random_region_supports_changes_add = yes
+        }
+        add_to_variable = {
+            OCF_bill = 20
+        }
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_20_add
+    }
+    option = {
+        name = OCF_topic_other.1.b
+    }
+}
+
+#移民
+country_event = {
+    id = OCF_topic_other.2
+    title = OCF_topic_other.2.title
+    desc = OCF_topic_other.2.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_small_port
+    trigger = {
+        has_war = no
+    }
+    option = {
+        name = OCF_topic_other.2.a
+        random_core_state = {
+            limit = {
+                is_controlled_by = ROOT
+            }
+            OCF_random_region_supports_changes_add = yes
+            OCF_random_region_supports_changes_del = yes
+            add_manpower = 2318
+        }
+        add_to_variable = {
+            OCF_bill = 10
+        }
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_10_add
+    }
+    option = {
+        name = OCF_topic_other.2.b
+    }
+}
+
+#议会打斗
+country_event = {
+    id = OCF_topic_other.3
+    title = OCF_topic_other.3.title
+    desc = OCF_topic_other.3.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.3.a
+        custom_effect_tooltip = OCF_changes_parliamentary_parties
+        OCF_randomly_reduce_senator_2 = yes
+        custom_effect_tooltip = OCF_changes_party_relations
+        custom_effect_tooltip = OCF_gridbox_seat_array_original_relationship_variable_random_list_del_2
+        hidden_effect = {
+            OCF_gridbox_seat_array_original_relationship_variable_random_list_del = yes
+            OCF_gridbox_seat_array_original_relationship_variable_random_list_del = yes
+        }
+    }
+    option = {
+        name = OCF_topic_other.3.b
+        add_political_power = -30
+    }
+}
+
+#基础设施升级
+country_event = {
+    id = OCF_topic_other.4
+    title = OCF_topic_other.4.title
+    desc = OCF_topic_other.4.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.4.a
+        add_timed_idea = { idea = OCF_upgrading_railway_network days = 35 }
+        add_to_variable = { OCF_bill = -10 }
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_10_del
+    }
+    option = {
+        name = OCF_topic_other.4.b
+    }
+}
+
+#军事预算增加
+country_event = {
+    id = OCF_topic_other.5
+    title = OCF_topic_other.5.title
+    desc = OCF_topic_other.5.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.5.a
+        add_timed_idea = { idea = OCF_military_budget_increase days = 35 }
+        add_to_variable = { OCF_bill = -20 }
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_20_del
+    }
+    option = {
+        name = OCF_topic_other.5.b
+    }
+}
+
+#反对派在参议院受挫
+country_event = {
+    id = OCF_topic_other.6
+    title = OCF_topic_other.6.title
+    desc = OCF_topic_other.6.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.6.a
+        add_political_power = 25
+        custom_effect_tooltip = OCF_changes_parliamentary_parties
+        custom_effect_tooltip = OCE_Rub_cards_new_0
+        OCF_gridbox_seat_array_senate_yes_add = yes
+        OCF_gridbox_seat_array_senate_no_del = yes
+        OCF_gridbox_seat_array_senate_yes_add = yes
+        OCF_gridbox_seat_array_senate_no_del = yes
+        OCF_gridbox_seat_array_senate_yes_add = yes
+        OCF_gridbox_seat_array_senate_no_del = yes
+    }
+}
+
+#众议院委员会支持总统的政策
+country_event = {
+    id = OCF_topic_other.7
+    title = OCF_topic_other.7.title
+    desc = OCF_topic_other.7.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.7.a
+        custom_effect_tooltip = OCF_changes_parliamentary_parties
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_1 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_1 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_I_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_2 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_2 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_II_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_3 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_3 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_III_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_4 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_4 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_IV_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_5 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_5 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_V_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_6 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_6 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_VI_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_7 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_7 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_VII_9
+        }
+        if = {
+            limit = { has_country_flag = OCF_control_government_flag_8 }
+            add_to_variable = {
+                OCF_gridbox_seat_array_original_8 = 35
+            }
+            custom_effect_tooltip = OCF_reduce_relationships_support_VIII_9
+        }
+    }
+}
+
+#众议员批评总统
+country_event = {
+    id = OCF_topic_other.8
+    title = OCF_topic_other.8.title
+    desc = OCF_topic_other.8.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.8.a
+        add_political_power = -50
+    }
+}
+
+#参议员公开反对政府的政策
+country_event = {
+    id = OCF_topic_other.9
+    title = OCF_topic_other.9.title
+    desc = OCF_topic_other.9.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.9.a
+        add_political_power = -25
+        custom_effect_tooltip = OCF_changes_parliamentary_parties
+        custom_effect_tooltip = OCE_Rub_cards_new_5
+        OCF_gridbox_seat_array_senate_yes_del = yes
+        OCF_gridbox_seat_array_senate_no_add = yes
+        OCF_gridbox_seat_array_senate_yes_del = yes
+        OCF_gridbox_seat_array_senate_no_add = yes
+        OCF_gridbox_seat_array_senate_yes_del = yes
+        OCF_gridbox_seat_array_senate_no_add = yes
+    }
+}
+
+#参议员投票支持政府提案
+country_event = {
+    id = OCF_topic_other.10
+    title = OCF_topic_other.10.title
+    desc = OCF_topic_other.10.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_parliament
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.10.a
+        add_political_power = 10
+        custom_effect_tooltip = OCF_changes_parliamentary_parties
+        custom_effect_tooltip = OCE_Rub_cards_new_2
+        OCF_gridbox_seat_array_senate_yes_add = yes
+        OCF_gridbox_seat_array_senate_no_del = yes
+    }
+}
+
+#众议院对总统不当行为的听证会
+country_event = {
+    id = OCF_topic_other.11
+    title = OCF_topic_other.11.title
+    desc = OCF_topic_other.11.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_topic_other.11.a
+        add_political_power = -10
+        add_stability = -0.05
+    }
+}
 
 #小故事区域
 
 #尘埃落定了吗？
 country_event = {
-	id = OCF_storiette.10001
-	title = OCF_storiette.10001.title
-	desc = OCF_storiette.10001.desc
-	is_triggered_only = yes
-	#fire_only_once = yes
-	trigger = {
-	}
-	option = {
-		name = OCF_storiette.10001.a
+    id = OCF_storiette.10001
+    title = OCF_storiette.10001.title
+    desc = OCF_storiette.10001.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {
+    }
+    option = {
+        name = OCF_storiette.10001.a
         country_event = {
             id = OCF_storiette.10002
         }
-	}
+    }
 }
 country_event = {
-	id = OCF_storiette.10002
-	title = OCF_storiette.10002.title
-	desc = OCF_storiette.10002.desc
-	is_triggered_only = yes
-	#fire_only_once = yes
-	trigger = {
-	}
-	option = {
-		name = OCF_storiette.10002.a
-	}
+    id = OCF_storiette.10002
+    title = OCF_storiette.10002.title
+    desc = OCF_storiette.10002.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {
+    }
+    option = {
+        name = OCF_storiette.10002.a
+    }
 }
