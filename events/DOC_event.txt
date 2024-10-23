@@ -1064,8 +1064,19 @@ country_event = {
 				promote_leader = yes
 				country_leader={
 					ideology=sub_Industrial_Liberalism
-					traits={}
+					traits={ DOC_armor_theory_faction }
 					id=-1
+				}
+			}
+			add_advisor_role = {
+				character = DOC_Ningfu_Pelogar
+				advisor = {
+					slot = theorist
+					cost = 75
+					idea_token = DOC_Ningfu_Pelogar
+					traits = {
+						blitzkrieg_theorist
+					}
 				}
 			}
 			add_advisor_role = {
@@ -1416,10 +1427,8 @@ country_event = {
 				name = DOC.201.3a
 				trigger = {
 					NOT = {
-						OR = {
-							tag = PLP
-							tag = URU
-						}
+						tag = PLP
+						tag = URU
 					}
 				}
 				ai_chance = { factor = 0.40 }
@@ -1439,10 +1448,8 @@ country_event = {
 				name = DOC.201.3b
 				trigger = {
 					NOT = {
-						OR = {
-							tag = PLP
-							tag = URU
-						}
+						tag = PLP
+						tag = URU
 					}
 				}
 				ai_chance = { factor = 0.60 }
@@ -1452,6 +1459,9 @@ country_event = {
 				country_event = DOC.20103001
 				news_event = { id = docnews.6 days = 0 }
 				DOC = { create_wargoal = { target = ROOT type = take_claimed_state } }
+
+				ROOT = { set_country_flag = DOC_battle_recovery_flag }#判定当前是收复战
+				#这个判断以后可以针对其他国家
 			}
 		}
 
@@ -1557,8 +1567,8 @@ country_event = {
 
 			immediate = {
 				hidden_effect = {
-					DOC = { country_event = { id = DOC.20110 days = 30 } }
-					DOC = { country_event = { id = DOC.20111 days = 5 } }
+					DOC = { country_event = { id = DOC.20110 days = 18 } }
+					DOC = { country_event = { id = DOC.20111 days = 2 } }
 				}
 			}
 
@@ -1901,10 +1911,12 @@ country_event = {
 				if = {
 					limit = { PLP = { NOT = { has_country_flag = PLP_OR_URU_Admitting_it } } }
 					ROOT = { declare_war_on = { target = PLP type = take_core_state } }
+					PLP = { set_country_flag = DOC_battle_recovery_flag }#判定当前是收复战
 				}
 				if = {
 					limit = { URU = { NOT = { has_country_flag = PLP_OR_URU_Admitting_it } } }
 					ROOT = { declare_war_on = { target = URU type = take_core_state } }
+					URU = { set_country_flag = DOC_battle_recovery_flag }#判定当前是收复战
 				}
 			}
 		}
@@ -1949,10 +1961,12 @@ country_event = {
 				if = {
 					limit = { PLP = { NOT = { has_country_flag = PLP_OR_URU_Admitting_it } } }
 					ROOT = { declare_war_on = { target = PLP type = take_core_state } }
+					PLP = { set_country_flag = DOC_battle_recovery_flag }#判定当前是收复战
 				}
 				if = {
 					limit = { URU = { NOT = { has_country_flag = PLP_OR_URU_Admitting_it } } }
 					ROOT = { declare_war_on = { target = URU type = take_core_state } }
+					URU = { set_country_flag = DOC_battle_recovery_flag }#判定当前是收复战
 				}
 			}
 		}
@@ -2006,9 +2020,17 @@ country_event = {
 							NOT = { controls_state = 105 }
 							NOT = { controls_state = 97 }
 						}
-						surrender_progress > 0.35
+						surrender_progress > 0.15
+					}
+
+				}
+				DOC = {
+					OR = {
+						has_government = democratic
+						has_government = neutrality
 					}
 				}
+				#has_country_flag = DOC_battle_recovery_flag
 			}
 
 			mean_time_to_happen = { days = 2 }
@@ -2019,8 +2041,19 @@ country_event = {
 					news_event = {
 						id = docnews.11
 					}
-					white_peace = DOC
+					every_country = {
+						limit = {
+							OR = {
+								is_in_faction_with = DOC
+								original_tag = DOC
+							}
+						}
+						THIS = {
+							white_peace = URU
+						}
+					}
 					leave_faction = yes
+
 				}
 				DOC = {
 					transfer_state = 105
@@ -2029,6 +2062,7 @@ country_event = {
 			}
 			option = {
 				name = DOC.20112.a
+				clr_country_flag = DOC_battle_recovery_flag
 			}
 		}
 
@@ -2044,18 +2078,27 @@ country_event = {
 
 			trigger = {
 				tag = PLP
+				PLP = {owns_state = 51
+					owns_state = 39}
 				PLP = {
 					has_war_with = DOC
-					owns_state = 51
-					owns_state = 39
+
 					OR = {
 						AND = {
 							NOT = { controls_state = 51 }
 							NOT = { controls_state = 39 }
 						}
-						surrender_progress > 0.35
+						surrender_progress > 0.3
+					}
+
+				}
+				DOC = {
+					OR = {
+						has_government = democratic
+						has_government = neutrality
 					}
 				}
+				#has_country_flag = DOC_battle_recovery_flag
 			}
 
 			mean_time_to_happen = { days = 2 }
@@ -2066,8 +2109,19 @@ country_event = {
 					news_event = {
 						id = docnews.11
 					}
-					white_peace = DOC
+					every_country = {
+						limit = {
+							OR = {
+								is_in_faction_with = DOC
+								original_tag = DOC
+							}
+						}
+						THIS = {
+							white_peace = PLP
+						}
+					}
 					leave_faction = yes
+
 				}
 				DOC = {
 					transfer_state = 51
@@ -2077,6 +2131,7 @@ country_event = {
 
 			option = {
 				name = DOC.20113.a
+				clr_country_flag = DOC_battle_recovery_flag
 			}
 		}
 
@@ -2673,10 +2728,30 @@ country_event = {
 
 			option = {
 				name = DOC.14004.a
+				custom_effect_tooltip = DOC_14004_a_desc
 				set_variable = { DOC_Relic_Treasure_Collection_pages_0 = 1 }
 				set_variable = { DOC_Relic_Treasure_Collection_army_core_attack_factor = 0.01 }
 				set_variable = { DOC_Relic_Treasure_Collection_army_core_defence_factor = 0.01 }
 				set_country_flag = DOC_14004_flag
 				add_to_variable = { DOC_morale = 5 }
+			}
+		}
+
+		country_event = {#革新提炼技术
+			id = DOC.15
+			title = DOC.15.t
+			desc = DOC.15.desc
+			picture = GFX_DOC_event_15
+			fire_only_once = yes
+
+			trigger = {
+				TAG = DOC
+				check_variable = { DOC.extraction_frequency > 2 }
+			}
+
+			option = {
+				name = DOC.15.a
+				custom_effect_tooltip = DOC_15_TT
+				set_country_flag = DOC_factory_distills_essence_blood_flag
 			}
 		}
