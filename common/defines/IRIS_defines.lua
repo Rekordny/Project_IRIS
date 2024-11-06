@@ -9,6 +9,8 @@ NDefines.NDiplomacy.MIN_OPINION_VALUE = -200						-- Min opinion value cap.
 NDefines.NCountry.MIN_STABILITY = -1.0
 NDefines.NCountry.MAX_WAR_SUPPORT = 1.0			
 
+NDefines.NSupply.RIVER_RAILWAY_LEVEL = 3                            -- 水路=3级铁路
+
 --------------------------------------------------------------------------------------------------------------
 -- LAND AI
 --------------------------------------------------------------------------------------------------------------
