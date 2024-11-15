@@ -5,6 +5,7 @@ add_namespace = FNC
 add_namespace = ANA
 add_namespace = OCF_PWR #战后议会重组
 add_namespace = OCF_storiette #小故事
+add_namespace = OCF_military_political #军政府
 
 
 #先锋党政变
@@ -1011,7 +1012,7 @@ country_event = {
             }
         }
         hidden_effect = {
-            country_event = { id = OCE.18 days = 200 }
+            country_event = { id = OCF.18 days = 200 }
         }
     }
     option = {
@@ -1093,7 +1094,7 @@ country_event = {
             }
         }
         hidden_effect = {
-            country_event = { id = OCE.18 days = 200 }
+            country_event = { id = OCF.18 days = 200 }
         }
     }
     option = {
@@ -1197,11 +1198,16 @@ country_event = {
     is_triggered_only = yes
     #fire_only_once = yes
     immediate = {
-        if = {
-            limit = {
-                NOT = { has_completed_focus = OCF_politics_77 }
+        hidden_effect = {
+            log = "[GetDateText]: [Root.GetName]: Mission OCF.25 关闭选举检测"
+            if = {
+                limit = {
+                    NOT = { has_completed_focus = OCF_politics_77 }
+                }
+                complete_national_focus = OCF_politics_77
             }
-            complete_national_focus = OCF_politics_77
+            set_temp_variable = { alert_id = token:alert_OCF_election_approaching }
+            del_IRIS_alert = yes
         }
     }
     trigger = {
@@ -1307,6 +1313,8 @@ country_event = {
                 OCF.OCF_election_results_winning = 5
             }
         }
+        custom_effect_tooltip = ocf_incorporate_new_national_policy
+        set_country_flag = OCF_Sakuraba_Hikaru_win_flag
         set_cosmetic_tag = OCF_sub_Techno_Bureaucracy
         news_event = {
             id = ocfnews.11
@@ -1373,6 +1381,7 @@ country_event = {
             custom_effect_tooltip = OCF_control_government_flag_1_yes
             set_country_flag = OCF_control_government_flag_1_yes
         }
+        mark_focus_tree_layout_dirty = yes
     }
     option = {
         name = OCF.25.z
@@ -1781,6 +1790,11 @@ country_event = {
     trigger = {  }
     immediate = {
         set_country_flag = has_OCF_101_flag #是否进行了第一次选举
+        hidden_effect = {
+            log = "[GetDateText]: [Root.GetName]: Mission OCF.101 关闭选举检测"
+            set_temp_variable = { alert_id = token:alert_OCF_election_approaching }
+            del_IRIS_alert = yes
+        }
     }
     option = {
         name = OCF.101.a
@@ -1856,6 +1870,11 @@ country_event = {
             base = 0
         }
         custom_effect_tooltip = OCF.100.TT
+        set_country_flag = OCF_coup_0_flag
+        hidden_effect = { load_oob = OCF_coup_0 }
+        news_event = {
+            id = ocfnews.12
+        }
     }
 }
 
@@ -2035,6 +2054,7 @@ country_event = {
         }
         country_event = {
             id = OCF.7
+            days = 3
         }
         115 = {
             add_manpower = -115
@@ -3561,6 +3581,192 @@ country_event = {
         add_stability = -0.1
     }
 }
+
+#军政府
+
+#卡仕角暴动
+country_event = {
+    id = OCF_military_political.10001
+    title = OCF_military_political.10001.title
+    desc = OCF_military_political.10001.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.10001.a
+        767 = { set_demilitarized_zone = yes }
+        add_stability = -0.1
+    }
+}
+
+country_event = {
+    id = OCF_military_political.10002
+    title = OCF_military_political.10002.title
+    desc = OCF_military_political.10002.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.10002.a
+
+        KCL = {
+            every_state = {
+                limit = {
+                    is_core_of = OCF
+                }
+                KCL = {
+                    add_state_core = PREV
+                }
+            }
+            add_stability = 0.6
+            add_war_support = 0.6
+            transfer_state = 767
+            OCF = {
+                declare_war_on = { target = KCL type = annex_everything }
+            }
+            add_ideas = KCL_overthrowing_military_political_system_ideas
+            create_country_leader = {
+                name = KCL_committee
+                desc = "KCL_committee_desc"
+                promote_leader = yes
+                picture = "gfx/leaders/KCL/KCL_committee.dds"
+                ideology = sub_Facism
+                traits = {}
+            }
+            hidden_effect = {
+                OCF_After_collapse_government_troops = yes
+                OCF_After_collapse_government_troops = yes
+                OCF_After_collapse_government_troops = yes
+
+                OCF = {
+                    country_event = { id = OCF_military_political.10003 days = 3 }
+                }
+            }
+        }
+        add_stability = -0.1
+    }
+}
+
+country_event = {
+    id = OCF_military_political.10003
+    title = OCF_military_political.10003.title
+    desc = OCF_military_political.10003.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.10002.a
+        every_state = {
+            limit = {
+                OR = {
+                    state = 771
+                    state = 116
+                    state = 156
+                    state = 772
+                    state = 129
+                    state = 165
+                }
+            }
+            PREV = { set_demilitarized_zone = no }
+            EIA = {
+                transfer_state = PREV
+            }
+        }
+        OCF = {
+            set_nationality = {
+                target_country = EIA
+                character = EIA_Oktyabrina
+            }
+        }
+        EIA = {
+            every_state = {
+                limit = {
+                    is_core_of = OCF
+                }
+                EIA = {
+                    add_state_core = PREV
+                }
+            }
+            EIA_Oktyabrina = {
+                promote_character = yes
+            }
+            add_stability = 0.6
+            add_war_support = 0.6
+            hidden_effect = {
+                OCF_After_collapse_government_troops = yes
+                OCF_After_collapse_government_troops = yes
+            }
+        }
+        add_stability = -0.1
+    }
+}
+
+#玛纳问题
+country_event = {
+    id = OCF_military_political.20001
+    title = OCF_military_political.20001.title
+    desc = OCF_military_political.20001.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.20001.a
+        if = {
+            limit = { has_idea = industrial_priority }
+            swap_ideas = {
+                remove_idea = industrial_priority
+                add_idea = industrial_priority_regional_protective_mana_use
+            }
+        }
+        if = {
+            limit = { has_idea = in_transition }
+            swap_ideas = {
+                remove_idea = in_transition
+                add_idea = industrial_priority_regional_protective_mana_use
+            }
+        }
+        add_tech_bonus = {
+            bonus = 1
+            uses = 2
+            category = cat_mana_infantry
+        }
+    }
+    option = {
+        name = OCF_military_political.20001.a
+        every_state = {
+            limit = {
+                OCF_magic_sanctuary = yes
+            }
+            remove_dynamic_modifier = { modifier = OCF_mana_protection_zone }
+        }
+    }
+    option = {
+        name = OCF_military_political.20001.a
+        add_tech_bonus = {
+            bonus = 0.5
+            uses = 1
+            category = cat_mana_infantry
+        }
+        add_tech_bonus = {
+            bonus = 0.5
+            uses = 1
+            category = artillery
+        }
+    }
+}
+
 
 #小故事区域
 

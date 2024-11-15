@@ -1,0 +1,86 @@
+#添加提示前检测是否重复
+add_IRIS_alert_unless_exists = {
+	if = {
+		limit = { NOT = { is_in_array = { IRIS_alerts = alert_id } } }
+		add_IRIS_alert = yes
+	}
+}
+
+#添加提示
+add_IRIS_alert = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { IRIS_alert_types_hide = alert_id } }#不在关闭的列表中
+		}
+
+		add_to_array = { array = IRIS_alerts value = alert_id index = 0 }
+		# add_to_array = { array = IRIS_alert_data value = alert_data index = 0 }
+
+		sound_effect = "alert_decision_new_sound"
+	}
+}
+
+#移除提示
+del_IRIS_alert = {
+	if = {
+		limit = {
+			is_in_array = { IRIS_alerts = alert_id }#在列表中
+		}
+        remove_from_array = { IRIS_alerts = alert_id }
+		# add_to_array = { array = IRIS_alerts value = alert_id index = 0 }
+		# add_to_array = { array = IRIS_alert_data value = alert_data index = 0 }
+
+	}
+}
+
+#点击事件
+IRIS_alert_click = {
+
+}
+
+#右键隐藏
+IRIS_alert_right_button = {
+    remove_from_array = { array = IRIS_alerts index = alert_idx }
+	# remove_from_array = { array = IRIS_alert_data index = alert_idx }
+
+	suppress_IRIS_alert = yes
+}
+
+#隐藏5周
+suppress_IRIS_alert = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { IRIS_alert_types_hide = alert_id } }
+		}
+
+		set_temp_variable = { suppression_weeks = 5 }
+        if = {
+			limit = { check_variable = { suppression_weeks > 0 } }
+			
+			add_to_array = { IRIS_alert_types_hide = alert_id }
+			add_to_array = { IRIS_alert_types_hide_time = suppression_weeks }
+		}
+	}
+}
+
+#每周倒计时
+IRIS_alert_suppression_weekly_countdown = {
+	set_temp_variable = { idx = 0 }
+
+	while_loop_effect = {
+		limit = { check_variable = { idx < IRIS_alert_types_hide^num } }
+
+		subtract_from_variable = { IRIS_alert_types_hide_time^idx = 1 }
+		if = { 
+			limit = { check_variable = { IRIS_alert_types_hide_time^idx = 0 } }
+
+			set_temp_variable = { alert_id = IRIS_alert_types_hide^idx }
+
+			remove_from_array = { array = IRIS_alert_types_hide index = idx }
+			remove_from_array = { array = IRIS_alert_types_hide_time index = idx }
+
+			subtract_from_temp_variable = { idx = 1 }
+		}
+		add_to_temp_variable = { idx = 1 }
+	}
+}
