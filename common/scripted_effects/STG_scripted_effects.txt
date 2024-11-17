@@ -1523,3 +1523,276 @@ STG_Insert_Party_Position = {
         add_to_array = { STG_seat_y_array = 75 }
     }
 }
+#红线国家安全系统初始化
+STG_rev_national_security_setup = {
+    hidden_effect = {
+        STG = {
+            set_variable = {STG_national_security = 100}#基础安全数值
+            set_variable = {STG_security_agency_action_point = 2}#安全局行动点数
+            set_variable = {STG_security_agency_action_point_limit = 2}
+            set_variable = {STG_armed_picket_action_point = 3}#纠察队行动点数
+            set_variable = {STG_armed_picket_action_point_limit = 3}
+            set_variable = {STG_armed_picket_level = 1}#纠察队等级
+            set_variable = {STG_rev_national_security_weekly_change = -2.7}
+            set_country_flag = {flag = STG_action_point_recovery_cooldown days = 180 value = 1}
+            set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 180 value = 1}
+        }
+    }
+}
+#国家安全每周变化
+STG_rev_national_security_weekly_change_effect = {
+    hidden_effect = {
+        STG = {
+            if = {
+                limit = {
+                    check_variable = {STG_armed_picket_level = 1}
+                }
+                set_variable = {STG_rev_national_security_picket = -0.2}
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_armed_picket_level = 2}
+                }
+                set_variable = {STG_rev_national_security_picket = 0}
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_armed_picket_level = 3}
+                }
+                set_variable = {STG_rev_national_security_picket = 0.2}
+            }
+            add_to_variable = {STG_national_security = STG_rev_national_security_weekly_change}
+            add_to_variable = {STG_national_security = STG_rev_national_security_picket}
+            STG_rev_national_security_check = yes
+            STG_action_point_recovery = yes
+        }
+    }
+}
+#安全状态检测
+STG_rev_national_security_check = {
+    hidden_effect = {
+        STG = {
+            clamp_variable = {
+                var = STG_national_security
+                max = 200
+                min = 0
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security < 26}
+                }
+                set_variable = {STG_national_security_level = 1}
+                STG_add_rev_national_security_idea = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = {STG_national_security > 25}
+                    check_variable = {STG_national_security < 61}
+                }
+                set_variable = {STG_national_security_level = 2}
+                STG_add_rev_national_security_idea = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = {STG_national_security > 60}
+                    check_variable = {STG_national_security < 91}
+                }
+                set_variable = {STG_national_security_level = 3}
+                STG_add_rev_national_security_idea = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = {STG_national_security > 90}
+                    check_variable = {STG_national_security < 141}
+                }
+                set_variable = {STG_national_security_level = 4}
+                STG_add_rev_national_security_idea = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = {STG_national_security > 140}
+                    check_variable = {STG_national_security < 161}
+                }
+                set_variable = {STG_national_security_level = 5}
+                STG_add_rev_national_security_idea = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = {STG_national_security > 160}
+                    check_variable = {STG_national_security < 181}
+                }
+                set_variable = {STG_national_security_level = 6}
+                STG_add_rev_national_security_idea = yes
+            }
+            else_if = {
+                limit = {
+                    check_variable = {STG_national_security > 180}
+                }
+                set_variable = {STG_national_security_level = 7}
+                STG_add_rev_national_security_idea = yes
+            }
+        }
+    }
+}
+#切换国家精神
+STG_add_rev_national_security_idea = {
+    hidden_effect = {
+        STG = {
+            remove_ideas = STG_rev_national_security_level_1
+            remove_ideas = STG_rev_national_security_level_2
+            remove_ideas = STG_rev_national_security_level_3
+            remove_ideas = STG_rev_national_security_level_4
+            remove_ideas = STG_rev_national_security_level_5
+            remove_ideas = STG_rev_national_security_level_6
+            remove_ideas = STG_rev_national_security_level_7
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 1}
+                }
+                add_ideas = STG_rev_national_security_level_1
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 2}
+                }
+                add_ideas = STG_rev_national_security_level_2
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 3}
+                }
+                add_ideas = STG_rev_national_security_level_3
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 4}
+                }
+                add_ideas = STG_rev_national_security_level_4
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 5}
+                }
+                add_ideas = STG_rev_national_security_level_5
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 6}
+                }
+                add_ideas = STG_rev_national_security_level_6
+            }
+            if = {
+                limit = {
+                    check_variable = {STG_national_security_level = 7}
+                }
+                add_ideas = STG_rev_national_security_level_7
+            }
+        }
+    }
+}
+#行动点数恢复
+STG_action_point_recovery = {
+    hidden_effect = {
+        STG = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = STG_action_point_recovery_cooldown
+                    }
+                }
+                add_to_variable = {STG_security_agency_action_point = 1}
+                add_to_variable = {STG_armed_picket_action_point = 1}
+                set_country_flag = {flag = STG_action_point_recovery_cooldown days = 180 value = 1}
+            }
+            clamp_variable = {
+                var = STG_security_agency_action_point
+                max = STG_security_agency_action_point_limit
+                min = 0
+            }
+            clamp_variable = {
+                var = STG_armed_picket_action_point
+                max = STG_armed_picket_action_point_limit
+                min = 0
+            }
+        }
+    }
+}
+#纠察队效率恶化
+STG_picket_level_worsen = {
+    hidden_effect = {
+        STG = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = STG_picket_level_worsen_cooldown
+                    }
+                }
+                add_to_variable = {STG_armed_picket_level = -1}
+                set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 180 value = 1}
+            }
+            clamp_variable = {
+                var = STG_armed_picket_level
+                max = 3
+                min = 1
+            }
+        }
+    }
+}
+#安全形势极度恶化
+STG_rev_damage_security_very_big = {
+    custom_effect_tooltip = STG_rev_damage_security_very_big_desc
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security = -15}
+            add_to_variable = {STG_rev_national_security_weekly_change = -0.5}
+        }
+    }
+}
+#安全形势恶化
+STG_rev_damage_security_big = {
+    custom_effect_tooltip = STG_rev_damage_security_big_desc
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security = -5}
+            add_to_variable = {STG_rev_national_security_weekly_change = -0.1}
+        }
+    }
+}
+#安全形势略微恶化
+STG_rev_damage_security = {
+    custom_effect_tooltip = STG_rev_damage_security_desc
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security = -2}
+        }
+    }
+}
+#安全形势略微好转
+STG_rev_strengthen_security = {
+    custom_effect_tooltip = STG_rev_strengthen_security_desc
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security = 2}
+        }
+    }
+}
+#安全形势好转
+STG_rev_strengthen_security_big = {
+    custom_effect_tooltip = STG_rev_strengthen_security_big_desc
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security = 5}
+            add_to_variable = {STG_rev_national_security_weekly_change = 0.1}
+        }
+    }
+}
+#安全形势大幅好转
+STG_rev_strengthen_security_very_big = {
+    custom_effect_tooltip = STG_rev_strengthen_security_very_big_desc
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security = 15}
+            add_to_variable = {STG_rev_national_security_weekly_change = 0.5}
+        }
+    }
+}

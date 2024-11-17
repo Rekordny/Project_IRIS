@@ -221,8 +221,12 @@ BLA_rule_of_tsar = {
             has_idea = BLA_legacy_of_young_august
         }
         cancel_trigger = {
-            NOT = {
-                has_idea = BLA_legacy_of_young_august
+            OR = {
+                has_idea = BLA_PM_Sanya
+                has_idea = BLA_PM_Lyudmila
+                NOT = {
+                    has_idea = BLA_legacy_of_young_august
+                }
             }
         }
         days_mission_timeout = 60
@@ -3982,6 +3986,7 @@ BLA_Sanyas_dream = {
         days_re_enable = 180
         remove_effect = {
             BLA_increase_unity = yes
+            BLA_increase_youth_power = yes
         }
         ai_will_do = {
             base = 0
@@ -3989,6 +3994,17 @@ BLA_Sanyas_dream = {
                 add = 10
                 has_political_power > 150
             }
+        }
+    }
+    BLA_streghten_youth_power = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_increase_youth_power = yes
+        }
+        ai_will_do = {
+            factor = 10
         }
     }
     BLA_promote_officials = {
@@ -4009,6 +4025,7 @@ BLA_Sanyas_dream = {
         remove_effect = {
             add_stability = 0.01
             add_war_support = 0.01
+            BLA_increase_youth_power = yes
             BLA_strengthen_gov_sanya = yes
         }
         ai_will_do = {
@@ -4037,6 +4054,7 @@ BLA_Sanyas_dream = {
         remove_effect = {
             army_experience = 25
             BLA_strengthen_gov_sanya = yes
+            BLA_increase_officier_power = yes
             custom_effect_tooltip = BLA_increase_preference_all_desc
             hidden_effect = {
                 BLA = {
@@ -4051,6 +4069,52 @@ BLA_Sanyas_dream = {
             modifier = {
                 add = 100
                 has_political_power > 150
+            }
+        }
+    }
+    BLA_streghten_labor_power = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_increase_labor_power = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    BLA_restrict_labor_power = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_decrease_labor_power = yes
+            add_popularity = {
+                ideology = communism
+                popularity = -0.02
+            }
+        }
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 100
+                communism > 0.30
+            }
+        }
+    }
+    BLA_contact_nobility = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_increase_loyalist_power = yes
+            BLA_increase_nobility_opinion = yes
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 1000
+                check_variable = {BLA_nobility_opinion < 0}
             }
         }
     }
@@ -4070,11 +4134,43 @@ BLA_Sanyas_dream = {
         days_remove = 30
         fire_only_once = yes
         remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
             BLA_decrease_nobility_opinion_big = yes
             BLA_decrease_capitalist_opinion_big = yes
             swap_ideas = {
                 remove_idea = xiaoshi16
                 add_idea = xiaoshi12
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    BLA_8hours_decision = {
+        available = {
+            has_idea = xiaoshi12
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_60_unity
+                BLA = {
+                    check_variable = {BLA_unity > 60}
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = BLA_PM_Sanya_30
+        }
+        cost = 100
+        days_remove = 30
+        fire_only_once = yes
+        remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
+            BLA_decrease_nobility_opinion_big = yes
+            BLA_decrease_capitalist_opinion_big = yes
+            swap_ideas = {
+                remove_idea = xiaoshi12
+                add_idea = xiaoshi8
             }
         }
         ai_will_do = {
@@ -4093,6 +4189,8 @@ BLA_Sanyas_dream = {
         days_remove = 30
         fire_only_once = yes
         remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
             swap_ideas = {
                 remove_idea = BLA_command_economy
                 add_idea = BLA_command_economy_reformed
@@ -4105,12 +4203,14 @@ BLA_Sanyas_dream = {
     #基本福利政策
     BLA_basic_welfare_policy = {
         visible = {
-            has_completed_focus = BLA_Anna_reform_17
+            has_completed_focus = BLA_PM_Sanya_29
         }
         cost = 150
         days_remove = 70
         fire_only_once = yes
         remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
             add_ideas = BLA_basic_welfare_policy_idea
         }
         ai_will_do = {
@@ -4130,6 +4230,7 @@ HEL_crisis = {
         activation = {
             tag = BLA
             has_country_flag = BLA_HEL_crisis
+            country_exists = HEL
         }
         cancel_trigger = {
             OR = {
@@ -4202,9 +4303,7 @@ HEL_crisis = {
         }
         cancel_trigger = {
             OR = {
-                NOT = {
-                    has_war_with = HEL
-                }
+                has_war_with = HEL
                 custom_trigger_tooltip = {
                     tooltip = BLA_negotiation_barrier_less_than_30
                     BLA = {
@@ -4532,6 +4631,358 @@ SVI_reintegration = {
                 }
                 add_core_of = SVI
             }
+        }
+    }
+}
+#土地改革
+BLA_systematic_land_reform = {
+    #结束改革
+    BLA_end_land_reform  = {
+        available = {
+            has_country_flag = BLA_land_reform_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = BLA_land_reform_in_progress
+            if = {
+                limit = {
+                    check_variable = {BLA_land_reform_progress = 1}
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 10
+                    random_core_state = {
+                        add_extra_state_shared_building_slots = 1
+                    }
+                }
+                custom_effect_tooltip = BLA_land_reform_progress_1_bonus
+                add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.05}
+                add_to_variable = {BLA_dynamic_monthly_population = 0.05}
+                add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.03}
+                add_to_variable = {BLA_dynamic_production_speed_industrial_complex_factor = 0.025}
+                add_to_variable = {BLA_dynamic_production_speed_arms_factory_factor = 0.025}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_land_reform_progress = 2}
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 25
+                    random_core_state = {
+                        add_extra_state_shared_building_slots = 1
+                    }
+                }
+                custom_effect_tooltip = BLA_land_reform_progress_2_bonus
+                add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.10}
+                add_to_variable = {BLA_dynamic_monthly_population = 0.125}
+                add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.06}
+                add_to_variable = {BLA_dynamic_production_speed_industrial_complex_factor = 0.05}
+                add_to_variable = {BLA_dynamic_production_speed_arms_factory_factor = 0.05}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_land_reform_progress > 2}
+                }
+                every_core_state = {
+                    add_extra_state_shared_building_slots = 1
+                }
+                custom_effect_tooltip = BLA_land_reform_progress_2_bonus
+                add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.15}
+                add_to_variable = {BLA_dynamic_monthly_population = 0.20}
+                add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.10}
+                add_to_variable = {BLA_dynamic_production_speed_industrial_complex_factor = 0.10}
+                add_to_variable = {BLA_dynamic_production_speed_arms_factory_factor = 0.10}
+                add_to_variable = {BLA_dynamic_global_building_slots_factor = 0.05}
+            }
+        }
+    }
+    #快速改革方针
+    BLA_land_reform_radical = {
+        available = {
+            NOT = {
+                has_country_flag = BLA_recently_changed_plan
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_land_reform_radical_flag
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = BLA_land_reform_radical_effect
+            set_country_flag = BLA_land_reform_radical_flag
+            clr_country_flag = BLA_land_reform_moderate_flag
+            clr_country_flag = BLA_land_reform_purchase_flag
+            set_country_flag = {flag = BLA_recently_changed_plan days = 30 value = 1}
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                has_stability < 0.50
+            }
+        }
+    }
+    #温和推进方针
+    BLA_land_reform_moderate = {
+        available = {
+            NOT = {
+                has_country_flag = BLA_recently_changed_plan
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_land_reform_moderate_flag
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = BLA_land_reform_moderate_effect
+            set_country_flag = BLA_land_reform_moderate_flag
+            clr_country_flag = BLA_land_reform_radical_flag
+            clr_country_flag = BLA_land_reform_purchase_flag
+            set_country_flag = {flag = BLA_recently_changed_plan days = 30 value = 1}
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #高价赎买方针
+    BLA_land_reform_purchase = {
+        available = {
+            NOT = {
+                has_country_flag = BLA_recently_changed_plan
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_land_reform_purchase_flag
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = BLA_land_reform_purchase_effect
+            set_country_flag = BLA_land_reform_purchase_flag
+            clr_country_flag = BLA_land_reform_moderate_flag
+            clr_country_flag = BLA_land_reform_radical_flag
+            set_country_flag = {flag = BLA_recently_changed_plan days = 30 value = 1}
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                has_political_power < 0
+            }
+        }
+    }
+    #将绝嗣贵族土地收归国有
+    BLA_inherit_lands = {
+        cost = 25
+        days_remove = 15
+        days_re_enable = 250
+        remove_effect = {
+            BLA_land_reform_progress_increase_15 = yes
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #用刺刀说服贵族
+    BLA_land_reform_radical_nobility = {
+        visible = {
+            has_country_flag = BLA_land_reform_radical_flag
+        }
+        cost = 20
+        days_remove = 30
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                60 = {
+                }
+                40 = {
+                    BLA_decrease_nobility_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                BLA = {
+                    check_variable = {BLA_nobility_opinion < 0}
+                }
+            }
+        }
+    }
+    #用军靴说服正教会
+    BLA_land_reform_radical_church = {
+        visible = {
+            has_country_flag = BLA_land_reform_radical_flag
+        }
+        cost = 30
+        days_remove = 30
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                60 = {
+                }
+                40 = {
+                    BLA_decrease_church_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                BLA = {
+                    check_variable = {BLA_church_opinion < 0}
+                }
+            }
+        }
+    }
+    #为不配合者安排意外
+    BLA_kill_some_bad_guys = {
+        visible = {
+            has_country_flag = BLA_land_reform_radical_flag
+        }
+        cost = 50
+        days_remove = 7
+        days_re_enable = 100
+        remove_effect = {
+            add_manpower = -50
+            custom_effect_tooltip = BLA_no_bad_event_desc
+            set_country_flag = {flag = BLA_no_bad_event_flag days = 60}
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    #与贵族商讨条款
+    BLA_land_reform_moderate_nobility = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 40
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                80 = {
+                }
+                20 = {
+                    BLA_decrease_nobility_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #为正教会划拨保留地
+    BLA_land_reform_moderate_church = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 60
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                80 = {
+                }
+                20 = {
+                    BLA_decrease_church_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #在皇宫中推杯换盏
+    BLA_land_reform_moderate_tsar = {
+        cost = 40
+        days_remove = 60
+        remove_effect = {
+            add_stability = 0.03
+        }   
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #给贵族打钱
+    BLA_land_reform_purchase_nobility = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 60
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #给正教会打钱
+    BLA_land_reform_purchase_church = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 80
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #利用贵族把柄
+    BLA_land_reform_special_nobility = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_enough_nobility_secret_1
+                BLA = {check_variable = {BLA_nobility_secret > 0}}
+            }
+        }
+        visible = {
+            BLA = {check_variable = {BLA_nobility_secret > 0}}
+        }
+        days_remove = 30
+        complete_effect = {
+            hidden_effect = {
+                BLA = {add_to_variable = {BLA_nobility_secret = -1}}
+            }
+        }
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #利用正教会把柄
+    BLA_land_reform_special_church = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_enough_church_secret_1
+                BLA = {check_variable = {BLA_church_secret > 0}}
+            }
+        }
+        visible = {
+            BLA = {check_variable = {BLA_church_secret > 0}}
+        }
+        days_remove = 30
+        complete_effect = {
+            hidden_effect = {
+                BLA = {add_to_variable = {BLA_church_secret = -1}}
+            }
+        }
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 1000
         }
     }
 }
