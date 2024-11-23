@@ -169,13 +169,11 @@ BLA_rule_of_tsar = {
             NOT = {
                 country_exists = WPU
             }
-            all_state = {
-                if = {
-                    limit = {
-                        is_core_of = WPU
-                    }
-                    is_core_of = SVI
+            all_state = {  
+                limit = {
+                    is_core_of = WPU
                 }
+                is_core_of = SVI
             }
         }
         visible = {
@@ -3430,7 +3428,7 @@ BLA_diplomacy = {
             }
         }
         cost = 0
-        days_remove = 1
+        days_remove = 3
         fire_only_once = yes
         complete_effect = {
         }
@@ -3463,6 +3461,452 @@ BLA_diplomacy = {
 }
 #大博弈
 Big_Game = {
+    BLA_prepare_for_invade_BGN = {
+        available = {
+            date > 3091.1.1
+        }
+        visible = {
+            tag = BLA
+        }
+        fire_only_once = yes
+        complete_effect = {
+            set_global_flag = prepare_for_battle_of_BGN
+            custom_effect_tooltip = BLA_gain_control_point_if_we_win
+            104 = {
+                transfer_state_to = BLC
+            }
+            BLA_RPK16 = {
+                set_nationality = BLC
+            }
+            hidden_effect = {
+                104 = {
+                    add_core_of = BLC
+                }
+                BLC = {
+                    inherit_technology = BLA
+                    country_lock_all_division_template = yes
+                    create_country_leader = {
+                        name = BLA_RPK16
+                        picture = GFX_BLA_RPK16
+                        expire = "3200.1.1.1"
+                        ideology = sub_Junta
+                    }
+                    set_popularities = {
+                        democratic = 0
+                        neutrality = 85
+                        fascism = 5
+                        communism = 0
+                        reactionism = 10
+                    }
+                    set_politics = {
+                        ruling_party = neutrality
+                    }
+                }
+                NAC = {
+                    country_event = {id = NAC.52}
+                    activate_mission = Battle_of_BGN_preparing_NAC_counter
+                }
+            }
+            BLA = {
+                activate_mission = Battle_of_BGN_preparing
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    Battle_of_BGN_preparing_NAC_counter = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 100
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            BGN = {
+                add_war_support = 0.20
+            }
+        }
+    }
+    Battle_of_BGN_preparing = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 100
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            clr_global_flag = prepare_for_battle_of_BGN
+            hidden_effect = {
+                NAC = {
+                    end_puppet = BGN
+                }
+            }
+            BLC = {
+                declare_war_on = {
+                    target = BGN
+                    type = annex_everything
+                }
+                hidden_effect = {
+                    load_oob = "BLC_battle"
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_global_flag = BLC_gained_naval_support_flag
+                    }
+                    BLC = {
+                        add_ideas = BGN_landing_legion
+                        add_timed_idea = {idea = BLA_naval_support days = 40}
+                    }
+                }
+                if = {
+                    limit = {
+                        has_global_flag = BLC_gained_extra_brigade_flag
+                    }
+                    BLC = {
+                        load_oob = "BLC_battle_2"
+                    }
+                }
+            }
+        }
+    }
+    Battle_of_BGN_ends = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            BLC = {
+                has_war_with = BGN
+            }
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 60
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                BGN = {
+                    white_peace = {
+                        tag = BLC
+                        message = BGN_defeated_BLC
+                    }
+                }
+                BLC = {
+                    every_character =  {
+						set_nationality = BLA
+					}
+                }
+                BLA = {
+                    annex_country = {
+                        target = BLC
+                    }
+                }
+                NAC = {
+                    set_autonomy = {
+                        target = BGN
+                        autonomous_state = puppet
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = BLC
+                    }
+                    remove_core_of = BLC
+                }
+            }
+        }
+    }
+    BLA_send_man = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            add_manpower = -1000
+            BLC = {
+                add_manpower = 1000
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_weapon = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            has_equipment = {
+                infantry_equipment > 499
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 500
+                target = BLC
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_naval_support = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_extra_brigade_flag
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_extra_brigade_flag
+            }
+        }
+        cost = 50
+        days_remove = 40
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_send_naval_support_flag
+        }
+        remove_effect = {
+            set_global_flag = BLC_gained_naval_support_flag
+            custom_effect_tooltip = BLC_gain_naval_support_in_war
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_extra_brigade = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_naval_support_flag
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_naval_support_flag
+            }
+        }
+        cost = 50
+        days_remove = 40
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_send_extra_brigade_flag
+        }
+        remove_effect = {
+            set_global_flag = BLC_gained_extra_brigade_flag
+            custom_effect_tooltip = BLC_gain_extra_brigade_in_war
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_build_bunker = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            122 = {
+                add_building_construction ={
+                    type = bunker
+                    province = 10037
+                    level = 2
+                    instant_build = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_send_man = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                add_manpower = 1000
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_send_weapon = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 500
+                    producer = NAC
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_train_army = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        fire_only_once = yes
+        days_remove = 60
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"波格内民兵\" division_template = \"工农民兵\" start_experience_factor = 0.20"
+                        owner = BGN
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_ask_OCF_for_help = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            country_exists = OCF
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+            NOT = {
+                country_exists = OCF
+            }
+        }
+        cost = 50
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {s
+            OCF = {
+                country_event = {id = BLA_dip.5 days = 3}
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
     #西部沿海
     Select_West = {
         available = {
@@ -4686,7 +5130,7 @@ BLA_systematic_land_reform = {
                 every_core_state = {
                     add_extra_state_shared_building_slots = 1
                 }
-                custom_effect_tooltip = BLA_land_reform_progress_2_bonus
+                custom_effect_tooltip = BLA_land_reform_progress_3_bonus
                 add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.15}
                 add_to_variable = {BLA_dynamic_monthly_population = 0.20}
                 add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.10}
