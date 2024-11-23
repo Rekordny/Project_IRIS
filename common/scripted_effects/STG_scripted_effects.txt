@@ -1107,7 +1107,7 @@ STG_increase_gov_strength_10 = {
 STG_reduce_gov_strength = {
     custom_effect_tooltip = STG_reduce_gov_strength_desc
     hidden_effect = {
-        STG = {add_to_variable = {STG_gov_strength = -3}}
+        STG = {add_to_variable = {STG_gov_strength = -4}}
         STG_check_gov_strength = yes
     }
 }
@@ -1115,7 +1115,7 @@ STG_reduce_gov_strength = {
 STG_reduce_gov_strength_big = {
     custom_effect_tooltip = STG_reduce_gov_strength_big_desc
     hidden_effect = {
-        STG = {add_to_variable = {STG_gov_strength = -6}}
+        STG = {add_to_variable = {STG_gov_strength = -8}}
         STG_check_gov_strength = yes
     }
 }
@@ -1533,7 +1533,7 @@ STG_rev_national_security_setup = {
             set_variable = {STG_armed_picket_action_point = 3}#纠察队行动点数
             set_variable = {STG_armed_picket_action_point_limit = 3}
             set_variable = {STG_armed_picket_level = 1}#纠察队等级
-            set_variable = {STG_rev_national_security_weekly_change = -2.7}
+            set_variable = {STG_rev_national_security_weekly_change = -1.8}
             set_country_flag = {flag = STG_action_point_recovery_cooldown days = 180 value = 1}
             set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 180 value = 1}
         }
@@ -1793,6 +1793,167 @@ STG_rev_strengthen_security_very_big = {
         STG = {
             add_to_variable = {STG_national_security = 15}
             add_to_variable = {STG_rev_national_security_weekly_change = 0.5}
+        }
+    }
+}
+#红线议会初始化
+STG_rev_par_setup = {
+    STG = {
+        set_variable = {STG_labor_seat = 61}
+        set_variable = {STG_labor_supporter = 61}
+        set_variable = {STG_left_seat = 41}
+        set_variable = {STG_left_supporter = 0}
+        set_variable = {STG_sd_seat = 36}
+        set_variable = {STG_sd_supporter = 0}
+        set_variable = {STG_lsd_seat = 0}
+        set_variable = {STG_lsd_supporter = 0}
+        set_variable = {STG_dem_seat = 12}
+        set_variable = {STG_dem_supporter = 0}
+        set_variable = {STG_rev_par_seat = 150}
+    }
+}
+#红线议会支持计算
+STG_calculate_rev_par_support = {
+    STG = {
+        clamp_variable = {
+            var = STG_labor_supporter
+            max = STG_labor_seat
+            min = 0
+        }
+        clamp_variable = {
+            var = STG_left_supporter
+            max = STG_left_seat
+            min = 0
+        }
+        clamp_variable = {
+            var = STG_sd_supporter
+            max = STG_sd_seat
+            min = 0
+        }
+        clamp_variable = {
+            var = STG_lsd_supporter
+            max = STG_lsd_seat
+            min = 0
+        }
+        clamp_variable = {
+            var = STG_dem_supporter
+            max = STG_dem_seat
+            min = 0
+        }
+        set_variable = {STG_rev_par_support = 0}
+        add_to_variable = {STG_rev_par_support = STG_labor_supporter}
+        add_to_variable = {STG_rev_par_support = STG_left_supporter}
+        add_to_variable = {STG_rev_par_support = STG_sd_supporter}
+        add_to_variable = {STG_rev_par_support = STG_lsd_supporter}
+        add_to_variable = {STG_rev_par_support = STG_dem_supporter}
+    }
+}
+#红线随机失去支持
+STG_rev_random_lose_a_supporter = {
+    custom_effect_tooltip = STG_rev_random_lose_a_supporter_desc
+    hidden_effect = {
+        STG = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = STG_rev_sd_collapsed
+                    }
+                }
+                if = {
+                    limit = {
+                        check_variable = {STG_left_supporter > 0}
+                        check_variable = {STG_sd_supporter > 0}
+                        check_variable = {STG_dem_supporter > 0}
+                    }
+                    random_list = {
+                        33 = {
+                            add_to_variable = {STG_left_supporter = -1}
+                        }
+                        33 = {
+                            add_to_variable = {STG_sd_supporter = -1}
+                        }
+                        33 = {
+                            add_to_variable = {STG_dem_supporter = -1}
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {STG_left_supporter > 0}
+                        check_variable = {STG_sd_supporter > 0}
+                        check_variable = {STG_dem_supporter = 0}
+                    }
+                    random_list = {
+                        50 = {
+                            add_to_variable = {STG_left_supporter = -1}
+                        }
+                        50 = {
+                            add_to_variable = {STG_sd_supporter = -1}
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {STG_left_supporter = 0}
+                        check_variable = {STG_sd_supporter > 0}
+                        check_variable = {STG_dem_supporter > 0}
+                    }
+                    random_list = {
+                        50 = {
+                            add_to_variable = {STG_dem_supporter = -1}
+                        }
+                        50 = {
+                            add_to_variable = {STG_sd_supporter = -1}
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {STG_left_supporter > 0}
+                        check_variable = {STG_sd_supporter = 0}
+                        check_variable = {STG_dem_supporter > 0}
+                    }
+                    random_list = {
+                        50 = {
+                            add_to_variable = {STG_dem_supporter = -1}
+                        }
+                        50 = {
+                            add_to_variable = {STG_left_supporter = -1}
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {STG_left_supporter > 0}
+                        check_variable = {STG_sd_supporter = 0}
+                        check_variable = {STG_dem_supporter = 0}
+                    }
+                    random_list = {
+                        add_to_variable = {STG_left_supporter = -1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {STG_left_supporter = 0}
+                        check_variable = {STG_sd_supporter > 0}
+                        check_variable = {STG_dem_supporter = 0}
+                    }
+                    random_list = {
+                        add_to_variable = {STG_sd_supporter = -1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {STG_left_supporter = 0}
+                        check_variable = {STG_sd_supporter = 0}
+                        check_variable = {STG_dem_supporter > 0}
+                    }
+                    random_list = {
+                        add_to_variable = {STG_dem_supporter = -1}
+                    }
+                }
+            }
+            STG_calculate_rev_par_support = yes
         }
     }
 }
