@@ -1037,6 +1037,14 @@ OCF_federal_film_company_initialization_variable = {
 
 #王女工坊   TMD我为什么要写这个
 
+#启用一项研究
+OCF_activate_a_study_effect = {
+    clr_country_flag = OCF_project_has_been_halted_flag
+    activate_mission = OCE_countdown_of_project_cycle
+    OCF_initialize_workshop = yes
+    add_to_variable = { OCF.attack_defense_manufacturing_weapon_number = 1 }
+}
+
 #原材料
 OCF_quantity_of_raw_materials_add_1 = {
     custom_effect_tooltip = OCF_quantity_of_raw_materials_add_1_tt
@@ -1078,11 +1086,19 @@ OCF_initialize_workshop = {
     set_variable = { OCF.optimization_degree_of_weapon_structure = OCF.weapon_structure } #当前武器结构性优化程度
 }
 
-#每月工坊数值增加
+#每周工坊数值增加
 OCF_workshop_values_increase = {
+    set_variable = { OCF.weapon_reliability_increase = OCF.weapon_reliability_increase_add }
+    add_to_variable = { OCF.weapon_reliability_increase = modifier@ocf_weapon_reliability_correct }
+    set_variable = { OCF.weapon_kill_increase = OCF.weapon_kill_increase_add }
+    add_to_variable = { OCF.weapon_kill_increase = modifier@ocf_weapon_kill_correct }
+    set_variable = { OCF.weapon_structure_increase = OCF.weapon_structure_increase_add }
+    add_to_variable = { OCF.weapon_structure_increase = modifier@ocf_weapon_structure_correct }
+
+
     add_to_variable = { OCF.weapon_reliability_progress = OCF.weapon_reliability_increase } #武器可靠性
     add_to_variable = { OCF.weapon_kill_progress = OCF.weapon_kill_increase } #武器杀伤
-    add_to_variable = { OCF.weapon_defense_progress = OCF.weapon_defense_increase } #武器防御
+    add_to_variable = { OCF.weapon_structure_progress = OCF.weapon_structure_increase } #武器结构
     if = {
         limit = { check_variable = { OCF.weapon_reliability_progress > 100 } }
         add_to_variable = { OCF.weapon_reliability = 5 }#可靠
@@ -1094,9 +1110,9 @@ OCF_workshop_values_increase = {
         set_variable = { OCF.weapon_kill_progress = 0 }
     }
     if = {
-        limit = { check_variable = { OCF.optimization_degree_of_weapon_structure > 100 } }
+        limit = { check_variable = { OCF.weapon_structure_progress > 100 } }
         add_to_variable = { OCF.weapon_structure = 5 }#结构
-        set_variable = { OCF.optimization_degree_of_weapon_structure = 0 }
+        set_variable = { OCF.weapon_structure_progress = 0 }
     }
 }
 
@@ -1159,6 +1175,30 @@ OCF_judging_workshop_results_0 = {
         limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 1 } }
         set_technology = { ocf_refined_magic_stone_tech = 1 }
     }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+    }
 }
 
 OCF_judging_workshop_results_1 = {
@@ -1167,7 +1207,73 @@ OCF_judging_workshop_results_1 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 1
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 1
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 1
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 1
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 1
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 1
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 1
 			}
@@ -1181,7 +1287,73 @@ OCF_judging_workshop_results_2 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 2
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 2
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 2
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 2
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 2
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 2
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 2
 			}
@@ -1195,7 +1367,73 @@ OCF_judging_workshop_results_3 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 3
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 3
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 3
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 3
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 3
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 3
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 3
 			}
@@ -1209,7 +1447,73 @@ OCF_judging_workshop_results_4 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 4
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 4
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 4
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 4
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 4
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 4
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 4
 			}
@@ -1223,7 +1527,73 @@ OCF_judging_workshop_results_5 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 5
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 5
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 5
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 5
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 5
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 5
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 5
 			}
@@ -1237,7 +1607,73 @@ OCF_judging_workshop_results_6 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 6
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 6
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 6
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 6
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 6
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 6
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 6
 			}
@@ -1251,7 +1687,73 @@ OCF_judging_workshop_results_7 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 7
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 7
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 7
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 7
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 7
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 7
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 7
 			}
@@ -1265,7 +1767,73 @@ OCF_judging_workshop_results_8 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 8
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 8
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 8
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 8
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 8
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 8
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 8
 			}
@@ -1279,7 +1847,73 @@ OCF_judging_workshop_results_9 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 9
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 9
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 9
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 9
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 9
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 9
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 9
 			}
@@ -1293,7 +1927,73 @@ OCF_judging_workshop_results_10 = {
         set_technology = { ocf_refined_magic_stone_tech = 1 }
         create_equipment_variant = {
 			name = "精炼魔石改"
-			type = ocf_refined_magic_stone_tech
+			type = ocf_refined_magic_stone
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 10
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 2 } }
+        set_technology = { ocf_refined_magic_stone_2_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石辅助装备改"
+			type = ocf_refined_magic_stone_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 10
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 3 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_tech = 1 }
+        create_equipment_variant = {
+			name = "魔石改装家用扫帚改"
+			type = ocf_magic_stone_modified_household_broom
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 10
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 4 } }
+        set_technology = { ocf_small_magic_wand_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改"
+			type = ocf_small_magic_wand
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 10
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 5 } }
+        set_technology = { ocf_small_magic_wand_2_tech = 1 }
+        create_equipment_variant = {
+			name = "小型魔导法杖改进款改"
+			type = ocf_small_magic_wand_2
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 10
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 6 } }
+        set_technology = { ocf_refined_magic_stone_3_tech = 1 }
+        create_equipment_variant = {
+			name = "轻型魔力供给装备改"
+			type = ocf_refined_magic_stone_3
+			upgrades = {
+				special_historical_equipment_upgrade_ALL = 10
+			}
+		}
+    }
+    else_if= {
+        limit = { check_variable = { OCF.attack_defense_manufacturing_weapon_number = 7 } }
+        set_technology = { ocf_magic_stone_modified_household_broom_2_tech = 1 }
+        create_equipment_variant = {
+			name = "附魔飞行服饰改"
+			type = ocf_magic_stone_modified_household_broom_2
 			upgrades = {
 				special_historical_equipment_upgrade_ALL = 10
 			}
@@ -6882,6 +7582,48 @@ OCF_elected_faction_8 = {
         long_name = OCF_parties_8_long
         name = OCF_parties_8
     }
+
+    country_event = {
+        id = ocfnews.3
+    }
+    complete_national_focus = OCF_politics_175
+    OCF_eliminate_current_ruling_party = yes
+    set_country_flag = OCF_control_government_flag_8
+    set_variable = {
+        OCF_gridbox_seat_array_original_1 = 82
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_2 = 55
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_3 = 107
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_4 = 108
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_5 = 76
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_6 = 21
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_7 = 31
+    }
+    set_variable = {
+        OCF_gridbox_seat_array_original_8 = 120
+    }
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    OCF_gridbox_seat_array_senate_yes_add = yes
+    OCF_gridbox_seat_array_senate_no_del = yes
+    custom_effect_tooltip = OCF.100.e_tt
+    add_to_array = {
+        global.OCF_changes_in_parliamentary_history_change_record_array = 0 index = 0
+    }
+    OCF_changes_in_parliamentary_history_list_dates_add = yes
 }
 
 ###     ######  ######## ##     ##    ###    ##       ##       ##    ##     ######   ######## ##    ## ######## ########     ###    ######## ########    ######## ##     ## ########     ######   ########     ###    ########  ##     ##    ##       #### ##    ## ########     ######  ########  ######   ##     ## ######## ##    ## ########  ######
