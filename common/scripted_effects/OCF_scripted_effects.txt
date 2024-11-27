@@ -1084,6 +1084,7 @@ OCF_initialize_workshop = {
     set_variable = { OCF.current_level_of_weapon_reliability_optimization = OCF.weapon_reliability } #武器可靠性优化程度
     set_variable = { OCF.current_level_of_weapon_availability_optimization = OCF.weapon_kill } #武器可用性优化程度
     set_variable = { OCF.optimization_degree_of_weapon_structure = OCF.weapon_structure } #当前武器结构性优化程度
+    clr_country_flag = OCF_entrusting_grand_chancellor_flag #去除大执政官标记
 }
 
 #每周工坊数值增加
@@ -1101,19 +1102,29 @@ OCF_workshop_values_increase = {
     add_to_variable = { OCF.weapon_structure_progress = OCF.weapon_structure_increase } #武器结构
     if = {
         limit = { check_variable = { OCF.weapon_reliability_progress > 100 } }
-        add_to_variable = { OCF.weapon_reliability = 5 }#可靠
+        add_to_variable = { OCF.weapon_reliability = 1 }#可靠
+        if = { limit = { check_variable = { OCF.weapon_reliability > 100 } } set_variable = { OCF.weapon_reliability = 100 } }
         set_variable = { OCF.weapon_reliability_progress = 0 }
     }
     if = {
         limit = { check_variable = { OCF.weapon_kill_progress > 100 } }
-        add_to_variable = { OCF.weapon_kill = 5 }#杀伤
+        add_to_variable = { OCF.weapon_kill = 1 }#杀伤
+        if = { limit = { check_variable = { OCF.weapon_kill > 100 } } set_variable = { OCF.weapon_kill = 100 } }
         set_variable = { OCF.weapon_kill_progress = 0 }
     }
     if = {
         limit = { check_variable = { OCF.weapon_structure_progress > 100 } }
-        add_to_variable = { OCF.weapon_structure = 5 }#结构
+        add_to_variable = { OCF.weapon_structure = 1 }#结构
+        if = { limit = { check_variable = { OCF.weapon_structure > 100 } } set_variable = { OCF.weapon_structure = 100 } }
         set_variable = { OCF.weapon_structure_progress = 0 }
     }
+}
+
+#防止工坊数值溢出
+OCF_prevent_overflow_of_workshop_values = {
+    if = { limit = { check_variable = { OCF.current_level_of_weapon_reliability_optimization > 100 } } set_variable = { OCF.current_level_of_weapon_reliability_optimization = 100 } }
+    if = { limit = { check_variable = { OCF.current_level_of_weapon_availability_optimization > 100 } } set_variable = { OCF.current_level_of_weapon_availability_optimization = 100 } }
+    if = { limit = { check_variable = { OCF.optimization_degree_of_weapon_structure > 100 } } set_variable = { OCF.optimization_degree_of_weapon_structure = 100 } }
 }
 
 #判定工坊结果
@@ -1124,47 +1135,51 @@ OCF_judging_workshop_results = {
     divide_variable = { OCF.weapon_result = 3 }
 
     if = {
-        limit = { check_variable = { OCF.weapon_result>99 } }
+        limit = { check_variable = { OCF.weapon_result>99 } is_ai = no }
         OCF_judging_workshop_results_10 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>89 } }
+        limit = { check_variable = { OCF.weapon_result>89 } is_ai = no }
         OCF_judging_workshop_results_9 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>79 } }
+        limit = { check_variable = { OCF.weapon_result>79 } is_ai = no }
         OCF_judging_workshop_results_8 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>69 } }
+        limit = { check_variable = { OCF.weapon_result>69 } is_ai = no }
         OCF_judging_workshop_results_7 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>59 } }
+        limit = { check_variable = { OCF.weapon_result>59 } is_ai = no }
         OCF_judging_workshop_results_6 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>49 } }
+        limit = { check_variable = { OCF.weapon_result>49 } is_ai = no }
         OCF_judging_workshop_results_5 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>39 } }
+        limit = { check_variable = { OCF.weapon_result>39 } is_ai = no }
         OCF_judging_workshop_results_4 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>29 } }
+        limit = { check_variable = { OCF.weapon_result>29 } is_ai = no }
         OCF_judging_workshop_results_3 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>19 } }
+        limit = { check_variable = { OCF.weapon_result>19 } is_ai = no }
         OCF_judging_workshop_results_2 = yes
     }
     else_if = {
-        limit = { check_variable = { OCF.weapon_result>9 } }
+        limit = { check_variable = { OCF.weapon_result>9 } is_ai = no }
         OCF_judging_workshop_results_1 = yes
     }
-    else = {
+    else_if = {
+        limit = { is_ai = no }
         OCF_judging_workshop_results_0 = yes
+    }
+    else = {
+        OCF_judging_workshop_results_5 = yes
     }
 }
 
@@ -7581,10 +7596,6 @@ OCF_elected_faction_8 = {
         ideology = democratic
         long_name = OCF_parties_8_long
         name = OCF_parties_8
-    }
-
-    country_event = {
-        id = ocfnews.3
     }
     complete_national_focus = OCF_politics_175
     OCF_eliminate_current_ruling_party = yes
