@@ -5,6 +5,7 @@ add_namespace = FNC
 add_namespace = ANA
 add_namespace = OCF_PWR #战后议会重组
 add_namespace = OCF_storiette #小故事
+add_namespace = OCF_military_political #军政府
 
 
 #先锋党政变
@@ -553,6 +554,7 @@ unit_leader_event = {
         ai_chance = {
             base = 10
         }
+        custom_effect_tooltip = FNC_3_TT
         load_oob = "FNC_3091_Naval"
         navy_experience = 50
         add_tech_bonus = {
@@ -1011,7 +1013,7 @@ country_event = {
             }
         }
         hidden_effect = {
-            country_event = { id = OCE.18 days = 200 }
+            country_event = { id = OCF.18 days = 200 }
         }
     }
     option = {
@@ -1093,7 +1095,7 @@ country_event = {
             }
         }
         hidden_effect = {
-            country_event = { id = OCE.18 days = 200 }
+            country_event = { id = OCF.18 days = 200 }
         }
     }
     option = {
@@ -1175,7 +1177,11 @@ country_event = {
     trigger = {
         TAG = OCF
         #date > 3095.1.1
-        has_country_flag = has_OCF_101_flag
+        has_country_flag = {
+            flag = has_OCF_101_flag
+            days > 10
+        }
+        #NOT = { has_country_flag = OCF_prevent_triggering_elections_value }#防止连续触发大选
     }
     picture = GFX_OCF_parliament
     option = {
@@ -1197,11 +1203,16 @@ country_event = {
     is_triggered_only = yes
     #fire_only_once = yes
     immediate = {
-        if = {
-            limit = {
-                NOT = { has_completed_focus = OCF_politics_77 }
+        hidden_effect = {
+            log = "[GetDateText]: [Root.GetName]: Mission OCF.25 关闭选举检测"
+            if = {
+                limit = {
+                    NOT = { has_completed_focus = OCF_politics_77 }
+                }
+                complete_national_focus = OCF_politics_77
             }
-            complete_national_focus = OCF_politics_77
+            set_temp_variable = { alert_id = token:alert_OCF_election_approaching }
+            del_IRIS_alert = yes
         }
     }
     trigger = {
@@ -1223,6 +1234,7 @@ country_event = {
             check_variable = {
                 OCF.OCF_election_results_winning = 5
             }
+            has_completed_focus = OCF_politics_79
         }
         if = {
             limit = {
@@ -1264,13 +1276,13 @@ country_event = {
             remove_ideas = OCF_idea_parliament
             add_ideas = OCF_idea_Hiiragi_Kagami
             add_ideas = OCF_idea_Izumi_Sojiro
-            set_variable = { OCF_party_leader_5_variable = 1 }
+            set_variable = { OCF_party_leader_5_variable = token:OCF_Kuroi_Nanako }
         }
         add_to_array = {
-            IRIS_Historical_leaders_Array = 2 #泉此方
+            IRIS_Historical_leaders_Array = token:OCF_Izumi_Konata #泉此方
         }
         add_to_array = {
-            IRIS_Historical_leaders_2_Array = 3 #柊镜
+            IRIS_Historical_leaders_2_Array = token:OCF_Hiiragi_Kagami #柊镜
         }
         add_to_array = {
             IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_5_proportion
@@ -1307,6 +1319,8 @@ country_event = {
                 OCF.OCF_election_results_winning = 5
             }
         }
+        custom_effect_tooltip = ocf_incorporate_new_national_policy
+        set_country_flag = OCF_Sakuraba_Hikaru_win_flag
         set_cosmetic_tag = OCF_sub_Techno_Bureaucracy
         news_event = {
             id = ocfnews.11
@@ -1341,17 +1355,17 @@ country_event = {
         OCF_Insert_Party_Position = yes
 
         set_variable = {
-            OCF_party_leader_5_variable = 5
+            OCF_party_leader_5_variable = token:OCF_Kuroi_Nanako
         }
         hidden_effect = {
             add_ideas = OCF_idea_parliament
             add_ideas = OCF_idea_Kuroi_Nanako
         }
         add_to_array = {
-            IRIS_Historical_leaders_Array = 30 #樱庭光
+            IRIS_Historical_leaders_Array = token:OCF_Sakuraba_Hikaru #樱庭光
         }
         add_to_array = {
-            IRIS_Historical_leaders_2_Array = 9 #议会
+            IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament #议会
         }
         add_to_array = {
             IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_5_proportion
@@ -1373,6 +1387,95 @@ country_event = {
             custom_effect_tooltip = OCF_control_government_flag_1_yes
             set_country_flag = OCF_control_government_flag_1_yes
         }
+        mark_focus_tree_layout_dirty = yes
+    }
+
+    option = {
+        name = OCF.25.c
+        ai_chance = {
+            base = 10
+            modifier = {
+                has_completed_focus = OCF_politics_174
+                add = -10
+            }
+        }
+        trigger = {
+            check_variable = {
+                OCF.OCF_election_results_winning = 8
+            }
+            has_completed_focus = OCF_politics_175
+        }
+
+
+        if = {
+            limit = {
+                OCF_Anisufia_Win_Parettia = {
+                    has_ideology_group = democratic
+                }
+            }
+            promote_character = OCF_Anisufia_Win_Parettia
+        }
+        else = {
+            add_country_leader_role = {
+                character = OCF_Anisufia_Win_Parettia
+                promote_leader = yes
+                country_leader = {
+                    ideology = sub_ocf_Mana_Conservatism
+                    traits = {OCF_revolutionary_princess OCF_love_magic}
+                }
+            }
+        }
+        custom_effect_tooltip = OCE_Replace_national_deputy
+        custom_effect_tooltip = OCF_idea_Yufiria_Mazenta_1
+        set_party_name = {
+            ideology = democratic
+            long_name = OCF_parliamentary_parties_8
+            name = OCF_parties_8
+        }
+        set_politics = {
+            ruling_party = democratic
+            elections_allowed = yes
+            election_frequency = 36
+        }
+        OCF_eliminate_current_ruling_party = yes
+        set_country_flag = OCF_control_government_flag_8
+
+        OCF_Insert_Party_Position = yes
+        add_to_array = {
+            global.OCF_changes_in_parliamentary_history_change_record_array = 0 index = 0
+        }
+        add_to_array = {
+            IRIS_Historical_leaders_Array = token:OCF_Anisufia_Win_Parettia #艾妮丝菲亚·温·帕雷提亚
+        }
+        add_to_array = {
+            IRIS_Historical_leaders_2_Array = token:OCF_Yufiria_Mazenta #尤菲莉亚·玛赞塔
+        }
+        add_to_array = {
+            IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_8_proportion
+        }
+        add_to_array = {
+            GetNameIRISHistoricalDate = global.year
+        }
+        #custom_effect_tooltip = OCF_set_Alisa_Mikhaylovna_Kujo_tt
+        hidden_effect = {
+            remove_ideas = OCF_idea_parliament
+            add_ideas = OCF_idea_Yufiria_Mazenta
+        }
+
+        #临时结盟
+        if = {
+            limit = { has_completed_focus = OCF_politics_4 }
+            custom_effect_tooltip = OCF_changes_party_relations
+            custom_effect_tooltip = OCF_control_government_flag_4_yes
+            set_country_flag = OCF_control_government_flag_4_yes
+        }
+        if = {
+            limit = { has_completed_focus = OCF_politics_3 }
+            custom_effect_tooltip = OCF_changes_party_relations
+            custom_effect_tooltip = OCF_control_government_flag_1_yes
+            set_country_flag = OCF_control_government_flag_1_yes
+        }
+        mark_focus_tree_layout_dirty = yes
     }
     option = {
         name = OCF.25.z
@@ -1395,9 +1498,6 @@ country_event = {
                 }
                 check_variable = {
                     OCF.OCF_election_results_winning = 7
-                }
-                check_variable = {
-                    OCF.OCF_election_results_winning = 8
                 }
             }
         }
@@ -1551,6 +1651,184 @@ country_event = {
     trigger = {}
     option = {
         name = OCF.28.a
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+#资助科学部？
+country_event = {
+    id = OCF.29
+    title = OCF.29.title
+    desc = OCF.29.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {
+        name = OCF.29.a
+        ai_chance = {
+            base = 10
+        }
+        OCF_Ueno = {
+            add_scientist_level = {
+                specialization = specialization_nuclear
+                level = 1
+            }
+        }
+        add_ideas = OCF_ueno_science_department
+        hidden_effect = {
+            country_event = { id = OCF.30 days = 365 }
+        }
+        add_to_variable = { OCF_bill = -40 }
+        set_country_flag = OCF_Ueno_flag
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_40_del
+    }
+    option = {
+        name = OCF.29.b
+        ai_chance = {
+            base = 0
+        }
+        OCF_Makise_Kurisu = {
+            add_scientist_level = {
+                specialization = specialization_nuclear
+                level = 1
+            }
+        }
+
+        add_to_variable = { OCF_bill = -30 }
+        OCF_gridbox_seat_array_original_relationship_variable_3_add = yes
+        OCF_gridbox_seat_array_original_relationship_variable_3_add = yes
+        custom_effect_tooltip = OCF_changes_party_relations
+        custom_effect_tooltip = OCF_reduce_relationships_III_8
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_30_del
+    }
+    option = {
+        name = OCF.29.c
+        ai_chance = {
+            base = 0
+        }
+        add_political_power = 50
+    }
+}
+
+#继续资助科学部？
+country_event = {
+    id = OCF.30
+    title = OCF.30.title
+    desc = OCF.30.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {
+        name = OCF.30.a
+        ai_chance = {
+            base = 10
+        }
+        swap_ideas = {
+            remove_idea = OCF_ueno_science_department
+            add_idea = OCF_ueno_science_department_2
+        }
+        add_to_variable = { OCF_bill = -60 }
+        custom_effect_tooltip = OCF_spending_funds_change
+        custom_effect_tooltip = OCF_spending_funds_60_del
+    }
+    option = {
+        name = OCF.30.b
+        ai_chance = {
+            base = 0
+        }
+        add_political_power = 50
+    }
+}
+
+#购买原材料
+country_event = {
+    id = OCF.31
+    title = OCF.31.title
+    desc = OCF.31.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {#同意
+        name = OCF.31.a
+        ai_chance = {
+            base = 10
+        }
+        add_political_power = 40
+        FROM = { country_event = OCF.32 }
+    }
+    option = {#拒绝
+        name = OCF.31.b
+        ai_chance = {
+            base = 2
+        }
+        FROM = { country_event = OCF.33 }
+    }
+}
+
+#同意出售原材料
+country_event = {
+    id = OCF.32
+    title = OCF.32.title
+    desc = OCF.32.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {#同意
+        name = OCF.32.a
+        ai_chance = {
+            base = 10
+        }
+        OCF_quantity_of_raw_materials_add_1 = yes
+    }
+}
+#拒绝出售原材料
+country_event = {
+    id = OCF.33
+    title = OCF.33.title
+    desc = OCF.33.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {#同意
+        name = OCF.33.a
+        ai_chance = {
+            base = 10
+        }
+
+    }
+}
+
+#王女开始研制新式玛纳产物
+country_event = {
+    id = OCF.34
+    title = OCF.34.title
+    desc = OCF.34.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {
+        name = OCF.34.a
+        ai_chance = {
+            base = 10
+        }
+        OCF_quantity_of_raw_materials_add_1 = yes
+    }
+}
+
+#注：王女工坊将会关闭
+country_event = {
+    id = OCF.35
+    title = OCF.35.title
+    desc = OCF.35.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    trigger = {}
+    option = {
+        name = OCF.35.a
         ai_chance = {
             base = 10
         }
@@ -1729,6 +2007,9 @@ country_event = {
         ai_chance = {
             base = 0
         }
+        trigger = {
+            always = no #暂时关闭
+        }
         custom_effect_tooltip = OCF.100.TT
         add_to_array = {
             global.OCF_changes_in_parliamentary_history_change_record_array = 0 index = 0
@@ -1750,6 +2031,20 @@ country_event = {
         }
         custom_effect_tooltip = OCF_Izumi_Konata_dress_decisions_1_tt
         custom_effect_tooltip = OCF_Hiiragi_Kagami_dress_decisions_1_tt
+    }
+    option = {
+        name = OCF.100.e
+        ai_chance = {
+            base = 0
+        }
+        activate_mission = OCF_In_the_national_public_opinion_survey
+        activate_mission = OCF_In_the_national_public_opinion_survey_time
+        custom_effect_tooltip = OCF_100_c
+        set_variable = {
+            OCF_election_season_is_underway = 8
+        }
+        custom_effect_tooltip = OCF_Anisufia_Win_Parettia_dress_decisions_1_tt
+        custom_effect_tooltip = OCF_Yufiria_Mazenta_dress_decisions_1_tt
     }
 }
 
@@ -1780,7 +2075,11 @@ country_event = {
     #fire_only_once = yes
     trigger = {  }
     immediate = {
-        set_country_flag = has_OCF_101_flag #是否进行了第一次选举
+        hidden_effect = {
+            log = "[GetDateText]: [Root.GetName]: Mission OCF.101 关闭选举检测"
+            set_temp_variable = { alert_id = token:alert_OCF_election_approaching }
+            del_IRIS_alert = yes
+        }
     }
     option = {
         name = OCF.101.a
@@ -1792,12 +2091,18 @@ country_event = {
                 check_variable = {
                     OCF.OCF_election_results_winning = 7
                 }
+                check_variable = {
+                    OCF.OCF_election_results_winning = 8
+                }
             }
         }
         ai_chance = {
             base = 10
         }
+
         OCF_reset_ruling_party = yes
+
+        set_country_flag = has_OCF_101_flag #是否进行了第一次选举
     }
     option = {
         name = OCF.101.b
@@ -1818,14 +2123,12 @@ country_event = {
                 check_variable = {
                     OCF.OCF_election_results_winning = 6
                 }
-                check_variable = {
-                    OCF.OCF_election_results_winning = 8
-                }
             }
         }
         ai_chance = {
             base = 2
         }
+
         add_timed_idea = { idea = OCF_controversial_election_results days = 120 }
         if = {
             limit = {
@@ -1843,6 +2146,15 @@ country_event = {
             }
             OCF_elected_faction_7 = yes
         }
+        if = {
+            limit = {
+                check_variable = {
+                    OCF_election_season_is_underway = 8
+                }
+            }
+            OCF_elected_faction_8 = yes
+        }
+        set_country_flag = has_OCF_101_flag #是否进行了第一次选举
     }
     option = {
         name = OCF.101.c
@@ -1856,6 +2168,11 @@ country_event = {
             base = 0
         }
         custom_effect_tooltip = OCF.100.TT
+        set_country_flag = OCF_coup_0_flag
+        hidden_effect = { load_oob = OCF_coup_0 }
+        news_event = {
+            id = ocfnews.12
+        }
     }
 }
 
@@ -2003,10 +2320,10 @@ country_event = {
             elections_allowed = no
         }
         add_to_array = {
-            IRIS_Historical_leaders_Array = 28 #阿尔盖
+            IRIS_Historical_leaders_Array = token:OCF_Algei_Seven_Kai_Delamond #阿尔盖
         }
         add_to_array = {
-            IRIS_Historical_leaders_2_Array = 17 #议会
+            IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament #议会
         }
         add_to_array = {
             IRIS_Historical_leaders_voting_rate_Array = 0 #不显示选票
@@ -2035,6 +2352,7 @@ country_event = {
         }
         country_event = {
             id = OCF.7
+            days = 3
         }
         115 = {
             add_manpower = -115
@@ -3220,7 +3538,7 @@ country_event = {
             name = OCF_Clonine_party
         }
         set_variable = {
-            OCF_party_leader_7_variable = 2
+            OCF_party_leader_7_variable = token:OCF_Clonine
         }
         add_country_leader_role = {
             character = OCF_Clonine
@@ -3475,6 +3793,7 @@ country_event = {
             }
             custom_effect_tooltip = OCF_reduce_relationships_support_VIII_9
         }
+        OCF_Insert_Party_Position = yes
     }
 }
 
@@ -3561,6 +3880,192 @@ country_event = {
         add_stability = -0.1
     }
 }
+
+#军政府
+
+#卡仕角暴动
+country_event = {
+    id = OCF_military_political.10001
+    title = OCF_military_political.10001.title
+    desc = OCF_military_political.10001.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.10001.a
+        767 = { set_demilitarized_zone = yes }
+        add_stability = -0.1
+    }
+}
+
+country_event = {
+    id = OCF_military_political.10002
+    title = OCF_military_political.10002.title
+    desc = OCF_military_political.10002.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.10002.a
+
+        KCL = {
+            every_state = {
+                limit = {
+                    is_core_of = OCF
+                }
+                KCL = {
+                    add_state_core = PREV
+                }
+            }
+            add_stability = 0.6
+            add_war_support = 0.6
+            transfer_state = 767
+            OCF = {
+                declare_war_on = { target = KCL type = annex_everything }
+            }
+            add_ideas = KCL_overthrowing_military_political_system_ideas
+            create_country_leader = {
+                name = KCL_committee
+                desc = "KCL_committee_desc"
+                promote_leader = yes
+                picture = "gfx/leaders/KCL/KCL_committee.dds"
+                ideology = sub_Facism
+                traits = {}
+            }
+            hidden_effect = {
+                OCF_After_collapse_government_troops = yes
+                OCF_After_collapse_government_troops = yes
+                OCF_After_collapse_government_troops = yes
+
+                OCF = {
+                    country_event = { id = OCF_military_political.10003 days = 3 }
+                }
+            }
+        }
+        add_stability = -0.1
+    }
+}
+
+country_event = {
+    id = OCF_military_political.10003
+    title = OCF_military_political.10003.title
+    desc = OCF_military_political.10003.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.10002.a
+        every_state = {
+            limit = {
+                OR = {
+                    state = 771
+                    state = 116
+                    state = 156
+                    state = 772
+                    state = 129
+                    state = 165
+                }
+            }
+            PREV = { set_demilitarized_zone = no }
+            EIA = {
+                transfer_state = PREV
+            }
+        }
+        OCF = {
+            set_nationality = {
+                target_country = EIA
+                character = EIA_Oktyabrina
+            }
+        }
+        EIA = {
+            every_state = {
+                limit = {
+                    is_core_of = OCF
+                }
+                EIA = {
+                    add_state_core = PREV
+                }
+            }
+            EIA_Oktyabrina = {
+                promote_character = yes
+            }
+            add_stability = 0.6
+            add_war_support = 0.6
+            hidden_effect = {
+                OCF_After_collapse_government_troops = yes
+                OCF_After_collapse_government_troops = yes
+            }
+        }
+        add_stability = -0.1
+    }
+}
+
+#玛纳问题
+country_event = {
+    id = OCF_military_political.20001
+    title = OCF_military_political.20001.title
+    desc = OCF_military_political.20001.desc
+    is_triggered_only = yes
+    #fire_only_once = yes
+    picture = GFX_OCF_envelope
+    trigger = {
+
+    }
+    option = {
+        name = OCF_military_political.20001.a
+        if = {
+            limit = { has_idea = industrial_priority }
+            swap_ideas = {
+                remove_idea = industrial_priority
+                add_idea = industrial_priority_regional_protective_mana_use
+            }
+        }
+        if = {
+            limit = { has_idea = in_transition }
+            swap_ideas = {
+                remove_idea = in_transition
+                add_idea = industrial_priority_regional_protective_mana_use
+            }
+        }
+        add_tech_bonus = {
+            bonus = 1
+            uses = 2
+            category = cat_mana_infantry
+        }
+    }
+    option = {
+        name = OCF_military_political.20001.a
+        every_state = {
+            limit = {
+                OCF_magic_sanctuary = yes
+            }
+            remove_dynamic_modifier = { modifier = OCF_mana_protection_zone }
+        }
+    }
+    option = {
+        name = OCF_military_political.20001.a
+        add_tech_bonus = {
+            bonus = 0.5
+            uses = 1
+            category = cat_mana_infantry
+        }
+        add_tech_bonus = {
+            bonus = 0.5
+            uses = 1
+            category = artillery
+        }
+    }
+}
+
 
 #小故事区域
 
