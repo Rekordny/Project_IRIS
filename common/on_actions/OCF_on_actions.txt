@@ -12,7 +12,7 @@ on_actions = {
 
                 #设置默认党魁
                 set_variable = { OCF_party_leader_1_variable = token:OCF_Yasumori_Minori }
-                set_variable = { OCF_party_leader_2_variable = token:OCF_token_NULL }
+                set_variable = { OCF_party_leader_2_variable = token:IRIS_token_NULL }
                 set_variable = { OCF_party_leader_3_variable = token:OCF_Alisa_Mikhaylovna_Kujo }
                 set_variable = { OCF_party_leader_4_variable = token:OCF_Shiina_Mayuri }
                 set_variable = { OCF_party_leader_5_variable = token:OCF_Izumi_Sojiro }
@@ -885,6 +885,77 @@ on_actions = {
                 }
                 OCF_workshop_values_increase = yes
             }
+
+            if = {
+                limit = {
+                    115 = { is_capital = no }
+                    has_full_control_of_state = 115
+                }
+                set_capital = { state = 115 remember_old_capital = no }
+            }
+            else_if = {
+                limit = {
+                    841 = { is_capital = no }
+                    has_full_control_of_state = 841
+                    NOT = { has_full_control_of_state = 115 }
+                }
+                set_capital = { state = 841 remember_old_capital = no }
+            }
+            else_if = {
+                limit = {
+                    842 = { is_capital = no }
+                    has_full_control_of_state = 842
+                    NOT = { has_full_control_of_state = 115 }
+                    NOT = { has_full_control_of_state = 841 }
+                }
+                set_capital = { state = 842 remember_old_capital = no }
+            }
+            else_if = {
+                limit = {
+                    843 = { is_capital = no }
+                    has_full_control_of_state = 843
+                    NOT = { has_full_control_of_state = 115 }
+                    NOT = { has_full_control_of_state = 841 }
+                    NOT = { has_full_control_of_state = 842 }
+                }
+                set_capital = { state = 843 remember_old_capital = no }
+            }
+            else_if = {
+                limit = {
+                    844 = { is_capital = no }
+                    has_full_control_of_state = 844
+                    NOT = { has_full_control_of_state = 115 }
+                    NOT = { has_full_control_of_state = 841 }
+                    NOT = { has_full_control_of_state = 842 }
+                    NOT = { has_full_control_of_state = 843 }
+                }
+                set_capital = { state = 844 remember_old_capital = no }
+            }
+            else_if = {
+                limit = {
+                    108 = { is_capital = no }
+                    has_full_control_of_state = 108
+                    NOT = { has_full_control_of_state = 115 }
+                    NOT = { has_full_control_of_state = 841 }
+                    NOT = { has_full_control_of_state = 842 }
+                    NOT = { has_full_control_of_state = 843 }
+                    NOT = { has_full_control_of_state = 844 }
+                }
+                set_capital = { state = 108 remember_old_capital = no }
+            }
+            else_if = {
+                limit = {
+                    88 = { is_capital = no }
+                    has_full_control_of_state = 88
+                    NOT = { has_full_control_of_state = 115 }
+                    NOT = { has_full_control_of_state = 841 }
+                    NOT = { has_full_control_of_state = 842 }
+                    NOT = { has_full_control_of_state = 843 }
+                    NOT = { has_full_control_of_state = 844 }
+                    NOT = { has_full_control_of_state = 108 }
+                }
+                set_capital = { state = 88 remember_old_capital = no }
+            }
             # if = {
             #     limit = {
             #         OR = {
@@ -1158,16 +1229,16 @@ on_actions = {
 
 
 
-            
+
         }
     }
 
     #大选
     on_new_term_election = {
         random_events = {
-			100 = OCF.20
-		}
-	}
+            100 = OCF.20
+        }
+    }
 
     on_declare_war = {
         effect = {
@@ -1250,13 +1321,7 @@ on_actions = {
                     }
                 }
             }
-
-        }
-    }
-
-    on_capitulation_immediate = {
-        effect = {
-            if = {
+            else_if = {
                 limit = {
                     ROOT = {
                         original_tag = OCF
@@ -1287,7 +1352,7 @@ on_actions = {
                     }
                 }
             }
-            if = {
+            else_if = {
                 limit = {
                     ROOT = {
                         original_tag = KCL
@@ -1317,8 +1382,21 @@ on_actions = {
                         remove_core_of = ROOT
                     }
                 }
-                
             }
+            # if = {
+            #     limit = { ROOT = { tag = OCF } }
+            #     if = {
+            #         limit = {
+            #             FROM = {
+            #                 NOT = { original_tag = OCE }
+            #                 NOT = { original_tag = OCF }
+            #                 NOT = { original_tag = EIA }
+            #                 NOT = { original_tag = INP }
+            #             }
+            #         }
+            #         OCF = { OCF_surrender_after_war_judge = yes }
+            #     }
+            # }
         }
     }
 
@@ -1332,476 +1410,26 @@ on_actions = {
                     }
                 }
                 FROM = {
-                    OCF_eliminate_current_ruling_party = yes
-                    #设置战后议会
-                    #共产党
-                    if = {
-                        limit = {
-                            has_government = communism
-                            NOT = {
-                                has_country_flag = OCF_control_government_flag_1
-                                has_country_flag = OCF_control_government_flag_2
-                            }
-                        }
-                        if = {
-                            limit = {
-                                has_idea = in_transition
-                            }
-                            swap_ideas = {
-                                remove_idea = in_transition
-                                add_idea = industrial_priority
-                            }
-                        }
-                        if = {
-                            limit = {
-                                has_idea = industrial_priority_regional_protective_mana_use
-                            }
-                            swap_ideas = {
-                                remove_idea = industrial_priority_regional_protective_mana_use
-                                add_idea = industrial_priority
-                            }
-                        }
-                        set_cosmetic_tag = OCF_socialism
-                        set_country_flag = OCF_parliamentary_parties_1
-                        if = {
-                            limit = {
-                                OCF_Izumi_Konata = {
-                                    has_ideology_group = democratic
-                                }
-                            }
-                            promote_character = OCF_Izumi_Konata
-                        }
-                        else = {
-                            add_country_leader_role = {
-                                character = OCF_Izumi_Konata
-                                promote_leader = yes
-                                country_leader = {
-                                    ideology = sub_Social_Democracy
-                                    traits = { OCF_Otaku OCF_Unreliable_Girl_A }
-                                }
-                            }
-                        }
-                        set_party_name = {
-                            ideology = communism
-                            long_name = OCF_parties_1_long
-                            name = OCF_parties_1
-                        }
-                        set_party_name = {
-                            ideology = democratic
-                            long_name = OCF_parties_5_long
-                            name = OCF_parties_5
-                        }
-                        set_party_name = {
-                            ideology = neutrality
-                            long_name = OCF_parties_0_long
-                            name = OCF_parties_0
-                        }
-                        set_party_name = {
-                            ideology = fascism
-                            long_name = OCF_parties_6_long
-                            name = OCF_parties_6
-                        }
-                        # set_party_name = {
-                        #     ideology = reactionism
-                        #     long_name = OCF_parties_6_long
-                        #     name = OCF_parties_6
-                        # }
-                        set_politics = {
-                            ruling_party = communism
-                        }
-                        #安守实里
-                        if = {
-                            limit = {
-                                OCF_Yasumori_Minori = {
-                                    has_ideology_group = communism
-                                }
-                            }
-                            promote_character = OCF_Yasumori_Minori
-                        }
+                    OCF_post_war_political_party_transition = yes
+                }
+            }
+        }
+    }
 
-                        add_ideas = OCF_idea_Yasumori_Minori
-                        remove_ideas = OCF_collapsed_government_system
-                        remove_ideas = OCF_collapsed_government_system_1
-                        remove_ideas = OCF_collapsed_government_system_2
-                        remove_ideas = OCF_collapsed_government_system_3
-                        remove_ideas = OCF_collapsed_government_system_4
-                        remove_ideas = OCF_collapsed_government_system_5
-                        remove_ideas = OCF_collapsed_government_system_6
-                        #remove_ideas = OCF_collapsed_government_system_7
-                        remove_ideas = OCF_Almost_zero_government_credibility
-                        remove_ideas = OCF_Almost_zero_government_credibility_1
-                        remove_ideas = OCF_Almost_zero_government_credibility_2
-                        remove_ideas = OCF_Almost_zero_government_credibility_3
-                        remove_ideas = OCF_Almost_zero_government_credibility_4
-                        #remove_ideas = OCF_Almost_zero_government_credibility_5
-                    }
-                    #右翼-阿尔泰尔
-                    else_if = {
-                        limit = {
-                            has_government = fascism
-                        }
-                        set_cosmetic_tag = OCF_fourth
-                        set_country_flag = OCF_control_government_flag_6
-                        set_party_name = {
-                            ideology = communism
-                            long_name = OCF_parties_1_long
-                            name = OCF_parties_1
-                        }
-                        set_party_name = {
-                            ideology = democratic
-                            long_name = OCF_parties_5_long
-                            name = OCF_parties_5
-                        }
-                        set_party_name = {
-                            ideology = neutrality
-                            long_name = OCF_parties_8_long
-                            name = OCF_parties_8
-                        }
-                        set_party_name = {
-                            ideology = fascism
-                            long_name = OCF_parties_6_long
-                            name = OCF_parties_6
-                        }
-                        # set_party_name = {
-                        #     ideology = reactionism
-                        #     long_name = OCF_parties_6_long
-                        #     name = OCF_parties_6
-                        # }
-                        set_politics = {
-                            ruling_party = fascism
-                        }
-                        if = {
-                            limit = {
-                                OCF_Izumi_Konata = {
-                                    has_ideology_group = democratic
-                                }
-                            }
-                            promote_character = OCF_Izumi_Konata
-                        }
-                        else = {
-                            add_country_leader_role = {
-                                character = OCF_Izumi_Konata
-                                promote_leader = yes
-                                country_leader = {
-                                    ideology = sub_Social_Democracy
-                                    traits = { OCF_Otaku OCF_Unreliable_Girl_A }
-                                }
-                            }
-                        }
-                        #阿尔泰尔
-                        if = {
-                            limit = {
-                                OCF_Altair = {
-                                    has_ideology_group = fascism
-                                }
-                            }
-                            promote_character = OCF_Altair
-                        }
-                        add_to_array = {
-                            IRIS_Historical_leaders_Array = token:OCF_Altair #阿尔泰尔
-                        }
-                        add_to_array = {
-                            IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament #议会
-                        }
-                        add_to_array = {
-                            IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_6_proportion
-                        }
-                        add_to_array = {
-                            GetNameIRISHistoricalDate = global.year
-                        }
-                        add_ideas = OCF_idea_Altair
-                        remove_ideas = OCF_collapsed_government_system
-                        remove_ideas = OCF_collapsed_government_system_1
-                        remove_ideas = OCF_collapsed_government_system_2
-                        remove_ideas = OCF_collapsed_government_system_3
-                        remove_ideas = OCF_collapsed_government_system_4
-                        remove_ideas = OCF_collapsed_government_system_5
-                        remove_ideas = OCF_collapsed_government_system_6
-                        #remove_ideas = OCF_collapsed_government_system_7
-                        remove_ideas = OCF_Almost_zero_government_credibility
-                        remove_ideas = OCF_Almost_zero_government_credibility_1
-                        remove_ideas = OCF_Almost_zero_government_credibility_2
-                        remove_ideas = OCF_Almost_zero_government_credibility_3
-                        remove_ideas = OCF_Almost_zero_government_credibility_4
-                        #remove_ideas = OCF_Almost_zero_government_credibility_5
-                    }
-                    #中立-军政府
-                    else_if = {
-                        limit = {
-                            has_government = neutrality
-                            ROOT = {
-                                NOT = {
-                                    has_country_leader_ideology = sub_Religious_Fundamentalism #宗教原教旨主义
-                                    has_country_leader_ideology = sub_Theocracy #神权主义
-                                    has_country_leader_ideology = sub_Magism #魔法主义
-                                    has_country_leader_ideology = sub_Fetishism #拜物神教
-                                    has_country_leader_ideology = sub_Green_Lotunism #青莲教义
-                                    has_country_leader_ideology = sub_Utopianism #精灵乌托邦主义
-                                }
-                            }
-                        }
-                        set_cosmetic_tag = OCF_fourth
-                        #set_country_flag = OCF_control_government_flag_6
-                        set_party_name = {
-                            ideology = communism
-                            long_name = OCF_parties_1_long
-                            name = OCF_parties_1
-                        }
-                        set_party_name = {
-                            ideology = democratic
-                            long_name = OCF_parties_5_long
-                            name = OCF_parties_5
-                        }
-                        set_party_name = {
-                            ideology = neutrality
-                            long_name = OCF_parties_0_long
-                            name = OCF_parties_0
-                        }
-                        set_party_name = {
-                            ideology = fascism
-                            long_name = OCF_parties_6_long
-                            name = OCF_parties_6
-                        }
-                        # set_party_name = {
-                        #     ideology = reactionism
-                        #     long_name = OCF_parties_6_long
-                        #     name = OCF_parties_6
-                        # }
-                        set_politics = {
-                            ruling_party = neutrality
-                        }
-                        if = {
-                            limit = {
-                                OCF_Izumi_Konata = {
-                                    has_ideology_group = democratic
-                                }
-                            }
-                            promote_character = OCF_Izumi_Konata
-                        }
-                        else = {
-                            add_country_leader_role = {
-                                character = OCF_Izumi_Konata
-                                promote_leader = yes
-                                country_leader = {
-                                    ideology = sub_Social_Democracy
-                                    traits = { OCF_Otaku OCF_Unreliable_Girl_A }
-                                }
-                            }
-                        }
-                        if = {
-                            limit = {
-                                ROOT = {
-                                    OR = {
-                                        has_country_leader_ideology = sub_Anarcho_individualism #无政府个人主义
-                                        has_country_leader_ideology = sub_Library #图书馆主义
-                                        #has_country_leader_ideology = sub_Religious_Fundamentalism #宗教原教旨主义
-                                        #has_country_leader_ideology = sub_Theocracy #神权主义
-                                        has_country_leader_ideology = sub_Librarism #博闻主义
-                                        #has_country_leader_ideology = sub_Magism #魔法主义
-                                        has_country_leader_ideology = sub_Futurism #未来主义
-                                        #has_country_leader_ideology = sub_Fetishism #拜物神教
-                                        has_country_leader_ideology = sub_Authoritarian_Democracy #威权民主主义
-                                        has_country_leader_ideology = sub_Oligarchy #寡头政治
-                                        #has_country_leader_ideology = sub_Military_Dictatorship #宪制独裁
-                                        #has_country_leader_ideology = sub_Green_Lotunism #青莲教义
-                                        has_country_leader_ideology = sub_Cultural_liberalism #文化自由主义
-                                        #has_country_leader_ideology = sub_Utopianism #精灵乌托邦主义
-                                        has_country_leader_ideology = sub_Knowledge_centrism #知识本位主义
-                                        has_country_leader_ideology = sub_Colonial_government #殖民地政府
-                                        has_country_leader_ideology = sub_Expedition #探险队
-                                    }
-                                }
-                            }
-                            #阿尔盖
-                            if = {
-                                limit = {
-                                    OCF_Algei_Seven_Kai_Delamond = {
-                                        has_ideology_group = neutrality
-                                    }
-                                }
-                                promote_character = OCF_Algei_Seven_Kai_Delamond
-                                add_to_array = {
-                                    IRIS_Historical_leaders_Array = token:OCF_Algei_Seven_Kai_Delamond #阿尔盖
-                                }
-                                add_to_array = {
-                                    IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament #议会
-                                }
-                                add_to_array = {
-                                    IRIS_Historical_leaders_voting_rate_Array = 0 #不显示选票
-                                }
-                                add_to_array = {
-                                    GetNameIRISHistoricalDate = global.year
-                                } 
-                            }
-                        }else = {
-                            #谭雅
-                            if = {
-                                limit = {
-                                    OCF_tanya_von_degurechaff = {
-                                        has_ideology_group = neutrality
-                                    }
-                                }
-                                promote_character = OCF_tanya_von_degurechaff
-                            }
-                            if = {
-				                limit = {
-					                OCF_tanya_von_degurechaff = {
-						                is_field_marshal = no
-					                }
-				                }
-                                OCF_tanya_von_degurechaff = {
-						            promote_leader = yes
-					            }
-			                }
-                            set_technology = {
-				                ocf_magic_gemstone_tech_1 = 1
-				                ocf_magic_gemstone_tech_2 = 1
-			                }
-                            add_to_array = {
-                                IRIS_Historical_leaders_Array = token:OCF_tanya_von_degurechaff #谭雅
-                            }
-                            add_to_array = {
-                                IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament #未知
-                            }
-                            add_to_array = {
-                                IRIS_Historical_leaders_voting_rate_Array = 0 #不计算
-                            }
-                            add_to_array = {
-                                GetNameIRISHistoricalDate = global.year
-                            }
-                        }
-
-                        remove_ideas = OCF_collapsed_government_system
-                        remove_ideas = OCF_collapsed_government_system_1
-                        remove_ideas = OCF_collapsed_government_system_2
-                        remove_ideas = OCF_collapsed_government_system_3
-                        remove_ideas = OCF_collapsed_government_system_4
-                        remove_ideas = OCF_collapsed_government_system_5
-                        remove_ideas = OCF_collapsed_government_system_6
-                        #remove_ideas = OCF_collapsed_government_system_7
-                        remove_ideas = OCF_Almost_zero_government_credibility
-                        remove_ideas = OCF_Almost_zero_government_credibility_1
-                        remove_ideas = OCF_Almost_zero_government_credibility_2
-                        remove_ideas = OCF_Almost_zero_government_credibility_3
-                        remove_ideas = OCF_Almost_zero_government_credibility_4
-                        #remove_ideas = OCF_Almost_zero_government_credibility_5
-                    }
-                    #艾妮丝菲亚·温·帕雷提亚
-                    else_if = {
-                        limit = {
-                            ROOT = {
-                                OR = {
-                                    has_country_leader_ideology = sub_Religious_Fundamentalism #宗教原教旨主义
-                                    has_country_leader_ideology = sub_Theocracy #神权主义
-                                    has_country_leader_ideology = sub_Magism #魔法主义
-                                    has_country_leader_ideology = sub_Fetishism #拜物神教
-                                    has_country_leader_ideology = sub_Green_Lotunism #青莲教义
-                                    has_country_leader_ideology = sub_Utopianism #精灵乌托邦主义
-                                }
-                            }
-                        }
-                        set_cosmetic_tag = OCF_fourth
-                        set_country_flag = OCF_control_government_flag_8
-                        set_politics = {
-                            ruling_party = democratic
-                        }
-                        set_party_name = {
-                            ideology = communism
-                            long_name = OCF_parties_1_long
-                            name = OCF_parties_1
-                        }
-                        set_party_name = {
-                            ideology = democratic
-                            long_name = OCF_parties_5_long
-                            name = OCF_parties_5
-                        }
-                        set_party_name = {
-                            ideology = neutrality
-                            long_name = OCF_parties_0_long
-                            name = OCF_parties_0
-                        }
-                        set_party_name = {
-                            ideology = fascism
-                            long_name = OCF_parties_6_long
-                            name = OCF_parties_6
-                        }
-                        if = {
-                            limit = {
-                                OCF_Izumi_Konata = {
-                                    has_ideology_group = democratic
-                                }
-                            }
-                            promote_character = OCF_Anisufia_Win_Parettia
-                        }
-                        else = {
-                            add_country_leader_role = {
-                                character = OCF_Anisufia_Win_Parettia
-                                promote_leader = yes
-                                country_leader = {
-                                    ideology = sub_ocf_Mana_Conservatism
-                                    traits = {OCF_revolutionary_princess OCF_love_magic}
-                                }
-                            }
-                        }
-                        hidden_effect = {
-                            remove_ideas = OCF_idea_parliament
-                            add_ideas = OCF_idea_Yufiria_Mazenta
-                            set_variable = { OCF_party_leader_8_variable = 1 }
-                        }
-                    }
-                    #社民-泉此方
-                    else = {
-                        set_cosmetic_tag = OCF_fourth
-                        set_country_flag = OCF_control_government_flag_5
-                        set_politics = {
-                            ruling_party = democratic
-                        }
-                        set_party_name = {
-                            ideology = communism
-                            long_name = OCF_parties_1_long
-                            name = OCF_parties_1
-                        }
-                        set_party_name = {
-                            ideology = democratic
-                            long_name = OCF_parties_5_long
-                            name = OCF_parties_5
-                        }
-                        set_party_name = {
-                            ideology = neutrality
-                            long_name = OCF_parties_0_long
-                            name = OCF_parties_0
-                        }
-                        set_party_name = {
-                            ideology = fascism
-                            long_name = OCF_parties_6_long
-                            name = OCF_parties_6
-                        }
-                        if = {
-                            limit = {
-                                OCF_Izumi_Konata = {
-                                    has_ideology_group = democratic
-                                }
-                            }
-                            promote_character = OCF_Izumi_Konata
-                        }
-                        else = {
-                            add_country_leader_role = {
-                                character = OCF_Izumi_Konata
-                                promote_leader = yes
-                                country_leader = {
-                                    ideology = sub_Social_Democracy
-                                    traits = { OCF_Otaku OCF_Unreliable_Girl_A }
-                                }
-                            }
-                        }
-                        hidden_effect = {
-                            remove_ideas = OCF_idea_parliament
-                            add_ideas = OCF_idea_Hiiragi_Kagami
-                            add_ideas = OCF_idea_Izumi_Sojiro
-                            set_variable = { OCF_party_leader_5_variable = token:OCF_Izumi_Sojiro }
-                        }
+    #地区丢失(不在这触发通用新闻)
+    on_state_control_changed = {
+        effect = {
+            if = {
+                limit = {
+                    FROM = { TAG = OCF surrender_progress > 0.99 }
+                    ROOT = {
+                        NOT = { original_tag = OCE }
+                        NOT = { original_tag = OCF }
+                        NOT = { original_tag = EIA }
+                        NOT = { original_tag = INP }
                     }
                 }
+                OCF = { OCF_surrender_after_war_judge = yes }
             }
         }
     }
