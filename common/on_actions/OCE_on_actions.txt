@@ -1,17 +1,6 @@
 on_actions = {
     on_startup = {
         effect = {
-            #载入历代领导人
-            every_possible_country = {
-                limit = {
-                    OR = {
-                        tag = OCF
-                        tag = OCE
-                    }
-                }
-                OCE_record_leaders_past_dynasties = YES
-            }
-
             every_state = {
                 limit = {
                     is_core_of = OCE
@@ -530,6 +519,8 @@ on_actions = {
                                 original_tag = OCF
                                 original_tag = EIA
                                 original_tag = INP
+                                original_tag = KWA
+                                original_tag = KCU
                             }
                         }
                     }
@@ -706,13 +697,70 @@ on_actions = {
                         OCE_bring_vienna_stage = YES
                     }
                     FROM = {
-                        white_peace = {
-                            tag = ROOT
-                            message = OCF_WIN_OCE_TT
+                        if = {
+                            limit = {
+                                FROM = {
+                                    NOT = { original_tag = KWA }
+                                    NOT = { original_tag = KCU }
+                                }
+                            }
+                            if = {
+                                limit = { country_exists = OCF }
+                                OCF = {
+                                    white_peace = {
+                                        tag = ROOT
+                                        message = OCF_WIN_OCE_TT
+                                    }
+                                    annex_country = {
+                                        target = ROOT transfer_troops = no
+                                    }
+                                }
+                            }
+                            else_if = {
+                                limit = { country_exists = EIA }
+                                EIA = {
+                                    white_peace = {
+                                        tag = ROOT
+                                    }
+                                    annex_country = {
+                                        target = ROOT transfer_troops = no
+                                    }
+                                }
+                            }
+                            else_if = {
+                                limit = { country_exists = INP }
+                                INP = {
+                                    white_peace = {
+                                        tag = ROOT
+                                    }
+                                    annex_country = {
+                                        target = ROOT transfer_troops = no
+                                    }
+                                }
+                            }
                         }
-                        annex_country = {
-                            target = ROOT transfer_troops = no
+                        else_if = {
+                            if = {
+                                limit = {
+                                    FROM = {
+                                        OR = {
+                                            original_tag = KWA
+                                            original_tag = KCU
+                                        }
+                                    }
+                                }
+                                FROM = {
+                                    white_peace = {
+                                        tag = ROOT
+                                        message = OCF_WIN_OCE_TT
+                                    }
+                                    annex_country = {
+                                        target = ROOT transfer_troops = no
+                                    }
+                                }
+                            }
                         }
+
                         # every_country = {
                         #     limit = {
                         #         NOT = {
@@ -893,6 +941,74 @@ on_actions = {
                     }
                 }
             }
+
+            #克拉达斯工人协会投降
+            if = {
+                limit = {
+                    ROOT = {
+                        original_tag = KWA
+                    }
+                }
+                if = {
+                    limit = {
+                        FROM = {
+                            OR = {
+                                original_tag = OCE
+                                original_tag = OCF
+                                original_tag = EIA
+                                original_tag = INP
+                            }
+                        }
+                    }
+                    ROOT = {
+                        transfer_navy = {
+                            target = FROM
+                        }
+                    }
+                    FROM = {
+                        white_peace = {
+                            tag = ROOT
+                        }
+                        annex_country = {
+                            target = ROOT transfer_troops = no
+                        }
+                    }
+                }
+            }
+
+            #克拉达斯市民联合投降
+            if = {
+                limit = {
+                    ROOT = {
+                        original_tag = KCU
+                    }
+                }
+                if = {
+                    limit = {
+                        FROM = {
+                            OR = {
+                                original_tag = OCE
+                                original_tag = OCF
+                                original_tag = EIA
+                                original_tag = INP
+                            }
+                        }
+                    }
+                    ROOT = {
+                        transfer_navy = {
+                            target = FROM
+                        }
+                    }
+                    FROM = {
+                        white_peace = {
+                            tag = ROOT
+                        }
+                        annex_country = {
+                            target = ROOT transfer_troops = no
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -903,25 +1019,31 @@ on_actions = {
             if = {
                 limit = {
                     FROM.FROM = { state = 115 }
-                    FROM = { TAG = OCE }
+                    FROM = {
+                        OR = {
+                            original_tag = OCE
+                            original_tag = KCU
+                            original_tag = KWA
+                        }
+                    }
                 }
                 if = {
                     limit = {
                         ROOT = {
-                            TAG = OCF
+                            original_tag = OCF
                         }
-                    }
-                    FROM = {
-                        #让维也纳上台
-                        OCE_bring_vienna_stage = yes
-                        #设置大洋协约崩溃
-                        OCE_oceania_faction_collapse = yes
                     }
                     OCF = {
                         country_event = {
                             id = OCF.14
                         }
                     }
+                }
+                FROM = {
+                    #让维也纳上台
+                    OCE_bring_vienna_stage = yes
+                    #设置大洋协约崩溃
+                    OCE_oceania_faction_collapse = yes
                 }
             }
         }

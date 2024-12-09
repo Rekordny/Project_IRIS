@@ -169,13 +169,11 @@ BLA_rule_of_tsar = {
             NOT = {
                 country_exists = WPU
             }
-            all_state = {
-                if = {
-                    limit = {
-                        is_core_of = WPU
-                    }
-                    is_core_of = SVI
+            all_state = {  
+                limit = {
+                    is_core_of = WPU
                 }
+                is_core_of = SVI
             }
         }
         visible = {
@@ -221,8 +219,12 @@ BLA_rule_of_tsar = {
             has_idea = BLA_legacy_of_young_august
         }
         cancel_trigger = {
-            NOT = {
-                has_idea = BLA_legacy_of_young_august
+            OR = {
+                has_idea = BLA_PM_Sanya
+                has_idea = BLA_PM_Lyudmila
+                NOT = {
+                    has_idea = BLA_legacy_of_young_august
+                }
             }
         }
         days_mission_timeout = 60
@@ -3426,7 +3428,7 @@ BLA_diplomacy = {
             }
         }
         cost = 0
-        days_remove = 1
+        days_remove = 3
         fire_only_once = yes
         complete_effect = {
         }
@@ -3459,6 +3461,491 @@ BLA_diplomacy = {
 }
 #大博弈
 Big_Game = {
+    BLA_prepare_for_invade_BGN = {
+        available = {
+            date > 3091.1.1
+        }
+        visible = {
+            tag = BLA
+        }
+        fire_only_once = yes
+        complete_effect = {
+            set_global_flag = prepare_for_battle_of_BGN
+            custom_effect_tooltip = BLA_gain_control_point_if_we_win
+            104 = {
+                transfer_state_to = BLC
+            }
+            BLA_RPK16 = {
+                set_nationality = BLC
+            }
+            hidden_effect = {
+                840 = {
+                    set_demilitarized_zone = yes
+                }
+                104 = {
+                    add_core_of = BLC
+                }
+                BLC = {
+                    add_manpower = 25000
+                    inherit_technology = BLA
+                    country_lock_all_division_template = yes
+                    create_country_leader = {
+                        name = BLA_RPK16
+                        picture = GFX_BLA_RPK16
+                        expire = "3200.1.1.1"
+                        ideology = sub_Junta
+                    }
+                    set_popularities = {
+                        democratic = 0
+                        neutrality = 85
+                        fascism = 5
+                        communism = 0
+                        reactionism = 10
+                    }
+                    set_politics = {
+                        ruling_party = neutrality
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = BGN
+                    }
+                    add_core_of = BLC
+                }
+                NAC = {
+                    country_event = {id = NAC.52}
+                    activate_mission = Battle_of_BGN_preparing_NAC_counter
+                }
+            }
+            BLA = {
+                activate_mission = Battle_of_BGN_preparing
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    Battle_of_BGN_preparing_NAC_counter = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 100
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            BGN = {
+                add_war_support = 0.20
+            }
+        }
+    }
+    Battle_of_BGN_preparing = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 100
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            clr_global_flag = prepare_for_battle_of_BGN
+            hidden_effect = {
+                NAC = {
+                    end_puppet = BGN
+                }
+            }
+            BLC = {
+                declare_war_on = {
+                    target = BGN
+                    type = annex_everything
+                }
+                840 = {
+                    set_demilitarized_zone = no
+                }
+                hidden_effect = {
+                    load_oob = "BLC_battle"
+                }
+            }
+            hidden_effect = {
+                BLA = {
+                    activate_mission = Battle_of_BGN_ends
+                }
+                NAC = {
+                    activate_mission = Battle_of_BGN_ends_NAC
+                }
+                if = {
+                    limit = {
+                        has_global_flag = BLC_gained_naval_support_flag
+                    }
+                    BLC = {
+                        add_ideas = BGN_landing_legion
+                        add_ideas = BLA_naval_support
+                    }
+                }
+                if = {
+                    limit = {
+                        has_global_flag = BLC_gained_extra_brigade_flag
+                    }
+                    BLC = {
+                        load_oob = "BLC_battle_2"
+                    }
+                }
+            }
+        }
+    }
+    Battle_of_BGN_ends = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 80
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                BGN = {
+                    white_peace = {
+                        tag = BLC
+                        message = BGN_defeated_BLC
+                    }
+                }
+                BLC = {
+                    every_character =  {
+						set_nationality = BLA
+					}
+                }
+                BLA = {
+                    annex_country = {
+                        target = BLC
+                    }
+                }
+                NAC = {
+                    set_autonomy = {
+                        target = BGN
+                        autonomous_state = puppet
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = BLC
+                    }
+                    remove_core_of = BLC
+                }
+            }
+        }
+    }
+    Battle_of_BGN_ends_NAC = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 80
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+        }
+    }
+    BLA_send_man = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            add_manpower = -1000
+            BLC = {
+                add_manpower = 1000
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_weapon = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            has_equipment = {
+                infantry_equipment > 499
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 500
+                target = BLC
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_naval_support = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_extra_brigade_flag
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_extra_brigade_flag
+            }
+        }
+        cost = 50
+        days_remove = 40
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_send_naval_support_flag
+        }
+        remove_effect = {
+            set_global_flag = BLC_gained_naval_support_flag
+            custom_effect_tooltip = BLC_gain_naval_support_in_war
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_extra_brigade = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_naval_support_flag
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_naval_support_flag
+            }
+        }
+        cost = 50
+        days_remove = 40
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_send_extra_brigade_flag
+        }
+        remove_effect = {
+            set_global_flag = BLC_gained_extra_brigade_flag
+            custom_effect_tooltip = BLC_gain_extra_brigade_in_war
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_build_bunker = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            122 = {
+                add_building_construction ={
+                    type = bunker
+                    province = 10037
+                    level = 2
+                    instant_build = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_send_man = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                add_manpower = 1000
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_send_weapon = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 500
+                    producer = NAC
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_train_army = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        fire_only_once = yes
+        days_remove = 60
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"波格内民兵\" division_template = \"工农民兵\" start_experience_factor = 0.20"
+                        owner = BGN
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_ask_OCF_for_help = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            country_exists = OCF
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+            NOT = {
+                country_exists = OCF
+            }
+        }
+        cost = 50
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            OCF = {
+                country_event = {id = BLA_dip.5 days = 3}
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
     #西部沿海
     Select_West = {
         available = {
@@ -3982,6 +4469,7 @@ BLA_Sanyas_dream = {
         days_re_enable = 180
         remove_effect = {
             BLA_increase_unity = yes
+            BLA_increase_youth_power = yes
         }
         ai_will_do = {
             base = 0
@@ -3989,6 +4477,17 @@ BLA_Sanyas_dream = {
                 add = 10
                 has_political_power > 150
             }
+        }
+    }
+    BLA_streghten_youth_power = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_increase_youth_power = yes
+        }
+        ai_will_do = {
+            factor = 10
         }
     }
     BLA_promote_officials = {
@@ -4009,6 +4508,7 @@ BLA_Sanyas_dream = {
         remove_effect = {
             add_stability = 0.01
             add_war_support = 0.01
+            BLA_increase_youth_power = yes
             BLA_strengthen_gov_sanya = yes
         }
         ai_will_do = {
@@ -4037,6 +4537,7 @@ BLA_Sanyas_dream = {
         remove_effect = {
             army_experience = 25
             BLA_strengthen_gov_sanya = yes
+            BLA_increase_officier_power = yes
             custom_effect_tooltip = BLA_increase_preference_all_desc
             hidden_effect = {
                 BLA = {
@@ -4051,6 +4552,52 @@ BLA_Sanyas_dream = {
             modifier = {
                 add = 100
                 has_political_power > 150
+            }
+        }
+    }
+    BLA_streghten_labor_power = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_increase_labor_power = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    BLA_restrict_labor_power = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_decrease_labor_power = yes
+            add_popularity = {
+                ideology = communism
+                popularity = -0.02
+            }
+        }
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 100
+                communism > 0.30
+            }
+        }
+    }
+    BLA_contact_nobility = {
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            BLA_increase_loyalist_power = yes
+            BLA_increase_nobility_opinion = yes
+        }
+        ai_will_do = {
+            factor = 0
+            modifier = {
+                add = 1000
+                check_variable = {BLA_nobility_opinion < 0}
             }
         }
     }
@@ -4070,6 +4617,8 @@ BLA_Sanyas_dream = {
         days_remove = 30
         fire_only_once = yes
         remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
             BLA_decrease_nobility_opinion_big = yes
             BLA_decrease_capitalist_opinion_big = yes
             swap_ideas = {
@@ -4093,6 +4642,8 @@ BLA_Sanyas_dream = {
         days_remove = 30
         fire_only_once = yes
         remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
             swap_ideas = {
                 remove_idea = BLA_command_economy
                 add_idea = BLA_command_economy_reformed
@@ -4105,12 +4656,14 @@ BLA_Sanyas_dream = {
     #基本福利政策
     BLA_basic_welfare_policy = {
         visible = {
-            has_completed_focus = BLA_Anna_reform_17
+            has_completed_focus = BLA_PM_Sanya_29
         }
         cost = 150
         days_remove = 70
         fire_only_once = yes
         remove_effect = {
+            BLA_bop_move_leftward = yes
+            BLA_increase_labor_power = yes
             add_ideas = BLA_basic_welfare_policy_idea
         }
         ai_will_do = {
@@ -4130,6 +4683,7 @@ HEL_crisis = {
         activation = {
             tag = BLA
             has_country_flag = BLA_HEL_crisis
+            country_exists = HEL
         }
         cancel_trigger = {
             OR = {
@@ -4202,9 +4756,7 @@ HEL_crisis = {
         }
         cancel_trigger = {
             OR = {
-                NOT = {
-                    has_war_with = HEL
-                }
+                has_war_with = HEL
                 custom_trigger_tooltip = {
                     tooltip = BLA_negotiation_barrier_less_than_30
                     BLA = {
@@ -4265,7 +4817,6 @@ HEL_crisis = {
         available = {
             has_country_flag = BLA_HEL_crisis
         }
-        cost = 20
         fire_only_once = yes
         days_remove = 7
         cancel_trigger = {
@@ -4297,7 +4848,6 @@ HEL_crisis = {
                 }
             }
         }
-        cost = 20
         fire_only_once = yes
         days_remove = 3
         cancel_trigger = {
@@ -4336,7 +4886,6 @@ HEL_crisis = {
         cancel_trigger = {
             has_war_with = HEL
         }
-        cost = 20
         days_remove = 14
         fire_only_once = yes
         complete_effect = {
@@ -4372,7 +4921,6 @@ HEL_crisis = {
         cancel_trigger = {
             has_war_with = HEL
         }
-        cost = 20
         days_remove = 14
         fire_only_once = yes
         complete_effect = {
@@ -4401,7 +4949,6 @@ HEL_crisis = {
                 has_war_with = HEL
             }
         }
-        cost = 10
         days_remove = 10
         cancel_trigger = {
             has_war_with = HEL
@@ -4422,7 +4969,6 @@ HEL_crisis = {
                 has_war_with = HEL
             }
         }
-        cost = 30
         days_remove = 10
         cancel_trigger = {
             has_war_with = HEL
@@ -4455,7 +5001,7 @@ HEL_crisis = {
                 has_war_with = HEL
             }
         }
-        cost = 50
+        cost = 20
         days_remove = 50
         cancel_trigger = {
             has_war_with = HEL
@@ -4495,7 +5041,6 @@ HEL_crisis = {
                 has_war_with = HEL
             }
         }
-        cost = 20
         days_remove = 30
         cancel_trigger = {
             has_war_with = HEL
@@ -4532,6 +5077,358 @@ SVI_reintegration = {
                 }
                 add_core_of = SVI
             }
+        }
+    }
+}
+#土地改革
+BLA_systematic_land_reform = {
+    #结束改革
+    BLA_end_land_reform  = {
+        available = {
+            has_country_flag = BLA_land_reform_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = BLA_land_reform_in_progress
+            if = {
+                limit = {
+                    check_variable = {BLA_land_reform_progress = 1}
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 10
+                    random_core_state = {
+                        add_extra_state_shared_building_slots = 1
+                    }
+                }
+                custom_effect_tooltip = BLA_land_reform_progress_1_bonus
+                add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.05}
+                add_to_variable = {BLA_dynamic_monthly_population = 0.05}
+                add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.03}
+                add_to_variable = {BLA_dynamic_production_speed_industrial_complex_factor = 0.025}
+                add_to_variable = {BLA_dynamic_production_speed_arms_factory_factor = 0.025}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_land_reform_progress = 2}
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 25
+                    random_core_state = {
+                        add_extra_state_shared_building_slots = 1
+                    }
+                }
+                custom_effect_tooltip = BLA_land_reform_progress_2_bonus
+                add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.10}
+                add_to_variable = {BLA_dynamic_monthly_population = 0.125}
+                add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.06}
+                add_to_variable = {BLA_dynamic_production_speed_industrial_complex_factor = 0.05}
+                add_to_variable = {BLA_dynamic_production_speed_arms_factory_factor = 0.05}
+            }
+            if = {
+                limit = {
+                    check_variable = {BLA_land_reform_progress > 2}
+                }
+                every_core_state = {
+                    add_extra_state_shared_building_slots = 1
+                }
+                custom_effect_tooltip = BLA_land_reform_progress_3_bonus
+                add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.15}
+                add_to_variable = {BLA_dynamic_monthly_population = 0.20}
+                add_to_variable = {BLA_dynamic_production_factory_max_efficiency_factor = 0.10}
+                add_to_variable = {BLA_dynamic_production_speed_industrial_complex_factor = 0.10}
+                add_to_variable = {BLA_dynamic_production_speed_arms_factory_factor = 0.10}
+                add_to_variable = {BLA_dynamic_global_building_slots_factor = 0.05}
+            }
+        }
+    }
+    #快速改革方针
+    BLA_land_reform_radical = {
+        available = {
+            NOT = {
+                has_country_flag = BLA_recently_changed_plan
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_land_reform_radical_flag
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = BLA_land_reform_radical_effect
+            set_country_flag = BLA_land_reform_radical_flag
+            clr_country_flag = BLA_land_reform_moderate_flag
+            clr_country_flag = BLA_land_reform_purchase_flag
+            set_country_flag = {flag = BLA_recently_changed_plan days = 30 value = 1}
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                has_stability < 0.50
+            }
+        }
+    }
+    #温和推进方针
+    BLA_land_reform_moderate = {
+        available = {
+            NOT = {
+                has_country_flag = BLA_recently_changed_plan
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_land_reform_moderate_flag
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = BLA_land_reform_moderate_effect
+            set_country_flag = BLA_land_reform_moderate_flag
+            clr_country_flag = BLA_land_reform_radical_flag
+            clr_country_flag = BLA_land_reform_purchase_flag
+            set_country_flag = {flag = BLA_recently_changed_plan days = 30 value = 1}
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #高价赎买方针
+    BLA_land_reform_purchase = {
+        available = {
+            NOT = {
+                has_country_flag = BLA_recently_changed_plan
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_land_reform_purchase_flag
+            }
+        }
+        complete_effect = {
+            custom_effect_tooltip = BLA_land_reform_purchase_effect
+            set_country_flag = BLA_land_reform_purchase_flag
+            clr_country_flag = BLA_land_reform_moderate_flag
+            clr_country_flag = BLA_land_reform_radical_flag
+            set_country_flag = {flag = BLA_recently_changed_plan days = 30 value = 1}
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                has_political_power < 0
+            }
+        }
+    }
+    #将绝嗣贵族土地收归国有
+    BLA_inherit_lands = {
+        cost = 25
+        days_remove = 15
+        days_re_enable = 250
+        remove_effect = {
+            BLA_land_reform_progress_increase_15 = yes
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #用刺刀说服贵族
+    BLA_land_reform_radical_nobility = {
+        visible = {
+            has_country_flag = BLA_land_reform_radical_flag
+        }
+        cost = 20
+        days_remove = 30
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                60 = {
+                }
+                40 = {
+                    BLA_decrease_nobility_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                BLA = {
+                    check_variable = {BLA_nobility_opinion < 0}
+                }
+            }
+        }
+    }
+    #用军靴说服正教会
+    BLA_land_reform_radical_church = {
+        visible = {
+            has_country_flag = BLA_land_reform_radical_flag
+        }
+        cost = 30
+        days_remove = 30
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                60 = {
+                }
+                40 = {
+                    BLA_decrease_church_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 0
+                BLA = {
+                    check_variable = {BLA_church_opinion < 0}
+                }
+            }
+        }
+    }
+    #为不配合者安排意外
+    BLA_kill_some_bad_guys = {
+        visible = {
+            has_country_flag = BLA_land_reform_radical_flag
+        }
+        cost = 50
+        days_remove = 7
+        days_re_enable = 100
+        remove_effect = {
+            add_manpower = -50
+            custom_effect_tooltip = BLA_no_bad_event_desc
+            set_country_flag = {flag = BLA_no_bad_event_flag days = 60}
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    #与贵族商讨条款
+    BLA_land_reform_moderate_nobility = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 40
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                80 = {
+                }
+                20 = {
+                    BLA_decrease_nobility_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #为正教会划拨保留地
+    BLA_land_reform_moderate_church = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 60
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+            random_list = {
+                80 = {
+                }
+                20 = {
+                    BLA_decrease_church_opinion = yes
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #在皇宫中推杯换盏
+    BLA_land_reform_moderate_tsar = {
+        cost = 40
+        days_remove = 60
+        remove_effect = {
+            add_stability = 0.03
+        }   
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #给贵族打钱
+    BLA_land_reform_purchase_nobility = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 60
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #给正教会打钱
+    BLA_land_reform_purchase_church = {
+        visible = {
+            has_country_flag = BLA_land_reform_moderate_flag
+        }
+        cost = 80
+        days_remove = 40
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 10
+        }
+    }
+    #利用贵族把柄
+    BLA_land_reform_special_nobility = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_enough_nobility_secret_1
+                BLA = {check_variable = {BLA_nobility_secret > 0}}
+            }
+        }
+        visible = {
+            BLA = {check_variable = {BLA_nobility_secret > 0}}
+        }
+        days_remove = 30
+        complete_effect = {
+            hidden_effect = {
+                BLA = {add_to_variable = {BLA_nobility_secret = -1}}
+            }
+        }
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #利用正教会把柄
+    BLA_land_reform_special_church = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_enough_church_secret_1
+                BLA = {check_variable = {BLA_church_secret > 0}}
+            }
+        }
+        visible = {
+            BLA = {check_variable = {BLA_church_secret > 0}}
+        }
+        days_remove = 30
+        complete_effect = {
+            hidden_effect = {
+                BLA = {add_to_variable = {BLA_church_secret = -1}}
+            }
+        }
+        remove_effect = {
+            BLA_land_reform_progress_increase_5 = yes
+        }
+        ai_will_do = {
+            base = 1000
         }
     }
 }
