@@ -2,33 +2,98 @@
 
 #TAG = {STATE = {create_character = yes}}
 create_character = {
-
-    add_to_variable = { role_index = 1 }
-
-    meta_effect = { #THIS 是地区  PREV是国家
-        text = {
-            set_variable = { role_owner = PREV.PREV }
-            [t_tag] = {
-                generate_character = {
-                    token_base = [t_tag]_new_character_[t_state]_index_[t_index]
+    if = {
+        limit = {
+            is_in_array = {
+                array = THIS.exile_role_array
+                value = PREV
+            }
+        }
+        # meta_effect = {
+        #     text = {
+        #         log="[t_tag]"
+        #         log="[t_index]"
+        #         set_temp_variable = { temp = role_@[t_tag] }
+        #         log="-------------------------"
+        #         log="[?temp]"
+        #     }
+        #     t_tag = "[?PREV.PREV.GetTag]"
+        #     t_index = "[?THIS.role_index]"
+        # }
+        meta_effect = {
+            text = {
+                log="开始检测流亡-------------------------"
+                log="省份代号：[t_state]"
+                [t_state] = {
+                    log="当前角色：[t_role]"
+                    log="流亡角色：[t_role_2]"
+                    set_variable = { THIS.role = [t_role_2] }
+                    log="存入角色：[t_role]"
+                    log="流亡角色国籍：[t_tag]"
+                    remove_from_array = { [t_state].exile_role_array = [t_tag] }
+                    log="-------------------------"
                 }
             }
-            set_variable = {
-                global.new_character = token:[t_tag]_new_character_[t_state]_index_[t_index]
-            }
-            add_to_array = {
-                global.new_character_array = global.new_character
-            }
-            create_character_image = yes #随机头像
+            t_tag = "[?PREV.GetTag]"
+            t_state = "[?THIS.GetID]"
+            t_role = "[?THIS.role]"
+            t_role_2 = "[?this.role_@PREV]"
         }
-        t_state = "[?THIS.GetID]"
-        t_tag = "[?PREV.PREV.GetTag]"
-        t_index = "[?THIS.role_index]"
     }
-    set_variable = {
-        THIS.role = global.new_character
+    else = {
+        add_to_variable = { role_index = 1 } #存储于省份
+        meta_effect = { #THIS 是地区  PREV是国家
+            text = {
+                set_variable = { role_owner = PREV.PREV } #存储国家TAG在省份
+                [t_tag] = {
+                    generate_character = {
+                        token_base = [t_tag]_new_character_[t_state]_index_[t_index]
+                    }
+                }
+                set_variable = {
+                    global.new_character = token:[t_tag]_new_character_[t_state]_index_[t_index]
+                }
+                add_to_array = {
+                    global.new_character_array = global.new_character
+                }
+                create_character_image = yes #随机头像
+            }
+            t_tag = "[?PREV.PREV.GetTag]"
+            t_state = "[?THIS.GetID]"
+            t_index = "[?THIS.role_index]"
+        }
+        set_variable = {
+            THIS.role = global.new_character
+        }
     }
 }
+
+#流亡当地角色
+exile_create_character = {
+    if = {
+        limit = {
+            not = {
+                is_in_array = {
+                    array = this.exile_role_array
+                    value = PREV
+                }
+            }
+            not = { check_variable = { role = token:IRIS_token_NULL } }
+        }
+        log="开始地区人物流亡-------------------------"
+        log="流亡地区：[?this.GetID]"
+        log="流亡角色：[?this.role]"
+        set_variable = {
+            this.role_@PREV = this.role
+        }
+        log="存入角色：[?this.role_@PREV]"
+        log="角色国籍：[?PREV.GetTag]"
+        add_to_array = {
+            this.exile_role_array = PREV
+        }
+    }
+}
+
 
 #清除该地区行政官
 del_create_character = {
