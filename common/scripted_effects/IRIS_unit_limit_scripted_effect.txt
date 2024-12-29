@@ -1,0 +1,102 @@
+
+#刷新部队上限
+IRIS_refresh_troop_limit = {
+	set_variable = { global.var = 0 }
+	for_each_scope_loop = {
+		array = global.IRIS_effect_list
+		if = {
+			limit = { check_variable = { global.var < 3 } }
+			set_variable = { max_divisions = 72 }
+		}
+		else_if = {
+			limit = { check_variable = { global.var < 6 } }
+			set_variable = { max_divisions = 54 }
+		}
+		else_if = {
+			limit = { check_variable = { global.var < 15 } }
+			set_variable = { max_divisions = 36 }
+		}
+		else = {
+			set_variable = { max_divisions = 24 }
+		}
+		multiply_variable = { max_divisions = 12 }
+		IRIS_refresh_troop_limit_correct = yes
+		IRIS_calculate_current_proportion_military = yes
+		add_to_variable = { global.var = 1 }
+	}
+}
+
+#修正
+IRIS_refresh_troop_limit_correct = {
+	set_variable = { increase_in_troops_coming_online_percentage_temp = 1 }
+	add_to_variable = { increase_in_troops_coming_online_percentage_temp = modifier@increase_in_troops_coming_online_percentage }
+	add_to_variable = { max_divisions = modifier@increase_in_troops_coming_online }
+	multiply_variable = { max_divisions = increase_in_troops_coming_online_percentage_temp }
+	
+	if = {
+		limit = { is_puppet = yes }
+		multiply_variable = { max_divisions = 0.5 }
+	}
+}
+
+#计算目前军队占比
+#输出 num_divisions_percentage 百分比   num_divisions_percentage_x gui坐标
+IRIS_calculate_current_proportion_military = {
+	set_variable = { num_divisions_percentage = num_battalions }
+	divide_variable = { num_divisions_percentage = max_divisions }
+
+	if = {
+		limit = { check_variable = { num_divisions_percentage < 0.33 } }
+		set_variable = { unit_limit_progressbar_frame = 1 }
+	}
+	else_if = {
+		limit = { check_variable = { num_divisions_percentage < 0.66 } }
+		set_variable = { unit_limit_progressbar_frame = 2 }
+	}
+	else = {
+		set_variable = { unit_limit_progressbar_frame = 3 }
+	}
+
+	set_variable = { num_divisions_percentage_x = 1 }
+	subtract_from_variable = { num_divisions_percentage_x = num_divisions_percentage }
+	multiply_variable = { num_divisions_percentage_x = -160 }
+	if = {
+		limit = { check_variable = { num_divisions_percentage_x > 0 } }
+		set_variable = { num_divisions_percentage_x = 0 }
+		IRIS_troops_exceed_negative_calculation = yes #部队超出负面计算
+	}
+}
+
+#部队超出负面计算
+IRIS_troops_exceed_negative_calculation = {
+	set_variable = { troops_exceed_negative_calculation_now = num_battalions } #记录当前数量
+
+	if = {
+		#如果比上一次数量多，就显示提示
+		limit = { check_variable = { troops_exceed_negative_calculation_now > troops_exceed_negative_calculation_storage } }
+		set_variable = { unit_limit_alert_visible = 1 }
+	}
+	#计算超出多少营 每个营0.002负面（不一定）
+	set_variable = { troops_exceed_negative_calculation_exceed = troops_exceed_negative_calculation_now }
+	subtract_from_variable = { troops_exceed_negative_calculation_exceed = max_divisions }
+	#组织度 army_org_factor
+	set_variable = { troops_exceed_negative_calculation_army_org_factor = troops_exceed_negative_calculation_exceed }
+	divide_variable = { troops_exceed_negative_calculation_army_org_factor = 500 }
+	multiply_variable = { troops_exceed_negative_calculation_army_org_factor = -1 }
+	#生活消费品系数 consumer_goods_expected_value
+	set_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value = troops_exceed_negative_calculation_exceed }
+	divide_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value = 720 }
+	#增援率 land_reinforce_rate
+	set_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = troops_exceed_negative_calculation_exceed }
+	divide_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = 3400 }
+	multiply_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = -1 }
+	#训练时间 training_time_army_factor
+	set_variable = { troops_exceed_negative_calculation_consumer_training_time_army_factor = troops_exceed_negative_calculation_exceed }
+	divide_variable = { troops_exceed_negative_calculation_consumer_training_time_army_factor = 75 }
+
+
+	set_variable = { troops_exceed_negative_calculation_storage = troops_exceed_negative_calculation_now }
+	add_dynamic_modifier = {
+		modifier = IRIS_exceeding_military_punishment_modifier
+	}
+}
