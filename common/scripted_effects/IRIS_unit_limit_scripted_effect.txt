@@ -60,11 +60,19 @@ IRIS_calculate_current_proportion_military = {
 	set_variable = { num_divisions_percentage_x = 1 }
 	subtract_from_variable = { num_divisions_percentage_x = num_divisions_percentage }
 	multiply_variable = { num_divisions_percentage_x = -160 }
+
+	set_temp_variable = { alert_id = token:alert_IRIS_size_troops_exceeds_upper_limit }
 	if = {
 		limit = { check_variable = { num_divisions_percentage_x > 0 } }
 		set_variable = { num_divisions_percentage_x = 0 }
 		IRIS_troops_exceed_negative_calculation = yes #部队超出负面计算
+		if = {
+			limit = { IRIS_disable_military_restrictions_trigger = no }
+			add_IRIS_alert_unless_exists = yes
+		}
+		else = { del_IRIS_alert = yes }
 	}
+	else = { del_IRIS_alert = yes }
 }
 
 #部队超出负面计算
@@ -73,7 +81,7 @@ IRIS_troops_exceed_negative_calculation = {
 
 	if = {
 		#如果比上一次数量多，就显示提示
-		limit = { check_variable = { troops_exceed_negative_calculation_now > troops_exceed_negative_calculation_storage } }
+		limit = { check_variable = { troops_exceed_negative_calculation_now > troops_exceed_negative_calculation_storage } IRIS_disable_military_restrictions_trigger = no }
 		set_variable = { unit_limit_alert_visible = 1 }
 	}
 	#计算超出多少营 每个营0.002负面（不一定）
@@ -96,7 +104,29 @@ IRIS_troops_exceed_negative_calculation = {
 
 
 	set_variable = { troops_exceed_negative_calculation_storage = troops_exceed_negative_calculation_now }
+
+	#计算最少所需基地
+	set_variable = { least_stable_garrison_field = troops_exceed_negative_calculation_exceed }
+	divide_variable = { least_stable_garrison_field = 48 }
+	set_temp_variable = { least_stable_garrison_field_temp = least_stable_garrison_field }
+	round_variable = least_stable_garrison_field_temp
+	if = {
+		limit = { check_variable = { least_stable_garrison_field > least_stable_garrison_field_temp } }
+		round_variable = least_stable_garrison_field
+		add_to_variable = { least_stable_garrison_field = 1 }
+	}
+	round_variable = least_stable_garrison_field
+
+	#添加负面
 	add_dynamic_modifier = {
 		modifier = IRIS_exceeding_military_punishment_modifier
+	}
+
+	if = {
+		limit = { IRIS_disable_military_restrictions_trigger = yes }
+		set_variable = { troops_exceed_negative_calculation_army_org_factor = 0 }
+		set_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value = 0 }
+		set_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = 0 }
+		set_variable = { troops_exceed_negative_calculation_consumer_training_time_army_factor = 0 }
 	}
 }
