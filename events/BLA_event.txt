@@ -533,6 +533,7 @@ country_event = {
         }
         add_political_power = -50
         custom_effect_tooltip = BLA_reform_blocked_desc
+		clr_country_flag = BLA_serfdom_question
 		ai_chance = {
 			base = 10
 		}
@@ -1243,6 +1244,64 @@ country_event = {
 	option = {
 		name = BLA_pol.48.a
 		BLA_bop_move_rightward = yes
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#再无嘶鸣
+country_event = {
+    id = BLA_pol.49
+    title = BLA_pol.49.t
+	desc = BLA_pol.49.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = BLA_pol.49.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#朝会
+country_event = {
+    id = BLA_pol.100
+    title = BLA_pol.100.t
+	desc = BLA_pol.100.desc
+	#picture = GFX_ungevent_1
+	is_triggered_only = yes
+	option = {
+		name = BLA_pol.100.a
+		BLA_gain_tsar_order = yes
+		hidden_effect = {
+			country_event = {id = BLA_pol.100 days = 365}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = BLA_pol.100.b
+		BLA_increase_all_opinion = yes
+		hidden_effect = {
+			country_event = {id = BLA_pol.100 days = 365}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+	option = {
+		name = BLA_pol.100.c
+		add_war_support = 0.05
+		add_manpower = 50000
+		add_political_power = 50
+		hidden_effect = {
+			country_event = {id = BLA_pol.100 days = 365}
+		}
+		trigger = {
+			has_war = yes
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -2068,6 +2127,9 @@ country_event = {
 	option = {
 		name = BLA_general.37.a
 		custom_effect_tooltip = BLA_untill_death_break_us_apart
+		hidden_effect = {
+			country_event = {id = BLA_pol.100}
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -3110,6 +3172,7 @@ country_event = {
         custom_effect_tooltip = BLA_revolution_is_coming_desc
         hidden_effect = {
             country_event = {id = BLA_rev.2 days = 15}
+			country_event = {id = BLA_rev.27 days = 3}
         }
 		ai_chance = {
 			base = 10
@@ -3977,6 +4040,49 @@ country_event = {
 		}
 	}
 }
+#糟糕的农业报告
+country_event = {
+    id = BLA_rev.26
+    title = BLA_rev.26.t
+	desc = BLA_rev.26.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+	trigger = {
+		tag = BLA
+		has_war_with = NAC
+		surrender_limit > 0.29
+		date > 3093.4.1
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
+	option = {
+		name = BLA_rev.26.a
+		remove_ideas = BLA_bread_basket
+		add_timed_idea = {idea = great_famine days = 300}
+		hidden_effect = {
+			news_event = {id = BLA_news.24 days = 3}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#海军的异动
+country_event = {
+    id = BLA_rev.27
+    title = BLA_rev.27.t
+	desc = BLA_rev.27.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = BLA_rev.27.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 #帝国残军
 country_event = {
     id = BLA_rev.999
@@ -4310,7 +4416,7 @@ country_event = {
 			BLA = {country_event = {id = BLA_dip.6 days = 6}}
 		}
 		ai_chance = {
-			base = 10
+			base = 100
 		}
 	}
 	option = {
@@ -4388,7 +4494,7 @@ country_event = {
 			country_event = {id = BLA_dip.10}
 		}
 		ai_chance = {
-			base = 10
+			base = 100
 			modifier = {
 				factor = 1000
 				has_government = communism
@@ -5388,7 +5494,81 @@ news_event = {
 		}
 	}
 }
-
+#3093年大饥荒
+news_event = {
+	id = BLA_news.24
+	title = BLA_news.24.t
+	desc = BLA_news.24.desc
+	picture = GFX_Current_War
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = BLA_news.24.a
+		if = {
+			limit = {
+				NOT = {has_idea = great_famine}
+			}
+			add_timed_idea = {idea = great_famine days = 300}
+		}
+		trigger = {
+			OR = {
+				tag = BLA
+				tag = HEL
+				tag = OPA
+				tag = HBR
+				tag = WAR
+			}
+		}
+	}
+	option = {
+		name = BLA_news.24.b
+		add_timed_idea = {idea = great_famine days = 300}
+		trigger = {
+			tag = NAC
+		}
+	}
+	option = {
+		name = BLA_news.24.c
+		trigger = {
+			NOT = {
+				tag = BLA
+			}
+			NOT = {
+				tag = NAC
+			}
+			NOT = {
+				tag = NWT
+			}
+			NOT = {
+				tag = OPA
+			}
+			NOT = {
+				tag = HBR
+			}
+			NOT = {
+				tag = WAR
+			}
+			NOT = {
+				tag = HEL
+			}
+			OR = {
+				is_IRIS_SAS_country = yes
+				is_IRIS_NAS_country = yes
+			}
+		}
+		add_timed_idea = {idea = great_famine_shock days = 200}
+	}
+	option = {
+		name = BLA_news.24.d
+		trigger = {
+			is_IRIS_SAS_country = no
+			is_IRIS_NAS_country = no
+		}
+	}
+}
 #
 country_event = {
 	id = BLA_lr.1

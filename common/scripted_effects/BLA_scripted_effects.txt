@@ -1041,6 +1041,23 @@ Rossiya_Revolution_NAC_army_effect = {
             division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.25"
             owner = NAC
         }
+        create_unit = {
+            division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.25"
+            owner = NAC
+        }
+        if = {
+            limit = {
+                NAC = {is_ai = yes}
+            }
+            create_unit = {
+                division = "name = \"真理解放军\" division_template = \"真理解放军\" start_experience_factor = 0.15"
+                owner = NAC
+            }
+            create_unit = {
+                division = "name = \"罗西亚红军\" division_template = \"罗西亚红军\" start_experience_factor = 0.25"
+                owner = NAC
+            }
+        }
         if = {
             limit = {
                 BLA = {has_idea = BLA_serfdom}
@@ -1231,6 +1248,9 @@ Rossiya_Revolution_Map_effect = {
                 transfer_state_to = NAC
                 Rossiya_Revolution_NAC_army_effect = yes
             }
+            849 = {
+                transfer_state_to = NAC
+            }
         }
         else = {
             265 = {
@@ -1241,6 +1261,9 @@ Rossiya_Revolution_Map_effect = {
             256 = {
                 transfer_state_to = NAC
                 Rossiya_Revolution_NAC_army_effect = yes
+            }
+            849 = {
+                transfer_state_to = NAC
             }
         }
         if = {
@@ -1263,9 +1286,19 @@ Rossiya_Revolution_Map_effect = {
                 add_core_of = ORE
                 Rossiya_Revolution_ORE_army_effect = yes
             }
+            854 = {
+                transfer_state_to = ORE
+                add_core_of = ORE
+                Rossiya_Revolution_ORE_army_effect = yes
+            }
         }
         else = {
             106 = {
+                transfer_state_to = ORE
+                add_core_of = ORE
+                Rossiya_Revolution_ORE_army_effect = yes
+            }
+            854 = {
                 transfer_state_to = ORE
                 add_core_of = ORE
                 Rossiya_Revolution_ORE_army_effect = yes
@@ -1769,6 +1802,7 @@ BLA_update_revolution_dynamic_modifier = {
         multiply_variable = {BLA_revolution_dynamic_army_morale_factor = BLA_morale}
         multiply_variable = {BLA_revolution_dynamic_army_org_factor = BLA_morale}
         multiply_variable = {BLA_revolution_dynamic_land_reinforce_rate = BLA_morale}
+        multiply_variable = {BLA_revolution_dynamic_equipment_capture_factor = BLA_equipment_capture_factor}
     }
 }
 BLA_calculate_youth_agenda = {
@@ -3248,8 +3282,16 @@ BLA_check_tsar_order = {
                     has_country_flag = BLA_tsar_order_recovered
                 }
             }
-            add_to_variable = {BLA_tsar_order = 1}
+            set_variable = {BLA_tsar_order_gain = BLA_tsar_order_limit}
+            multiply_variable = {BLA_tsar_order_gain = 0.5}
+            round_variable = BLA_tsar_order_gain
+            add_to_variable = {BLA_tsar_order = BLA_tsar_order_gain}
             set_country_flag = {flag = BLA_tsar_order_recovered days = 180 value = 1}
+        }
+        clamp_variable = {
+            var = BLA_tsar_order
+            max = BLA_tsar_order_limit
+            min = 0
         }
     }
 }
@@ -3320,11 +3362,35 @@ BLA_tsar_order_industry_effect = {
             add_extra_state_shared_building_slots = 2
             set_state_flag = extra_slot_gained
         }
+        if = {
+            limit = {
+                NOT = {has_state_flag = BLA_had_tsar_order}
+            }
+            set_state_flag = BLA_had_tsar_order
+        }
         owner = {
             hidden_effect = {
                 add_to_variable = {BLA_tsar_order = -1}
                 BLA_check_tsar_order = yes
             }
+        }
+    }
+}
+#获得沙皇政令
+BLA_gain_tsar_order = {
+    custom_effect_tooltip = BLA_gain_tsar_order_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_tsar_order = 1}
+        }
+    }
+}
+#获得沙皇政令上限
+BLA_gain_tsar_order_limit = {
+    custom_effect_tooltip = BLA_gain_tsar_order_limit_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_tsar_order_limit = 1}
         }
     }
 }

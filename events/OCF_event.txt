@@ -6,7 +6,527 @@ add_namespace = ANA
 add_namespace = OCF_PWR #战后议会重组
 add_namespace = OCF_storiette #小故事
 add_namespace = OCF_military_political #军政府
+add_namespace = OCF_RBANP #重建局自动国策
+add_namespace = OCF_PANP #政治自动国策
 
+@OCF_PANP_DAYS_FLAG = 105
+
+#重建局自动国策 未完成
+country_event = {
+    id = OCF_RBANP.01
+    title = OCF_RBANP.01.t
+    desc = OCF_RBANP.01.d
+    is_triggered_only = yes
+    picture = GFX_OCF_RBANP_1
+    trigger = {
+        tag = OCF
+    }
+    immediate = {
+        #农业重组
+        if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_zhengzhi_4
+            }
+            complete_national_focus = {
+                focus = OCF_zhengzhi_4
+                use_side_message = yes
+                originator_name = OCF_zhengzhi_2_ideas
+            }
+            
+            deactivate_shine_on_focus = OCF_zhengzhi_4
+            activate_shine_on_focus = OCF_zhengzhi_3
+            country_event = { id = OCF_RBANP.01 days = 105 }
+        }
+        #工业重组
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_zhengzhi_3
+            }
+            complete_national_focus = {
+                focus = OCF_zhengzhi_3
+                use_side_message = yes
+                originator_name = OCF_zhengzhi_2_ideas
+            }
+            deactivate_shine_on_focus = OCF_zhengzhi_3
+            activate_shine_on_focus = OCF_zhengzhi_5
+            country_event = { id = OCF_RBANP.01 days = 105 }
+        }
+        #完成本岛现代化
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_zhengzhi_5
+            }
+            complete_national_focus = {
+                focus = OCF_zhengzhi_5
+                use_side_message = yes
+                originator_name = OCF_zhengzhi_2_ideas
+            }
+            deactivate_shine_on_focus = OCF_zhengzhi_5
+            activate_shine_on_focus = OCF_zhengzhi_6
+            country_event = { id = OCF_RBANP.01 days = 105 }
+        }
+        #卡仕角化工厂
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_zhengzhi_6
+            }
+            complete_national_focus = {
+                focus = OCF_zhengzhi_6
+                use_side_message = yes
+                originator_name = OCF_zhengzhi_2_ideas
+            }
+            deactivate_shine_on_focus = OCF_zhengzhi_6
+            activate_shine_on_focus = OCF_zhengzhi_7
+            country_event = { id = OCF_RBANP.01 days = 105 }
+        }
+        #扩建佛兰斯拉钢铁厂
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_zhengzhi_7
+            }
+            complete_national_focus = {
+                focus = OCF_zhengzhi_7
+                use_side_message = yes
+                originator_name = OCF_zhengzhi_2_ideas
+            }
+            deactivate_shine_on_focus = OCF_zhengzhi_7
+            activate_shine_on_focus = OCF_zhengzhi_8
+            country_event = { id = OCF_RBANP.01 days = 105 }
+        }
+        #修复损毁工业
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_zhengzhi_8
+            }
+            complete_national_focus = {
+                focus = OCF_zhengzhi_8
+                use_side_message = yes
+                originator_name = OCF_zhengzhi_2_ideas
+            }
+            deactivate_shine_on_focus = OCF_zhengzhi_8
+            activate_shine_on_focus = OCF_zhengzhi_11
+            country_event = { id = OCF_RBANP.01 days = 105 }
+        }
+        #东彼岸群岛现代化
+        else_if = {
+            limit = {
+                OR = {
+                    has_shine_effect_on_focus = OCF_zhengzhi_11
+                    NOT = { has_completed_focus = OCF_zhengzhi_9 }
+                }
+            }
+            if = {
+                limit = { NOT = { has_completed_focus = OCF_zhengzhi_11 } }
+                complete_national_focus = {
+                    focus = OCF_zhengzhi_11
+                    use_side_message = yes
+                    originator_name = OCF_zhengzhi_2_ideas
+                }
+                deactivate_shine_on_focus = OCF_zhengzhi_11
+            }
+            if = { #如果是AI 或者 完成了法案
+                limit = {
+                    OR = {
+                        is_ai = yes
+                        has_country_flag = OCF_politics_12_flag
+                    }
+                    controls_state = 129
+                    controls_state = 772
+                    controls_state = 771
+                    controls_state = 116
+                    controls_state = 156
+                }
+                activate_shine_on_focus = OCF_zhengzhi_9
+                country_event = { id = OCF_RBANP.01 days = 105 }
+            }
+            else_if = { #如果把岛弄丢了
+                limit = {
+                    has_country_flag = OCF_politics_12_flag
+                    OR = {
+                        NOT = { controls_state = 129 }
+                        NOT = { controls_state = 772 }
+                        NOT = { controls_state = 771 }
+                        NOT = { controls_state = 116 }
+                        NOT = { controls_state = 156 }
+                    }
+                }
+                country_event = {}
+            }
+            else = { #法案未通过
+                country_event = {}
+            }
+        }
+
+    }
+}
+
+#自动政治国策
+country_event = {
+    id = OCF_PANP.01
+    title = OCF_PANP.01.t
+    desc = OCF_PANP.01.d
+    is_triggered_only = yes
+    picture = GFX_OCF_PANP_01
+    trigger = {
+        tag = OCF
+        has_country_flag = OCF_PANP_01_flag #自动政治国策被启用
+    }
+    immediate = {
+        #呼吁团结
+        if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_9
+            }
+            complete_national_focus = {
+                focus = OCF_politics_9
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_9
+            activate_shine_on_focus = OCF_politics_10
+            set_country_flag = { flag = OCF_PANP_politics_10_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #清除设备
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_10
+            }
+            complete_national_focus = {
+                focus = OCF_politics_10
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_10
+            activate_shine_on_focus = OCF_politics_11
+            set_country_flag = { flag = OCF_PANP_politics_11_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #大洋之音
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_11
+            }
+            complete_national_focus = {
+                focus = OCF_politics_11
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_11
+            activate_shine_on_focus = OCF_politics_12
+            set_country_flag = { flag = OCF_PANP_politics_12_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #加强岛链交流
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_12
+            }
+            complete_national_focus = {
+                focus = OCF_politics_12
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_12
+            if = { # 左派
+                limit = { has_completed_focus = OCF_politics_3 }
+                activate_shine_on_focus = OCF_politics_5
+                set_country_flag = { flag = OCF_PANP_politics_5_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+                country_event = { id = OCF_PANP.01 days = 105 }
+            }
+            else_if = { # 民主派
+                limit = { has_completed_focus = OCF_politics_4 }
+                activate_shine_on_focus = OCF_politics_17
+                set_country_flag = { flag = OCF_PANP_politics_17_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+                country_event = { id = OCF_PANP.01 days = 105 }
+            }
+        }
+
+        #左派 与工会合作
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_5
+            }
+            complete_national_focus = {
+                focus = OCF_politics_5
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_5
+            activate_shine_on_focus = OCF_politics_7
+            set_country_flag = { flag = OCF_PANP_politics_7_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #促进人民企业兴起
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_7
+            }
+            complete_national_focus = {
+                focus = OCF_politics_7
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_7
+            activate_shine_on_focus = OCF_politics_8
+            set_country_flag = { flag = OCF_PANP_politics_8_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #团结工人
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_8
+            }
+            complete_national_focus = {
+                focus = OCF_politics_8
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_8
+            activate_shine_on_focus = OCF_politics_14
+            set_country_flag = { flag = OCF_PANP_politics_14_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #提高最低时薪
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_14
+            }
+            complete_national_focus = {
+                focus = OCF_politics_14
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_14
+            activate_shine_on_focus = OCF_politics_13
+            set_country_flag = { flag = OCF_PANP_politics_13_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #实行8小时工作制
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_13
+            }
+            complete_national_focus = {
+                focus = OCF_politics_13
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_13
+            # activate_shine_on_focus = OCF_politics_13
+            # country_event = { id = OCF_PANP.01 days = 105 }
+        }
+
+        #民主派 3076年的教训
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_17
+            }
+            complete_national_focus = {
+                focus = OCF_politics_17
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_17
+            activate_shine_on_focus = OCF_politics_18
+            set_country_flag = { flag = OCF_PANP_politics_18_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #反独裁法案
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_18
+            }
+            complete_national_focus = {
+                focus = OCF_politics_18
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_18
+            activate_shine_on_focus = OCF_politics_19
+            set_country_flag = { flag = OCF_PANP_politics_19_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #承诺民主自由
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_19
+            }
+            complete_national_focus = {
+                focus = OCF_politics_19
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_19
+            activate_shine_on_focus = OCF_politics_21
+            set_country_flag = { flag = OCF_PANP_politics_21_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #强化政府
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_21
+            }
+            complete_national_focus = {
+                focus = OCF_politics_21
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_21
+            activate_shine_on_focus = OCF_politics_20
+            set_country_flag = { flag = OCF_PANP_politics_20_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #鼓励创新
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_20
+            }
+            complete_national_focus = {
+                focus = OCF_politics_20
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_20
+            activate_shine_on_focus = OCF_politics_22
+            set_country_flag = { flag = OCF_PANP_politics_22_flag days = @OCF_PANP_DAYS_FLAG value = 1 }
+            country_event = { id = OCF_PANP.01 days = 105 }
+        }
+        #鼓励创新
+        else_if = {
+            limit = {
+                has_shine_effect_on_focus = OCF_politics_22
+            }
+            complete_national_focus = {
+                focus = OCF_politics_22
+                use_side_message = yes
+                originator_name = OCF_Executive_Committee_House_Representatives
+            }
+            deactivate_shine_on_focus = OCF_politics_22
+            # activate_shine_on_focus = OCF_politics_22
+            # country_event = { id = OCF_PANP.01 days = 105 }
+        }
+    }
+}
+
+#自动政治国策 被中止
+country_event = {
+    id = OCF_PANP.02
+    title = OCF_PANP.02.t
+    desc = OCF_PANP.02.d
+    # is_triggered_only = yes
+    picture = GFX_OCF_PANP_01
+    trigger = {
+        tag = OCF
+        has_country_flag = OCF_PANP_01_flag #自动政治国策被启用
+        OR = {
+            AND = {
+                has_completed_focus = OCF_politics_3 #左派
+                NOT = { #不是对应的执政党
+                    has_country_flag = OCF_control_government_flag_1
+                    has_country_flag = OCF_control_government_flag_5
+                    has_country_flag = OCF_control_government_flag_8
+                }
+            }
+            AND = {
+                has_completed_focus = OCF_politics_4 #民主派
+                NOT = { #不是对应的执政党
+                    has_country_flag = OCF_control_government_flag_3
+                    has_country_flag = OCF_control_government_flag_4
+                    has_country_flag = OCF_control_government_flag_5
+                    has_country_flag = OCF_control_government_flag_7
+                }
+            }
+        }
+    }
+    immediate = {
+        hidden_effect = {
+            clr_country_flag = OCF_PANP_01_flag
+            if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_9 }
+                deactivate_shine_on_focus = OCF_politics_9
+                clr_country_flag = OCF_PANP_politics_9_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_10 }
+                deactivate_shine_on_focus = OCF_politics_10
+                clr_country_flag = OCF_PANP_politics_10_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_11 }
+                deactivate_shine_on_focus = OCF_politics_11
+                clr_country_flag = OCF_PANP_politics_11_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_12 }
+                deactivate_shine_on_focus = OCF_politics_12
+                clr_country_flag = OCF_PANP_politics_12_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_5 }
+                deactivate_shine_on_focus = OCF_politics_5
+                clr_country_flag = OCF_PANP_politics_5_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_7 }
+                deactivate_shine_on_focus = OCF_politics_7
+                clr_country_flag = OCF_PANP_politics_7_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_8 }
+                deactivate_shine_on_focus = OCF_politics_8
+                clr_country_flag = OCF_PANP_politics_8_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_13 }
+                deactivate_shine_on_focus = OCF_politics_13
+                clr_country_flag = OCF_PANP_politics_13_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_14 }
+                deactivate_shine_on_focus = OCF_politics_14
+                clr_country_flag = OCF_PANP_politics_14_flag
+            }
+
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_17 }
+                deactivate_shine_on_focus = OCF_politics_17
+                clr_country_flag = OCF_PANP_politics_17_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_18 }
+                deactivate_shine_on_focus = OCF_politics_18
+                clr_country_flag = OCF_PANP_politics_18_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_19 }
+                deactivate_shine_on_focus = OCF_politics_19
+                clr_country_flag = OCF_PANP_politics_19_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_21 }
+                deactivate_shine_on_focus = OCF_politics_21
+                clr_country_flag = OCF_PANP_politics_21_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_20 }
+                deactivate_shine_on_focus = OCF_politics_20
+                clr_country_flag = OCF_PANP_politics_20_flag
+            }
+            else_if = {
+                limit = { has_shine_effect_on_focus = OCF_politics_22 }
+                deactivate_shine_on_focus = OCF_politics_22
+                clr_country_flag = OCF_PANP_politics_22_flag
+            }
+        }
+    }
+    option = {
+        name = OCF_PANP.02.a
+        ai_chance = {
+            base = 10
+        }
+    }
+}
 
 #先锋党政变
 country_event = {
@@ -1972,10 +2492,12 @@ country_event = {
         }
     }
     immediate = {
-        hidden_effect = {
-            complete_national_focus = OCF_politics_1
-        }
         set_country_flag = OCF_election_season_is_underway_flag
+        hidden_effect = {
+            country_event = {
+                id = OCF.6 days = 15
+            }
+        }
     }
     option = {
         name = OCF.100.a
@@ -2035,7 +2557,7 @@ country_event = {
     option = {
         name = OCF.100.e
         ai_chance = {
-            base = 0
+            base = 15
         }
         activate_mission = OCF_In_the_national_public_opinion_survey
         activate_mission = OCF_In_the_national_public_opinion_survey_time
@@ -2101,6 +2623,9 @@ country_event = {
         }
 
         OCF_reset_ruling_party = yes
+        hidden_effect = {
+            complete_national_focus = OCF_politics_1
+        }
 
         set_country_flag = has_OCF_101_flag #是否进行了第一次选举
     }
@@ -2127,6 +2652,9 @@ country_event = {
         }
         ai_chance = {
             base = 2
+        }
+        hidden_effect = {
+            complete_national_focus = OCF_politics_1
         }
 
         add_timed_idea = { idea = OCF_controversial_election_results days = 120 }
@@ -3309,11 +3837,13 @@ country_event = {
     trigger = {}
     option = {
         name = OCF_topic.7021.a
+        set_country_flag = OCF_topic_7021_a_flag
+        custom_effect_tooltip = OCF_New_Resolution
         hidden_effect = {
-            country_event = {
-                id = OCF_topic.7023
-                days = 10
-            }
+            # country_event = {
+            #     id = OCF_topic.7023
+            #     days = 10
+            # }
         }
     }
 }
@@ -3363,6 +3893,9 @@ country_event = {
         add_stability = 0.1
         remove_ideas = OCF_restless_ambitious_person_idea
         set_country_flag = OCF_topic_7024_flag
+        hidden_effect = {
+            country_event = { id = ocfnews.14 }
+        }
     }
 }
 
@@ -3557,7 +4090,184 @@ country_event = {
     }
 }
 
+#任职演讲
+country_event = {
+    id = OCF_topic.7034
+    title = OCF_topic.7034.t
+    desc = OCF_topic.7034.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7034.a
+        country_event = { id = OCF_topic.7035 }
+    }
+}
+country_event = {
+    id = OCF_topic.7035
+    title = OCF_topic.7035.t
+    desc = OCF_topic.7035.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7035.a
+    }
+    option = {
+        name = OCF_topic.7035.b
+    }
+}
 
+#少女归来
+country_event = {
+    id = OCF_topic.7036
+    title = OCF_topic.7036.t
+    desc = OCF_topic.7036.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7036.a
+    }
+}
+
+#布琼布拉的晚宴·其一
+country_event = {
+    id = OCF_topic.7037
+    title = OCF_topic.7037.t
+    desc = OCF_topic.7037.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7037.a
+        country_event = { id = OCF_topic.7038 days = 3 }
+    }
+}
+
+#布琼布拉的晚宴·其二
+country_event = {
+    id = OCF_topic.7038
+    title = OCF_topic.7038.t
+    desc = OCF_topic.7038.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7038.a
+        country_event = { id = OCF_topic.7039 }
+    }
+}
+#布琼布拉的晚宴·其二
+country_event = {
+    id = OCF_topic.7039
+    title = OCF_topic.7039.t
+    desc = OCF_topic.7039.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7039.a
+        country_event = { id = OCF_topic.7040 days = 3 }
+    }
+}
+
+#布琼布拉的晚宴·其三
+country_event = {
+    id = OCF_topic.7040
+    title = OCF_topic.7040.t
+    desc = OCF_topic.7040.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7040.a
+        country_event = { id = OCF_topic.7041 }
+    }
+}
+#布琼布拉的晚宴·其三
+country_event = {
+    id = OCF_topic.7041
+    title = OCF_topic.7041.t
+    desc = OCF_topic.7041.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7041.a
+        country_event = { id = OCF_topic.7042 days = 3 }
+    }
+}
+
+#布琼布拉的晚宴·其四
+country_event = {
+    id = OCF_topic.7042
+    title = OCF_topic.7042.t
+    desc = OCF_topic.7042.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7042.a
+        country_event = { id = OCF_topic.7043 days = 3 }
+    }
+}
+
+#布琼布拉的晚宴·其五
+country_event = {
+    id = OCF_topic.7043
+    title = OCF_topic.7043.t
+    desc = OCF_topic.7043.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7043.a
+        country_event = { id = OCF_topic.7044 }
+    }
+}
+#布琼布拉的晚宴·其五
+country_event = {
+    id = OCF_topic.7044
+    title = OCF_topic.7044.t
+    desc = OCF_topic.7044.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7044.a
+        country_event = { id = ocfnews.15 }
+    }
+}
+
+#卡仕角行动
+country_event = {
+    id = OCF_topic.7045
+    title = OCF_topic.7045.t
+    desc = OCF_topic.7045.d
+    is_triggered_only = yes
+    #fire_only_once = yes
+    # picture = GFX_OCF_topic_7033
+    trigger = {}
+    option = {
+        name = OCF_topic.7045.a
+        set_country_flag = OCF_topic_7045_flag
+        custom_effect_tooltip = OCF_topic_7045_tt
+        set_variable = { OCF_internal_review_Investigation_progress = 0 }
+        activate_mission = OCE_situation_deteriorating
+    }
+}
 #议会随机非党派事件(包括议会吵架)
 
 #捐赠
