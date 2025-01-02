@@ -29,6 +29,8 @@ create_character = {
                     log="当前角色：[t_role]"
                     log="流亡角色：[t_role_2]"
                     set_variable = { THIS.role = [t_role_2] }
+                    log="角色经验：[?this.role_experience]"
+                    set_variable = { this.role_experience = [t_role_experience] }
                     log="存入角色：[t_role]"
                     log="流亡角色国籍：[t_tag]"
                     set_variable = { role_owner = [t_tag] }
@@ -40,13 +42,29 @@ create_character = {
             t_state = "[?THIS.GetID]"
             t_role = "[?THIS.role]"
             t_role_2 = "[?this.role_@PREV]"
+            t_role_experience = "[?this.role_experience_@PREV]"
         }
     }
     else = {
         add_to_variable = { role_index = 1 } #存储于省份
+        set_variable = { role_owner = PREV.PREV } #存储国家TAG在省份
+        if = {
+            limit = { check_variable = { role_experience = -1 } }
+            random_list = {
+                1 = { set_variable = { role_experience = 0 } }
+                1 = { set_variable = { role_experience = 10 } }
+                1 = { set_variable = { role_experience = 20 } }
+                1 = { set_variable = { role_experience = 30 } }
+                1 = { set_variable = { role_experience = 40 } }
+                1 = { set_variable = { role_experience = 50 } }
+                1 = { set_variable = { role_experience = 60 } }
+            }
+            
+        }
+
         meta_effect = { #THIS 是地区  PREV是国家
             text = {
-                set_variable = { role_owner = PREV.PREV } #存储国家TAG在省份
+
                 [t_tag] = {
                     generate_character = {
                         token_base = [t_tag]_new_character_[t_state]_index_[t_index]
@@ -89,12 +107,17 @@ exile_create_character = {
         set_variable = {
             this.role_@PREV = this.role
         }
+        log="角色经验：[?this.role_experience]"
+        set_variable = {
+            this.role_experience_@PREV = this.role_experience
+        }
         log="存入角色：[?this.role_@PREV]"
         log="角色国籍：[?PREV.GetTag]"
         add_to_array = {
             this.exile_role_array = PREV
         }
         log="-------------------------"
+        set_variable = { this.role_experience = -1 }
     }
 }
 
@@ -102,6 +125,7 @@ exile_create_character = {
 #清除该地区行政官
 del_create_character = {
     this = { set_variable = { role = token:IRIS_token_NULL } }
+    set_variable = { role_experience = -1 }
 }
 
 
@@ -151,7 +175,7 @@ create_character_promote = {
     random_list = {
         1 = { create_character_promote_fortification_engineer = yes }
     }
-
+    set_variable = { prev.role_experience = -1 }
     #加上头像
     meta_effect = {
         text = {
@@ -431,7 +455,7 @@ create_character_promote = {
                 }
             }
         }
-        ch = "[?prev.role.GetTokenLocalizedKey]"
+        ch = "[?prev.role.GetTokenKey]"
         ch_tag = "[?owner.GetTag]"
     }
 
@@ -462,7 +486,7 @@ create_character_promote_fortification_engineer = {
                 }
             }
         }
-        ch = "[?prev.role.GetTokenLocalizedKey]"
+        ch = "[?prev.role.GetTokenKey]"
         ch_tag = "[?owner.GetTag]"
     }
 }
