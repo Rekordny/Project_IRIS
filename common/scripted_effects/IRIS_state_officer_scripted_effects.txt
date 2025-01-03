@@ -1,0 +1,1464 @@
+#创建地区行政官
+
+#TAG = {STATE = {create_character = yes}}
+create_character = {
+    if = {
+        limit = {
+            PREV.PREV = { NOT = { has_country_flag = not_create_character_flag } }
+        }
+        if = {
+            limit = {
+                is_in_array = {
+                    array = THIS.exile_role_array
+                    value = PREV
+                }
+            }
+            # meta_effect = {
+            #     text = {
+            #         log="[t_tag]"
+            #         log="[t_index]"
+            #         set_temp_variable = { temp = role_@[t_tag] }
+            #         log="-------------------------"
+            #         log="[?temp]"
+            #     }
+            #     t_tag = "[?PREV.PREV.GetTag]"
+            #     t_index = "[?THIS.role_index]"
+            # }
+            meta_effect = {
+                text = {
+                    log="-------------------------"
+                    log="地区流亡角色回归"
+                    log="省份代号：[t_state]"
+                    [t_state] = {
+                        log="当前角色：[t_role]"
+                        log="流亡角色：[t_role_2]"
+                        set_variable = { THIS.role = [t_role_2] }
+                        log="角色经验：[?this.role_experience]"
+                        set_variable = { this.role_experience = [t_role_experience] }
+                        log="存入角色：[t_role]"
+                        log="流亡角色国籍：[t_tag]"
+                        set_variable = { role_owner = [t_tag] }
+                        remove_from_array = { [t_state].exile_role_array = [t_tag] }
+                        log="-------------------------"
+                    }
+                }
+                t_tag = "[?PREV.GetTag]"
+                t_state = "[?THIS.GetID]"
+                t_role = "[?THIS.role]"
+                t_role_2 = "[?this.role_@PREV]"
+                t_role_experience = "[?this.role_experience_@PREV]"
+            }
+        }
+        else = {
+            add_to_variable = { role_index = 1 } #存储于省份
+            set_variable = { role_owner = PREV.PREV } #存储国家TAG在省份
+            if = {
+                # limit = { check_variable = { THIS.role_experience = -1 } }
+                random_list = {
+                    1 = { set_variable = { THIS.role_experience = 0 } }
+                    1 = { set_variable = { THIS.role_experience = 10 } }
+                    1 = { set_variable = { THIS.role_experience = 20 } }
+                    1 = { set_variable = { THIS.role_experience = 30 } }
+                    1 = { set_variable = { THIS.role_experience = 40 } }
+                    1 = { set_variable = { THIS.role_experience = 50 } }
+                    1 = { set_variable = { THIS.role_experience = 60 } }
+                    1 = { set_variable = { THIS.role_experience = 70 } }
+                    1 = { set_variable = { THIS.role_experience = 80 } }
+                    1 = { set_variable = { THIS.role_experience = 90 } }
+                    1 = { set_variable = { THIS.role_experience = 100 } }
+                }
+
+            }
+
+            meta_effect = { #THIS 是地区  PREV是国家
+                text = {
+
+                    [t_tag] = {
+                        generate_character = {
+                            token_base = [t_tag]_new_character_[t_state]_index_[t_index]
+                        }
+                    }
+                    set_variable = {
+                        global.new_character = token:[t_tag]_new_character_[t_state]_index_[t_index]
+                    }
+                    add_to_array = {
+                        global.new_character_array = global.new_character
+                    }
+                    create_character_image = yes #随机头像
+                }
+                t_tag = "[?PREV.PREV.GetTag]"
+                t_state = "[?THIS.GetID]"
+                t_index = "[?THIS.role_index]"
+            }
+            set_variable = {
+                THIS.role = global.new_character
+            }
+        }
+    }
+}
+
+#流亡当地角色
+exile_create_character = {
+    if = {
+        limit = {
+            not = {
+                is_in_array = {
+                    array = this.exile_role_array
+                    value = PREV
+                }
+            }
+            not = { check_variable = { role = token:IRIS_token_NULL } }
+        }
+        log="-------------------------"
+        log="地区人物流亡"
+        log="流亡地区：[?this.GetID]"
+        log="流亡角色：[?this.role]"
+        set_variable = {
+            this.role_@PREV = this.role
+        }
+        log="角色经验：[?this.role_experience]"
+        set_variable = {
+            this.role_experience_@PREV = this.role_experience
+        }
+        log="存入角色：[?this.role_@PREV]"
+        log="角色国籍：[?PREV.GetTag]"
+        add_to_array = {
+            this.exile_role_array = PREV
+        }
+        log="-------------------------"
+        # set_variable = { this.role_experience = -1 }
+    }
+}
+
+
+#清除该地区行政官
+del_create_character = {
+    this = { set_variable = { role = token:IRIS_token_NULL } }
+    # set_variable = { role_experience = -1 }
+}
+
+
+
+#随机头像
+#输入 global.new_character
+create_character_image = {
+    if = {
+        limit = {
+            owner = { original_tag = KIV }
+        }
+        random_list = {
+            1 = { add_to_array = { global.new_character_image_kiv_1_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_kiv_2_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_kiv_3_array = global.new_character } }
+        }
+    }
+    else = {
+        random_list = {
+            #idea_europe_generic_land_1 ~ idea_europe_generic_land_18
+            1 = { add_to_array = { global.new_character_image_1_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_2_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_3_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_4_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_5_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_6_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_7_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_8_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_9_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_10_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_11_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_12_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_13_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_14_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_15_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_16_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_17_array = global.new_character } }
+            1 = { add_to_array = { global.new_character_image_18_array = global.new_character } }
+        }
+    }
+}
+
+
+#提拔
+create_character_promote = {
+    #随机特质
+    if = {
+        limit = { not = { check_variable = { prev.role_experience > 33 } } }
+        random_list = {
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_workhorse_flag }
+                }
+                create_character_promote_T_workhorse_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_gentleman_flag }
+                }
+                create_character_promote_T_gentleman_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_prince_flag }
+                }
+                create_character_promote_T_prince_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_backstabber_flag }
+                }
+                create_character_promote_T_backstabber_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_charmer_flag }
+                }
+                create_character_promote_T_charmer_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_engineer_flag }
+                }
+                create_character_promote_T_engineer_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_war_industrialist_flag }
+                }
+                create_character_promote_T_war_industrialist_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_Planner_of_industry_flag }
+                }
+                create_character_promote_T_Planner_of_industry_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_financier_flag }
+                }
+                create_character_promote_T_financier_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_armaments_organizer_flag }
+                }
+                create_character_promote_T_armaments_organizer_N = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_quartermaster_general_flag }
+                }
+                create_character_promote_T_quartermaster_general_N = yes
+            }
+        }
+    }
+    else_if = {
+        limit = { not = { check_variable = { prev.role_experience > 66 } } }
+        random_list = {
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_workhorse_flag }
+                }
+                create_character_promote_T_workhorse_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_gentleman_flag }
+                }
+                create_character_promote_T_gentleman_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_prince_flag }
+                }
+                create_character_promote_T_prince_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_backstabber_flag }
+                }
+                create_character_promote_T_backstabber_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_charmer_flag }
+                }
+                create_character_promote_T_charmer_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_engineer_flag }
+                }
+                create_character_promote_T_engineer_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_war_industrialist_flag }
+                }
+                create_character_promote_T_war_industrialist_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_Planner_of_industry_flag }
+                }
+                create_character_promote_T_Planner_of_industry_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_financier_flag }
+                }
+                create_character_promote_T_financier_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_armaments_organizer_flag }
+                }
+                create_character_promote_T_armaments_organizer_R = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_quartermaster_general_flag }
+                }
+                create_character_promote_T_quartermaster_general_R = yes
+            }
+        }
+    }
+    else = {
+        random_list = {
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_workhorse_flag }
+                }
+                create_character_promote_T_workhorse_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_gentleman_flag }
+                }
+                create_character_promote_T_gentleman_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_prince_flag }
+                }
+                create_character_promote_T_prince_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_backstabber_flag }
+                }
+                create_character_promote_T_backstabber_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_charmer_flag }
+                }
+                create_character_promote_T_charmer_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_engineer_flag }
+                }
+                create_character_promote_T_engineer_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_war_industrialist_flag }
+                }
+                create_character_promote_T_war_industrialist_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_Planner_of_industry_flag }
+                }
+                create_character_promote_T_Planner_of_industry_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_financier_flag }
+                }
+                create_character_promote_T_financier_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_armaments_organizer_flag }
+                }
+                create_character_promote_T_armaments_organizer_S = yes
+            }
+            1 = {
+                modifier = {
+                    factor = 0
+                    owner = { has_country_flag = T_quartermaster_general_flag }
+                }
+                create_character_promote_T_quartermaster_general_S = yes
+            }
+        }
+    }
+
+    # set_variable = { prev.role_experience = -1 }
+    #加上头像
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_1_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_Portrait_Europe_Generic_land_1_small" }
+                        civilian = { small ="GFX_Portrait_Europe_Generic_land_1_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_2_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_Portrait_Europe_Generic_land_2_small" }
+                        civilian = { small ="GFX_Portrait_Europe_Generic_land_2_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_3_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_Portrait_Europe_Generic_land_3_small" }
+                        civilian = { small ="GFX_Portrait_Europe_Generic_land_3_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_4_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_Portrait_Europe_Generic_land_4_small" }
+                        civilian = { small ="GFX_Portrait_Europe_Generic_land_4_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_5_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_Portrait_Europe_Generic_land_5_small" }
+                        civilian = { small ="GFX_Portrait_Europe_Generic_land_5_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_6_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_6" }
+                        civilian = { small ="GFX_idea_europe_generic_land_6" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_7_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_7" }
+                        civilian = { small ="GFX_idea_europe_generic_land_7" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_8_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_8" }
+                        civilian = { small ="GFX_idea_europe_generic_land_8" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_9_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_9" }
+                        civilian = { small ="GFX_idea_europe_generic_land_9" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_10_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_10" }
+                        civilian = { small ="GFX_idea_europe_generic_land_10" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_11_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_11" }
+                        civilian = { small ="GFX_idea_europe_generic_land_11" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_12_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_12" }
+                        civilian = { small ="GFX_idea_europe_generic_land_12" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_13_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_portrait_europe_generic_land_13_small" }
+                        civilian = { small ="GFX_portrait_europe_generic_land_13_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_14_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_14" }
+                        civilian = { small ="GFX_idea_europe_generic_land_14" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_15_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_15" }
+                        civilian = { small ="GFX_idea_europe_generic_land_15" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_16_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_16" }
+                        civilian = { small ="GFX_idea_europe_generic_land_16" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_17_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_17" }
+                        civilian = { small ="GFX_idea_europe_generic_land_17" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_18_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_idea_europe_generic_land_18" }
+                        civilian = { small ="GFX_idea_europe_generic_land_18" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_kiv_1_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_portrait_generic_KIV_federal_student_union_administrator_A_1_small" }
+                        civilian = { small ="GFX_portrait_generic_KIV_federal_student_union_administrator_A_1_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_kiv_2_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_portrait_generic_KIV_federal_student_union_administrator_A_1_0_small" }
+                        civilian = { small ="GFX_portrait_generic_KIV_federal_student_union_administrator_A_1_0_small" }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        is_in_array = {
+                            array = global.new_character_image_kiv_3_array
+                            value = prev.role
+                        }
+                    }
+                    set_portraits = {
+                        character = [ch]
+                        army = { small ="GFX_portrait_generic_KIV_valkyrie_student_A_1_small" }
+                        civilian = { small ="GFX_portrait_generic_KIV_valkyrie_student_A_1_small" }
+                    }
+                }
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+
+
+
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                [ch_state] = {
+                    set_variable = { role = token:IRIS_token_NULL_temp }
+                }
+            }
+        }
+        ch_tag = "[?owner.GetTag]"
+        ch_state = "[?THIS.GetID]"
+    }
+}
+
+#浮夸的实干家
+create_character_promote_T_workhorse_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_workhorse_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_workhorse_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#安分的实干家
+create_character_promote_T_workhorse_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_workhorse_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_workhorse_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#称职的实干家
+create_character_promote_T_workhorse_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_workhorse_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_workhorse_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#吝啬的绅士
+create_character_promote_T_gentleman_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_gentleman_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_gentleman_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#礼貌的绅士
+create_character_promote_T_gentleman_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_gentleman_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_gentleman_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#慷慨的绅士
+create_character_promote_T_gentleman_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_gentleman_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_gentleman_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#温和的巨头
+create_character_promote_T_prince_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_prince_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_prince_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#强劲的巨头
+create_character_promote_T_prince_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_prince_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_prince_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#骇人的巨头
+create_character_promote_T_prince_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_prince_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_prince_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#张扬的阴谋家
+create_character_promote_T_backstabber_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_backstabber_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_backstabber_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#沉默的阴谋家
+create_character_promote_T_backstabber_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_backstabber_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_backstabber_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#幕后的阴谋家
+create_character_promote_T_backstabber_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_backstabber_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_backstabber_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#蹩脚的魅惑者
+create_character_promote_T_charmer_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_charmer_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_charmer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#熟练的魅惑者
+create_character_promote_T_charmer_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_charmer_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_charmer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#健谈的魅惑者
+create_character_promote_T_charmer_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_charmer_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_charmer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#贪污的军事工程师
+create_character_promote_T_engineer_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_engineer_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_engineer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#严谨的军事工程师
+create_character_promote_T_engineer_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_engineer_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_engineer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#偏执的军事工程师
+create_character_promote_T_engineer_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_engineer_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_engineer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#新晋的战争企业家
+create_character_promote_T_war_industrialist_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_war_industrialist_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_war_industrialist_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#平庸的战争企业家
+create_character_promote_T_war_industrialist_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_war_industrialist_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_war_industrialist_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#激进的战争企业家
+create_character_promote_T_war_industrialist_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_war_industrialist_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_war_industrialist_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#生疏的工业规划师
+create_character_promote_T_Planner_of_industry_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_Planner_of_industry_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_Planner_of_industry_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#专业的工业规划师
+create_character_promote_T_Planner_of_industry_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_Planner_of_industry_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_Planner_of_industry_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#资深的工业规划师
+create_character_promote_T_Planner_of_industry_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_Planner_of_industry_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_Planner_of_industry_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#刁钻的金融家
+create_character_promote_T_financier_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_financier_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_financier_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#稳健的金融家
+create_character_promote_T_financier_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_financier_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_financier_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#远见的金融家
+create_character_promote_T_financier_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_financier_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_financier_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#生硬的军备组织者
+create_character_promote_T_armaments_organizer_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_armaments_organizer_N }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_armaments_organizer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#灵活的军备组织者
+create_character_promote_T_armaments_organizer_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_armaments_organizer_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_armaments_organizer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#高效的军备组织者
+create_character_promote_T_armaments_organizer_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_armaments_organizer_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_armaments_organizer_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+
+#怠慢的军需局局长
+create_character_promote_T_quartermaster_general_N = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_armaments_organizer_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_quartermaster_general_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#廉洁的军需局局长
+create_character_promote_T_quartermaster_general_R = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_armaments_organizer_R }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_quartermaster_general_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}
+#严格的军需局局长
+create_character_promote_T_quartermaster_general_S = {
+    meta_effect = {
+        text = {
+            [ch_tag] = {
+                add_advisor_role = {
+                    Character = [ch]
+                    advisor = {
+                        slot = political_advisor
+                        traits = { T_armaments_organizer_S }
+                        available = yes
+                        cost = 100
+                    }
+                }
+                add_to_variable = { currently_promoted_regional_role = 1 }
+                set_country_flag = T_quartermaster_general_flag
+            }
+        }
+        ch = "[?prev.role.GetTokenKey]"
+        ch_tag = "[?owner.GetTag]"
+    }
+}

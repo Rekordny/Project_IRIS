@@ -1,0 +1,267 @@
+#火车国
+#御一夜铁路公司
+RLN_train_armor_organization = {
+    icon = GFX_idea_generic_tank_manufacturer_3
+    allowed = {
+        tag = RLN
+    }
+    equipment_type = {
+		armor
+		train_equipment
+		railway_gun_equipment
+	}
+	research_categories = {
+		armor
+		support_tech
+		train_tech
+	}
+    initial_trait = {
+		name = RLN_train_armor_organization_mio_desc
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+		production_bonus = {
+			production_capacity_factor = 0.05
+			production_cost_factor = -0.05
+		}
+	}
+    #重启闲置产线
+    trait = {
+		token = RLN_mio_trait_restart_production
+		name = RLN_mio_trait_restart_production
+		icon = GFX_generic_mio_department_icon_tank_general_production
+
+		position = { x=6 y=0 }
+
+		limit_to_equipment_type = {train_equipment railway_gun_equipment}
+
+		production_bonus = {
+            production_efficiency_cap_factor = 0.05
+			production_cost_factor = -0.05
+		}
+        on_complete = {
+            FROM = {
+                capital_scope = {
+                    add_extra_state_shared_building_slots = 2
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+            }
+        }
+	}
+    #大批量生产
+    trait = {
+		token = RLN_mio_trait_mass_production
+		name = RLN_mio_trait_mass_production
+		icon = GFX_generic_mio_department_icon_tank_general_line_efficiency
+
+		position = { x=0 y=1 }
+        relative_position_id = RLN_mio_trait_restart_production
+        all_parents = {RLN_mio_trait_restart_production}
+
+		limit_to_equipment_type = {train_equipment railway_gun_equipment}
+
+		production_bonus = {
+            production_efficiency_gain_factor = 0.10
+            production_efficiency_cap_factor = 0.05
+		}
+	}
+    #节约成本
+    trait = {
+		token = RLN_mio_trait_reduce_cost
+		name = RLN_mio_trait_reduce_cost
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+
+		position = { x=0 y=1 }
+        relative_position_id = RLN_mio_trait_mass_production
+        all_parents = {RLN_mio_trait_mass_production}
+
+		limit_to_equipment_type = {train_equipment railway_gun_equipment}
+
+        equipment_bonus = {
+            build_cost_ic = -0.05
+        }
+		production_bonus = {
+			production_resource_need_factor = -0.15
+		}
+	}
+    #战争巨兽
+    trait = {
+		token = RLN_mio_trait_war_machine
+		name = RLN_mio_trait_war_machine
+		icon = GFX_generic_mio_trait_icon_production_capacity
+        special_trait_background = yes
+
+		position = { x=0 y=1 }
+        relative_position_id = RLN_mio_trait_reduce_cost
+        all_parents = {RLN_mio_trait_reduce_cost}
+
+		limit_to_equipment_type = {railway_gun_equipment}
+        available = {
+            FROM = {
+                has_war = yes
+            }
+        }
+        equipment_bonus = {
+            build_cost_ic = -0.10
+        }
+	}
+    #转向装甲生产
+    trait = {
+		token = RLN_mio_trait_swith_to_tank_production
+		name = RLN_mio_trait_swith_to_tank_production
+		icon = GFX_generic_mio_department_icon_tank_general_conversion
+
+		position = { x=0 y=0 }
+
+		limit_to_equipment_type = {armor}
+
+		production_bonus = {
+            production_efficiency_gain_factor = 0.15
+		}
+        available = {
+            OR = {
+                FROM = {
+                    has_war = yes
+                }
+                threat > 0.24
+            }
+        }
+        on_complete = {
+            FROM = {
+                capital_scope = {
+                    add_extra_state_shared_building_slots = 2
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 2
+                        instant_build = yes
+                    }
+                }
+            }
+        }
+	}
+    trait = {
+		token = generic_mio_trait_power_traverse
+		name = generic_mio_trait_power_traverse
+		icon = GFX_generic_mio_trait_icon_breakthrough
+
+		position = { x=0 y=1 }
+        limit_to_equipment_type = {armor}
+        relative_position_id = RLN_mio_trait_swith_to_tank_production
+        all_parents = {RLN_mio_trait_swith_to_tank_production}
+		
+		equipment_bonus = {
+			breakthrough = 0.05
+		}
+	}
+    trait = {
+		token = generic_mio_trait_all_round_cupola
+		name = generic_mio_trait_all_round_cupola
+		icon = GFX_generic_mio_trait_icon_breakthrough
+
+		position = { x=0 y=1 }
+        limit_to_equipment_type = {armor}
+		relative_position_id = generic_mio_trait_power_traverse
+
+		all_parents = { generic_mio_trait_power_traverse }
+		
+		equipment_bonus = {
+			breakthrough = 0.05
+		}
+	}
+    trait = {
+		token = generic_mio_trait_simplified_turret_design
+		name = generic_mio_trait_simplified_turret_design
+		icon = GFX_generic_mio_trait_icon_production_capacity
+
+		position = { x=0 y=1 }
+        limit_to_equipment_type = {armor}
+		relative_position_id = generic_mio_trait_all_round_cupola
+
+		all_parents = { generic_mio_trait_all_round_cupola }
+		
+		production_bonus = {
+			production_capacity_factor = 0.05
+		}
+	}
+    trait = {
+		token = generic_mio_trait_spaced_armor
+		name = generic_mio_trait_spaced_armor
+		icon = GFX_generic_mio_trait_icon_armor_value
+
+		position = { x=2 y=1 }
+        limit_to_equipment_type = {armor}
+		relative_position_id = RLN_mio_trait_swith_to_tank_production
+
+		all_parents = { RLN_mio_trait_swith_to_tank_production }
+        mutually_exclusive = { generic_mio_trait_sloped_side_armor}
+
+		equipment_bonus = {
+			armor_value = 0.10
+		}
+	}
+    trait = {
+		token = generic_mio_trait_sloped_side_armor
+		name = generic_mio_trait_sloped_side_armor
+		icon = GFX_generic_mio_trait_icon_breakthrough
+
+		position = { x=2 y=0 }
+        limit_to_equipment_type = {armor}
+		relative_position_id = generic_mio_trait_spaced_armor
+
+		all_parents = { RLN_mio_trait_swith_to_tank_production }
+		mutually_exclusive = { generic_mio_trait_spaced_armor}
+		
+		equipment_bonus = {
+			breakthrough = 0.07
+		}
+    }
+    #火力升级
+    trait = {
+		token = RLN_mio_trait_firepower_upgrade
+		name = RLN_mio_trait_firepower_upgrade
+		icon = GFX_generic_mio_trait_icon_ap_attack
+
+		position = { x=1 y=1 }
+        limit_to_equipment_type = {armor}
+		relative_position_id = generic_mio_trait_spaced_armor
+
+		any_parent = { generic_mio_trait_sloped_side_armor generic_mio_trait_spaced_armor }
+		
+		
+		equipment_bonus = {
+			soft_attack = 0.06
+            hard_attack = 0.06
+		}
+    }
+    #24小时生产
+    trait = {
+		token = RLN_mio_trait_enless_production
+		name = RLN_mio_trait_enless_production
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+
+		position = { x=0 y=1 }
+        limit_to_equipment_type = {armor}
+		relative_position_id = RLN_mio_trait_firepower_upgrade
+
+		all_parents = { RLN_mio_trait_firepower_upgrade }
+		
+		
+		equipment_bonus = {
+			build_cost_ic = -0.10
+            reliability = 0.05
+		}
+        production_bonus = {
+            production_capacity_factor = 0.15
+            production_efficiency_cap_factor = 0.10
+        }
+    }
+}

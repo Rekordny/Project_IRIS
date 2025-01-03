@@ -148,6 +148,28 @@ OCF_surrender_after_war_judge = {  #作用域-OCF
     }
 
     #如果有玩家  彼岸洋占领区
+    if = {
+        limit = {
+            OCF = { is_faction_leader = yes }
+        }
+        OCF = { dismantle_faction = yes }
+    }
+    else = {
+        OCF = { leave_faction = yes }
+    }
+    every_state = {
+        limit = {
+            is_core_of = OCF
+            is_owned_by = OCF
+        }
+        OCF = { set_state_controller = PREV }
+    }
+    every_country = {
+        limit = {
+            has_war_with = OCF
+        }
+        THIS = { white_peace = OCF }
+    }
     if = { #领袖
         limit = {
             any_country = {
@@ -302,18 +324,7 @@ OCF_surrender_after_war = {
                 has_country_flag = OCF_ocf_overlord_flag
             }
         }
-        every_state = {
-            limit = {
-                is_controlled_by = var:OCF.OCF_ocf_overlord
-                is_core_of = OCF
-                is_owned_by = OCF
-            }
-            OCF = {
-                set_state_controller = PREV
-            }
-        }
         var:OCF.OCF_ocf_overlord = {
-            white_peace = OCF
             puppet = {
                 target = OCF
                 end_civil_wars = no
@@ -322,8 +333,8 @@ OCF_surrender_after_war = {
         }
         841 = {
             set_victory_points = {
-	            province = 16216
-	            value = 20
+                province = 16216
+                value = 20
             }
         }
         OCF_post_war_political_party_transition = yes

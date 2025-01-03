@@ -26,7 +26,7 @@ ideas = {
 				fuel_gain_factor = -0.6
 				agency_upgrade_time = 1.0
 			}
-		
+
 			picture = GFX_black_ink_night_economic_collapse
 
 			allowed_to_remove = {
@@ -122,6 +122,7 @@ ideas = {
 				conversion_cost_mil_to_civ_factor = -0.3
 				max_fuel_factor = -0.25
 				fuel_gain_factor = -0.4
+				increase_in_troops_coming_online_percentage = -0.05
 			}
 
 			default = yes
@@ -141,10 +142,19 @@ ideas = {
 		low_economic_mobilisation = {
 
 			available = {
-				has_war_support > 0.15
+				if = {
+					limit = { tag = OCF }
+					OR = {
+						OCF_government_support_30_triggers = yes
+						OCF_passed_senate_triggers = yes
+					}
+				}
+				else = {
+					has_war_support > 0.15
+				}
 			}
 			on_add = {
-				
+
 			}
 
 			cost = 150
@@ -160,9 +170,9 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 2
+				factor = 2
 
-   				modifier = {
+				modifier = {
 					factor = 20
 
 					is_major = yes
@@ -177,13 +187,29 @@ ideas = {
 					date < 1937.6.1
 					factor = 0
 				}
-   			}
+			}
 		}
 
 		partial_economic_mobilisation = {
 
 			available = {
-				has_war_support > 0.25
+				if = {
+					limit = { tag = OCF }
+					OR = {
+						AND = {
+							has_war_support > 0.25
+							OR = {
+								OCF_government_support_30_triggers = yes
+								OCF_passed_senate_triggers = yes
+							}
+						}
+						OCF_government_support_40_triggers = yes
+						OCF_abolition_parliament_triggers = yes
+					}
+				}
+				else = {
+					has_war_support > 0.25
+				}
 			}
 
 			cost = 150
@@ -196,35 +222,57 @@ ideas = {
 				conversion_cost_civ_to_mil_factor= -0.1
 				conversion_cost_mil_to_civ_factor = 0.1
 				fuel_gain_factor = -0.1
+				increase_in_troops_coming_online_percentage = 0.05
 			}
 
 			cancel_if_invalid = no
 			on_add = {
-				
+
 			}
 			ai_will_do = {
-   				factor = 2
+				factor = 2
 
-   				modifier = {
+				modifier = {
 					factor = 20
 
 					is_major = yes
 				}
-   			}
+			}
 		}
 
 		war_economy = {
 
 
 			available = {
-				has_war_support > 0.5			
-				has_war = yes
-				any_enemy_country = {
-					ic_ratio = {
-						tag = ROOT
-						ratio > 0.4
+				if = {
+					limit = { tag = OCF }
+					OR = {
+						AND = {
+							has_war_support > 0.5
+							has_war = yes
+							any_enemy_country = {
+								ic_ratio = {
+									tag = ROOT
+									ratio > 0.4
+								}
+							}
+							OCF_government_support_30_triggers = yes
+							OCF_passed_senate_triggers = yes
+						}
+						OCF_abolition_parliament_triggers = yes
+						OCF_government_support_60_triggers = yes
 					}
-				}			
+				}
+				else = {
+					has_war_support > 0.5
+					has_war = yes
+					any_enemy_country = {
+						ic_ratio = {
+							tag = ROOT
+							ratio > 0.4
+						}
+					}
+				}
 			}
 
 			cost = 150
@@ -236,14 +284,15 @@ ideas = {
 				production_speed_arms_factory_factor = 0.2
 				conversion_cost_civ_to_mil_factor= -0.2
 				conversion_cost_mil_to_civ_factor = 0.2
+				increase_in_troops_coming_online_percentage = 0.1
 			}
 
 			cancel_if_invalid = no
 			on_add = {
-				
+
 			}
 			ai_will_do = {
-   				factor = 3
+				factor = 3
 
 				modifier = {
 					#High prio on production
@@ -273,13 +322,32 @@ ideas = {
 					has_idea = closed_economy
 					has_large_ally_not_pick_closed_economy = yes
 				}
-   			}
+			}
 		}
 
 		tot_economic_mobilisation = {
 
 
 			available = {
+				if = {
+					limit = { tag = OCF }
+					OR = {
+						AND = {
+							has_war_support > 0.8
+							has_war = yes
+							any_enemy_country = {
+								ic_ratio = {
+									tag = ROOT
+									ratio > 0.5
+								}
+							}
+							OCF_government_support_50_triggers = yes
+							OCF_passed_senate_triggers = yes
+						}
+						OCF_abolition_parliament_triggers = yes
+						OCF_government_support_90_triggers = yes
+					}
+				}
 				has_war = yes
 				has_war_support > 0.8
 				any_enemy_country = {
@@ -290,10 +358,10 @@ ideas = {
 				}
 			}
 			on_add = {
-				
+
 			}
 			ai_will_do = {
-   				factor = 1
+				factor = 1
 
 				modifier = {
 					factor = 25
@@ -341,7 +409,7 @@ ideas = {
 						}
 					}
 				}
-   			}
+			}
 
 			cost = 150
 			removal_cost = -1
@@ -353,6 +421,7 @@ ideas = {
 				production_speed_arms_factory_factor = 0.3
 				conversion_cost_civ_to_mil_factor= -0.3
 				conversion_cost_mil_to_civ_factor = 0.3
+				increase_in_troops_coming_online_percentage = 0.15
 			}
 
 			cancel_if_invalid = no
@@ -380,8 +449,8 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 0
-   			}
+				factor = 0
+			}
 		}
 		new_economic_policy_2 = {
 			name = new_economic_policy
@@ -410,8 +479,8 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 0
-   			}
+				factor = 0
+			}
 		}
 		planned_economy = {
 			name = planned_economy
@@ -441,8 +510,8 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 0
-   			}
+				factor = 0
+			}
 		}
 	}
 
@@ -475,7 +544,7 @@ ideas = {
 			allowed_to_remove = {
 				has_war = yes
 			}
-			
+
 			cancel_if_invalid = no
 		}
 
@@ -486,15 +555,30 @@ ideas = {
 					limit = {
 						is_small_Lotus_tag = yes
 					}
-						NOT = {
-							has_idea = SRS_Renmen_Treaty_Partial_Compliance
-						}
+					NOT = {
+						has_idea = SRS_Renmen_Treaty_Partial_Compliance
+					}
 				}
 				if = {
 					limit = {
 						tag = NAC
 					}
 					NOT = {has_idea = NAC_block}
+				}
+				if = {
+					limit = {
+						tag = AKL
+					}
+					has_completed_focus = AKL_akari_26
+				}
+				if = {
+					limit = {
+						tag = OCF
+					}
+					OR = {
+						OCF_passed_senate_triggers = yes
+						OCF_government_support_60_triggers = yes
+					}
 				}
 			}
 
@@ -523,14 +607,14 @@ ideas = {
 						has_idea = SRS_unequal_treaty
 					}
 					NOT = {
-						has_idea = SRS_Renmen_Treaty_Compliance 
+						has_idea = SRS_Renmen_Treaty_Compliance
 					}
 				}
 			}
 
 			ai_will_do = {
-   				factor = 1
-   			}
+				factor = 1
+			}
 		}
 
 		export_focus = {
@@ -541,6 +625,21 @@ ideas = {
 						tag = NAC
 					}
 					NOT = {has_idea = NAC_block}
+				}
+				if = {
+					limit = {
+						tag = AKL
+					}
+					has_completed_focus = AKL_akari_26
+				}
+				if = {
+					limit = {
+						tag = OCF
+					}
+					OR = {
+						OCF_passed_senate_triggers = yes
+						OCF_government_support_60_triggers = yes
+					}
 				}
 			}
 
@@ -564,21 +663,36 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 1
+				factor = 1
 				modifier = {
 					factor = 1000
 				}
-   			}
+			}
 		}
 
 		limited_exports = {
-			
+
 			available = {
 				if = {
 					limit = {
 						tag = NAC
 					}
 					NOT = {has_idea = NAC_block}
+				}
+				if = {
+					limit = {
+						tag = AKL
+					}
+					has_completed_focus = AKL_akari_26
+				}
+				if = {
+					limit = {
+						tag = OCF
+					}
+					OR = {
+						OCF_passed_senate_triggers = yes
+						OCF_government_support_60_triggers = yes
+					}
 				}
 				OR = {
 					AND = {
@@ -620,9 +734,9 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 1
+				factor = 1
 
-   				modifier = {
+				modifier = {
 					add = -1
 
 					is_major = no
@@ -651,20 +765,31 @@ ideas = {
 					has_idea = closed_economy
 					has_large_ally_not_pick_closed_economy = yes
 				}
-   			}
+			}
 		}
 
 		closed_economy = {
 
 			available = {
-				has_war = yes
-				OR = {
-					has_government = fascism
-					has_government = communism
+				if = {
+					limit = {
+						tag = OCF
+					}
+					OR = {
+						OCF_abolition_parliament_triggers = yes
+						OCF_government_support_90_triggers = yes
+					}
 				}
-				OR = {
-					has_idea = war_economy
-					has_idea = tot_economic_mobilisation
+				else = {
+					has_war = yes
+					OR = {
+						has_government = fascism
+						has_government = communism
+					}
+					OR = {
+						has_idea = war_economy
+						has_idea = tot_economic_mobilisation
+					}
 				}
 				if = {
 					limit = {
@@ -723,9 +848,9 @@ ideas = {
 			cancel_if_invalid = no
 
 			ai_will_do = {
-   				factor = 1
+				factor = 1
 
-   				modifier = {
+				modifier = {
 					factor = 0
 
 					is_major = no
@@ -748,7 +873,7 @@ ideas = {
 					# since they will require our trades
 					has_large_ally_not_pick_closed_economy = yes
 				}
-   			}
+			}
 		}
 	}
 }
