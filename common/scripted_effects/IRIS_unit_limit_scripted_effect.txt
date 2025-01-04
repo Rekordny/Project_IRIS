@@ -1,28 +1,48 @@
 
 #刷新部队上限
 IRIS_refresh_troop_limit = {
-	set_variable = { global.var = 0 }
-	for_each_scope_loop = {
-		array = global.IRIS_effect_list
-		if = {
-			limit = { check_variable = { global.var < 3 } }
-			set_variable = { max_divisions = 72 }
+	if = {
+		limit = {
+			has_global_flag = has_activate_military_restrictions_flag
 		}
-		else_if = {
-			limit = { check_variable = { global.var < 6 } }
-			set_variable = { max_divisions = 54 }
+		set_variable = { global.IRIS_refresh_troop_limit_var = 0 }
+		for_each_scope_loop = {
+			array = global.IRIS_effect_list
+			if = {
+				limit = { check_variable = { global.var < 3 } }
+				set_variable = { max_divisions = 72 }
+			}
+			else_if = {
+				limit = { check_variable = { global.var < 6 } }
+				set_variable = { max_divisions = 54 }
+			}
+			else_if = {
+				limit = { check_variable = { global.var < 15 } }
+				set_variable = { max_divisions = 36 }
+			}
+			else = {
+				set_variable = { max_divisions = 24 }
+			}
+			multiply_variable = { max_divisions = 12 }
+			IRIS_refresh_troop_limit_correct = yes
+			IRIS_calculate_current_proportion_military = yes
+			add_to_variable = { global.IRIS_refresh_troop_limit_var = 1 }
 		}
-		else_if = {
-			limit = { check_variable = { global.var < 15 } }
-			set_variable = { max_divisions = 36 }
+		every_country = {
+			if = {
+				limit = {
+					not = {
+						is_in_array = {
+							array = global.IRIS_effect_list
+							value = this
+						}
+					}
+				}
+				set_variable = { max_divisions = 0 }
+				IRIS_refresh_troop_limit_correct = yes
+				IRIS_calculate_current_proportion_military = yes
+			}
 		}
-		else = {
-			set_variable = { max_divisions = 24 }
-		}
-		multiply_variable = { max_divisions = 12 }
-		IRIS_refresh_troop_limit_correct = yes
-		IRIS_calculate_current_proportion_military = yes
-		add_to_variable = { global.var = 1 }
 	}
 }
 
@@ -32,7 +52,7 @@ IRIS_refresh_troop_limit_correct = {
 	add_to_variable = { increase_in_troops_coming_online_percentage_temp = modifier@increase_in_troops_coming_online_percentage }
 	add_to_variable = { max_divisions = modifier@increase_in_troops_coming_online }
 	multiply_variable = { max_divisions = increase_in_troops_coming_online_percentage_temp }
-	
+
 	if = {
 		limit = { is_puppet = yes }
 		multiply_variable = { max_divisions = 0.5 }
@@ -66,13 +86,14 @@ IRIS_calculate_current_proportion_military = {
 		limit = { check_variable = { num_divisions_percentage_x > 0 } }
 		set_variable = { num_divisions_percentage_x = 0 }
 		IRIS_troops_exceed_negative_calculation = yes #部队超出负面计算
+		set_variable = { ai_desired_divisions_factor = -5 }
 		if = {
 			limit = { IRIS_disable_military_restrictions_trigger = no }
 			add_IRIS_alert_unless_exists = yes
 		}
-		else = { del_IRIS_alert = yes set_variable = { unit_limit_alert_visible = 0 } }
+		else = { del_IRIS_alert = yes set_variable = { unit_limit_alert_visible = 0 } set_variable = { ai_desired_divisions_factor = 0 } }
 	}
-	else = { del_IRIS_alert = yes set_variable = { unit_limit_alert_visible = 0 } }
+	else = { del_IRIS_alert = yes set_variable = { unit_limit_alert_visible = 0 } set_variable = { ai_desired_divisions_factor = 0 } }
 }
 
 #部队超出负面计算
@@ -84,20 +105,32 @@ IRIS_troops_exceed_negative_calculation = {
 		limit = { check_variable = { troops_exceed_negative_calculation_now > troops_exceed_negative_calculation_storage } IRIS_disable_military_restrictions_trigger = no }
 		set_variable = { unit_limit_alert_visible = 1 }
 	}
-	#计算超出多少营 每个营0.002负面（不一定）
+	#计算超出多少营 每个营负面（不一定）
 	set_variable = { troops_exceed_negative_calculation_exceed = troops_exceed_negative_calculation_now }
 	subtract_from_variable = { troops_exceed_negative_calculation_exceed = max_divisions }
 	#组织度 army_org_factor
 	set_variable = { troops_exceed_negative_calculation_army_org_factor = troops_exceed_negative_calculation_exceed }
 	divide_variable = { troops_exceed_negative_calculation_army_org_factor = 500 }
 	multiply_variable = { troops_exceed_negative_calculation_army_org_factor = -1 }
+	if = {
+		limit = { check_variable = { troops_exceed_negative_calculation_army_org_factor < -0.5 } }
+		set_variable = { troops_exceed_negative_calculation_army_org_factor = -0.5 }
+	}
 	#生活消费品系数 consumer_goods_expected_value
 	set_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value = troops_exceed_negative_calculation_exceed }
 	divide_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value = 720 }
+	if = {
+		limit = { check_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value > 0.35 } }
+		set_variable = { troops_exceed_negative_calculation_consumer_goods_expected_value = 0.35 }
+	}
 	#增援率 land_reinforce_rate
 	set_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = troops_exceed_negative_calculation_exceed }
 	divide_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = 3400 }
 	multiply_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = -1 }
+	if = {
+		limit = { check_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate < -0.1 } }
+		set_variable = { troops_exceed_negative_calculation_consumer_land_reinforce_rate = -0.1 }
+	}
 	#训练时间 training_time_army_factor
 	set_variable = { troops_exceed_negative_calculation_consumer_training_time_army_factor = troops_exceed_negative_calculation_exceed }
 	divide_variable = { troops_exceed_negative_calculation_consumer_training_time_army_factor = 75 }
