@@ -270,7 +270,7 @@ BLA_rule_of_tsar = {
                 }
             }
         }
-        days_mission_timeout = 60
+        days_mission_timeout = 80
         selectable_mission = no
         complete_effect = {
         }
@@ -327,7 +327,7 @@ BLA_rule_of_tsar = {
                 has_idea = BLA_legacy_of_young_august
             }
         }
-        days_mission_timeout = 60
+        days_mission_timeout = 80
         selectable_mission = no
         complete_effect = {
         }
@@ -377,6 +377,7 @@ BLA_rule_of_tsar = {
         }
         visible = {
             has_completed_focus = BLA_Anna_pol_12
+            always = no
         }
         cost = 150
         days_remove = 30
@@ -1151,96 +1152,6 @@ BLA_secret_police = {
                     }
                 }
                 set_country_flag = {flag = BLA_recent_loosen_censorship_flag days = 60 value = 1}
-            }
-        }
-    }
-    #改编革命歌曲
-    BLA_modifiy_songs = {
-        available = {
-        }
-        visible = {
-        }
-        cost = 30
-        days_remove = 30
-        days_re_enable = 60
-        complete_effect = {
-        }
-        remove_effect = {
-            custom_effect_tooltip = Rossiya_Propaganda_desc
-            add_popularity = {
-                ideology = communism
-                popularity = -0.01
-            }
-            add_popularity = {
-                ideology = neutrality
-                popularity = 0.01
-            }
-            add_power_balance_value = {
-                id = BLA_legacy_of_August
-                value = 0.01
-                tooltip_side = BLA_ice_dream
-            }
-            hidden_effect = {
-                if = {
-                    limit = {
-                        check_variable = {BLA_propaganda_counter = 0}
-                        country_exists = NAC
-                    }
-                    country_event = {id = Rossiya_Propaganda.1}
-                    every_country = {
-                        add_to_variable = {BLA_propaganda_counter = 1}
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {BLA_propaganda_counter = 1}
-                        country_exists = NAC
-                    }
-                    country_event = {id = Rossiya_Propaganda.2}
-                    every_country = {
-                        add_to_variable = {BLA_propaganda_counter = 1}
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {BLA_propaganda_counter = 2}
-                        country_exists = NAC
-                    }
-                    country_event = {id = Rossiya_Propaganda.3}
-                    every_country = {
-                        add_to_variable = {BLA_propaganda_counter = 1}
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {BLA_propaganda_counter = 3}
-                        country_exists = NAC
-                    }
-                    country_event = {id = Rossiya_Propaganda.4}
-                    every_country = {
-                        add_to_variable = {BLA_propaganda_counter = 1}
-                    }
-                }
-                else = {
-                    every_country = {
-                        add_to_variable = {BLA_propaganda_counter = 1}
-                    }
-                }
-            }
-        }
-        ai_will_do = {
-            base = 1000
-            modifier = {
-                add = 100
-                communism > 0.10
-            }
-            modifier = {
-                add = 100
-                communism > 0.20
-            }
-            modifier = {
-                add = 100
-                communism > 0.25
             }
         }
     }
@@ -3521,6 +3432,9 @@ Big_Game = {
             BLA_RPK16 = {
                 set_nationality = BLC
             }
+            BLA_AK15 = {
+                set_nationality = BLC
+            }
             hidden_effect = {
                 840 = {
                     set_demilitarized_zone = yes
@@ -3640,6 +3554,7 @@ Big_Game = {
                 }
                 BLC = {
                     add_ideas = BGN_landing_legion
+                    add_dynamic_modifier = {modifier = BLC_landing_dynamic_modifier}
                 }
                 if = {
                     limit = {
@@ -3742,6 +3657,7 @@ Big_Game = {
             tag = BLA
             has_global_flag = prepare_for_battle_of_BGN
         }
+        cost = 30
         days_remove = 30
         cancel_trigger = {
             NOT = {
@@ -3750,8 +3666,15 @@ Big_Game = {
         }
         remove_effect = {
             add_manpower = -1000
+            custom_effect_tooltip = BLA_strengthen_BLC
             BLC = {
                 add_manpower = 1000
+                hidden_effect = {
+                    add_to_variable = {BLC_army_attack_factor = 0.04}
+                    add_to_variable = {BLC_army_defence_factor = 0.04}
+                    add_to_variable = {BLC_army_org_factor = 0.04}
+                    add_to_variable = {BLC_army_morale_factor = 0.04}
+                }
             }
         }
         ai_will_do = {
@@ -3769,6 +3692,7 @@ Big_Game = {
             tag = BLA
             has_global_flag = prepare_for_battle_of_BGN
         }
+        cost = 30
         days_remove = 30
         cancel_trigger = {
             NOT = {
@@ -3780,6 +3704,15 @@ Big_Game = {
                 equipment = infantry_equipment
                 amount = 500
                 target = BLC
+            }
+            custom_effect_tooltip = BLA_strengthen_BLC
+            hidden_effect = {
+                BLC = {
+                    add_to_variable = {BLC_army_attack_factor = 0.04}
+                    add_to_variable = {BLC_army_defence_factor = 0.04}
+                    add_to_variable = {BLC_army_org_factor = 0.04}
+                    add_to_variable = {BLC_army_morale_factor = 0.04}
+                }
             }
         }
         ai_will_do = {
@@ -4332,6 +4265,274 @@ Big_Game = {
                         check_variable = {BLA_E_control_point < NAC_E_control_point}
                     }
                 }
+            }
+        }
+    }
+    #改编革命歌曲
+    BLA_modifiy_songs = {
+        visible = {
+            tag = BLA
+        }
+        cost = 30
+        days_remove = 30
+        days_re_enable = 60
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = Rossiya_Propaganda_desc
+            add_popularity = {
+                ideology = communism
+                popularity = -0.01
+            }
+            add_popularity = {
+                ideology = neutrality
+                popularity = 0.01
+            }
+            add_power_balance_value = {
+                id = BLA_legacy_of_August
+                value = 0.01
+                tooltip_side = BLA_ice_dream
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 0}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.1}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 1}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.2}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 2}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.3}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 3}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.4}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else = {
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+            modifier = {
+                add = 100
+                communism > 0.10
+            }
+            modifier = {
+                add = 100
+                communism > 0.20
+            }
+            modifier = {
+                add = 100
+                communism > 0.25
+            }
+        }
+    }
+    NAC_jokes = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 30
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                random_list = {
+                    50 = {
+                        add_stability = -0.02
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.02
+                        }
+                    }
+                    50 = {
+                    }
+                }
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    NAC_focus_on_army = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                BLA_decrease_army_opinion = yes
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_country_flag = Rossiya_Propaganda_7_triggered
+                        }
+                    }
+                    country_event = {id = Rossiya_Propaganda.7}
+                }
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    NAC_focus_on_freeman = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                BLA_decrease_freeman_opinion = yes
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_country_flag = Rossiya_Propaganda_6_triggered
+                        }
+                    }
+                    country_event = {id = Rossiya_Propaganda.6}
+                }
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    NAC_focus_on_serf = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            add_manpower = 500
+            BLA = {
+                add_manpower = -100
+                random_list = {
+                    80 = {
+
+                    }
+                    20 = {
+                        BLA_decrease_serf_opinion = yes
+                    }
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_country_flag = Rossiya_Propaganda_8_triggered
+                        }
+                    }
+                    country_event = {id = Rossiya_Propaganda.8}
+                }
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
             }
         }
     }
@@ -5495,14 +5696,18 @@ BLA_Hermann_revolution_decision = {
     }
     #与青年八月党握手
     BLA_cooperate_with_August = {
-        cost = 10
+        cost = BLA_cooperate_with_August_cost
         days_remove = 40
         remove_effect = {
             BLA_reduce_corrupt_3 = yes
-            add_power_balance_value = {
-                id = BLA_legacy_of_August
-                value = -0.02
-                tooltip_side = BLA_voice_of_people
+            if = {
+                limit = {
+                    has_idea = BLA_legacy_of_young_august
+                }
+                add_days_mission_timeout = {
+                    mission = BLA_young_august_protest
+                    days = 10
+                }
             }
         }
         ai_will_do = {
@@ -5515,6 +5720,9 @@ BLA_Hermann_revolution_decision = {
     }
     #整合青年八月党
     BLA_integrate_August = {
+        available = {
+            has_country_flag = BLA_aug_spilt_up_flag
+        }
         visible = {
             has_completed_focus = BLA_PM_Siera_22
         }
@@ -5527,6 +5735,7 @@ BLA_Hermann_revolution_decision = {
             BLA_increase_cul_4 = yes
             BLA_increase_mil_4 = yes
             BLA_bop_move_rightward = yes
+            set_country_flag = BLA_aug_integrated
         }
         ai_will_do = {
             base = 10
@@ -5866,7 +6075,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 857 } } 
         fire_only_once = yes
-        days_remove = 60
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -5903,7 +6112,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 855 } } 
         fire_only_once = yes
-        days_remove = 60
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -5940,7 +6149,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 854 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -5987,7 +6196,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 183 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6039,7 +6248,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 118 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6091,7 +6300,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 232 } } 
         fire_only_once = yes
-        days_remove = 60
+        days_remove = BLA_project_time_2
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6132,7 +6341,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 215 } } 
         fire_only_once = yes
-        days_remove = 60
+        days_remove = BLA_project_time_2
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6173,7 +6382,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 87 } } 
         fire_only_once = yes
-        days_remove = 60
+        days_remove = BLA_project_time_2
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6214,7 +6423,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 146 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6271,7 +6480,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 186 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6308,7 +6517,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 126 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6349,7 +6558,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 199 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6386,7 +6595,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 112 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6419,7 +6628,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 163 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6452,7 +6661,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 853 } } 
         fire_only_once = yes
-        days_remove = 80
+        days_remove = BLA_project_time
         modifier = {
             consumer_goods_factor = 0.15
         }
@@ -6486,7 +6695,7 @@ Rossiya_key_industrial_project = {
         state_target = yes
         highlight_states = { highlight_state_targets = { state = 41 } } 
         fire_only_once = yes
-        days_remove = 120
+        days_remove = BLA_project_time_3
         modifier = {
             consumer_goods_factor = 0.15
         }
