@@ -83,8 +83,45 @@ on_actions = {
             NAC = {
                 NAC_update_dynamic_modifier = yes
             }
+            if = {
+                limit = {
+                    is_faction_leader = yes
+                }
+                every_country = {
+                    limit = {
+                        is_in_faction_with = NAC
+                        NOT = {
+                            tag = NAC
+                        }
+                        NOT = {
+                            is_in_array = {
+                                array = NAC.faction_member
+                                value = THIS
+                            }
+                        }
+                    }
+                    add_to_array = {
+                        array = NAC.faction_member
+                        value = THIS
+                    }
+                }
+                every_country = {
+                    limit = {
+                        NOT = {
+                            is_in_faction_with = NAC
+                        }
+                        is_in_array = {
+                            array = NAC.faction_member
+                            value = THIS
+                        }
+                    }
+                    remove_from_array = {
+                        array = NAC.faction_member
+                        value = THIS
+                    }
+                }
+            }
         }
-
     }
     on_monthly_NAC = {
         effect = {
@@ -136,6 +173,33 @@ on_actions = {
                     annex_country = {
                         target = ROOT
                     }
+                }
+            }
+            if = {
+                limit = {
+                    NSN = {
+                        is_in_faction_with = NAC
+                    }
+                    FROM = {
+                        OR = {
+                            tag = NAC
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    ROOT = {
+                        tag = SSN
+                    }
+                }
+                NSN = {
+                    annex_country = {
+                        target = ROOT
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = SSN
+                    }
+                    add_core_of = NSN
                 }
             }
         }
