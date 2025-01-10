@@ -110,7 +110,7 @@ on_actions = {
 					NOT = { has_global_flag = ELN_capitulation_immediate_flag }
 					FROM = {
 						original_tag = ELN
-						surrender_progress > 0.8
+						surrender_progress > 0.7
 					}
 					ROOT = {
 						OR = {
@@ -286,39 +286,15 @@ on_actions = {
 								is_controlled_by = TAU
 								is_controlled_by = ELN
 							}
-							ANZ = { transfer_state = PREV }
-						}
-						# white_peace = ELN
-					}
-					#归属乌斯拉尔
-					USR = {
-						#邮票
-						if = {
-							limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 10 } } }
-							add_to_array = { USR.Stamp_ID_list = 10 }
-							USR_add_stamp_utility = yes
-						}
-						every_state = {
-							limit = {
-								is_owned_by = ELN
-								OR = {
-									is_controlled_by = USR
-									is_controlled_by = SCK
-									is_controlled_by = CTC
-									is_controlled_by = YMD
-									is_controlled_by = TAU
-									is_controlled_by = ELN
-								}
-								OR = {
-									region = 60
-									region = 58
-									state = 100
-									state = 83
-									state = 77
-									state = 84
-									state = 96
-									state = 103
-								}
+							OR = {
+								region = 60
+								region = 58
+								state = 100
+								state = 83
+								state = 77
+								state = 84
+								state = 96
+								state = 103
 							}
 						}
 						USR = { transfer_state = PREV }
@@ -431,7 +407,16 @@ on_actions = {
 						ROOT = { is_in_faction = yes }
 					}
 					log = "检测阵营"
-					ROOT = { add_to_faction = PEN }
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_ally_with = ROOT
+							}
+							is_faction_leader = yes
+						}
+						THIS = { add_to_faction = PEN }
+					}
 				}
 				else = {
 					log = "检测非阵营"
@@ -456,7 +441,13 @@ on_actions = {
 						}
 					}
 				}
-				PEN = { add_country_leader_trait = ELN_grand_marshal }
+				PEN = {
+					add_country_leader_trait = ELN_grand_marshal
+					declare_war_on = { target = ELN type = annex_everything }
+				}
+				# PEN = {
+				# 	add_civil_war_target = ELN
+				# }
 				52 = {
 					set_victory_points = {#建立自由市
 						province = 133
