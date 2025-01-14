@@ -1,0 +1,272 @@
+#启用世界冲突
+IRIS_activate_world_conflict = {
+    clear_array = global.war_member
+    clear_array = global.defense_member
+    clear_array = global.neutral_member
+    meta_effect = {
+        text = {
+            IRIS_activate_world_conflict_[V] = yes
+        }
+        V = "[?global.IRIS_conflict]"
+    }
+    every_country = {
+        add_to_array = { IRIS_alerts = token:alert_IRIS_world_conflict_marker }
+    }
+}
+
+#关闭冲突
+IRIS_closing_world_conflicts = {
+    clear_array = global.war_member
+    clear_array = global.defense_member
+    clear_array = global.neutral_member
+    set_variable = { global.IRIS_conflict = 0 }
+    every_country = {
+        remove_from_array = { IRIS_alerts = token:alert_IRIS_world_conflict_marker }
+    }
+}
+
+#转入中立
+IRIS_activate_world_transfer_neutrality = {
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.war_member
+                value = THIS
+            }
+        }
+        remove_from_array = { global.war_member = THIS }
+    }
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.defense_member
+                value = THIS
+            }
+        }
+        remove_from_array = { global.defense_member = THIS }
+    }
+    if = {
+        limit = {
+            NOT = {
+                is_in_array = {
+                    array = global.neutral_member
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = { global.neutral_member = THIS }
+    }
+    IRIS_calculating_world_conflict_advantage = yes
+}
+
+#转入进攻
+IRIS_activate_world_war_member = {
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.neutral_member
+                value = THIS
+            }
+        }
+        remove_from_array = { global.neutral_member = THIS }
+    }
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.defense_member
+                value = THIS
+            }
+        }
+        remove_from_array = { global.defense_member = THIS }
+    }
+    if = {
+        limit = {
+            NOT = {
+                is_in_array = {
+                    array = global.war_member
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = { global.war_member = THIS }
+    }
+    IRIS_calculating_world_conflict_advantage = yes
+}
+
+#转入防御
+IRIS_activate_world_defense_member = {
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.neutral_member
+                value = THIS
+            }
+        }
+        remove_from_array = { global.neutral_member = THIS }
+    }
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.war_member
+                value = THIS
+            }
+        }
+        remove_from_array = { global.war_member = THIS }
+    }
+    if = {
+        limit = {
+            NOT = {
+                is_in_array = {
+                    array = global.defense_member
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = { global.defense_member = THIS }
+    }
+    IRIS_calculating_world_conflict_advantage = yes
+}
+
+#计算优势
+IRIS_calculating_world_conflict_advantage = {
+    set_variable = { global.war_member_variable = 0 }
+    set_variable = { global.defense_member_variable = 0 }
+    #进攻
+    for_each_scope_loop = {
+		array = global.war_member
+        if = {
+            limit = {
+                is_major = yes
+            }
+            add_to_variable = { global.war_member_variable = 2 }
+        }
+        else = {
+            add_to_variable = { global.war_member_variable = 1 }
+        }
+    }
+    #防御
+    for_each_scope_loop = {
+		array = global.defense_member
+        if = {
+            limit = {
+                is_major = yes
+            }
+            add_to_variable = { global.defense_member_variable = 2 }
+        }
+        else = {
+            add_to_variable = { global.defense_member_variable = 1 }
+        }
+    }
+
+    #计算占比
+    set_variable = { global.all_member_variable = global.war_member_variable }
+    add_to_variable = { global.all_member_variable = global.defense_member_variable }
+    divide_variable = { global.war_member_variable = global.all_member_variable }
+    multiply_variable = { global.war_member_variable = 10000 }
+}
+
+
+#博林克尼亚岛屿冲突
+IRIS_activate_world_conflict_1 = {
+    #添加中立
+    every_country = {
+        limit = {
+            OR = {
+                is_ally_with = OCF
+                tag = OCF
+                is_ally_with = USF
+                tag = USF
+                if = {
+                    limit = {
+                        BLA = { NOT = { has_war_with = NAC } }
+                    }
+                    is_ally_with = BLA
+                    tag = BLA
+                }
+                if = {
+                    limit = {
+                        NAC = { NOT = { has_war_with = BLA } }
+                    }
+                    is_ally_with = NAC
+                    tag = NAC
+                }
+                AND = {
+                    is_major = yes
+                    OR = {
+                        is_IRIS_eu_country = yes
+                        is_IRIS_GBA_country = yes
+                    }
+                }
+            }
+        }
+        add_to_array = { global.neutral_member = THIS }
+        country_event = { id = BRG.4 }
+    }
+    #进攻
+    OCF = { IRIS_activate_world_war_member = yes }
+    BRG = { IRIS_activate_world_war_member = yes }
+    every_country = {
+        limit = {
+            is_ally_with = OCF
+            original_tag = BRG
+        }
+        THIS = { IRIS_activate_world_war_member = yes }
+    }
+
+    #防御
+    USF = { IRIS_activate_world_defense_member = yes }
+    every_country = {
+        limit = {
+            is_ally_with = USF
+            original_tag = BRG
+        }
+        THIS = { IRIS_activate_world_defense_member = yes }
+    }
+}
+
+#东欧危机
+IRIS_activate_world_conflict_2 = {
+    #添加中立
+    every_country = {
+        limit = {
+            OR = {
+                AND = {
+                    is_major = yes
+                    OR = {
+                        is_IRIS_eu_country = yes
+                        is_IRIS_GBA_country = yes
+                    }
+                }
+                tag = URU
+                tag = PLP
+                tag = DOC
+            }
+        }
+        if = {
+            limit = {
+                NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
+            }
+            add_to_array = { global.neutral_member = THIS }
+        }
+    }
+    #进攻
+    DOC = { IRIS_activate_world_war_member = yes }
+
+    #防御
+    if = {
+        limit = {
+            URU = {
+                NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
+            }
+        }
+        URU = { IRIS_activate_world_defense_member = yes }
+    }
+    if = {
+        limit = {
+            PLP = {
+                NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
+            }
+        }
+        PLP = { IRIS_activate_world_defense_member = yes }
+    }
+}
