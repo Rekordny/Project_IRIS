@@ -10,7 +10,7 @@ scripted_gui = {
 
 	# 	visible = {
 	# 		# always = yes
-	# 		NOT = { check_variable = { global.IRIS_conflict = 0 } }
+	# 		NOT = { check_variable = { IRIS_conflict = 0 } }
 	# 		# is_ai = no
 	# 		# has_global_flag = diplomatic_crisis_alert
 	# 	}
@@ -34,7 +34,7 @@ scripted_gui = {
 
 	# 	visible = {
 	# 		# always = yes
-	# 		NOT = { check_variable = { global.IRIS_conflict = 0 } }
+	# 		NOT = { check_variable = { IRIS_conflict = 0 } }
 	# 		# is_ai = no
 	# 		# has_global_flag = crisis_in_progress
 	# 	}
@@ -64,7 +64,10 @@ scripted_gui = {
 
 		visible = {
 			# always = yes
-			NOT = { check_variable = { global.IRIS_conflict = 0 } }
+			# any_country = {
+            #     check_variable = { global.IRIS_conflict_@FROM = 0 }
+            # }
+			
 			check_variable = { crisisoverview_window = 1 }
 			# is_ai = no
 			# has_global_flag = crisis_in_progress
@@ -73,24 +76,31 @@ scripted_gui = {
 
 		dynamic_lists = {
 			attacker_grid = {
-				array = global.war_member
+				array = war_member
 				index = war_member_index
 				change_scope = yes
 				entry_container = country_entry_crisis
 			}
 			defender_grid = {
-				array = global.defense_member
+				array = defense_member
 				index = defender_member_index
 				change_scope = yes
 				entry_container = country_entry_crisis
 			}
 			neutral_grid = {
-				array = global.neutral_member
+				array = neutral_member
 				index = neutral_member_index
 				change_scope = yes
 				entry_container = country_entry_middle
 			}
 			
+			IRIS_conflict_container = {
+				array = global.IRIS_conflict_container
+				index = conflict_container_index
+				value = IRIS_conflict_container_value
+				change_scope = yes
+				entry_container = waroverview_war_button
+			}
 		}
 
 		triggers = {
@@ -104,6 +114,11 @@ scripted_gui = {
 				# clr_country_flag = crisis_window_ON
 				set_variable = { crisisoverview_window = 0 }
 			}
+			button_click = {
+				ROOT = {
+					IRIS_convert_corresponding_conflict = yes
+				}
+			}
 		}	
 
 		properties = {
@@ -112,7 +127,11 @@ scripted_gui = {
 			}
 			warscore_progressbar = {
 				# frame = global.aggressor_advantage
-				frame = global.war_member_variable
+				frame = global.world_conflict_progress_bar_@var:world_conflict_progress_bar_TAG
+			}
+			button = {
+				image = "[ROOT.GetIRISConflictButtonImage]"
+				frame = ROOT.IRIS_conflict_frame^conflict_container_index
 			}
 		}
 	}
