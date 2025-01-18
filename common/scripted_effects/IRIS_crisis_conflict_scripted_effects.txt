@@ -1,0 +1,554 @@
+#数组后缀为触发国家 要存入冲突列表
+#作用域为当前国家
+
+#启用世界冲突
+#使用方法
+#set_variable = { IRIS_conflict = 1 } #填写id
+#IRIS_activate_world_conflict = yes
+IRIS_activate_world_conflict = {
+    # clear_array = war_member
+    # clear_array = defense_member
+    # clear_array = neutral_member
+    meta_effect = {
+        text = {
+            IRIS_activate_world_conflict_[V] = yes
+        }
+        V = "[?IRIS_conflict_temp]"
+    }
+    hidden_effect = {
+        every_country = {
+            set_temp_variable = { alert_id = token:alert_IRIS_world_conflict_marker }
+            add_IRIS_alert_unless_exists = yes
+            scoped_sound_effect = "Agent_Initiate_Mission_Capture_Ciphers_strong"
+            add_to_array = { IRIS_conflict_frame = 2 } #判断第几帧用的
+            IRIS_convert_corresponding_conflict_remove = yes
+        }
+    }
+}
+
+#关闭冲突
+#请在启用的国家关闭
+#使用方法
+#set_temp_variable = { tag_temp = OCF } #填写启用国家TAG
+#IRIS_closing_world_conflicts = yes
+IRIS_closing_world_conflicts = {
+    clear_array = global.war_member_@var:tag_temp
+    clear_array = global.defense_member_@var:tag_temp
+    clear_array = global.war_member_@var:tag_temp
+    set_variable = { global.IRIS_conflict_@var:tag_temp = 0 }
+    remove_from_array = { global.IRIS_conflict_container = var:tag_temp }
+    hidden_effect = {
+        if = {
+            limit = {
+                all_country = {
+                    check_variable = { global.IRIS_conflict_@THIS = 0 }
+                }
+            }
+            every_country = {
+                remove_from_array = { IRIS_alerts = token:alert_IRIS_world_conflict_marker }
+                set_variable = { crisisoverview_window = 0 }
+                # set_variable = { IRIS_conflict = 0 }
+                clear_array = war_member
+                clear_array = defense_member
+                clear_array = neutral_member
+                clear_array = IRIS_conflict_frame
+            }
+        }
+        else = {
+            every_country = {
+                IRIS_convert_corresponding_conflict_remove = yes
+            }
+        }
+    }
+}
+
+
+#转换至对应冲突 此为GUI使用
+IRIS_convert_corresponding_conflict = {
+    clear_array = war_member
+    clear_array = defense_member
+    clear_array = neutral_member
+    #######################################################
+    clear_array = IRIS_conflict_frame
+    set_variable = { number_conflicts_temp = global.IRIS_conflict_container^num }
+    for_loop_effect = {
+        end = number_conflicts_temp
+        add_to_array = { IRIS_conflict_frame = 2 }
+    }
+    set_variable = { IRIS_conflict_frame^conflict_container_index = 1 } #判断第几帧用的
+    #######################################################
+    meta_effect = {
+        text = {
+            set_variable = { IRIS_conflict_TAG = [TAG] }
+            set_variable = { IRIS_conflict = global.IRIS_conflict_@[TAG] }
+            #载入进攻方
+            for_each_loop = {
+                array = global.war_member_@[TAG]
+                value = v
+                add_to_array = {
+                    war_member = v
+                }
+            }
+            get_sorted_scored_countries = {
+                scorer = IRIS_war_member_scorer
+                array = war_member
+            }
+            #载入防御方
+            for_each_loop = {
+                array = global.defense_member_@[TAG]
+                value = v
+                add_to_array = {
+                    defense_member = v
+                }
+            }
+            get_sorted_scored_countries = {
+                scorer = IRIS_defense_member_scorer
+                array = defense_member
+            }
+            #载入中立方
+            for_each_loop = {
+                array = global.neutral_member_@[TAG]
+                value = v
+                add_to_array = {
+                    neutral_member = v
+                }
+            }
+            get_sorted_scored_countries = {
+                scorer = IRIS_neutral_member_scorer
+                array = neutral_member
+            }
+            set_temp_variable = { tag_temp = [TAG] }
+        }
+        TAG = "[?global.IRIS_conflict_container^conflict_container_index]"
+    }
+    IRIS_calculating_world_conflict_advantage = yes
+}
+
+#强制计算 此为强制计算使用，该操作为自动运行，无需调用
+IRIS_convert_corresponding_conflict_TEMP = {
+    every_country = {
+        limit = {
+            check_variable = { IRIS_conflict_TAG = tag_temp }
+        }
+        clear_array = war_member
+        clear_array = defense_member
+        clear_array = neutral_member
+        meta_effect = {
+            text = {
+                set_variable = { IRIS_conflict = global.IRIS_conflict_@[TAG] }
+                #载入进攻方
+                for_each_loop = {
+                    array = global.war_member_@[TAG]
+                    value = v
+                    add_to_array = {
+                        war_member = v
+                    }
+                }
+                get_sorted_scored_countries = {
+                    scorer = IRIS_war_member_scorer
+                    array = war_member
+                }
+                #载入防御方
+                for_each_loop = {
+                    array = global.defense_member_@[TAG]
+                    value = v
+                    add_to_array = {
+                        defense_member = v
+                    }
+                }
+                get_sorted_scored_countries = {
+                    scorer = IRIS_defense_member_scorer
+                    array = defense_member
+                }
+                #载入中立方
+                for_each_loop = {
+                    array = global.neutral_member_@[TAG]
+                    value = v
+                    add_to_array = {
+                        neutral_member = v
+                    }
+                }
+                get_sorted_scored_countries = {
+                    scorer = IRIS_neutral_member_scorer
+                    array = neutral_member
+                }
+                set_temp_variable = { tag_temp = [TAG] }
+            }
+            TAG = "[?tag_temp]"
+        }
+        IRIS_calculating_world_conflict_advantage = yes
+    }
+}
+
+#移除后转移至第一位 该操作为自动运行，无需调用
+IRIS_convert_corresponding_conflict_remove = {
+    clear_array = war_member
+    clear_array = defense_member
+    clear_array = neutral_member
+    #######################################################
+    clear_array = IRIS_conflict_frame
+    set_variable = { number_conflicts_temp = global.IRIS_conflict_container^num }
+    for_loop_effect = {
+        end = number_conflicts_temp
+        add_to_array = { IRIS_conflict_frame = 2 }
+    }
+    set_variable = { IRIS_conflict_frame^0 = 1 } #判断第几帧用的
+    #######################################################
+    meta_effect = {
+        text = {
+            set_variable = { IRIS_conflict_TAG = [TAG] }
+            set_variable = { IRIS_conflict = global.IRIS_conflict_@[TAG] }
+            #载入进攻方
+            for_each_loop = {
+                array = global.war_member_@[TAG]
+                value = v
+                add_to_array = {
+                    war_member = v
+                }
+            }
+            get_sorted_scored_countries = {
+                scorer = IRIS_war_member_scorer
+                array = war_member
+            }
+            #载入防御方
+            for_each_loop = {
+                array = global.defense_member_@[TAG]
+                value = v
+                add_to_array = {
+                    defense_member = v
+                }
+            }
+            get_sorted_scored_countries = {
+                scorer = IRIS_defense_member_scorer
+                array = defense_member
+            }
+            #载入中立方
+            for_each_loop = {
+                array = global.neutral_member_@[TAG]
+                value = v
+                add_to_array = {
+                    neutral_member = v
+                }
+            }
+            get_sorted_scored_countries = {
+                scorer = IRIS_neutral_member_scorer
+                array = neutral_member
+            }
+            set_temp_variable = { tag_temp = [TAG] }
+        }
+        TAG = "[?global.IRIS_conflict_container^0]"
+    }
+    IRIS_calculating_world_conflict_advantage = yes
+}
+
+#转入中立
+#使用方法
+#TAG = { IRIS_activate_world_transfer_neutrality = yes }
+IRIS_activate_world_transfer_neutrality = {
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.war_member_@var:tag_temp
+                value = THIS
+            }
+        }
+        remove_from_array = { global.war_member_@var:tag_temp = THIS }
+    }
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.defense_member_@var:tag_temp
+                value = THIS
+            }
+        }
+        remove_from_array = { global.defense_member_@var:tag_temp = THIS }
+    }
+    if = {
+        limit = {
+            NOT = {
+                is_in_array = {
+                    array = global.neutral_member_@var:tag_temp
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = { global.neutral_member_@var:tag_temp = THIS }
+    }
+    IRIS_convert_corresponding_conflict_TEMP = yes
+}
+
+#转入进攻
+#使用方法
+#TAG = { IRIS_activate_world_war_member = yes }
+IRIS_activate_world_war_member = {
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.neutral_member_@var:tag_temp
+                value = THIS
+            }
+        }
+        remove_from_array = { global.neutral_member_@var:tag_temp = THIS }
+    }
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.defense_member_@var:tag_temp
+                value = THIS
+            }
+        }
+        remove_from_array = { global.defense_member_@var:tag_temp = THIS }
+    }
+    if = {
+        limit = {
+            NOT = {
+                is_in_array = {
+                    array = global.war_member_@var:tag_temp
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = { global.war_member_@var:tag_temp = THIS }
+    }
+    IRIS_convert_corresponding_conflict_TEMP = yes
+}
+
+#转入防御
+#使用方法
+#TAG = { IRIS_activate_world_defense_member = yes }
+IRIS_activate_world_defense_member = {
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.neutral_member_@var:tag_temp
+                value = THIS
+            }
+        }
+        remove_from_array = { global.neutral_member_@var:tag_temp = THIS }
+    }
+    if = {
+        limit = {
+            is_in_array = {
+                array = global.war_member_@var:tag_temp
+                value = THIS
+            }
+        }
+        remove_from_array = { global.war_member_@var:tag_temp = THIS }
+    }
+    if = {
+        limit = {
+            NOT = {
+                is_in_array = {
+                    array = global.defense_member_@var:tag_temp
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = { global.defense_member_@var:tag_temp = THIS }
+    }
+    IRIS_convert_corresponding_conflict_TEMP = yes
+}
+
+#计算优势 此为GUI使用
+IRIS_calculating_world_conflict_advantage = {
+
+    # set_variable = { ROOT.war_member_variable = 0 }
+    # set_variable = { ROOT.defense_member_variable = 0 }
+    # #进攻
+    # for_each_scope_loop = {
+    #     array = global.war_member_@var:tag_temp
+    #     add_to_variable = { ROOT.war_member_variable = THIS.national_influence }
+    # }
+    # #防御
+    # for_each_scope_loop = {
+    #     array = global.defense_member_@var:tag_temp
+    #     add_to_variable = { ROOT.defense_member_variable = THIS.national_influence }
+    # }
+
+    # #计算占比
+    # set_variable = { ROOT.all_member_variable = ROOT.war_member_variable }
+    # add_to_variable = { ROOT.all_member_variable = ROOT.defense_member_variable }
+    # divide_variable = { ROOT.war_member_variable = ROOT.all_member_variable }
+    # multiply_variable = { ROOT.war_member_variable = 10000 }
+
+    #############################
+    #使用世界变量
+    set_variable = { global.war_member_variable_@var:tag_temp = 0 } #进攻方优势
+    set_variable = { global.defense_member_variable_@var:tag_temp = 0 } #防御方优势
+    #进攻
+    for_each_scope_loop = {
+        array = global.war_member_@var:tag_temp
+        add_to_variable = { global.war_member_variable_@var:tag_temp = THIS.national_influence }
+    }
+    #防御
+    for_each_scope_loop = {
+        array = global.defense_member_@var:tag_temp
+        add_to_variable = { global.defense_member_variable_@var:tag_temp = THIS.national_influence }
+    }
+    #计算占比
+    set_variable = { global.all_member_variable_@var:tag_temp = global.war_member_variable_@var:tag_temp } #载入进攻方
+    add_to_variable = { global.all_member_variable_@var:tag_temp = global.defense_member_variable_@var:tag_temp } #载入防御方
+    divide_variable = { global.war_member_variable_@var:tag_temp = global.all_member_variable_@var:tag_temp } #计算进攻方优势（小数） global.war_member_variable_@var:tag_temp
+
+    set_variable = { global.world_conflict_progress_bar_@var:tag_temp = global.war_member_variable_@var:tag_temp }
+    multiply_variable = { global.world_conflict_progress_bar_@var:tag_temp = 10000 }
+    set_variable = { world_conflict_progress_bar_TAG = tag_temp }
+    log = "[?global.war_member_variable_@var:world_conflict_progress_bar_TAG]"
+}
+
+#初始化
+#使用方法
+#set_temp_variable = { tag_temp = TAG } #这行意思是谁启用的冲突
+#IRIS_activate_world_conflict_initialization = yes
+IRIS_activate_world_conflict_initialization = {
+    set_variable = { global.IRIS_conflict_@var:tag_temp = IRIS_conflict_temp }
+    add_to_array = { global.IRIS_conflict_container = tag_temp }
+}
+
+
+#以下由IRIS_activate_world_conflict = yes自动调用
+###############################################################################
+
+
+#博林克尼亚岛屿冲突
+IRIS_activate_world_conflict_1 = {
+    set_temp_variable = { tag_temp = OCF }
+    IRIS_activate_world_conflict_initialization = yes
+    #添加中立
+    every_country = {
+        limit = {
+            OR = {
+                is_ally_with = OCF
+                tag = OCF
+                is_ally_with = USF
+                tag = USF
+                if = {
+                    limit = {
+                        BLA = { NOT = { has_war_with = NAC } }
+                    }
+                    is_ally_with = BLA
+                    tag = BLA
+                }
+                if = {
+                    limit = {
+                        NAC = { NOT = { has_war_with = BLA } }
+                    }
+                    is_ally_with = NAC
+                    tag = NAC
+                }
+                AND = {
+                    is_major = yes
+                    OR = {
+                        is_IRIS_eu_country = yes
+                        is_IRIS_GBA_country = yes
+                    }
+                }
+            }
+        }
+        add_to_array = { global.neutral_member_@var:tag_temp = THIS }
+        country_event = { id = BRG.4 }
+    }
+    #进攻
+    OCF = {
+        OCF = { IRIS_activate_world_war_member = yes }
+        every_country = {
+            limit = {
+                is_ally_with = OCF
+                original_tag = BRG
+            }
+            THIS = { IRIS_activate_world_war_member = yes }
+        }
+
+        #防御
+        USF = { IRIS_activate_world_defense_member = yes }
+        every_country = {
+            limit = {
+                is_ally_with = USF
+                original_tag = BRG
+            }
+            THIS = { IRIS_activate_world_defense_member = yes }
+        }
+    }
+}
+
+#东欧危机
+IRIS_activate_world_conflict_2 = {
+    set_temp_variable = { tag_temp = DOC }
+    IRIS_activate_world_conflict_initialization = yes
+    #添加中立
+    every_country = {
+        limit = {
+            OR = {
+                AND = {
+                    is_major = yes
+                    OR = {
+                        is_IRIS_eu_country = yes
+                        is_IRIS_GBA_country = yes
+                    }
+                }
+                tag = URU
+                tag = PLP
+                tag = DOC
+            }
+        }
+        if = {
+            limit = {
+                NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
+            }
+            add_to_array = { global.neutral_member_@var:tag_temp = THIS }
+        }
+    }
+    #进攻
+    DOC = { IRIS_activate_world_war_member = yes }
+    # remove_from_array = { global.neutral_member_@var:tag_temp = DOC }
+    # add_to_array = { global.war_member_@var:tag_temp = DOC }
+
+    #防御
+    if = {
+        limit = {
+            URU = {
+                NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
+            }
+        }
+        URU = { IRIS_activate_world_defense_member = yes }
+    }
+    # add_to_array = { global.defense_member_@var:tag_temp = URU }
+    # remove_from_array = { global.neutral_member_@var:tag_temp = URU }
+    if = {
+        limit = {
+            PLP = {
+                NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
+            }
+        }
+        PLP = { IRIS_activate_world_defense_member = yes }
+    }
+    # add_to_array = { global.defense_member_@var:tag_temp = PLP }
+    # remove_from_array = { global.neutral_member_@var:tag_temp = PLP }
+}
+
+
+
+
+
+###############################################################################
+############                    此为示例代码                        ############
+###############################################################################
+IRIS_activate_world_conflict_id = {
+    set_temp_variable = { tag_temp = TAG } #这行意思是谁启用的冲突
+    IRIS_activate_world_conflict_initialization = yes #初始化
+    #以上两行不能少
+    #以下编写中立方 进攻方 防御方
+
+    #以下代码都可以在后续事件中追加
+    #载入国家
+    TAG = {
+        add_to_array = { global.neutral_member_@var:tag_temp = THIS } #把参与的国家载入
+    }
+
+    #进攻方
+    TAG = { IRIS_activate_world_war_member = yes } #国家移动到进攻方
+    #防御方
+    TAG = { IRIS_activate_world_defense_member = yes } #国家移动到防御方
+    #中立 默认就是中立 一般用于事件
+    TAG = { IRIS_activate_world_transfer_neutrality = yes } #国家移动到中立
+}
