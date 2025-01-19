@@ -238,6 +238,7 @@ focus_tree = {
 		icon = GFX_focus_ANZ_heavy_carrier_airwing
 		relative_position_id = ANZ_invest_quad_engine_airframe
 		prerequisite = { focus = ANZ_invest_quad_engine_airframe }
+		prerequisite = { focus = ANZ_carrier_conversion }
 		x = 1
 		y = 3
 		cost = 10
@@ -245,33 +246,12 @@ focus_tree = {
 			base = 10
 		}
 		completion_reward = {
-			custom_effect_tooltip = ANZ_504th_joint_fighter_wing_modifer_tt
-			set_variable = {
-				ANZ_air_nav_efficiency = 0.15
-				tooltip = air_nav_efficiency_tt
-			}
-			set_variable = {
-				ANZ_air_range_factor = 0.15
-				tooltip = air_range_factor_tt
-			}
-			
-			custom_effect_tooltip = generic_skip_one_line_tt
 			show_mio_tooltip = ANZ_reggione_organization
 			mio:ANZ_reggione_organization = {
 				complete_mio_trait = ANZ_mio_trait_heavy_carrier_airwing_production_line
 			}
 			
 			custom_effect_tooltip = generic_skip_one_line_tt
-			#if = {
-			#	limit = {
-			#		NOT = {
-			#			has_tech = improved_small_airframe
-			#		}
-			#	}
-			#	set_technology = {
-			#		improved_small_airframe = 1
-			#	}
-			#}
 			create_equipment_variant = {
 				name = "Re.2002 Ariete"
 				type = cv_small_plane_naval_bomber_airframe_2
@@ -288,12 +268,6 @@ focus_tree = {
 					}
 				icon = "GFX_ITA_cv_fighter2_medium"
 				model = "ITA_cv_CAS_equipment_2_entity"
-			}
-			effect_tooltip = {
-				add_equipment_to_stockpile = {
-					type = cv_small_plane_naval_bomber_airframe
-					amount = 100
-				}
 			}
 			hidden_effect = {
 				add_equipment_to_stockpile = {
@@ -328,6 +302,23 @@ focus_tree = {
 				progress = 0
 				efficiency = 100 
 				industrial_manufacturer = mio:ANZ_reggione_organization
+			}
+			effect_tooltip = {
+				add_equipment_to_stockpile = {
+					type = cv_small_plane_naval_bomber_airframe
+					amount = 100
+				}
+			}
+
+			custom_effect_tooltip = generic_skip_one_line_tt
+			custom_effect_tooltip = ANZ_504th_joint_fighter_wing_modifer_tt
+			set_variable = {
+				ANZ_air_nav_efficiency = 0.15
+				tooltip = air_nav_efficiency_tt
+			}
+			set_variable = {
+				ANZ_air_range_factor = 0.15
+				tooltip = air_range_factor_tt
 			}
 		}
 	}
@@ -372,10 +363,21 @@ focus_tree = {
 			base = 10
 		}
 		completion_reward = {
-			sp:sp_air_radar = {
-				add_project_progress_ratio = 0.5
+			if = {
+				limit = {
+					NOT = { is_special_project_completed = sp:sp_air_radar }
+				}
+				complete_special_project = {
+					project = sp:sp_air_radar
+				}
 			}
-			custom_effect_tooltip = ANZ_purchase_rader_tt
+			210 = {
+				add_building_construction = {
+					type = radar_station
+					level = 1
+					instant_build = yes
+				}
+			}
 			add_tech_bonus = {
 				bonus = 1
 				uses = 1
@@ -418,6 +420,363 @@ focus_tree = {
 		}
 		completion_reward = {
 			add_ideas = ANZ_maritime_bureau_of_anzio
+		}
+	}
+
+	#战列舰主炮换装
+	focus = {
+		id = ANZ_replacement_of_battleship_main_guns
+		icon = GFX_focus_ANZ_replacement_of_battleship_main_guns
+		relative_position_id = ANZ_set_up_maritime_bureau_of_anzio
+		prerequisite = { focus = ANZ_set_up_maritime_bureau_of_anzio }
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1
+				uses = 2
+				category = cat_ship_heavy_battery
+			}
+			navy_experience = 35
+		}
+	}
+
+	#更新现有潜艇
+	focus = {
+		id = ANZ_update_existing_submarines
+		icon = GFX_focus_ANZ_update_existing_submarines
+		relative_position_id = ANZ_set_up_maritime_bureau_of_anzio
+		prerequisite = { focus = ANZ_set_up_maritime_bureau_of_anzio }
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			create_equipment_variant = {
+				name = "Marcello Class"
+				type = ship_hull_submarine_2
+				name_group = ITA_SS_HISTORICAL
+				parent_version = 0
+				modules = {
+					fixed_ship_torpedo_slot = ship_torpedo_sub_2
+					fixed_ship_engine_slot = sub_ship_engine_2
+					rear_1_custom_slot = ship_torpedo_sub_2
+				}
+			}
+
+			custom_effect_tooltip = ANZ_update_existing_submarines_tt
+			hidden_effect = {
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Lorenzo Marcello"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Enrico Dandolo"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Lazzaro Mocenigo"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Giacomo Nani"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Sebastiano Veniero"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Andrea Provana"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Agostino Barbarigo"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Angelo Emo"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Francesco Morosini"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+				add_equipment_production = { 
+					equipment = { 
+						type = ship_hull_submarine_2 
+						creator = "ANZ" 
+						version_name = "Marcello Class" 
+					} 
+					name = "RN Comandante Cappellini"
+					requested_factories = 1 
+					progress = 0.50
+					amount = 1 
+				} 
+			}
+		}
+	}
+
+	#大舰队
+	focus = {
+		id = ANZ_big_fleet
+		icon = GFX_focus_ANZ_big_fleet
+		mutually_exclusive = { focus = ANZ_focus_on_escort }
+		relative_position_id = ANZ_replacement_of_battleship_main_guns
+		prerequisite = { focus = ANZ_replacement_of_battleship_main_guns }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = bb_tech
+			}
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.75
+				uses = 1
+				category = fleet_in_being_tree
+			}
+		}
+	}
+
+	#专注护航
+	focus = {
+		id = ANZ_focus_on_escort
+		icon = GFX_ANZ_focus_on_escort
+		mutually_exclusive = { focus = ANZ_big_fleet }
+		relative_position_id = ANZ_update_existing_submarines
+		prerequisite = { focus = ANZ_update_existing_submarines }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1
+				uses = 2
+				category = dd_tech
+			}
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.75
+				uses = 1
+				category = trade_interdiction_tree
+			}
+		}
+	}
+
+	#袖珍潜艇
+	focus = {
+		id = ANZ_midget_submarines
+		icon = GFX_focus_generic_midget_submarines
+		relative_position_id = ANZ_focus_on_escort
+		prerequisite = { focus = ANZ_big_fleet focus = ANZ_focus_on_escort }
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			navy_experience = 15
+			if = {
+				limit = {
+					NOT = { is_special_project_completed = sp:sp_naval_midget_submarine }
+				}
+				complete_special_project = {
+					project = sp:sp_naval_midget_submarine
+				}
+			}
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.5
+				uses = 1
+				category = trade_interdiction_tree
+			}
+			add_tech_bonus = {
+				bonus = 1.0
+				uses = 1
+				category = ss_tech
+			}
+
+			custom_effect_tooltip = generic_skip_one_line_tt
+			random_owned_controlled_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					is_coastal = yes
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = dockyard
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+
+	#大型船只改装
+	focus = {
+		id = ANZ_carrier_conversion
+		icon = GFX_focus_ANZ_carrier_conversion
+		relative_position_id = ANZ_big_fleet
+		prerequisite = { focus = ANZ_big_fleet }
+		x = 0
+		y = 2
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1
+				uses = 1
+				category = cv_tech
+			}
+		}
+	}
+
+	#主力舰核心
+	focus = {
+		id = ANZ_focus_on_capital_ship
+		icon = GFX_focus_ANZ_focus_on_capital_ship
+		relative_position_id = ANZ_carrier_conversion
+		prerequisite = { focus = ANZ_carrier_conversion }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			
+			add_doctrine_cost_reduction = {
+				cost_reduction = 1
+				uses = 1
+				category = fleet_in_being_tree
+			}
+		}
+	}
+
+	#拓展雷达
+	focus = {
+		id = ANZ_expand_rader_research
+		icon = GFX_ANZ_expand_rader_research
+		relative_position_id = ANZ_focus_on_escort
+		prerequisite = { focus = ANZ_focus_on_escort }
+		x = 0
+		y = 2
+		cost = 10
+		available = {
+			is_special_project_completed = sp:sp_air_radar
+		}
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1
+				uses = 1
+				category = electronics
+			}
+			swap_ideas = {
+				remove_idea = ANZ_maritime_bureau_of_anzio
+				add_idea = ANZ_maritime_bureau_of_anzio_2
+			}
+		}
+	}
+
+	#专注偷铝
+	focus = {
+		id = ANZ_focus_on_raiding
+		icon = GFX_ANZ_focus_on_escort
+		relative_position_id = ANZ_expand_rader_research
+		prerequisite = { focus = ANZ_expand_rader_research }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = ANZ_maritime_bureau_of_anzio_2
+				add_idea = ANZ_maritime_bureau_of_anzio_3
+			}
 		}
 	}
 
