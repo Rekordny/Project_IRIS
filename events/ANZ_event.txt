@@ -3,6 +3,7 @@
 #####################################################
 add_namespace = anz
 add_namespace = anz_news
+add_namespace = anz_test
 
 #着眼南方问题
 country_event = {
@@ -655,6 +656,396 @@ country_event = {
 		}
 	}
 }
+
+#进军罗曼
+country_event = {
+	id = anz.19
+	title = anz.19.t
+	desc = anz.19.desc
+	picture = GFX_ANZ_CE19
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = { #我们需要和军阀联手-军阀的援助
+		name = anz.19.a
+		ANZ_Panettone = {
+			add_trait = {
+				trait = ANZ_fazione_di_mana
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_trait = ANZ_scuola_industriale
+					}
+					remove_trait = {
+						trait = ANZ_scuola_industriale
+					}
+				}
+			}
+		}
+		add_ideas = ANZ_pantaloni_rossi
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	option = { #教会不信任这些忘恩负义者-军阀的背叛
+		name = anz.19.b
+		ANZ_Panettone = {
+			add_trait = {
+				trait = ANZ_scuola_industriale
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_trait = ANZ_fazione_di_mana
+					}
+					remove_trait = {
+						trait = ANZ_fazione_di_mana
+					}
+				}
+			}
+		}
+		add_political_power = 200
+		set_country_flag = ANZ_betrayal_of_warlords
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#释放卢西亚娜
+country_event = {
+	id = anz.20
+	title = anz.20.t
+	desc = anz.20.desc
+	picture = GFX_ANZ_CE20
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.20.a
+		effect_tooltip = {
+			ANZ_Luciana = {
+				add_field_marshal_role = {
+					traits={ ANZ_fazione_di_mana infantry_officer }
+					skill=3
+					attack_skill=2
+					defense_skill=2
+					planning_skill=2
+					logistics_skill=3
+				}
+				add_advisor_role = {
+					advisor = {
+						slot = theorist
+						idea_token = ANZ_Luciana
+						traits = { superior_firepower_expert }
+					}
+				}
+			}
+		}	
+		set_country_flag = ANZ_Luciana_released
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#大圣座的呼唤
+country_event = {
+	id = anz.21
+	title = anz.21.t
+	desc = anz.21.desc
+	picture = GFX_ANZ_CE21
+	is_triggered_only = yes
+	option = {
+		name = anz.21.a
+		if = {
+			limit = {
+				is_ai = no
+			}
+			add_political_power = -100
+		}
+		effect_tooltip = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ANZ_connection_of_the_holy_see
+			}
+			FROM = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = ANZ_connection_of_the_holy_see
+				}
+			}
+		}
+		FROM = {
+			add_to_variable = {
+				var = anz_num_pact_with_mana_secular_state
+    			value = 1
+			}
+		}
+		#add_to_array = {
+		#	array = FROM.anz_pact_with_mana_secular_state_detail
+		#	value = ROOT.id
+		#}
+		set_country_flag = ANZ_pact_with_mana_secular_state_agreed
+		
+		ai_chance = {
+			base = 1
+
+			modifier = {
+				factor = 0
+				
+				is_major = no
+				if = {
+					limit = {
+						is_in_faction = yes
+					}
+					faction_leader = {
+						NOT = {
+							has_idea = mana_priority
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						is_puppet = yes
+					}
+					overlord = {
+						NOT = {
+							has_idea = mana_priority
+						}
+					}
+				}
+				else = {
+					is_in_faction = no
+				}
+			}
+		}
+	}
+
+	option = {
+		name = anz.21.b
+		
+		ai_chance = {
+			base = 1
+
+			modifier = {
+				factor = 0
+
+				OR = {
+					is_major = yes
+					if = {
+						limit = {
+							is_in_faction = yes
+						}
+						faction_leader = {
+							has_idea = mana_priority
+						}
+					}
+					else_if = {
+						limit = {
+							is_puppet = yes
+						}
+						overlord = {
+							has_idea = mana_priority
+						}
+					}
+					else = {
+						always = no
+					}
+				}
+			}
+		}
+	}
+}
+
+#大圣座的呼唤-test
+country_event = {
+	id = anz_test.21
+	title = anz.21.t
+	desc = anz.21.desc
+	picture = GFX_ANZ_CE21
+	is_triggered_only = yes
+	option = {
+		name = anz.21.a
+		every_country = {
+			limit = {
+				is_ai = no
+			}
+			country_event = anz.21
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+}
+
+#与玛娜世俗国家的约定-正
+country_event = {
+	id = anz.22
+	title = anz.22.t
+	desc = anz.22.desc
+	picture = GFX_ANZ_CE22
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.22.a
+		custom_effect_tooltip = anz.22.a.tt_1
+		every_country = {
+			limit = {
+				has_country_flag = ANZ_pact_with_mana_secular_state_agreed
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = ANZ_connection_of_the_holy_see
+			}
+			hidden_effect = {
+				ROOT = {
+					add_opinion_modifier = {
+						target = PREV
+						modifier = ANZ_connection_of_the_holy_see
+					}
+				}
+			}
+		}
+		custom_effect_tooltip = anz.22.a.tt_2
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#与玛娜世俗国家的约定-反
+country_event = {
+	id = anz.23
+	title = anz.23.t
+	desc = anz.23.desc
+	picture = GFX_ANZ_CE23
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.23.a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#与玛娜世俗国家的约定-检测
+country_event = {
+	id = anz.24
+	hidden = yes
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		if = {
+			limit = {
+				check_variable = {
+					anz_num_pact_with_mana_secular_state > 0
+				}
+			}
+			country_event = anz.22
+		}
+		else = {
+			country_event = anz.23
+		}
+	}
+}
+
+#安提乌姆别墅纵火案
+country_event = {
+	id = anz.25
+	title = anz.25.t
+	desc = anz.25.desc
+	picture = GFX_ANZ_CE25
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.25.a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#大圣座的胜利
+country_event = {
+	id = anz.26
+	title = anz.26.t
+	desc = anz.26.desc
+	picture = GFX_ANZ_CE26
+	is_triggered_only = yes
+	option = {
+		name = anz.26.a
+		if = {
+			limit = {
+				NOT = {
+					original_tag = ANZ
+				}
+				is_ai = no
+			}
+			add_political_power = 200
+		}
+		if = {
+			limit = {
+				NOT = {
+					original_tag = ANZ
+				}
+			}
+			add_stability = 0.05
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#“教皇”
+country_event = {
+	id = anz.27
+	title = anz.27.t
+	desc = anz.27.desc
+	picture = GFX_ANZ_CE27
+
+	trigger = {
+		tag = ANZ
+		NOT = { has_country_flag = anz_27_fired }
+	}
+	
+	immediate = {
+		set_country_flag = anz_27_fired
+
+		#初始化塔罗牌
+		set_country_flag = ANZ_tarot_ui_get
+	}
+
+	mean_time_to_happen = {
+		days = 30
+	}
+
+	option = {
+		name = anz.27.a
+
+		#获得塔罗牌-教皇
+		add_to_array = {
+			ANZ_tarot_list = 1 #塔罗牌-教皇
+		}
+		set_variable = {
+			ANZ_tarot_get = 1
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
 #####################################################
 #####################NEWS_EVENTS####################
 #####################################################
@@ -740,5 +1131,66 @@ news_event = {
 			not = { tag = ANZ }
 			ANZ = { has_same_ideology = no }
 		}
+	}
+}
+
+#“那棵树”
+news_event = {
+	id = anz_news.4
+	title = anz_news.4.t
+	picture = GFX_USR_NE4
+	desc = anz_news.4.desc
+
+	trigger = {
+		original_tag = ANZ
+		date > 3090.3.4
+		NOT = { has_global_flag = anz_news_4_fired }
+	}
+	
+	immediate = {
+		set_global_flag = anz_news_4_fired
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = anz_news.4.a
+	}
+}
+
+#洛蒂安玛娜大主教迪-拉戈遭遇保皇党刺杀去世
+news_event = {
+	id = anz_news.5
+	title = anz_news.5.t
+	picture = GFX_USR_NE5
+	desc = anz_news.5.desc
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			country_event = {
+				id = anz_news.6
+				days = 10
+			}
+		}
+	}
+
+	option = {
+		name = anz_news.5.a
+	}
+}
+
+#第13号主教
+news_event = {
+	id = anz_news.6
+	title = anz_news.6.t
+	picture = GFX_USR_NE6
+	desc = anz_news.6.desc
+	is_triggered_only = yes
+
+	option = {
+		name = anz_news.6.a
 	}
 }
