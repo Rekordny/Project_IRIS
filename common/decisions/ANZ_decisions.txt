@@ -37,6 +37,50 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 	}
 	
+	#地方性妥协
+	ANZ_compromise_with_local = {
+		visible = {
+			has_completed_focus = ANZ_perparedness_averts_peril
+		}
+
+		cost = 100
+		days_remove = 50 
+		fire_only_once = yes
+
+		remove_effect = {
+			add_power_balance_value = {
+				id = ANZ_industrialization_against_manalisation
+				value = -0.15
+			}
+		}
+
+		ai_will_do = {
+			factor = 0 #暂时设定
+		}
+	}
+	
+	#招募虔诚者
+	ANZ_recruit_devout_individuals = {
+		visible = {
+			has_completed_focus = ANZ_perparedness_averts_peril
+		}
+
+		cost = 100
+		days_remove = 100 
+
+		remove_effect = {
+			add_to_variable = {
+				var = anz_num_recruit_devout_individuals
+    			value = 1
+				tooltip = anz_num_recruit_devout_individuals_tt
+			}
+		}
+
+		ai_will_do = {
+			factor = 0 #暂时设定
+		}
+	}
+	
 	#允许礼拜税
 	ANZ_allow_liturgical_tax = {
 		visible = {
@@ -542,7 +586,11 @@ ANZ_scramble_for_troops_and_officers = {
 		days_mission_timeout = 70
 		timeout_effect = {
 			random_unit_leader = {
-				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
+				limit = { 
+					NOT = { has_trait = ANZ_fazione_di_mana } 
+					NOT = { has_trait = ANZ_scuola_industriale } 
+					NOT = { is_character = ANZ_Panettone } #将由事件决定帕尼托内的立场
+				}
 				add_trait = {
 					trait = ANZ_scuola_industriale
 				}
@@ -648,6 +696,41 @@ ANZ_after_civil = {
 			171 = {
 				industrial_complex > 4
 			}
+		}
+	}
+}
+
+IRIS_debug_decisions = {
+	ANZ_pact_with_mana_secular_state = {
+		complete_effect = {
+			ANZ = {
+				country_event = anz_test.21
+			}
+		}
+	}
+
+	ANZ_load_focus_tree_ANZ_anzio = {
+		visible = {
+			tag = ANZ
+		}
+		complete_effect = {
+			country_lock_all_division_template = no
+			remove_power_balance = {
+				id = ANZ_industrialization_against_manalisation
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = ANZ_load_focus_tree_anzio
+						has_country_flag = ANZ_load_focus_tree_lothian
+					}
+				}
+				divide_variable = {
+					anz_completed_focus_pre_civil = 100
+				}
+			}
+			set_country_flag = ANZ_load_focus_tree_anzio
+			load_focus_tree = ANZ_anzio
 		}
 	}
 }
