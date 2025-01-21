@@ -248,6 +248,14 @@ NAC_liberate_old_world = {
                     is_puppet_of = NAC
                 }
             }
+            OR = {
+                NOT = {
+                    country_exists = MZL
+                }
+                MZL = {
+                    is_puppet_of = NAC
+                }
+            }
             if = {
                 limit = {
                     NOT = {
@@ -280,23 +288,34 @@ NAC_liberate_old_world = {
                     is_puppet_of = NAC
                 }
             }
+            OR = {
+                NOT = {
+                    country_exists = MZL
+                }
+                MZL = {
+                    is_puppet_of = NAC
+                }
+            }
             if = {
                 limit = {
                     NOT = {
                         country_exists = KAM
                         country_exists = IKR
+                        country_exists = MZL
                     }
                 }
                 any_controlled_state = {
                     OR = {
                         is_core_of = KAM
                         is_core_of = IKR
+                        is_core_of = MZL
                     }
                 }
             }
         }
         complete_effect = {
             custom_effect_tooltip = NAC_establish_the_independent_pasha
+            set_global_flag = established_united_socialist_pasha
             hidden_effect = {
                 if = {
                     limit = {
@@ -311,6 +330,9 @@ NAC_liberate_old_world = {
                             OR = {
                                 is_core_of = KAM
                                 is_core_of = IKR
+                            }
+                            NOT = {
+                                state = 823
                             }
                         }
                         transfer_state_to = KAM
@@ -364,6 +386,9 @@ NAC_liberate_old_world = {
                                 is_core_of = KAM
                                 is_core_of = IKR
                             }
+                            NOT = {
+                                state = 823
+                            }
                         }
                         transfer_state_to = IKR
                         add_core_of = IKR
@@ -402,24 +427,48 @@ NAC_liberate_old_world = {
                         add_to_faction = IKR
                     }
                 }
-                else = {
+                else_if = {
+                    limit = {
+                        MZL = {is_puppet_of = NAC}
+                    }
+                    set_autonomy = {
+                        target = MZL
+                        autonomy_state = autonomy_free
+                    }
                     every_controlled_state = {
                         limit = {
                             OR = {
                                 is_core_of = KAM
                                 is_core_of = IKR
                             }
+                            NOT = {
+                                state = 823
+                            }
                         }
-                        transfer_state_to = KAM
-                        add_core_of = KAM
+                        transfer_state_to = MZL
+                        add_core_of = MZL
                     }
                     every_state = {
                         limit = {
-                            is_core_of = IKR
+                            is_core_of = KAM
                         }
-                        add_core_of = KAM
+                        add_core_of = MZL
                     }
-                    KAM = {
+                    if = {
+                        limit = {
+                            country_exists = KAM
+                            KAM = {
+                                is_puppet_of = NAC
+                            }
+                        }
+                        MZL = {
+                            annex_country = {
+                                target = KAM
+                                transfer_troops = yes
+                            }
+                        }
+                    }
+                    MZL = {
                         set_cosmetic_tag = KAM_Pasha_communism
                         set_politics = {
                             ruling_party = communism
@@ -430,7 +479,45 @@ NAC_liberate_old_world = {
                         }
                     }
                     NAC = {
-                        add_to_faction = KAM
+                        add_to_faction = MZL
+                    }
+                }
+                else = {
+                    every_controlled_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = KAM
+                                is_core_of = IKR
+                            }
+                            NOT = {
+                                state = 823
+                            }
+                        }
+                        transfer_state_to = MZL
+                        add_core_of = MZL
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = IKR
+                        }
+                        add_core_of = MZL
+                    }
+                    MZL = {
+                        set_cosmetic_tag = KAM_Pasha_communism
+                        set_politics = {
+                            ruling_party = communism
+                        }
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.20
+                        }
+                        promote_character = {
+                            character = IKR_Mafamute
+                            ideology = sub_Military_socialism
+                        }
+                    }
+                    NAC = {
+                        add_to_faction = MZL
                     }
                 }
             }
@@ -656,7 +743,7 @@ remove_embargo_on_NAC = {
             is_embargoing = NAC
         }
         complete_effect = {
-            break_ = NAC
+            break_embargo = NAC
         }
         ai_will_do = {
             factor = 1000
