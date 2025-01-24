@@ -49,10 +49,14 @@ OCF_After_collapse_government = {
     KEZ = {
         transfer_state = 115
         transfer_state = 826
-        transfer_state = 841
+        transfer_state = 843
+        transfer_state = 844
         add_state_core = 115
         add_state_core = 826
         add_state_core = 841
+        add_state_core = 842
+        add_state_core = 843
+        add_state_core = 844
         if = {
             limit = {
                 FNC = {
@@ -74,6 +78,26 @@ OCF_After_collapse_government = {
             traits = {}
         }
     }
+    KWA = {
+		transfer_state = 842
+		add_state_core = 115
+        add_state_core = 826
+        add_state_core = 841
+        add_state_core = 842
+        add_state_core = 843
+        add_state_core = 844
+        set_country_flag = OCF_After_collapse_government_countries_flag
+    }
+    KCU = {
+		transfer_state = 841
+		add_state_core = 115
+        add_state_core = 826
+        add_state_core = 841
+        add_state_core = 842
+        add_state_core = 843
+        add_state_core = 844
+        set_country_flag = OCF_After_collapse_government_countries_flag
+    }
     SIE = {
         transfer_state = 773
         add_state_core = 773
@@ -90,8 +114,13 @@ OCF_After_collapse_government = {
         }
     }
     FLA = {
-        transfer_state = 766
-        add_state_core = 766
+        if = {
+            limit = {
+                ANA = { controls_state = 766 }
+            }
+            transfer_state = 766
+            add_state_core = 766
+        }
         transfer_state = 88
         add_state_core = 88
         set_country_flag = OCF_After_collapse_government_countries_flag
@@ -452,8 +481,8 @@ OCF_After_collapse_government_Declare_war = {
         }
         IF = {
             limit = { NOT = { has_war_with = ROOT } }
+            declare_war_on = { target = PREV type = annex_everything }
         }
-        declare_war_on = { target = PREV type = annex_everything }
     }
     every_state = {
         limit = {
@@ -485,7 +514,8 @@ OCF_After_collapse_government_Declare_war = {
 #内战结束
 OCF_end_of_civil_war = {
     OCF = {
-        OCF_reset_ruling_party = yes
+        remove_from_array = { global.has_ruling_coalition = THIS }
+        OCF_eliminate_current_ruling_party = yes
         OCF_clear_all_deputy_leaders = yes
         set_country_flag = OCF_abolition_parliament_yes_flag
         transfer_state = 115
@@ -6331,6 +6361,62 @@ OCF_calculate_winning_usage = {
 ##    ## ##     ## ##        ##        ##    ##  ##       ##    ## ##    ##
 ######   #######  ##        ##        ##     ## ########  ######   ######
 
+#调整至100值
+OCF_region_supports_formatting = {
+    hidden_effect = {
+        every_state = {
+            limit = {
+                OCF_computable_region_triggers = yes
+            }
+            set_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_1 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_2 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_3 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_4 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_5 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_6 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_7 }
+            add_to_temp_variable = { THIS.temp = THIS.OCF_regional_support_rate_8 }
+            #如果超过100
+            if = {
+                limit = { check_variable = { THIS.temp > 100 } }
+                add_to_temp_variable = { THIS.temp = -100 }
+                for_loop_effect = {
+                    end = THIS.temp
+                    random_list = {
+                        THIS.OCF_regional_support_rate_1 = { add_to_variable = { THIS.OCF_regional_support_rate_1 = -1 } }
+                        THIS.OCF_regional_support_rate_2 = { add_to_variable = { THIS.OCF_regional_support_rate_2 = -1 } }
+                        THIS.OCF_regional_support_rate_3 = { add_to_variable = { THIS.OCF_regional_support_rate_3 = -1 } }
+                        THIS.OCF_regional_support_rate_4 = { add_to_variable = { THIS.OCF_regional_support_rate_4 = -1 } }
+                        THIS.OCF_regional_support_rate_5 = { add_to_variable = { THIS.OCF_regional_support_rate_5 = -1 } }
+                        THIS.OCF_regional_support_rate_6 = { add_to_variable = { THIS.OCF_regional_support_rate_6 = -1 } }
+                        THIS.OCF_regional_support_rate_7 = { add_to_variable = { THIS.OCF_regional_support_rate_7 = -1 } }
+                        THIS.OCF_regional_support_rate_8 = { add_to_variable = { THIS.OCF_regional_support_rate_8 = -1 } }
+                    }
+                }
+            }
+            #如果小于100
+            if = {
+                limit = { check_variable = { THIS.temp < 100 } }
+                add_to_temp_variable = { THIS.temp = -100 }
+                multiply_temp_variable = { THIS.temp = -1 }
+                for_loop_effect = {
+                    end = THIS.temp
+                    random_list = {
+                        THIS.OCF_regional_support_rate_1 = { add_to_variable = { THIS.OCF_regional_support_rate_1 = 1 } }
+                        THIS.OCF_regional_support_rate_2 = { add_to_variable = { THIS.OCF_regional_support_rate_2 = 1 } }
+                        THIS.OCF_regional_support_rate_3 = { add_to_variable = { THIS.OCF_regional_support_rate_3 = 1 } }
+                        THIS.OCF_regional_support_rate_4 = { add_to_variable = { THIS.OCF_regional_support_rate_4 = 1 } }
+                        THIS.OCF_regional_support_rate_5 = { add_to_variable = { THIS.OCF_regional_support_rate_5 = 1 } }
+                        THIS.OCF_regional_support_rate_6 = { add_to_variable = { THIS.OCF_regional_support_rate_6 = 1 } }
+                        THIS.OCF_regional_support_rate_7 = { add_to_variable = { THIS.OCF_regional_support_rate_7 = 1 } }
+                        THIS.OCF_regional_support_rate_8 = { add_to_variable = { THIS.OCF_regional_support_rate_8 = 1 } }
+                    }
+                }
+            }
+        }
+    }
+}
+
 #打压党派
 OCF_suppress_political_parties = {
     OCF_refresh_regional_support_rate = yes
@@ -6338,6 +6424,7 @@ OCF_suppress_political_parties = {
     OCF = {
         OCF_government_authority = yes
         OCF_calculate_winning_usage = yes
+        OCF_region_supports_formatting = yes
     }
 }
 OCF_suppress_political_parties_1 = {
@@ -6541,6 +6628,7 @@ OCF_supporting_political_parties = {
     OCF = {
         OCF_government_authority = yes
         OCF_calculate_winning_usage = yes
+        OCF_region_supports_formatting = yes
     }
 }
 OCF_supporting_political_parties_1 = {
@@ -7091,10 +7179,11 @@ OCF_random_region_supports_changes_del = {
 OCF_refresh_all_regional_data = {
     every_state = {
         limit = {
-            OCF_votable_areas_triggers = yes
+            OCF_computable_region_triggers = yes
         }
         OCF_refresh_regional_support_rate = yes
     }
+    OCF_region_supports_formatting = yes
 }
 
 #切换党魁
