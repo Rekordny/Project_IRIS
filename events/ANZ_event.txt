@@ -743,8 +743,20 @@ country_event = {
 					}
 				}
 			}
+		}
+		hidden_effect = {
+			ANZ_Luciana = {
+				set_character_flag = ANZ_Luciana_released
+				set_portraits = {
+					army={
+						small="gfx/interface/ideas/ANZ/Luciana.dds"
+					}
+					civilian={
+						small="gfx/interface/ideas/ANZ/Luciana.dds"
+					}
+				}
+			}
 		}	
-		set_country_flag = ANZ_Luciana_released
 		
 		ai_chance = {
 			base = 1
@@ -1036,14 +1048,515 @@ country_event = {
 		add_to_array = {
 			ANZ_tarot_list = 1 #塔罗牌-教皇
 		}
-		set_variable = {
-			ANZ_tarot_get = 1
+		if = {
+			limit = {
+				is_ai = no
+			}
+			set_variable = {
+				ANZ_tarot_get = 1
+			}
 		}
 		
 		ai_chance = {
 			base = 1
 		}
 	}
+}
+
+#新国王加冕
+country_event = {
+	id = anz.28
+	title = anz.28.t
+	desc = anz.28.desc
+	picture = GFX_ANZ_CE28
+	is_triggered_only = yes
+	option = {
+		name = anz.28.a
+		add_ideas = ANZ_king_of_fashion
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#安齐奥希望组建战车道联盟
+country_event = {
+	id = anz.29
+	title = anz.29.t
+	desc = anz.29.desc
+	picture = GFX_ANZ_CE29
+	is_triggered_only = yes
+	option = {
+		name = anz.29.a
+		create_faction = USR_senshado_alliance_idea
+		add_ideas = USR_senshado_alliance_idea
+		add_war_support = 0.05
+		add_to_faction = FROM
+		FROM = { 
+			add_ideas = USR_senshado_alliance_idea
+			add_war_support = 0.05
+		}
+		if = {
+			limit = { YMD = { is_in_faction = no is_subject = no } }
+			add_to_faction = YMD
+			YMD = { add_ideas = USR_senshado_alliance_idea }
+		}
+		if = {
+			limit = { CTC = { is_in_faction = no is_subject = no } }
+			add_to_faction = CTC
+			CTC = { add_ideas = USR_senshado_alliance_idea }
+		}
+		if = {
+			limit = { TAU = { is_in_faction = no is_subject = no has_government = USR } }
+			add_to_faction = TAU
+			TAU = { add_ideas = USR_senshado_alliance_idea }
+		}
+		news_event = { id = usr_news.3 }
+
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	option = {
+		name = anz.29.b
+		ANZ = {
+			country_event = ANZ.30
+		}
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#乌斯拉尔拒绝同盟
+country_event = {
+	id = anz.30
+	title = anz.30.t
+	desc = anz.30.desc
+	picture = GFX_ANZ_CE30
+	is_triggered_only = yes
+	option = {
+		name = anz.30.a
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#加利亚遗留问题/索取苏瓦尔
+country_event = {
+	id = anz.31
+	title = {
+		text = anz.31.t.gal
+		trigger = {
+			GAL = {
+				exists = yes
+				NOT = {
+					is_puppet_of = FROM
+				}
+			}
+		}
+	}
+	title = {
+		text = anz.31.t.swa
+		trigger = {
+			GAL = {
+				OR = {
+					exists = no
+					is_puppet_of = FROM
+				}
+			}
+		}
+	}
+	desc = {
+		text = anz.31.d.gal
+		trigger = {
+			GAL = {
+				exists = yes
+				NOT = {
+					is_puppet_of = FROM
+				}
+			}
+		}
+	}
+	desc = {
+		text = anz.31.d.swa
+		trigger = {
+			GAL = {
+				OR = {
+					exists = no
+					is_puppet_of = FROM
+				}
+			}
+		}
+	}
+	picture = GFX_ANZ_CE31
+	is_triggered_only = yes
+	option = {
+		name = anz.31.a
+		#要求合并
+		if = {
+			limit = {
+				GAL = {
+					exists = yes
+					NOT = {
+						is_puppet_of = FROM
+					}
+				}
+			}
+			GAL = {
+				country_event = {
+					id = ANZ.32
+					days = 1
+				}
+			}
+		}
+		else = {
+			SWA = {
+				country_event = {
+					id = ANZ.32
+					days = 1
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = anz.31.a
+		#要求傀儡
+		if = {
+			limit = {
+				GAL = {
+					exists = yes
+					NOT = {
+						is_puppet_of = FROM
+					}
+				}
+			}
+			GAL = {
+				country_event = {
+					id = ANZ.33
+					days = 1
+				}
+			}
+		}
+		else = {
+			SWA = {
+				country_event = {
+					id = ANZ.33
+					days = 1
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#安齐奥要求亚合并
+country_event = {
+	id = anz.32
+	title = {
+		text = anz.32.t.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	title = {
+		text = anz.32.t.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	desc = {
+		text = anz.32.d.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	desc = {
+		text = anz.32.d.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	picture = GFX_ANZ_CE32
+	is_triggered_only = yes
+	option = {
+		name = anz.32.a
+		#同意
+		custom_effect_tooltip = anz_32_a_tt
+		FROM = {
+			country_event = ANZ.35
+		}
+
+		ai_chance = {
+			base = 1
+			#modifier = {
+			#	add = 1
+			#	tag = SWA
+			#}
+		}
+	}
+
+	option = {
+		name = anz.32.a
+		#拒绝
+		FROM = {
+			country_event = ANZ.36
+		}
+		effect_tooltip = {
+			FROM = {
+				declare_war_on = {
+					target = ROOT
+					type = annex_everything
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 0
+			#modifier = {
+			#	add = -1
+			#	tag = SWA
+			#}
+		}
+	}
+}
+
+#安齐奥要求亚傀儡
+country_event = {
+	id = anz.33
+	title = {
+		text = anz.33.t.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	title = {
+		text = anz.33.t.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	desc = {
+		text = anz.33.d.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	desc = {
+		text = anz.33.d.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	picture = GFX_ANZ_CE33
+	is_triggered_only = yes
+	option = {
+		name = anz.33.a
+		#同意
+		custom_effect_tooltip = anz_32_a_tt
+		FROM = {
+			country_event = ANZ.34
+		}
+
+		ai_chance = {
+			base = 1
+			#modifier = {
+			#	add = 1
+			#	tag = SWA
+			#}
+		}
+	}
+
+	option = {
+		name = anz.33.a
+		#拒绝
+		FROM = {
+			country_event = ANZ.36
+		}
+		effect_tooltip = {
+			FROM = {
+				declare_war_on = {
+					target = ROOT
+					type = annex_everything
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 0
+			#modifier = {
+			#	add = -1
+			#	tag = SWA
+			#}
+		}
+	}
+}
+
+#同意傀儡
+country_event = {
+	id = anz.34
+	title = {
+		text = anz.34.t.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	title = {
+		text = anz.34.t.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	desc = {
+		text = anz.34.d.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	desc = {
+		text = anz.34.d.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	picture = GFX_ANZ_CE34
+	is_triggered_only = yes
+	option = {
+		name = anz.34.a
+		puppet = FROM
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#同意合并
+country_event = {
+	id = anz.35
+	title = {
+		text = anz.35.t.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	title = {
+		text = anz.35.t.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	desc = {
+		text = anz.35.d.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	desc = {
+		text = anz.35.d.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	picture = GFX_ANZ_CE35
+	is_triggered_only = yes
+	option = {
+		name = anz.35.a
+		annex_country = {
+			target = FROM
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#拒绝要求
+country_event = {
+	id = anz.36
+	title = {
+		text = anz.36.t.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	title = {
+		text = anz.36.t.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	desc = {
+		text = anz.36.d.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	desc = {
+		text = anz.36.d.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	picture = GFX_ANZ_CE36
+	is_triggered_only = yes
+	option = {
+		name = anz.36.a
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#最后通牒-仅展示
+country_event = {
+	id = anz.37
+	title = anz.37.t
+	is_triggered_only = yes
+	hidden = yes
 }
 
 #####################################################
