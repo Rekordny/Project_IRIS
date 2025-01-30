@@ -624,7 +624,7 @@ focus_tree = {
 		y = 1
 		cost = 10
 		ai_will_do = {
-			base = 10
+			base = 0
 		}
 		completion_reward = {
 			add_tech_bonus = {
@@ -969,7 +969,7 @@ focus_tree = {
 		y = 1
 		cost = 10
 		ai_will_do = {
-			base = 10
+			base = 0
 		}
 		completion_reward = {
 			swap_ideas = {
@@ -1022,6 +1022,7 @@ focus_tree = {
 		icon = GFX_focus_ANZ_join_senshado_alliance
 		relative_position_id = ANZ_new_king
 		prerequisite = { focus = ANZ_new_king }
+		mutually_exclusive = { focus = ANZ_anzio_first }
 		x = -3
 		y = 1
 		cost = 5
@@ -1029,6 +1030,7 @@ focus_tree = {
 			base = 0
 		}
 		available = {
+			is_in_faction = no
 			NOT = { has_war_with = USR }
 			ANZ = { has_government = fascism }
 			USR = { has_government = fascism }
@@ -1039,7 +1041,47 @@ focus_tree = {
 
 		completion_reward = {
 			USR = {
-				country_event = anz.29
+				country_event = {
+					id = anz.29
+					days =1
+				}
+			}
+		}
+	}
+
+	#安齐奥万岁
+	focus = {
+		id = ANZ_anzio_first
+		icon = GFX_focus_ANZ_anzio_first
+		relative_position_id = ANZ_new_king
+		prerequisite = { focus = ANZ_new_king }
+		mutually_exclusive = { focus = ANZ_join_senshado_alliance }
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			is_in_faction = no
+		}
+
+		completion_reward = {
+			create_faction = ANZ_roman_faction
+			every_country = {
+				limit = {
+					OR = {
+						tag = YMD
+						tag = OHR
+					}
+				}
+				country_event = {
+					id = ANZ.38
+					days = 1
+				}
+			}
+			hidden_effect = {
+				news_event = { id = anz_news.7 days = 2}
 			}
 		}
 	}
@@ -1083,12 +1125,55 @@ focus_tree = {
 		}
 	}
 
+	#扩建那布勒番茄酱罐头厂
+	focus = {
+		id = ANZ_expand_tomato_ketchup_cannery
+		icon = GFX_focus_ANZ_expand_tomato_ketchup_cannery
+		relative_position_id = ANZ_tech_share_with_uslar
+		prerequisite = { focus = ANZ_tech_share_with_uslar }
+		prerequisite = { focus = ANZ_develop_southern_agricultural }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			237 = {
+				is_fully_controlled_by = ROOT
+			}
+		}
+
+		completion_reward = {
+			237 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_ideas = ANZ_tomato_ketchup
+			every_army_leader = {
+				add_logistics = 2
+			}
+			
+			custom_effect_tooltip = generic_skip_one_line_tt
+			USR = {
+				add_ideas = ANZ_tomato_ketchup
+				every_army_leader = {
+					add_logistics = 2
+				}
+			}
+		}
+	}
+
 	#解决加利亚问题
 	focus = {
 		id = ANZ_demand_request_to_gal
 		icon = GFX_focus_ANZ_demand_request_to_gal
 		relative_position_id = ANZ_join_senshado_alliance
-		prerequisite = { focus = ANZ_join_senshado_alliance }
+		prerequisite = { focus = ANZ_join_senshado_alliance focus = ANZ_anzio_first }
 		x = -1
 		y = 1
 		cost = 5
@@ -1121,6 +1206,7 @@ focus_tree = {
 					id = ANZ.31
 				}
 			}
+			custom_effect_tooltip = ANZ_demand_request_to_gal_tt
 		}
 	}
 
@@ -1148,6 +1234,7 @@ focus_tree = {
 		}
 
 		completion_reward = {
+			set_country_flag = ANZ_demand_request_to_swa
 			effect_tooltip = {
 				if = {
 					limit = {
@@ -1169,6 +1256,7 @@ focus_tree = {
 					id = ANZ.31
 				}
 			}
+			custom_effect_tooltip = ANZ_demand_request_to_gal_tt
 		}
 	}
 
@@ -1177,7 +1265,7 @@ focus_tree = {
 		id = ANZ_anchovy_saigao
 		icon = GFX_focus_ANZ_anchovy_saigao
 		relative_position_id = ANZ_join_senshado_alliance
-		prerequisite = { focus = ANZ_join_senshado_alliance }
+		prerequisite = { focus = ANZ_join_senshado_alliance focus = ANZ_anzio_first }
 		x = 1
 		y = 1
 		cost = 5
@@ -1192,6 +1280,174 @@ focus_tree = {
 					trait = ANZ_duce
 				}
 			}
+		}
+	}
+
+	#放眼美乐蒂
+	focus = {
+		id = ANZ_focus_on_south
+		icon = GFX_focus_ANZ_focus_on_south
+		relative_position_id = ANZ_anchovy_saigao
+		prerequisite = { focus = ANZ_anchovy_saigao }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+
+		completion_reward = {
+			add_timed_idea = {
+				idea = ANZ_invading_prepare
+				days = 720
+			}
+			add_tech_bonus = {
+				bonus = 1
+				uses = 1
+				category = marine_tech
+			}
+		}
+	}
+
+	#战争后勤
+	focus = {
+		id = ANZ_fuel_preparation
+		icon = GFX_focus_ANZ_fuel_preparation
+		relative_position_id = ANZ_focus_on_south
+		prerequisite = { focus = ANZ_focus_on_south }
+		x = -3
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+
+		completion_reward = {
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = fuel_silo
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = fuel_silo
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = ROOT
+					free_building_slots = {
+						building = fuel_silo
+						size > 1
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = fuel_silo
+					level = 2
+					instant_build = yes
+				}
+			}
+			add_timed_idea = {
+				idea = ANZ_fuel_preparation_ready
+				days = 365
+			}
+		}
+	}
+
+	#处理贵族
+	focus = {
+		id = ANZ_dealing_with_nobles
+		icon = GFX_focus_ANZ_dealing_with_nobles
+		relative_position_id = ANZ_new_king
+		prerequisite = { focus = ANZ_new_king }
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			NOT = {
+				has_idea = ANZ_pantaloni_rossi
+			}
+		}
+
+		completion_reward = {
+			#
+		}
+	}
+
+	#处理教会
+	focus = {
+		id = ANZ_dealing_with_the_church
+		icon = GFX_focus_ANZ_dealing_with_the_church
+		relative_position_id = ANZ_new_king
+		prerequisite = { focus = ANZ_new_king }
+		x = 3
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+
+		completion_reward = {
+			add_ideas = ANZ_dealing_with_nobles_going_on
+		}
+	}
+
+	#消灭玛娜
+	focus = {
+		id = ANZ_wipe_out_mana
+		icon = GFX_focus_ANZ_wipe_out_mana
+		relative_position_id = ANZ_dealing_with_the_church
+		prerequisite = { focus = ANZ_dealing_with_the_church }
+		x = 0
+		y = 1
+		offset = {
+			x = -1
+			y = 0
+			trigger = {
+				has_country_flag = ANZ_nero_returned
+			}
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		bypass = {
+			NOT = {
+				has_idea = ANZ_ancient_mana_tradition
+			}
+		}
+
+		completion_reward = {
+			unlock_decision_category_tooltip = ANZ_demanarization
+		}
+	}
+
+	#消灭玛娜
+	focus = {
+		id = ANZ_strike_on_mafia
+		icon = GFX_focus_ANZ_strike_on_mafia
+		relative_position_id = ANZ_wipe_out_mana
+		prerequisite = { focus = ANZ_wipe_out_mana }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+
+		completion_reward = {
+			unlock_decision_tooltip = ANZ_destroy_mafia_tooltip
 		}
 	}
 }
