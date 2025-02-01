@@ -50,66 +50,132 @@ USR_kuromorimine_organization = {
 	}
 
 	tree_header_text = {
-		text = mio_header_tank_construction
-		x = 3
-	}
-
-	tree_header_text = {
-		text = mio_header_equipment_and_specialization
-		x = 7
+		text = mio_header_design
+		x = 1
 	}
 
 	tree_header_text = {
 		text = mio_header_armor
-		x = 9
-	}
-	initial_trait = {
-		organization_modifier = {
-			military_industrial_organization_research_bonus = 0.05
-		}
+		x = 4
 	}
 
-	add_trait = {  
-		token = GER_mio_trait_hotrolled_armor
-		name = GER_mio_trait_hotrolled_armor
-		icon = GFX_generic_mio_department_icon_tank_general_technology
+	tree_header_text = {
+		text = mio_header_engines
+		x = 7
+	}
+
+	override_trait = {
+		token = generic_mio_trait_armor_steel_working
+
+		position = { x=3 y=0 }
+	}
+
+	add_trait = {
+		token = GER_mio_trait_hoesch_facilities
+		name = GER_mio_trait_hoesch_facilities
+		icon = GFX_generic_mio_trait_icon_production_capacity
 		special_trait_background = yes
 
-		limit_to_equipment_type = { medium_tank_chassis }
-		production_bonus = {
-			production_efficiency_cap_factor = 0.05
-			production_efficiency_gain_factor = 0.05
+		position = { x=@tank_hoesch_X y=@tank_hoesch_Y }  
+		
+		visible = {
+			FROM = { original_tag = GER }
 		}
 
-		position = { x=9 y=2 }  
+		available = {
+			FROM = {
+				NOT = { has_country_flag = GER_hoesch_facilities_trait_taken_flag }
+			}
+		}
+
+		on_complete = {
+			custom_effect_tooltip = generic_trait_will_not_be_available_in_other_organizations
+			FROM = {
+				set_country_flag = GER_hoesch_facilities_trait_taken_flag
+			}
+		}
+
+		production_bonus = {
+			production_capacity_factor = 0.05
+		}
+
 		ai_will_do = {
 			base = 2
-			modifier = {
-				factor = 1.5
-				date > 3093.1.1
-			}
 		}
 	}
 
 	add_trait = {
-		token = GER_mio_trait_multilayer_armour
-		name = GER_mio_trait_multilayer_armour
-		icon = GFX_generic_mio_trait_icon_armor_value
+		token = GER_mio_trait_high_velocity_armament
+		name = GER_mio_trait_high_velocity_armament
+		icon = GFX_generic_mio_department_icon_tank_general_at
 		special_trait_background = yes
 
-		any_parent = { GER_mio_trait_hotrolled_armor }
-		limit_to_equipment_type = { medium_tank_chassis }
-		equipment_bonus = {
-			armor_value = 0.1
-		} 
+		position = { x=1 y=2 }
+		relative_position_id = generic_mio_trait_spaced_armor
 
-		position = { x=9 y=4 }  
+		all_parents = { generic_mio_trait_improved_gun_metallurgy }
+
+		any_parent = { generic_mio_trait_spaced_armor generic_mio_trait_crew_survival_layout generic_mio_trait_sloped_side_armor }
+		
+		available = {
+		}
+
+		equipment_bonus = {
+			ap_attack = 0.05
+			hard_attack = 0.05
+		}
+
 		ai_will_do = {
 			base = 2
-			modifier = {
-				factor = 1.5
-				date > 3093.1.1
-			}
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_schachtellaufwerk 
+		name = GER_mio_trait_schachtellaufwerk 
+		icon = GFX_generic_mio_department_icon_tank_heavy_tank_quality
+		special_trait_background = yes
+
+		position = { x=-1 y=1 }
+		relative_position_id = generic_mio_trait_improved_suspension
+
+		all_parents = { generic_mio_trait_improved_suspension }
+
+		
+		available = {
+		}
+
+		equipment_bonus = {
+			breakthrough = 0.03
+			reliability = 0.03
+		}
+
+		ai_will_do = {
+			base = 2
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_mobility_design_philosophy
+		name = GER_mio_trait_mobility_design_philosophy 
+		icon = GFX_generic_mio_department_icon_tank_medium_tank_engine
+		special_trait_background = yes
+
+		position = { x=1 y=1 }
+		relative_position_id = generic_mio_trait_improved_suspension
+
+		all_parents = { generic_mio_trait_improved_suspension }
+
+		
+		available = {
+		}
+
+		equipment_bonus = {
+			maximum_speed = 0.05
+		}
+
+		ai_will_do = {
+			base = 2
 		}
 	}
 }
@@ -245,7 +311,7 @@ USR_uslar_royal_rifle_organization = {
 			}
 		}
 	}
-	
+
 	available = {
 		# When in a Foreign MIO, countries need to be at peace with original country
 		IF = {
@@ -253,6 +319,55 @@ USR_uslar_royal_rifle_organization = {
 				FROM = { NOT = { original_tag = USR } }
 			}
 			FROM = { NOT = { has_war_with = USR } }
+		}
+	}
+}
+
+# 重要行动原型机械制造公司
+USR_IOP_organization = {
+	include = generic_support_equipment_organization
+	icon = GFX_idea_USR_IOP
+	allowed = {	
+		OR = {
+			tag = RZT
+			tag = USR
+			tag = RHB
+			tag = BGT
+			tag = KST
+		}
+	}
+	available = {
+		# When in a Foreign MIO, countries need to be at peace with original country
+		IF = {
+			limit = {
+				FROM = { NOT = { original_tag = USR } }
+			}
+			FROM = { NOT = { has_war_with = USR } }
+		}
+	}
+	add_trait = {
+		token = GER_mio_trait_policiary_equipment
+		name = GER_mio_trait_policiary_equipment
+		icon = GFX_generic_mio_department_icon_support_equipment
+		special_trait_background = yes
+
+		position = { x=0 y=1 } 
+		relative_position_id = generic_mio_trait_private_tenders
+		
+		all_parents = { generic_mio_trait_private_tenders }
+
+		ai_will_do = {
+			base = 2
+		}
+
+		limit_to_equipment_type = { support_equipment }
+
+		organization_modifier = {
+			military_industrial_organization_funds_gain = 0.05
+		}
+
+		equipment_bonus = {
+			build_cost_ic = -0.05
 		}
 	}
 }
@@ -279,6 +394,111 @@ USR_opel_organization = {
 				FROM = { NOT = { original_tag = USR } }
 			}
 			FROM = { NOT = { has_war_with = USR } }
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_continental_ag_tires
+		name = GER_mio_trait_continental_ag_tires
+		icon = GFX_generic_mio_trait_icon_reliability
+		special_trait_background = yes
+
+		position = { x=9 y=0 }  
+
+		visible = {
+			FROM = { original_tag = GER }
+		}
+
+		available = { 
+			FROM = {
+				has_completed_focus = USR_everyone_has_a_car
+			}
+		}
+
+		equipment_bonus = {
+			reliability = 0.05
+			build_cost_ic = -0.02
+		}
+
+		ai_will_do = {
+			base = 2
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_ford_facilities
+		name = GER_mio_trait_ford_facilities
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		special_trait_background = yes
+
+		position = { x=9 y=1 }  
+
+		visible = {
+			FROM = { original_tag = GER }
+		}
+
+		available = {
+			FROM = {
+				has_completed_focus = USR_everyone_has_a_car
+			}
+		}
+
+		production_bonus = {
+			production_capacity_factor = 0.05
+		}
+
+		ai_will_do = {
+			base = 2
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_efficiency_in_mass_production
+		name = GER_mio_trait_efficiency_in_mass_production
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		special_trait_background = yes
+
+		position = { x=0 y=1 }
+		relative_position_id = GER_mio_trait_ford_facilities
+
+		any_parent = { GER_mio_trait_ford_facilities }
+
+		visible = {
+			FROM = { original_tag = GER }
+		}
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.05
+		}
+
+		ai_will_do = {
+			base = 2
+		}
+	}
+
+	add_trait = {
+		token = GER_mio_trait_improved_engines
+		name = GER_mio_trait_improved_engines
+		icon = GFX_generic_mio_department_icon_motorized_mechanized_engine
+		special_trait_background = yes
+
+		position = { x=-1 y=1 }
+		relative_position_id = GER_mio_trait_ford_facilities
+
+		any_parent = { GER_mio_trait_ford_facilities }
+
+		visible = {
+			FROM = { original_tag = GER }
+		}
+
+		equipment_bonus = {
+			maximum_speed = 0.05
+			reliability = 0.03
+			build_cost_ic = 0.02
+		}
+
+		ai_will_do = {
+			base = 2
 		}
 	}
 }
