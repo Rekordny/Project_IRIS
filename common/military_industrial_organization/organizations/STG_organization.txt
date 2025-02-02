@@ -1,6 +1,7 @@
 #圣葛罗莉安娜装甲
 STG_armor_organization = {
-	include = generic_mobile_tank_organization
+	icon = GFX_idea_STG_armor_organization
+	include = generic_medium_tank_organization
 	
 	allowed = {	
 		tag = STG
@@ -10,26 +11,368 @@ STG_armor_organization = {
 			tag = STG
 		}
 	}
+
+	equipment_type = { 
+		mio_cat_eq_all_light_tank
+		mio_cat_eq_all_medium_tank
+		mio_cat_eq_all_heavy_tank
+	}
+
 	initial_trait = {
+		name = STG_armor_organization_mio_desc
+
 		production_bonus = {
 			production_efficiency_gain_factor = 0.10
 		}
 	}
+	add_trait = { 
+		token = ENG_mio_trait_expanded_turret_capacity
+		name = ENG_mio_trait_expanded_turret_capacity
+		icon = GFX_generic_mio_department_icon_tank_medium_tank_engine
+		special_trait_background = yes
+
+		position = { x=3 y=0 }
+
+		equipment_bonus = {
+			reliability = 0.05
+			armor_value = 0.05
+			breakthrough = 0.05
+		}
+	}
 	add_trait = {
-		token = STG_tea_maker
-		name = STG_tea_maker
+		token = STG_mio_trait_tea_maker
+		name = STG_mio_trait_tea_maker
 		icon = GFX_generic_mio_trait_icon_reliability
 		special_trait_background = yes
 
-		position = { x=4 y=0 }
+		position = { x=0 y=1 }
+		relative_position_id = ENG_mio_trait_expanded_turret_capacity
+
+		all_parents = {ENG_mio_trait_expanded_turret_capacity}
 		
 		equipment_bonus = {
-			maximum_speed = 0.10
-			soft_attack = 0.02
-			defense = 0.02
+			maximum_speed = 0.05
+			soft_attack = 0.03
+			defense = 0.03
 		}
 		production_bonus = {
 			production_cost_factor = 0.01
+		}
+	}
+	#战车道产业合作
+	add_trait = {
+		token = STG_mio_trait_senshado_cooperation
+		name = STG_mio_trait_senshado_cooperation
+		icon = GFX_generic_mio_trait_icon_production_capacity
+		special_trait_background = yes
+
+		position = { x=5 y=3 }
+		
+		available = {
+			FROM = {
+				has_idea = USR_senshado_alliance_idea
+			}
+		}
+
+		production_bonus = {
+			production_capacity_factor = 0.06
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.08
+		}
+	}
+	#17磅反坦克炮
+	add_trait = {
+		token = STG_mio_trait_17_pounder
+		name = STG_mio_trait_17_pounder
+		icon = GFX_generic_mio_trait_icon_hard_attack
+		special_trait_background = yes
+
+		position = { x=2 y=2 }
+		relative_position_id = generic_mio_trait_simplified_turret_design
+		all_parents = {generic_mio_trait_simplified_turret_design}
+		limit_to_equipment_type = {
+			medium_tank_chassis
+			heavy_tank_chassis
+		}
+		mutually_exclusive = {STG_mio_trait_howitzer}
+		equipment_bonus = {
+			hard_attack = 0.05
+			ap_attack = 0.1
+		}
+	}
+	#榴弹炮
+	add_trait = {
+		token = STG_mio_trait_howitzer
+		name = STG_mio_trait_howitzer
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		special_trait_background = yes
+
+		position = { x=3 y=2 }
+		relative_position_id = generic_mio_trait_simplified_turret_design
+		all_parents = {generic_mio_trait_simplified_turret_design}
+		limit_to_equipment_type = {
+			medium_tank_chassis
+			heavy_tank_chassis
+		}
+		mutually_exclusive = {STG_mio_trait_17_pounder}
+		equipment_bonus = {
+			soft_attack = 0.06
+			hard_attack = -0.05
+		}
+	}
+	#装甲强化
+	add_trait = {
+		token = STG_mio_trait_armor_upgrade
+		name = STG_mio_trait_armor_upgrade
+		icon = GFX_generic_mio_trait_icon_armor_value
+		special_trait_background = yes
+
+		position = { x=0 y=1 }
+		relative_position_id = generic_mio_trait_advanced_shells
+		all_parents = {generic_mio_trait_advanced_shells}
+		
+		equipment_bonus = {
+			armor_value = 0.05
+			breakthrough = 0.03
+		}
+	}
+}
+STG_Arsenal_of_New_Alexander = {
+	icon = GFX_idea_STG_Arsenal_of_New_Alexander
+	include = generic_battle_line_ship_organization
+	allowed = {
+		tag = STG
+	}
+    visible = {
+        FROM = {
+            tag = STG
+        }
+    }
+	equipment_type = {
+		mio_cat_eq_all_battleship
+		mio_cat_eq_all_cruiser
+		mio_cat_eq_all_destroyer
+	}
+	research_categories = {
+		mio_cat_tech_all_capital_ship_and_modules
+		mio_cat_tech_all_cruiser_and_modules
+		mio_cat_tech_all_screen_ship_and_modules
+	}
+	initial_trait = {
+		name = STG_Arsenal_of_New_Alexander_mio_desc
+
+		production_bonus = {
+			production_capacity_factor = 0.08
+		}
+	}
+
+	#翻新船坞
+	add_trait = {
+		token = STG_mio_trait_new_dockyard
+		name = STG_mio_trait_new_dockyard
+		icon = GFX_generic_mio_trait_icon_reliability
+		special_trait_background = yes
+
+		position = { x=3 y=1 }
+
+		production_bonus = {
+			production_cost_factor = -0.04
+		}
+
+		on_add = {
+			random_owned_controlled_state = {
+				limit = {
+					is_coastal = yes
+				}
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = dockyard
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+		}
+	}
+
+	#重启战列舰生产
+	add_trait = {
+		token = STG_mio_trait_capital_ship_production
+		name = STG_mio_trait_capital_ship_production
+		icon = GFX_generic_mio_trait_icon_build_cost_ic
+		special_trait_background = yes
+
+		position = { x=0 y=1 }
+		relative_position_id = STG_mio_trait_new_dockyard
+
+		all_parents = {STG_mio_trait_new_dockyard}
+
+		available = {
+			has_completed_focus = STG_mil_17
+		}
+
+		production_bonus = {
+			ship_hull_heavy = {
+				build_cost_ic = -0.10
+			}
+		}
+	}
+
+	#海事合作
+	add_trait = {
+		token = STG_mio_trait_martime_cooperation
+		name = STG_mio_trait_martime_cooperation
+		icon = GFX_generic_mio_trait_icon_reliability
+		special_trait_background = yes
+
+		position = { x=3 y=3 }
+
+		available = {
+			is_in_faction = yes
+		}
+
+		production_bonus = {
+			production_cost_factor = -0.03
+		}
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.08
+		}
+	}
+
+	#整合昂格利亚造船厂
+	add_trait = {
+		token = STG_mio_trait_anglican_integration
+		name = STG_mio_trait_anglican_integration
+		icon = GFX_generic_mio_trait_icon_reliability
+		special_trait_background = yes
+
+		position = { x=3 y=4 }
+
+		available = {
+			OR = {
+				has_global_flag = Anglia_Reconcilation_flag
+				has_global_flag = ANGLIA_UNITED_FLAG
+			}
+		}
+
+		production_bonus = {
+			production_cost_factor = -0.05
+		}
+		equipment_bonus = {
+			lg_attack = 0.05
+			hg_attack = 0.05
+			build_cost_ic = -0.05
+		}
+	}
+}
+STG_Reisenburg_Military_Group = {
+	include = generic_infantry_equipment_organization
+	icon = GFX_idea_STG_Reisenburg_Military_Group
+
+	allowed = {
+		tag = STG
+	}
+    visible = {
+        FROM = {
+            tag = STG
+        }
+    }
+
+	initial_trait = {
+		name = STG_Reisenburg_Military_Group_mio_desc
+
+		organization_modifier = {
+			military_industrial_organization_research_bonus = 0.05
+		}
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.05
+		}
+
+		equipment_bonus = {
+			soft_attack = 0.05
+		}
+	}
+
+	#反装甲步枪
+	add_trait = {
+		token = STG_mio_trait_anti_tank_gun
+		name = STG_mio_trait_anti_tank_gun
+		icon = GFX_generic_mio_trait_icon_ap_attack
+		special_trait_background = yes
+
+		position = { x=0 y=1 }
+		relative_position_id = generic_mio_trait_heavy_anti_armor_ammunition
+
+		all_parents = {generic_mio_trait_heavy_anti_armor_ammunition}
+		
+		equipment_bonus = {
+			hard_attack = 0.1
+			ap_attack = 0.1
+		}
+	}
+
+	#乌斯拉尔标准
+	add_trait = {
+		token = STG_mio_trait_USR_standard
+		name = STG_mio_trait_USR_standard
+		icon = GFX_generic_mio_trait_icon_efficiency_cap
+		special_trait_background = yes
+
+		position = { x=2 y=0 }
+
+		mutually_exclusive = {
+			STG_mio_trait_Unified_standard
+			STG_mio_trait_UNG_standard
+		}
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.1
+			production_efficiency_gain_factor = -0.15
+		}
+	}
+
+	#统一标准
+	add_trait = {
+		token = STG_mio_trait_Unified_standard
+		name = STG_mio_trait_Unified_standard
+		icon = GFX_generic_mio_trait_icon_soft_attack
+		special_trait_background = yes
+
+		position = { x=3 y=0 }
+
+		mutually_exclusive = {
+			STG_mio_trait_USR_standard
+			STG_mio_trait_UNG_standard
+		}
+		available = {
+			FROM = {
+				has_completed_focus = STG_true_dar_22
+			}
+		}
+		production_bonus = {
+			production_efficiency_cap_factor = 0.1
+			production_resource_need_factor = -0.1
+		}
+	}
+
+	#昂格利亚标准
+	add_trait = {
+		token = STG_mio_trait_UNG_standard
+		name = STG_mio_trait_UNG_standard
+		icon = GFX_generic_mio_trait_icon_efficiency_gain
+		special_trait_background = yes
+
+		mutually_exclusive = {
+			STG_mio_trait_Unified_standard
+			STG_mio_trait_USR_standard
+		}
+
+		position = { x=4 y=0 }
+
+		production_bonus = {
+			production_efficiency_cap_factor = 0.05
+			production_efficiency_gain_factor = 0.05
 		}
 	}
 }
