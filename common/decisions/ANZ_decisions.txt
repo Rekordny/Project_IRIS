@@ -596,6 +596,21 @@ ANZ_demanarization = {
 					type = dimai
 					level = building_level@dimai
 				}
+				if = {
+					limit = {
+						raw_mana > 0
+					}
+					set_temp_variable = {
+						num_of_mana_to_remove = 0
+					}
+					subtract_from_temp_variable = {
+						num_of_mana_to_remove = resource@raw_mana
+					}
+					add_resource = {
+						type = raw_mana
+						amount = var:num_of_mana_to_remove
+					}
+				}
 			}
 			add_cic = var:cic_from_dimai
 			hidden_effect = {
@@ -623,6 +638,7 @@ ANZ_demanarization = {
 
 #打击黑手党
 ANZ_strike_on_mafia_cat = {
+
 	#黑手党问题扩散
 	ANZ_mafia_spreading_mission = {
 		allowed = {
@@ -632,7 +648,14 @@ ANZ_strike_on_mafia_cat = {
 
 		activation = {
 			any_state = {
-				has_state_flag = ANZ_mafia_target_state
+				OR = {
+					has_dynamic_modifier = {
+						modifier = ANZ_mafia_allowed_state_modifier
+					}
+					has_dynamic_modifier = {
+						modifier = ANZ_mafia_problem_state_modifier
+					}
+				}
 			}
 		}
 		fire_only_once = yes
@@ -654,19 +677,52 @@ ANZ_strike_on_mafia_cat = {
 		}
 
 		cancel_trigger = {
-			all_core_state = {
-				NOT = {
-					has_dynamic_modifier = {
-						modifier = ANZ_mafia_problem_state_modifier
+			if = {
+				limit = {
+					NOT = {
+						has_completed_focus = ANZ_allow_underground_transactions
 					}
+				}
+				all_core_state = {
+					NOT = {
+						has_dynamic_modifier = {
+							modifier = ANZ_mafia_problem_state_modifier
+						}
+					}
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = ANZ_mafia_spreading_mission_tri_tt
+					always = no
 				}
 			}
 		}
 
 		timeout_effect = {
-			FROM = {
-				add_dynamic_modifier = {
-					modifier = ANZ_mafia_problem_state_modifier
+			if = {
+				limit = {
+					NOT = {
+						has_completed_focus = ANZ_allow_underground_transactions
+					}
+				}
+				FROM = {
+					add_dynamic_modifier = {
+						modifier = ANZ_mafia_problem_state_modifier
+					}
+					add_to_array = {
+						ANZ.ANZ_mafia_states_num = THIS
+					}
+				}
+			}
+			else = {
+				FROM = {
+					add_dynamic_modifier = {
+						modifier = ANZ_mafia_allowed_state_modifier
+					}
+					add_to_array = {
+						ANZ.ANZ_mafia_states_num = THIS
+					}
 				}
 			}
 			hidden_effect = {
@@ -678,8 +734,13 @@ ANZ_strike_on_mafia_cat = {
 				}
 				random_state = {
 					limit = { 
-						has_dynamic_modifier = {
-							modifier = ANZ_mafia_problem_state_modifier
+						OR = {
+							has_dynamic_modifier = {
+								modifier = ANZ_mafia_problem_state_modifier
+							}
+							has_dynamic_modifier = {
+								modifier = ANZ_mafia_allowed_state_modifier
+							}
 						}
 					}
 					random_neighbor_state = {
@@ -689,6 +750,9 @@ ANZ_strike_on_mafia_cat = {
 							NOT = {
 								has_dynamic_modifier = {
 									modifier = ANZ_mafia_problem_state_modifier
+								}
+								has_dynamic_modifier = {
+									modifier = ANZ_mafia_allowed_state_modifier
 								}
 							}
 						}
@@ -713,20 +777,41 @@ ANZ_strike_on_mafia_cat = {
 		state_target = yes
 		target_trigger = {
 			FROM = {
-				has_dynamic_modifier = {
-					modifier = ANZ_mafia_problem_state_modifier
+				OR = {
+					has_dynamic_modifier = {
+						modifier = ANZ_mafia_problem_state_modifier
+					}
+					has_dynamic_modifier = {
+						modifier = ANZ_mafia_allowed_state_modifier
+					}
 				}
 			}
 		}
-
+		
 		visible = {
 			NOT = {
-				has_completed_focus = ANZ_strike_on_mafia
+				has_country_flag = ANZ_strike_on_mafia
 			}
 		}
 		
 		available = {
-			has_completed_focus = ANZ_strike_on_mafia
+			if = {
+				limit = {
+					NOT = {
+						has_completed_focus = ANZ_allow_underground_transactions
+					}
+				}
+				custom_trigger_tooltip = {
+					tooltip = ANZ_mafia_spreading_mission_tri_2_tt
+					always = no
+				}
+			}
+			else = {
+				custom_trigger_tooltip = {
+					tooltip = ANZ_mafia_spreading_mission_tri_tt
+					always = no
+				}
+			}
 		}
 	}
 
@@ -767,6 +852,9 @@ ANZ_strike_on_mafia_cat = {
 
 		visible = {
 			has_completed_focus = ANZ_strike_on_mafia
+			NOT = {
+				has_completed_focus = ANZ_allow_underground_transactions
+			}
 		}
 		# fire_only_once = yes
 		days_remove = 80
@@ -774,6 +862,9 @@ ANZ_strike_on_mafia_cat = {
 			FROM = {
 				remove_dynamic_modifier = {
 					modifier = ANZ_mafia_problem_state_modifier
+				}
+				remove_from_array = {
+					ANZ.ANZ_mafia_states_num = THIS
 				}
 			}
 		}
@@ -795,6 +886,106 @@ ANZ_strike_on_mafia_cat = {
 	}
 	
 }
+
+operations = {
+
+	#若尔攻势
+	ANZ_operation_on_state157 = {
+		icon = generic_operation
+
+		allowed = {
+			always = no
+		}
+
+		available = {
+			157 = {	
+				is_controlled_by_ROOT_or_ally = yes
+			}
+		}
+
+		highlight_states = {
+			highlight_state_targets = { state = 157 }
+			highlight_provinces = { 10392 }
+		}
+
+		days_mission_timeout = 90
+		fire_only_once = yes
+
+		activation = {
+
+		}
+
+		is_good = no
+
+		complete_effect = {
+			add_tech_bonus = {
+				bonus = 1
+				uses = 1
+				category = naval_equipment
+			}
+			activate_mission = ANZ_operation_on_state127
+		}
+
+		timeout_effect = {
+			add_war_support = -0.1
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
+
+	#攻占帕莉丝
+	ANZ_operation_on_state127 = {
+		icon = generic_operation
+
+		allowed = {
+			always = no
+		}
+
+		available = {
+			127 = {	
+				is_controlled_by_ROOT_or_ally = yes
+			}
+		}
+
+		highlight_states = {
+			highlight_state_targets = { state = 127 }
+			highlight_provinces = { 6660 }
+		}
+
+		days_mission_timeout = 180
+		fire_only_once = yes
+
+		activation = {
+
+		}
+
+		is_good = no
+
+		complete_effect = {
+			add_tech_bonus = {
+				bonus = 1
+				uses = 1
+				category = infantry_weapons
+			}
+			add_tech_bonus = {
+				bonus = 1
+				uses = 1
+				category = mana_tech
+			}
+		}
+
+		timeout_effect = {
+			add_war_support = -0.2
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+
 
 #争夺军队和军官
 ANZ_scramble_for_troops_and_officers = {
@@ -992,7 +1183,11 @@ IRIS_debug_decisions = {
 				}
 			}
 			set_country_flag = ANZ_load_focus_tree_anzio
-			load_focus_tree = ANZ_anzio
+			load_focus_tree = {
+				tree = ANZ_anzio
+				keep_completed = yes
+			}
+			mark_focus_tree_layout_dirty = yes
 		}
 	}
 }
