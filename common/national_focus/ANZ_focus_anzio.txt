@@ -155,10 +155,7 @@ focus_tree = {
 				limit = {
 					has_full_control_of_state = 210
 					210 = {
-						land_facility < 1
-						naval_facility < 1
-						air_facility < 1
-						nuclear_facility < 1
+						can_construct_building = air_facility
 					}
 				}
 				210 = {
@@ -180,25 +177,15 @@ focus_tree = {
 					limit = {
 						is_fully_controlled_by = ROOT
 						is_in_home_area = yes
-						supply_node > 0
-						land_facility < 1
-						naval_facility < 1
-						air_facility < 1
-						nuclear_facility < 1
+						can_construct_building = air_facility
 					}
 					add_building_construction = {
 						type = air_base
 						level = 3
 						instant_build = yes
 					}
-					add_building_construction = {
-						type = air_facility
-						level = 1
-						instant_build = yes
-						province = {
-							all_provinces = no
-							limit_to_supply_node = yes
-						}
+					construct_building_in_random_province = {
+						air_facility = 1
 					}
 				}
 			}
@@ -370,11 +357,34 @@ focus_tree = {
 					project = sp:sp_air_radar
 				}
 			}
-			210 = {
-				add_building_construction = {
-					type = radar_station
-					level = 1
-					instant_build = yes
+			if = {
+				limit = {
+					has_full_control_of_state = 210
+					210 = {
+						radar_station < 1
+					}
+				}
+				210 = {
+					add_building_construction = {
+						type = radar_station
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			else = {
+				random_owned_controlled_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						is_in_home_area = yes
+						radar_station < 1
+					}
+					prioritize = { 223 } 
+					add_building_construction = {
+						type = radar_station
+						level = 1
+						instant_build = yes
+					}
 				}
 			}
 			add_tech_bonus = {
@@ -1005,6 +1015,132 @@ focus_tree = {
 				swap_ideas = {
 					remove_idea = ANZ_senshado_school_1
 					add_idea = ANZ_senshado_school_1_2
+				}
+			}
+		}
+	}
+
+	#多用途火炮研发
+	focus = {
+		id = ANZ_multi_role_artillery
+		icon = GFX_focus_ANZ_multi_role_artillery
+		relative_position_id = ANZ_update_army_equipment
+		prerequisite = { focus = ANZ_update_army_equipment }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = artillery
+			}
+			add_ideas = ANZ_idea_multi_role_artillery
+			hidden_effect = {
+				set_technology = {
+					ANZ_multi_role_artillery_tec = 1
+					popup = no
+				}
+			}
+		}
+	}
+
+	#弥兰王立时装学院
+	focus = {
+		id = ANZ_aviation_infantry_manufacturer
+		icon = GFX_focus_ANZ_aviation_infantry_manufacturer
+		relative_position_id = ANZ_de_mana_education
+		prerequisite = { focus = ANZ_de_mana_education }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			176 = {
+				is_fully_controlled_by = ROOT
+			}
+		}
+		completion_reward = {
+			176 = {
+				set_state_category = large_city
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = ANZ_aviation_infantry_organization
+		}
+	}
+
+	#建设陆军研究机构
+	focus = {
+		id = ANZ_build_land_facility
+		icon = GFX_focus_ANZ_build_land_facility
+		relative_position_id = ANZ_multi_role_artillery
+		prerequisite = { focus = ANZ_multi_role_artillery }
+		prerequisite = { focus = ANZ_aviation_infantry_manufacturer }
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					has_full_control_of_state = 176
+					176 = {
+						can_construct_building = land_facility
+					}
+				}
+				176 = {
+					add_building_construction = {
+						type = land_facility
+						level = 1
+						instant_build = yes
+						province = 3388
+					}
+					if = {
+						limit = {
+							ROOT = { is_special_project_completed = sp:sp_air_radar }
+							radar_station < 1
+						}
+						add_building_construction = {
+							type = radar_station
+							level = 1
+							instant_build = yes
+						}
+					}
+				}
+			}
+			else = {
+				random_owned_controlled_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						is_in_home_area = yes
+						can_construct_building = land_facility
+					}
+					construct_building_in_random_province = {
+						land_facility = 1
+					}
+					if = {
+						limit = {
+							ROOT = { is_special_project_completed = sp:sp_air_radar }
+							radar_station < 1
+						}
+						add_building_construction = {
+							type = radar_station
+							level = 1
+							instant_build = yes
+						}
+					}
 				}
 			}
 		}
