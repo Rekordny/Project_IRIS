@@ -16,7 +16,7 @@ focus_tree = {
 	focus = {
 		id = ANZ_reorganize_mil
 		icon = GFX_focus_ANZ_reorganize_mil
-		x = 2
+		x = 7
 		y = 0
 		cost = 5
 		ai_will_do = {
@@ -73,10 +73,10 @@ focus_tree = {
 			#custom_effect_tooltip = ANZ_504th_joint_fighter_wing_modifer_tt
 			swap_ideas = {
 				remove_idea = ANZ_improve_striker_units_equipment_00
-				add_idea = ANZ_improve_striker_units_equipment
+				add_idea = ANZ_improve_striker_units_equipment_01
 			}
 			hidden_effect = {
-				add_ideas = ANZ_improve_striker_units_equipment
+				add_ideas = ANZ_improve_striker_units_equipment_01
 			}
 		}
 	}
@@ -87,8 +87,8 @@ focus_tree = {
 		icon = GFX_focus_ANZ_air_land_battle_tactic
 		relative_position_id = ANZ_improve_striker_units_equipment
 		prerequisite = { focus = ANZ_improve_striker_units_equipment }
-		x = 0
-		y = 2
+		x = -2
+		y = 1
 		cost = 10
 		ai_will_do = {
 			base = 10
@@ -145,7 +145,7 @@ focus_tree = {
 		relative_position_id = ANZ_research_skip_bombing_tactic
 		prerequisite = { focus = ANZ_research_skip_bombing_tactic }
 		x = 0
-		y = 2
+		y = 1
 		cost = 10
 		ai_will_do = {
 			base = 10
@@ -155,10 +155,7 @@ focus_tree = {
 				limit = {
 					has_full_control_of_state = 210
 					210 = {
-						land_facility < 1
-						naval_facility < 1
-						air_facility < 1
-						nuclear_facility < 1
+						can_construct_building = air_facility
 					}
 				}
 				210 = {
@@ -180,25 +177,15 @@ focus_tree = {
 					limit = {
 						is_fully_controlled_by = ROOT
 						is_in_home_area = yes
-						supply_node > 0
-						land_facility < 1
-						naval_facility < 1
-						air_facility < 1
-						nuclear_facility < 1
+						can_construct_building = air_facility
 					}
 					add_building_construction = {
 						type = air_base
 						level = 3
 						instant_build = yes
 					}
-					add_building_construction = {
-						type = air_facility
-						level = 1
-						instant_build = yes
-						province = {
-							all_provinces = no
-							limit_to_supply_node = yes
-						}
+					construct_building_in_random_province = {
+						air_facility = 1
 					}
 				}
 			}
@@ -218,7 +205,7 @@ focus_tree = {
 		relative_position_id = ANZ_invest_quad_engine_airframe
 		prerequisite = { focus = ANZ_invest_quad_engine_airframe }
 		x = 0
-		y = 2
+		y = 1
 		cost = 5
 		ai_will_do = {
 			base = 10
@@ -240,7 +227,7 @@ focus_tree = {
 		prerequisite = { focus = ANZ_invest_quad_engine_airframe }
 		prerequisite = { focus = ANZ_carrier_conversion }
 		x = 1
-		y = 3
+		y = 4
 		cost = 10
 		ai_will_do = {
 			base = 10
@@ -328,9 +315,8 @@ focus_tree = {
 		id = ANZ_new_piston_engine
 		icon = GFX_focus_ANZ_skip_bombing_tactic
 		relative_position_id = ANZ_improve_striker_units_equipment
-		prerequisite = { focus = ANZ_regroup_504th_joint_fighter_wing }
 		prerequisite = { focus = ANZ_improve_striker_units_equipment }
-		x = 1
+		x = 0
 		y = 1
 		cost = 5
 		ai_will_do = {
@@ -357,7 +343,7 @@ focus_tree = {
 		relative_position_id = ANZ_new_piston_engine
 		prerequisite = { focus = ANZ_new_piston_engine }
 		x = 0
-		y = 2
+		y = 1
 		cost = 10
 		ai_will_do = {
 			base = 10
@@ -371,11 +357,34 @@ focus_tree = {
 					project = sp:sp_air_radar
 				}
 			}
-			210 = {
-				add_building_construction = {
-					type = radar_station
-					level = 1
-					instant_build = yes
+			if = {
+				limit = {
+					has_full_control_of_state = 210
+					210 = {
+						radar_station < 1
+					}
+				}
+				210 = {
+					add_building_construction = {
+						type = radar_station
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+			else = {
+				random_owned_controlled_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						is_in_home_area = yes
+						radar_station < 1
+					}
+					prioritize = { 223 } 
+					add_building_construction = {
+						type = radar_station
+						level = 1
+						instant_build = yes
+					}
 				}
 			}
 			add_tech_bonus = {
@@ -723,7 +732,15 @@ focus_tree = {
 			base = 10
 		}
 		completion_reward = {
-			
+			ANZ_Aquila = {
+				add_advisor_role = {
+					advisor = {
+						slot = theorist
+						idea_token = ANZ_Aquila
+						traits = { grand_fleet_proponent }
+					}
+				}
+			}
 			add_doctrine_cost_reduction = {
 				cost_reduction = 1
 				uses = 1
@@ -780,6 +797,33 @@ focus_tree = {
 		}
 	}
 
+	#远洋思维
+	focus = {
+		id = ANZ_focus_on_invasion
+		icon = GFX_ANZ_focus_on_invasion
+		relative_position_id = ANZ_focus_on_raiding
+		prerequisite = { focus = ANZ_focus_on_capital_ship focus = ANZ_focus_on_raiding }
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 1
+				ahead_reduction = 2
+				uses = 1
+				category = tp_tech
+			}
+			add_ideas = ANZ_idea_focus_on_invasion
+			#add_ai_strategy = {
+			#	type = naval_invasion_focus
+   			#	value = 50
+			#}
+		}
+	}
+
 	#建设战车道学院
 	focus = {
 		id = ANZ_set_up_senshado_school
@@ -797,14 +841,61 @@ focus_tree = {
 		}
 	}
 
+	#战术研究
+	focus = {
+		id = ANZ_research_land_doctrine
+		icon = GFX_focus_ANZ_research_land_doctrine
+		relative_position_id = ANZ_set_up_senshado_school
+		prerequisite = { focus = ANZ_set_up_senshado_school }
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.75
+				uses = 3
+				category = land_doctrine
+			}
+		}
+	}
+
+	#陆军装备更新
+	focus = {
+		id = ANZ_update_army_equipment
+		icon = GFX_focus_ANZ_update_army_equipment
+		relative_position_id = ANZ_set_up_senshado_school
+		prerequisite = { focus = ANZ_set_up_senshado_school }
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = infantry_weapons
+			}
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 1
+				category = support_tech
+			}
+		}
+	}
+
 	#去玛娜化教育
 	focus = {
 		id = ANZ_de_mana_education
 		icon = GFX_focus_ANZ_de_mana_education
 		relative_position_id = ANZ_set_up_senshado_school
 		prerequisite = { focus = ANZ_set_up_senshado_school }
-		x = 2
-		y = 2
+		x = 3
+		y = 1
 		cost = 10
 		ai_will_do = {
 			base = 10
@@ -814,11 +905,252 @@ focus_tree = {
 		}
 	}
 
+	#引进新战车
+	focus = {
+		id = ANZ_introduce_new_tanks
+		icon = GFX_focus_ANZ_introduce_new_tanks
+		relative_position_id = ANZ_research_land_doctrine
+		prerequisite = { focus = ANZ_research_land_doctrine }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			hidden_effect = {
+				add_tech_bonus = {
+					bonus = 0.75
+					uses = 2
+					category = armor
+				}
+			}
+		}
+	}
+
+	#小而灵活
+	focus = {
+		id = ANZ_flexible_tank
+		icon = GFX_focus_ANZ_flexible_tank
+		relative_position_id = ANZ_introduce_new_tanks
+		prerequisite = { focus = ANZ_introduce_new_tanks }
+		mutually_exclusive = { focus = ANZ_hammer_tank }
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = ANZ_senshado_school
+				add_idea = ANZ_senshado_school_1
+			}
+		}
+	}
+
+	#铜墙铁壁
+	focus = {
+		id = ANZ_hammer_tank
+		icon = GFX_focus_ANZ_flexible_tank
+		relative_position_id = ANZ_introduce_new_tanks
+		prerequisite = { focus = ANZ_introduce_new_tanks }
+		mutually_exclusive = { focus = ANZ_flexible_tank }
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 0
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = ANZ_senshado_school
+				add_idea = ANZ_senshado_school_2
+			}
+			custom_effect_tooltip = ANZ_hammer_tank_tt
+			hidden_effect = {
+				set_technology = {
+					ANZ_hammer_tank_tec = 1
+					popup = no
+				}
+			}
+		}
+	}
+
+	#伪装战术
+	focus = {
+		id = ANZ_camouflage_tactics
+		icon = GFX_focus_ANZ_camouflage_tactics
+		relative_position_id = ANZ_flexible_tank
+		prerequisite = { focus = ANZ_flexible_tank focus = ANZ_hammer_tank }
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_potential_special_forces_tree = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_idea = ANZ_senshado_school_1
+					}
+					swap_ideas = {
+						remove_idea = ANZ_senshado_school_1
+						add_idea = ANZ_senshado_school_1_2
+					}
+				}
+				if = {
+					limit = {
+						has_idea = ANZ_senshado_school_2
+					}
+					swap_ideas = {
+						remove_idea = ANZ_senshado_school_2
+						add_idea = ANZ_senshado_school_2_2
+					}
+				}
+			}
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = ANZ_senshado_school_1
+					add_idea = ANZ_senshado_school_1_2
+				}
+			}
+		}
+	}
+
+	#多用途火炮研发
+	focus = {
+		id = ANZ_multi_role_artillery
+		icon = GFX_focus_ANZ_multi_role_artillery
+		relative_position_id = ANZ_update_army_equipment
+		prerequisite = { focus = ANZ_update_army_equipment }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = artillery
+			}
+			add_ideas = ANZ_idea_multi_role_artillery
+			hidden_effect = {
+				set_technology = {
+					ANZ_multi_role_artillery_tec = 1
+					popup = no
+				}
+			}
+		}
+	}
+
+	#弥兰王立时装学院
+	focus = {
+		id = ANZ_aviation_infantry_manufacturer
+		icon = GFX_focus_ANZ_aviation_infantry_manufacturer
+		relative_position_id = ANZ_de_mana_education
+		prerequisite = { focus = ANZ_de_mana_education }
+		x = 0
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			176 = {
+				is_fully_controlled_by = ROOT
+			}
+		}
+		completion_reward = {
+			176 = {
+				set_state_category = large_city
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = ANZ_aviation_infantry_organization
+		}
+	}
+
+	#建设陆军研究机构
+	focus = {
+		id = ANZ_build_land_facility
+		icon = GFX_focus_ANZ_build_land_facility
+		relative_position_id = ANZ_multi_role_artillery
+		prerequisite = { focus = ANZ_multi_role_artillery }
+		prerequisite = { focus = ANZ_aviation_infantry_manufacturer }
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			if = {
+				limit = {
+					has_full_control_of_state = 176
+					176 = {
+						can_construct_building = land_facility
+					}
+				}
+				176 = {
+					add_building_construction = {
+						type = land_facility
+						level = 1
+						instant_build = yes
+						province = 3388
+					}
+					if = {
+						limit = {
+							ROOT = { is_special_project_completed = sp:sp_air_radar }
+							radar_station < 1
+						}
+						add_building_construction = {
+							type = radar_station
+							level = 1
+							instant_build = yes
+						}
+					}
+				}
+			}
+			else = {
+				random_owned_controlled_state = {
+					limit = {
+						is_fully_controlled_by = ROOT
+						is_in_home_area = yes
+						can_construct_building = land_facility
+					}
+					construct_building_in_random_province = {
+						land_facility = 1
+					}
+					if = {
+						limit = {
+							ROOT = { is_special_project_completed = sp:sp_air_radar }
+							radar_station < 1
+						}
+						add_building_construction = {
+							type = radar_station
+							level = 1
+							instant_build = yes
+						}
+					}
+				}
+			}
+		}
+	}
+
 	#重建安齐奥
 	focus = {
 		id = ANZ_rebuild_anzio
 		icon = GFX_focus_ANZ_rebuild_anzio
-		x = 18
+		x = 25
 		y = 0
 		cost = 10
 		ai_will_do = {
@@ -995,6 +1327,43 @@ focus_tree = {
 			swap_ideas = {
 				remove_idea = youxiantiaokong
 				add_idea = ANZ_balanced_development
+			}
+		}
+	}
+
+	#安其奥美味经济
+	focus = {
+		id = ANZ_anzio_delicious_economy
+		icon = GFX_focus_ANZ_anzio_delicious_economy
+		relative_position_id = ANZ_develop_southern_agricultural
+		prerequisite = { focus = ANZ_develop_southern_agricultural }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			#
+		}
+	}
+
+	#国拟投资协定
+	focus = {
+		id = ANZ_improve_balanced_development
+		icon = GFX_focus_ANZ_improve_balanced_development
+		relative_position_id = ANZ_anzio_delicious_economy
+		prerequisite = { focus = ANZ_anzio_delicious_economy }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = ANZ_balanced_development
+				add_idea = ANZ_balanced_development_2
 			}
 		}
 	}
@@ -1185,6 +1554,7 @@ focus_tree = {
 			GAL = {
 				OR = {
 					NOT = { country_exists = GAL }
+					has_war_with = ROOT
 					is_puppet_of = ROOT
 					is_in_faction_with = ROOT
 				}
@@ -1227,6 +1597,7 @@ focus_tree = {
 			SWA = {
 				OR = {
 					NOT = { country_exists = SWA }
+					has_war_with = ROOT
 					is_puppet_of = ROOT
 					is_in_faction_with = ROOT
 				}
@@ -1279,6 +1650,17 @@ focus_tree = {
 					ideology = sub_Facism
 					trait = ANZ_duce
 				}
+				custom_effect_tooltip = ANZ_anchovy_saigao_tt
+				hidden_effect = {
+					remove_trait = {
+						slot = theorist
+						trait = mobile_warfare_expert
+					}
+					add_trait = {
+						slot = theorist
+						trait = ANZ_mobile_warfare_expert
+					}
+				}
 			}
 		}
 	}
@@ -1315,6 +1697,7 @@ focus_tree = {
 		icon = GFX_focus_ANZ_fuel_preparation
 		relative_position_id = ANZ_focus_on_south
 		prerequisite = { focus = ANZ_focus_on_south }
+		prerequisite = { focus = ANZ_anzio_delicious_economy }
 		x = -3
 		y = 1
 		cost = 10
@@ -1362,6 +1745,247 @@ focus_tree = {
 		}
 	}
 
+	#庇护希斯帕尼亚的流亡者领袖
+	focus = {
+		id = ANZ_hispanic_exile_leader
+		icon = GFX_focus_ANZ_hispanic_exile_leader
+		relative_position_id = ANZ_anzio_first
+		prerequisite = { focus = ANZ_anzio_first }
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		bypass = {
+			has_global_flag = USR_CIVIL_WAR_START
+		}
+
+		completion_reward = {
+			add_popularity = {
+				ideology = communism
+				popularity = 0.1
+			}
+			add_stability = -0.05
+			if = {
+				limit = { CTC = { is_in_faction = no is_subject = no } }
+				CTC = { 
+					country_event = {
+						id = ANZ.41
+						days = 5
+					}
+				}
+			}
+		}
+	}
+
+	#庇护希斯帕尼亚人
+	focus = {
+		id = ANZ_hispanic_exile_people
+		icon = GFX_focus_ANZ_hispanic_exile_people
+		relative_position_id = ANZ_hispanic_exile_leader
+		prerequisite = { focus = ANZ_hispanic_exile_leader }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+
+		completion_reward = {
+			country_event = ANZ.45
+
+			custom_effect_tooltip = generic_skip_one_line_tt
+			STG = {
+				every_state = {
+					limit = {
+						OR = {
+							state = 206
+							state = 213
+							state = 222
+							state = 230
+							state = 231
+							state = 717
+							state = 718
+						}
+					}
+					add_claim_by = ANZ
+				}
+			}
+		}
+	}
+
+	#桥头堡垒
+	focus = {
+		id = ANZ_wargoal_on_TAU
+		icon = GFX_focus_ANZ_wargoal_on_TAU
+		relative_position_id = ANZ_anzio_first
+		prerequisite = { focus = ANZ_focus_on_south }
+		prerequisite = { focus = ANZ_anzio_first }
+		x = 0
+		y = 3
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		bypass = {
+			TAU = {
+				OR = {
+					NOT = { country_exists = TAU }
+					has_war_with = ROOT
+					is_puppet_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+    			target = TAU
+			}
+		}
+	}
+
+	#确保红帆海走廊
+	focus = {
+		id = ANZ_wargoal_on_ELN
+		icon = GFX_focus_ANZ_wargoal_on_ELN
+		relative_position_id = ANZ_anzio_first
+		prerequisite = { focus = ANZ_focus_on_south }
+		prerequisite = { focus = ANZ_anzio_first }
+		x = 2
+		y = 3
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		bypass = {
+			ELN = {
+				OR = {
+					NOT = { country_exists = ELN }
+					has_war_with = ROOT
+					is_puppet_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+    			target = ELN
+			}
+			activate_mission = ANZ_operation_on_state157
+		}
+	}
+
+	#马耳的姑娘
+	focus = {
+		id = ANZ_suppression_from_TAU
+		icon = GFX_focus_ANZ_suppression_from_TAU
+		relative_position_id = ANZ_wargoal_on_TAU
+		prerequisite = { focus = ANZ_wargoal_on_TAU }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			OR = {
+				TAU = {
+					is_puppet_of = ROOT
+					is_in_faction_with = ROOT
+				}
+				AND = {
+					NOT = { country_exists = TAU }
+					custom_trigger_tooltip = {
+						tooltip = ANZ_suppression_from_TAU_tri_tt
+						any_state = {
+							is_core_of = TAU
+							is_owned_and_controlled_by = ROOT
+						}
+					}
+				}
+			}
+		}
+
+		completion_reward = {
+			custom_effect_tooltip = ANZ_suppression_from_TAU_tt
+			show_ideas_tooltip = ANZ_fake_suppression_from_TAU_law
+		}
+	}
+
+	#夺取东北美乐蒂
+	focus = {
+		id = ANZ_wargoal_on_NEV
+		icon = GFX_focus_ANZ_wargoal_on_NEV
+		relative_position_id = ANZ_wargoal_on_TAU
+		prerequisite = { focus = ANZ_wargoal_on_TAU focus = ANZ_wargoal_on_ELN }
+		x = 2
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		bypass = {
+			NEV = {
+				OR = {
+					NOT = { country_exists = NEV }
+					has_war_with = ROOT
+					is_puppet_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			create_wargoal = {
+				type = annex_everything
+    			target = NEV
+			}
+		}
+	}
+
+	#干涉对立
+	focus = {
+		id = ANZ_interference_in_opposition
+		icon = GFX_focus_ANZ_interference_in_opposition
+		relative_position_id = ANZ_suppression_from_TAU
+		prerequisite = { focus = ANZ_suppression_from_TAU }
+		prerequisite = { focus = ANZ_wargoal_on_NEV }
+		x = 1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		bypass = {
+			BOW = {
+				OR = {
+					NOT = { country_exists = BOW }
+					is_puppet_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+			PCC = {
+				OR = {
+					NOT = { country_exists = PCC }
+					is_puppet_of = ROOT
+					is_in_faction_with = ROOT
+				}
+			}
+		}
+
+		completion_reward = {
+			add_timed_idea = {
+				idea = ANZ_bonus_against_BOW_PCC
+				days = 720
+			}
+		}
+	}
+
 	#处理贵族
 	focus = {
 		id = ANZ_dealing_with_nobles
@@ -1391,7 +2015,7 @@ focus_tree = {
 		icon = GFX_focus_ANZ_dealing_with_the_church
 		relative_position_id = ANZ_new_king
 		prerequisite = { focus = ANZ_new_king }
-		x = 3
+		x = 4
 		y = 1
 		cost = 5
 		ai_will_do = {
@@ -1399,7 +2023,10 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			add_ideas = ANZ_dealing_with_nobles_going_on
+			add_timed_idea = {
+				idea = ANZ_dealing_with_nobles_going_on
+				days = 200
+			}
 		}
 	}
 
@@ -1433,7 +2060,7 @@ focus_tree = {
 		}
 	}
 
-	#消灭玛娜
+	#打击黑手党
 	focus = {
 		id = ANZ_strike_on_mafia
 		icon = GFX_focus_ANZ_strike_on_mafia
@@ -1445,9 +2072,80 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 		}
+		allow_branch = {
+			has_country_flag = ANZ_mafia_setup
+		}
 
 		completion_reward = {
+			set_country_flag = ANZ_strike_on_mafia
 			unlock_decision_tooltip = ANZ_destroy_mafia_tooltip
+		}
+	}
+
+	#允许地下交易
+	focus = {
+		id = ANZ_allow_underground_transactions
+		icon = GFX_focus_ANZ_allow_underground_transactions
+		relative_position_id = ANZ_strike_on_mafia
+		prerequisite = { focus = ANZ_strike_on_mafia }
+		mutually_exclusive = { focus = ANZ_ban_mafia }
+		x = -1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 0
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ANZ_allow_underground_transactions_tri_tt
+				check_variable = {
+					ANZ_mafia_states_num^num > 10
+				}
+			}
+		}
+
+		completion_reward = {
+			clr_country_flag = ANZ_strike_on_mafia
+			every_state = {
+				limit = {
+					has_dynamic_modifier = {
+						modifier = ANZ_mafia_problem_state_modifier
+					}
+				}
+				hidden_effect = {
+					add_dynamic_modifier = {
+						modifier = ANZ_mafia_allowed_state_modifier
+					}
+				}
+				custom_effect_tooltip = ANZ_allow_underground_transactions_tt
+			}
+		}
+	}
+
+	#禁止违禁物流通
+	focus = {
+		id = ANZ_ban_mafia
+		icon = GFX_focus_ANZ_ban_mafia
+		relative_position_id = ANZ_strike_on_mafia
+		prerequisite = { focus = ANZ_strike_on_mafia }
+		mutually_exclusive = { focus = ANZ_allow_underground_transactions }
+		x = 1
+		y = 1
+		cost = 10
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = ANZ_ban_mafia_tri_tt
+				check_variable = {
+					ANZ_mafia_states_num^num < 1
+				}
+			}
+		}
+
+		completion_reward = {
+			add_ideas = ANZ_mafia_assets
 		}
 	}
 }
