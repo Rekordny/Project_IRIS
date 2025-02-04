@@ -107,6 +107,7 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
+            custom_effect_tooltip = STG_disable_perty_intro
 			country_event = { id = STG_general.1 }
 		}
     }
@@ -1171,6 +1172,12 @@ focus_tree = {
             add_dynamic_modifier = {
                 modifier = STG_rev_modifier
             }
+            custom_effect_tooltip = available_political_advisor
+            show_ideas_tooltip = STG_Weidenberg_advisor
+            custom_effect_tooltip = available_political_advisor
+            show_ideas_tooltip = STG_Rohman_advisor
+            custom_effect_tooltip = available_political_advisor
+            show_ideas_tooltip = STG_Brand_advisor
             custom_effect_tooltip = STG_third_meeting_desc
             custom_effect_tooltip = STG_unlock_a_new_branch_desc
             hidden_effect = {
@@ -2689,19 +2696,16 @@ focus_tree = {
             add_political_power = 50
 		}
     }
-    #人不犯我，我不犯人
+    #高筑墙
     focus = {
         id = STG_com_64
         icon = GFX_STG_com_64
         x = -2
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_com_63
         available_if_capitulated = yes
         available = {
-        }
-        mutually_exclusive = {
-            focus = STG_com_65
         }
         prerequisite = { 
             focus = STG_com_63
@@ -2841,19 +2845,16 @@ focus_tree = {
 		    }
 		}
     }
-    #主动出击
+    #重启造舰计划
     focus = {
         id = STG_com_65
         icon = GFX_STG_com_65
-        x = 2
+        x = 0
         y = 1
-        cost = 5
+        cost = 4
         relative_position_id = STG_com_63
         available_if_capitulated = yes
         available = {
-        }
-        mutually_exclusive = {
-            focus = STG_com_64
         }
         prerequisite = { 
             focus = STG_com_63
@@ -2863,65 +2864,100 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = { 
-            if = {
-                limit = {
-                    country_exists = UNG
-                    NOT = {
-                        is_in_faction_with = UNG
-                    }
-                }
-                create_wargoal = {
-                    target = UNG
-                    type = annex_everything
+            custom_effect_tooltip = STG_unlock_rev_policy_dockyard_2
+            hidden_effect = {
+                country_event = {id = STG_rev.120 days = 3}
+            }
+		}
+    }
+    #登陆准备
+    focus = {
+        id = STG_com_landing_preparation
+        icon = GFX_STG_com_landing_preparation
+        x = 2
+        y = 1
+        cost = 4
+        relative_position_id = STG_com_63
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_63
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        available = {
+            has_completed_focus = STG_mil_4
+            has_tech = mtg_landing_craft
+        }
+        bypass = {
+            NOT = {
+                country_exists = UNG
+            }
+        }
+        completion_reward = {
+            custom_effect_tooltip = STG_unlock_landing_plan
+            set_country_flag = STG_unlock_landing_plan_flag
+            add_political_power = -100
+            add_equipment_to_stockpile = {
+                type = convoy
+                amount = 50
+            }
+            add_equipment_to_stockpile = {
+                type = floating_harbor_equipment
+                amount = 50
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"两栖装甲师\" division_template = \"两栖装甲师\" start_experience_factor = 0.50"
+                    owner = STG
                 }
             }
-            if = {
-                limit = {
-                    country_exists = FNG
-                    NOT = {
-                        is_in_faction_with = FNG
-                    }
-                }
-                create_wargoal = {
-                    target = FNG
-                    type = annex_everything
-                }
+		}
+    }
+    #海峡冲刺
+    focus = {
+        id = STG_com_cross_the_strait
+        icon = GFX_STG_com_cross_the_strait
+        x = 0
+        y = 1
+        cost = 1
+        relative_position_id = STG_com_65
+        available_if_capitulated = yes
+        available = {
+        }
+        prerequisite = { 
+            focus = STG_com_64
+        }
+        prerequisite = { 
+            focus = STG_com_65
+        }
+        prerequisite = { 
+            focus = STG_com_landing_preparation
+        }
+        ai_will_do = {
+			#factor = 1
+            factor = 100
+		}
+        bypass = {
+            NOT = {
+                country_exists = UNG
             }
-            if = {
-                limit = {
-                    country_exists = MSA
-                    NOT = {
-                        is_in_faction_with = MSA
-                    }
-                }
-                create_wargoal = {
-                    target = MSA
-                    type = annex_everything
-                }
+        }
+        available = {
+            has_country_flag = STG_complete_landing_plan_flag
+        }
+        completion_reward = { 
+            set_country_flag = STG_cross_the_strait_flag
+            declare_war_on = {
+                target = UNG
+                type = annex_everything
             }
-            if = {
-                limit = {
-                    country_exists = USR
-                    NOT = {
-                        is_in_faction_with = USR
-                    }
-                }
-                create_wargoal = {
-                    target = USR
-                    type = annex_everything
-                }
-            }
-            if = {
-                limit = {
-                    country_exists = ANZ
-                    NOT = {
-                        is_in_faction_with = ANZ
-                    }
-                }
-                create_wargoal = {
-                    target = ANZ
-                    type = annex_everything
-                }
+            add_timed_idea = {
+                idea = STG_landing_plan_bonus
+                days = 365
             }
 		}
     }
@@ -3023,6 +3059,10 @@ focus_tree = {
             STG_reduce_usr_unrest_big = yes
             STG_increase_cam_unrest = yes    
             country_event = {id = STG_ilya.2 days = 3}
+            custom_effect_tooltip = available_military_high_command
+            show_ideas_tooltip = STG_Siera_advisor
+            custom_effect_tooltip = available_political_advisor
+            show_ideas_tooltip = STG_Liz_advisor
 		}
     }
     #扩建爱因兹贝伦城
@@ -3048,25 +3088,56 @@ focus_tree = {
 		}
         completion_reward = {
             country_event = {id = STG_ilya.3 days = 3}
-            682 = {
-                add_extra_state_shared_building_slots = 1
-                add_building_construction = {
-                    type = arms_factory
-                    level = 1
-                    instant_build = yes
+            if = {
+                limit = {
+                    NOT = {has_idea = STG_Liz_advisor}
                 }
-                add_extra_state_shared_building_slots = 1
-                add_building_construction = {
-                    type = industrial_complex
-                    level = 1
-                    instant_build = yes
+                682 = {
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = bunker
+                        level = 3
+                        instant_build = yes
+                    }
                 }
-                add_building_construction = {
-                    type = bunker
-                    level = 3
-                    instant_build = yes
+                custom_effect_tooltip = STG_gain_bonus_if_we_has_liz
+            }
+            if = {
+                limit = {
+                    has_idea = STG_Liz_advisor
                 }
-		    }
+                682 = {
+                    add_extra_state_shared_building_slots = 2
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_extra_state_shared_building_slots = 1
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = bunker
+                        level = 4
+                        instant_build = yes
+                    }
+                }
+                custom_effect_tooltip = STG_gain_bonus_for_we_has_liz
+            }
 		}
     }
     #《爱因兹贝伦领地位法案》
@@ -4032,6 +4103,7 @@ focus_tree = {
             factor = 100
 		}
         completion_reward = {
+            STG_shipbuilding_setup = yes
             create_equipment_variant = {
 		        name = "爱因兹贝伦之耀"
 		        type = ship_hull_super_heavy_1
@@ -5286,6 +5358,10 @@ focus_tree = {
                 uses = 1
                 category = cat_mobile_warfare
             }
+            mio:STG_armor_organization= {
+                add_mio_funds = 1000
+                add_mio_size = 1
+            }
             hidden_effect = {
                 country_event = {id = STG_grey.15 days = 3}
             }
@@ -6097,6 +6173,7 @@ focus_tree = {
 			army_experience = 25
             navy_experience = 25
             air_experience = 25
+            STG_shipbuilding_setup = yes
             if = {
                 limit = {
                     has_idea = STG_Graceful_Army_attack
@@ -8073,6 +8150,12 @@ focus_tree = {
         icon = GFX_focus_STG_mil_1
         x = -16
         y = 2
+        offset = {
+            x = 8
+            trigger = {
+                has_completed_focus = STG_com_16
+            }
+        }
         cost = 1
         available_if_capitulated = yes
         allow_branch = {
@@ -8135,6 +8218,10 @@ focus_tree = {
 				    instant_build = yes
 			    }
 		    }
+            mio:STG_Reisenburg_Military_Group = {
+                add_mio_funds = 1000
+                add_mio_size = 1
+            }
 		}
     }
     #完成百夫长计划
@@ -8178,8 +8265,15 @@ focus_tree = {
             add_equipment_to_stockpile = {
 		        type = medium_tank_chassis
 		        amount = 500
+                variant_name = "百夫长量产型"
 		        producer = STG
 	        }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"第五装甲师 “卡莫洛特”\" division_template = \"圣葛罗莉安娜装甲师\" start_experience_factor = 0.30"
+                    owner = STG
+                }
+            }
 		}
     }
     #碧波之上
@@ -8312,6 +8406,10 @@ focus_tree = {
                 cost_reduction = 0.50
                 uses = 2
                 category = land_doctrine
+            }
+            mio:STG_armor_organization= {
+                add_mio_funds = 1000
+                add_mio_size = 1
             }
 		}
     }
@@ -8644,35 +8742,75 @@ focus_tree = {
                 bonus = 1.0
                 uses = 1
             }
-            create_equipment_variant = {
-                name = "王家海军上级级"
-                type = ship_hull_heavy_1
-                parent_version = 0
-                modules = {
-                    fixed_ship_battery_slot = ship_heavy_battery_1
-                    fixed_ship_anti_air_slot = ship_anti_air_1
-                    fixed_ship_fire_control_system_slot = ship_fire_control_system_1
-                    fixed_ship_radar_slot = empty
-                    fixed_ship_engine_slot = heavy_ship_engine_2
-                    fixed_ship_secondaries_slot = dp_ship_secondaries_2
-                    fixed_ship_armor_slot = ship_armor_bc_2
-                    front_1_custom_slot = ship_heavy_battery_
-                    mid_1_custom_slot = ship_anti_air_1
-                    mid_2_custom_slot = ship_secondaries_1
-                    rear_1_custom_slot = ship_heavy_battery_1
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                create_equipment_variant = {
+                    name = "专政级"
+                    type = ship_hull_heavy_1
+                    parent_version = 0
+                    modules = {
+                        fixed_ship_battery_slot = ship_heavy_battery_1
+                        fixed_ship_anti_air_slot = ship_anti_air_1
+                        fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+                        fixed_ship_radar_slot = empty
+                        fixed_ship_engine_slot = heavy_ship_engine_2
+                        fixed_ship_secondaries_slot = dp_ship_secondaries_2
+                        fixed_ship_armor_slot = ship_armor_bc_2
+                        front_1_custom_slot = ship_heavy_battery_1
+                        mid_1_custom_slot = ship_anti_air_1
+                        mid_2_custom_slot = empty
+                        rear_1_custom_slot = ship_heavy_battery_1
+                    }
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_heavy_1
+                        creator = "STG" 
+                        version_name = "专政级"
+                    }
+                    name = "SGN 胡德"
+                    requested_factories = 1
+                    progress = 0.75
+                    amount = 1
                 }
             }
-            add_equipment_production = {
-		        equipment = {
-			        type = ship_hull_carrier_1
-			        creator = "STG" 
-			        version_name = "王家海军上级级"
-		        }
-		        name = "SGN 胡德"
-		        requested_factories = 1
-		        progress = 0.75
-		        amount = 1
-	        }
+            else = {
+                create_equipment_variant = {
+                    name = "王家海军上将级"
+                    type = ship_hull_heavy_1
+                    parent_version = 0
+                    modules = {
+                        fixed_ship_battery_slot = ship_heavy_battery_1
+                        fixed_ship_anti_air_slot = ship_anti_air_1
+                        fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+                        fixed_ship_radar_slot = empty
+                        fixed_ship_engine_slot = heavy_ship_engine_2
+                        fixed_ship_secondaries_slot = dp_ship_secondaries_2
+                        fixed_ship_armor_slot = ship_armor_bc_2
+                        front_1_custom_slot = ship_heavy_battery_1
+                        mid_1_custom_slot = ship_anti_air_1
+                        mid_2_custom_slot = empty
+                        rear_1_custom_slot = ship_heavy_battery_1
+                    }
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_heavy_1
+                        creator = "STG" 
+                        version_name = "王家海军上将级"
+                    }
+                    name = "SGN 胡德"
+                    requested_factories = 1
+                    progress = 0.75
+                    amount = 1
+                }
+            }
+            mio:STG_Arsenal_of_New_Alexander = {
+                add_mio_funds = 1000
+                add_mio_size = 1
+            }
 		}
     }
     #欧罗巴通衢
@@ -8754,8 +8892,14 @@ focus_tree = {
         icon = GFX_STG_UNG_civ_war_reaction_1
         x = 12
         y = 0
+        offset = {
+            x = 6
+            trigger = {
+                has_completed_focus = STG_com_16
+            }
+        }
         relative_position_id = STG_mil_1
-        cost = 1
+        cost = 0.3
         available_if_capitulated = yes
         allow_branch = {
             has_global_flag = UNG_CivilWar_begun
@@ -8785,7 +8929,7 @@ focus_tree = {
         icon = GFX_STG_UNG_civ_war_reaction_2
         x = -2
         y = 1
-        cost = 2
+        cost = 1
         relative_position_id = STG_UNG_civ_war_reaction_1
         available_if_capitulated = yes
         prerequisite = {    
@@ -8834,7 +8978,7 @@ focus_tree = {
         icon = GFX_STG_UNG_civ_war_reaction_3
         x = 0
         y = 1
-        cost = 4
+        cost = 2
         relative_position_id = STG_UNG_civ_war_reaction_2
         available_if_capitulated = yes
         prerequisite = {    
@@ -9362,6 +9506,10 @@ focus_tree = {
                 bonus = 1.0
                 uses = 2
                 category = industry
+            }
+            mio:STG_armor_organization= {
+                add_mio_funds = 1000
+                add_mio_size = 1
             }
             hidden_effect = {
                 country_event = {id = STG_dar.10 days = 5}
@@ -10097,7 +10245,7 @@ focus_tree = {
         x = 0
         y = 1
         relative_position_id = STG_true_dar_6
-        cost = 4
+        cost = 3
         available_if_capitulated = yes
         prerequisite = {
             focus = STG_true_dar_6
@@ -10110,6 +10258,7 @@ focus_tree = {
         completion_reward = {
             add_war_support = 0.05
             add_political_power = 50
+            STG_shipbuilding_setup = yes
         }
     }
     #盎格利亚的正统
@@ -10119,7 +10268,7 @@ focus_tree = {
         x = 0
         y = 1
         relative_position_id = STG_true_dar_30
-        cost = 5
+        cost = 3
         available_if_capitulated = yes
         prerequisite = {
             focus = STG_true_dar_30

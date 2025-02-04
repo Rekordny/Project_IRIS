@@ -1919,6 +1919,67 @@ STG_parliament_issues = {
             factor = 10
         }
     }
+    #第二次造舰计划预算
+    STG_rev_policy_dockyard_2 = {
+        available = {
+            NOT = {
+                has_country_flag = STG_rencetly_policy
+            }
+            STG_rev_can_pass_issue_trigger = yes
+        }
+        fire_only_once = yes
+        visible = {
+            has_country_flag = STG_rev_par_mechanics
+            has_completed_focus = STG_com_65
+        }
+        cost = 70
+        days_remove = 70
+        complete_effect = {
+            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
+            clr_country_flag = STG_policy_passed_flag
+            set_country_flag = STG_policy_passed_flag
+            
+        }
+        remove_effect = {
+            country_event = {id = STG_rev.119 days = 1}
+            717 = {
+                limit = {
+                    is_owned_and_controlled_by = ROOT
+                }
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+                    type = dockyard
+                    level = 2
+                    instant_build = yes
+                }
+            }
+            222 = {
+                limit = {
+                    is_owned_and_controlled_by = ROOT
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = dockyard
+                    level = 1
+                    instant_build = yes
+                }
+            }
+            231 = {
+                limit = {
+                    is_owned_and_controlled_by = ROOT
+                }
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = dockyard
+                    level = 1
+                    instant_build = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
     #战争宣传
     STG_rev_policy_war_propaganda = {
         available = {
@@ -5820,6 +5881,46 @@ STG_syn_union = {
 }
 #宣告昂格利亚统一
 Unite_Anglia = {
+    #踢翻王冠
+    STG_break_the_throne = {
+        available = {
+            if = {
+                limit = {
+                    tag = STG
+                }
+                controls_state = 218
+            }
+            has_war_with = UNG
+        }
+        visible = {
+            tag = STG
+            OR = {
+                has_global_flag = WAR_FOR_ANGLIA
+                has_global_flag = STG_operation_long_bow
+            }
+            has_war_with = UNG
+        }
+        fire_only_once = yes
+        complete_effect = {
+            UNG = {
+                add_stability = -0.20
+                add_war_support = -0.20
+            }
+            every_state = {
+                limit = {
+                    OR = {
+                        is_core_of = UNG
+                        is_core_of = MSA
+                        is_core_of = FNG
+                    }                        
+                }
+                add_core_of = STG
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
     #STG-军事统一
     STG_unite_decision = {
         available = {
@@ -5828,7 +5929,12 @@ Unite_Anglia = {
                     tag = STG
                 }
                 controls_state = 218
-            } 
+            }
+            NOT = {
+                country_exists = UNG
+                country_exists = FNG
+                country_exists = MSA
+            }
         }
         visible = {
             tag = STG
@@ -6701,6 +6807,18 @@ STG_tea_and_cake = {
 }
 ###debug国策路线 ##debug focus road
 STG_debug_decisions = {
+    STG_super_mio = {
+        visible = {
+			is_debug = yes
+			is_ai = no
+		}
+        complete_effect = {
+            mio:STG_armor_organization = {
+                add_mio_funds = 10000
+                add_mio_size = 10
+            }
+        }
+    }
     STG_add_claim = {
         visible = {
 			is_debug = yes
@@ -7755,6 +7873,800 @@ STG_debt_crisis = {
         fire_only_once = yes
         remove_effect = {
             country_event = {id = STG_rev.87}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+STG_party_intro = {
+    STG_syndicalist_intro = {
+        available = {hidden_trigger ={always = no}}
+    }
+    STG_social_dem_intro = {
+        available = {hidden_trigger ={always = no}}
+    }
+    STG_left_intro = {
+        available = {hidden_trigger ={always = no}}
+    }
+    STG_conservative_intro = {
+        available = {hidden_trigger ={always = no}}
+    }
+    STG_usr_loyalist_intro = {
+        available = {hidden_trigger ={always = no}}
+    }
+    STG_ung_loyalist_intro = {
+        available = {hidden_trigger ={always = no}}
+    }
+}
+#大建出奇迹
+STG_shipbuilding = {
+    #五月起义号
+    STG_BB_Red_May = {
+        cost = 40
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = -20
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_heavy_1
+                        creator = "STG" 
+                        version_name = "五月起义级"
+                    }
+                    name = "SGN 五月起义"
+                    requested_factories = 1
+                    progress = 0.85
+                    amount = 1
+                }
+            }
+            else = {
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_heavy_1
+                        creator = "STG" 
+                        version_name = "加里波莉级"
+                    }
+                    name = "SGN 加里波莉"
+                    requested_factories = 1
+                    progress = 0.85
+                    amount = 1
+                }
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #联合号
+    STG_BB_Union = {
+        cost = 40
+        fire_only_once = yes
+        visible = {
+            NOT = {has_country_flag = STG_convert_Union_to_cv}
+        }
+        available = {
+            NOT = {has_country_flag = STG_convert_Union_to_cv}
+        }
+        complete_effect = {
+            navy_experience = -20
+            set_country_flag = STG_continue_to_build_Union
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_heavy_1
+                        creator = "STG" 
+                        version_name = "五月起义级"
+                    }
+                    name = "SGN 联合"
+                    requested_factories = 1
+                    progress = 0.65
+                    amount = 1
+                }
+            }
+            else = {
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_heavy_1
+                        creator = "STG" 
+                        version_name = "加里波莉级"
+                    }
+                    name = "SGN 联合"
+                    requested_factories = 1
+                    progress = 0.65
+                    amount = 1
+                }
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #将联合号改为航母
+    STG_CV_Union = {
+        cost = 40
+        fire_only_once = yes
+        visible = {
+            NOT = {has_country_flag = STG_continue_to_build_Union}
+        }
+        available = {
+            NOT = {has_country_flag = STG_continue_to_build_Union}
+        }
+        complete_effect = {
+            navy_experience = -20
+            set_country_flag = STG_convert_Union_to_cv
+            create_equipment_variant = {
+                name = "联合级"
+                type = ship_hull_carrier_1
+                modules = {
+                    fixed_ship_deck_slot_1 = ship_deck_space
+                    fixed_ship_deck_slot_2 = ship_deck_space
+                    fixed_ship_anti_air_slot = ship_anti_air_1
+                    fixed_ship_radar_slot = empty
+                    fixed_ship_engine_slot = carrier_ship_engine_2
+                    fixed_ship_secondaries_slot = ship_secondaries_2
+                    front_1_custom_slot = ship_deck_space
+                }
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_carrier_1
+                    creator = "STG" 
+                    version_name = "联合级"
+                }
+                name = "SGN 联合"
+                requested_factories = 1
+                progress = 0.65
+                amount = 1
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #巡洋
+    STG_CL_1 = {
+        cost = 20
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = -10
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "焰火级"
+                    }
+                    name = "SGN 焰火"
+                    requested_factories = 1
+                    progress = 0.8
+                    amount = 1
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "焰火级"
+                    }
+                    name = "SGN 烛火"
+                    requested_factories = 1
+                    progress = 0.8
+                    amount = 1
+                }
+            }
+            else = {
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "剑鞘级"
+                    }
+                    name = "SGN 焰火"
+                    requested_factories = 1
+                    progress = 0.8
+                    amount = 1
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "剑鞘级"
+                    }
+                    name = "SGN 烛火"
+                    requested_factories = 1
+                    progress = 0.8
+                    amount = 1
+                }
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #巡洋
+    STG_CL_2 = {
+        cost = 20
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = -10
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "焰火级"
+                    }
+                    name = "SGN 逆火"
+                    requested_factories = 1
+                    progress = 0.7
+                    amount = 1
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "焰火级"
+                    }
+                    name = "SGN 灯火"
+                    requested_factories = 1
+                    progress = 0.7
+                    amount = 1
+                }
+            }
+            else = {
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "剑鞘级"
+                    }
+                    name = "SGN 焰火"
+                    requested_factories = 1
+                    progress = 0.7
+                    amount = 1
+                }
+                add_equipment_production = {
+                    equipment = {
+                        type = ship_hull_cruiser_2
+                        creator = "STG" 
+                        version_name = "剑鞘级"
+                    }
+                    name = "SGN 烛火"
+                    requested_factories = 1
+                    progress = 0.7
+                    amount = 1
+                }
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #驱逐
+    STG_DD_1 = {
+        cost = 20
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = -10
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.7
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.7
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.7
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.7
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.7
+                amount = 1
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #驱逐
+    STG_DD_2 = {
+        cost = 20
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = -10
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.5
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.5
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.5
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.5
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.5
+                amount = 1
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #驱逐
+    STG_DD_3 = {
+        cost = 20
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = -10
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.4
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.4
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.4
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.4
+                amount = 1
+            }
+            add_equipment_production = {
+                equipment = {
+                    type = ship_hull_light_2
+                    creator = "STG" 
+                    version_name = "机动级"
+                }
+                requested_factories = 1
+                progress = 0.4
+                amount = 1
+            }
+            add_to_variable = {STG.STG_shipbuilding_var = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_complete_plan = {
+        available = {
+            hidden_trigger = {
+                check_variable = {STG.STG_shipbuilding_var > 6}
+            }
+        }
+        fire_only_once = yes
+        complete_effect = {
+            navy_experience = 100
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+STG_landing_plan = {
+    STG_army_training = {
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            army_experience = 20
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_naval_training = {
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            navy_experience = 20
+            STG_add_landing_plan_5 = yes
+            set_country_flag = STG_naval_training
+            custom_effect_tooltip = STG_unlock_strait_drill
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_air_force_training = {
+        cost = 15
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            air_experience = 20
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_train_armored_marine = {
+        cost = 25
+        fire_only_once = yes
+        days_remove = 90
+        remove_effect = {
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"两栖装甲师\" division_template = \"两栖装甲师\" start_experience_factor = 0.50"
+                    owner = STG
+                }
+            }
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_landing_drill = {
+        cost = 20
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            STG_add_landing_plan_10 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_amphibious_tank_production = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 90
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = medium_tank_amphibious_chassis_1
+                amount = 100
+            }
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_supply_equipment_production = {
+        cost = 20
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = support_equipment_1
+                amount = 200
+            }
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_send_agents = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            STG_add_landing_plan_5 = yes
+            set_country_flag = STG_send_agents
+            custom_effect_tooltip = STG_unlock_contact_UNG_cooperator
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_contact_UNG_cooperator = {
+        visible = {
+            has_country_flag = STG_send_agents
+        }
+        cost = 45
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_secret_act = {
+        visible = {
+            has_country_flag = STG_send_agents
+        }
+        cost = 30
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_contact_FNG_warrior = {
+        visible = {
+            has_country_flag = STG_send_agents
+        }
+        cost = 30
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            STG_add_landing_plan_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_make_a_plan = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            STG_add_landing_plan_10 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_hide_our_intention = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 10
+        remove_effect = {
+            STG_add_landing_plan_10 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_strait_drill = {
+        visible = {
+            has_country_flag = STG_naval_training
+        }
+        cost = 50
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            STG_add_landing_plan_15 = yes
+            country_event = {id = STG_general.21 days = 3}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_complete_landing_plan = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_has_100_plan
+                check_variable = {STG.STG_landing_plan > 99}
+            }
+        }
+        complete_effect = {
+            set_country_flag = STG_complete_landing_plan_flag
+            custom_effect_tooltip = STG_unlock_cross_the_strait_focus
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+STG_cross_the_strait = {
+    STG_send_naval_support = {
+        available = {
+            NOT = {
+                controls_state = 238
+                controls_state = 166
+                controls_state = 182
+            }
+        }
+        cost = 30
+        days_remove = 30
+        complete_effect = {
+            238 = {
+                add_dynamic_modifier = {modifier = STG_naval_support_2 scope = UNG}
+            }
+            166 = {
+                add_dynamic_modifier = {modifier = STG_naval_support_2 scope = UNG}
+            }
+            182 = {
+                add_dynamic_modifier = {modifier = STG_naval_support_2 scope = UNG}
+            }
+        }
+        remove_effect = {
+            238 = {
+                remove_dynamic_modifier = {modifier = STG_naval_support_2 scope = UNG}
+            }
+            166 = {
+                remove_dynamic_modifier = {modifier = STG_naval_support_2 scope = UNG}
+            }
+            182 = {
+                remove_dynamic_modifier = {modifier = STG_naval_support_2 scope = UNG}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_fight_with_FNG_182 = {
+        cost = 30
+        fire_only_once = yes
+        complete_effect = {
+            182 = {
+                add_dynamic_modifier = {modifier =FNG_attack scope = UNG days = 60}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_fight_with_FNG_166 = {
+        cost = 30
+        fire_only_once = yes
+        complete_effect = {
+            166 = {
+                add_dynamic_modifier = {modifier =FNG_attack scope = UNG days = 60}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_attack_the_inner_land = {
+        cost = 10
+        fire_only_once = yes
+        complete_effect = {
+            UNG = {
+                add_timed_idea = {
+                    idea = STG_massive_attack
+                    days = 90
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_throw_a_smoke_shell = {
+        visible = {
+            check_variable = {STG.STG_smoke_counter < 3}
+        }
+        cost = 20
+        days_re_enable = 10
+        days_re_enable = 90
+        remove_effect = {
+            country_event = {id = STG_general.25 days = 1}
+            add_to_variable = {STG.STG_smoke_counter = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_mobalise_UNG_oppositor = {
+        cost = 50
+        fire_only_once = yes
+        complete_effect = {
+            UNG = {
+                add_timed_idea = {
+                    idea = STG_mobalise_UNG_oppositor_idea
+                    days = 180
+                }
+            }
         }
         ai_will_do = {
             factor = 1000
