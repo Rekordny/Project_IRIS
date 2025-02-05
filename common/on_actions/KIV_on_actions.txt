@@ -386,9 +386,15 @@ on_actions = {
 							modifier = {
 								factor = 0
 								#不知火 花耶将会变得极端。
-								has_game_rule = {
-									rule = KIV_ai_behavior
-									option = KIV_shiranui_kaya_4
+								OR = {
+									has_game_rule = {
+										rule = KIV_ai_behavior
+										option = KIV_shiranui_kaya_4
+									}
+									has_game_rule = {
+										rule = KIV_ai_behavior
+										option = KIV_shiranui_kaya_5
+									}
 								}
 							}
 							set_temp_variable = {
@@ -490,6 +496,33 @@ on_actions = {
 						target = PCC
 					}
 				}
+				if = {
+					limit = {
+						has_game_rule = {
+							rule = KIV_ai_behavior
+							option = KIV_shiranui_kaya_3
+						}
+					}
+					every_country = {
+						limit = {
+							is_IRIS_melody_country = yes
+							OR = {
+								NOT = {
+									is_ally_with = KIV
+								}
+								NOT = {
+									TAG = KIV
+								}
+							}
+						}
+						KIV = {
+							create_wargoal = {
+								target = PREV
+								type = annex_everything
+							}
+						}
+					}
+				}
 			}
 			if = {
 				limit = {
@@ -528,20 +561,55 @@ on_actions = {
 						target = KIV
 					}
 				}
-				KIV = {
-					annex_country = {
-						target = ROOT
-						transfer_troops = no
+				if = {
+					limit = {
+						ROOT = {
+							is_faction_leader = yes
+							all_allied_country = {
+								is_major = no
+							}
+						}
 					}
-					release_autonomy = {
-						target = ROOT
-						autonomy_state = autonomy_integrated_puppet
-						freedom_level = 0.5
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_ally_with = ROOT
+							}
+						}
+						KIV = {
+							annex_country = {
+								target = PREV
+								transfer_troops = no
+							}
+							release_autonomy = {
+								target = PREV
+								autonomy_state = autonomy_integrated_puppet
+								freedom_level = 0.5
+							}
+						}
 					}
-					# every_state = {
-					# 	limit = {
-					# 	}
-					# }
+				}
+				else = {
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_puppet_of = ROOT
+							}
+						}
+						KIV = {
+							annex_country = {
+								target = PREV
+								transfer_troops = no
+							}
+							release_autonomy = {
+								target = PREV
+								autonomy_state = autonomy_integrated_puppet
+								freedom_level = 0.5
+							}
+						}
+					}
 				}
 				every_country = {
 					limit = {
@@ -593,20 +661,11 @@ on_actions = {
 							limit = {
 								is_core_of = var:temp
 							}
-							var:temp = {
-								transfer_state_to = PREV
-								if = {
-									limit = {
-										NOT = {
-											is_puppet_of = KIV
-										}
-									}
-									KIV = {
-										set_autonomy = {
-											target = PREV
-											autonomous_state = autonomy_integrated_puppet
-										}
-									}
+							KIV = {
+								release_autonomy = {
+									target = var:temp
+									autonomy_state = autonomy_integrated_puppet
+									freedom_level = 0.5
 								}
 							}
 						}
