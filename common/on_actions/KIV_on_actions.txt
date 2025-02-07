@@ -436,6 +436,18 @@ on_actions = {
 						traits = {
 						}
 					}
+					create_field_marshal = {
+						name = PCC_KIV_saten_ruiko
+						desc = "PCC_KIV_saten_ruiko_desc"
+						portrait_path = "gfx/leaders/PCC/PCC_KIV_saten_ruiko.dds"
+						traits = {
+						}
+						skill = 2
+						attack_skill = 1
+						defense_skill = 3
+						planning_skill = 2
+						logistics_skill = 1
+					}
 					create_wargoal = {
 						target = NEV
 						type = annex_everything
@@ -482,7 +494,6 @@ on_actions = {
 					}
 					set_global_flag = KIV_GSC_faction_collapse_flag
 					create_faction = KIV_faction_name
-					
 					KIV_GSC_faction_array = yes
 					random_list = {
 						1 = {
@@ -793,52 +804,81 @@ on_actions = {
 				limit = {
 					ROOT = {
 						original_tag = KIV
+						has_country_leader = {
+							character = KIV_shiranui_kaya
+							ruling_only = yes
+						}
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							original_tag = PCC
+							is_puppet = no
+						}
 					}
 					FROM = {
-						original_tag = PCC
-					}
-				}
-				FROM = {
-					white_peace = {
-						tag = ROOT
-						# message = OCF_WIN_OCE_TT
-					}
-				}
-				KIV = {
-					remove_ideas = KIV_WAR_TO_PCC
-					transfer_navy = {
-						target = PCC
-					}
-					PCC = {
-						annex_country = {
-							target = KIV
-							transfer_troops = no
+						white_peace = {
+							tag = ROOT
+							# message = OCF_WIN_OCE_TT
 						}
 					}
-					every_state = {
-						limit = {
-							is_core_of = KIV
-							is_owned_by = PCC
+					KIV = {
+						remove_ideas = KIV_WAR_TO_PCC
+						transfer_navy = {
+							target = PCC
 						}
+						PCC = {
+							annex_country = {
+								target = KIV
+								transfer_troops = no
+							}
+						}
+						every_state = {
+							limit = {
+								is_core_of = KIV
+								is_owned_by = PCC
+							}
+							KIV = {
+								transfer_state = PREV
+							}
+							create_unit = {
+								division = "name = \"联邦学生军\" division_template = \"联邦学生军\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+								owner = KIV
+							}
+						}
+					}
+				}
+				country_event = {
+					id = KIV_incomplete.5
+				}
+				# country_event = {
+				# 	id = kivnews.5
+				# }
+				country_event = {
+					id = KIV_incomplete.6
+					days = 7
+				}
+				if = {
+					limit = {
 						KIV = {
-							transfer_state = PREV
-						}
-						create_unit = {
-							division = "name = \"联邦学生军\" division_template = \"联邦学生军\" start_experience_factor = 0.1 start_equipment_factor = 1 "
-							owner = KIV
+							has_dynamic_modifier = {
+								modifier = KIV_campus_city_modifier
+							}
 						}
 					}
-					country_event = {
-						id = KIV_incomplete.5
-					}
-					# country_event = {
-					# 	id = kivnews.5
-					# }
-					country_event = {
-						id = KIV_incomplete.6
-						days = 7
+					every_country = {
+						limit = {
+							OR = {
+								has_war_with = KIV
+								tag = FROM
+								is_ally_with = FROM
+							}
+						}
+						set_country_flag = KIV_not_superman_flag
 					}
 				}
+				KIV_GSC_faction_array = yes
 			}
 		}
 	}
