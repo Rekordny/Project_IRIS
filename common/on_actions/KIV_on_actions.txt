@@ -848,6 +848,117 @@ on_actions = {
 							}
 						}
 					}
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_ally_with = ROOT
+							}
+						}
+						KIV = {
+							annex_country = {
+								target = PREV
+								transfer_troops = no
+							}
+							release_autonomy = {
+								target = PREV
+								autonomy_state = autonomy_integrated_puppet
+								freedom_level = 0.5
+							}
+						}
+					}
+				}
+				else = {
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_puppet_of = ROOT
+							}
+						}
+						KIV = {
+							annex_country = {
+								target = PREV
+								transfer_troops = no
+							}
+							release_autonomy = {
+								target = PREV
+								autonomy_state = autonomy_integrated_puppet
+								freedom_level = 0.5
+							}
+						}
+					}
+				}
+				every_country = {
+					limit = {
+						OR = {
+							original_tag = KIV
+							is_ally_with = KIV
+						}
+					}
+					set_temp_variable = {
+						temp = this
+					}
+					every_state = {
+						limit = {
+							is_owned_by = KIV
+							NOT = {
+								is_core_of = KIV
+							}
+							is_core_of = var:temp
+						}
+						var:temp = {
+							transfer_state = PREV
+						}
+					}
+				}
+				every_state = {
+					limit = {
+						is_owned_by = KIV
+						NOT = {
+							is_core_of = KIV
+						}
+					}
+					add_to_temp_array = {
+						temp_array = this
+					}
+				}
+				every_possible_country = {
+					limit = {
+						OR = {
+							exists = no
+							is_puppet_of = KIV
+						}
+					}
+					set_temp_variable = {
+						temp = this
+					}
+					for_each_scope_loop = {
+						array = temp_array
+						if = {
+							limit = {
+								is_core_of = var:temp
+							}
+							KIV = {
+								release_autonomy = {
+									target = var:temp
+									autonomy_state = autonomy_integrated_puppet
+									freedom_level = 0.5
+								}
+							}
+						}
+					}
+				}
+				KIV_GSC_faction_array = yes
+			}
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = KIV
+					}
+					FROM = {
+						original_tag = PCC
+					}
 				}
 				country_event = {
 					id = KIV_incomplete.5
@@ -877,6 +988,34 @@ on_actions = {
 						}
 						set_country_flag = KIV_not_superman_flag
 					}
+				}
+				KIV_GSC_faction_array = yes
+			}
+		}
+	}
+	on_offer_join_faction = {
+		effect = {
+			FROM = {
+				if = {
+					limit = {
+						is_in_faction_with = KIV
+						KIV = {
+							is_faction_leader = yes
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = KIV_campus_city_modifier
+					}
+				}
+				KIV_GSC_faction_array = yes
+			}
+		}
+	}
+	on_leave_faction = {
+		effect = {
+			FROM = {
+				remove_dynamic_modifier = {
+					modifier = KIV_campus_city_modifier
 				}
 				KIV_GSC_faction_array = yes
 			}
