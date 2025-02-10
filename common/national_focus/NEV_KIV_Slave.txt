@@ -40,6 +40,7 @@ focus_tree = {
 				set_technology = {
 					NEV_Unit_MKA = 0
 				}
+				country_lock_all_division_template = yes
 				delete_unit = {
 					disband = yes
 				}
@@ -60,7 +61,9 @@ focus_tree = {
 		prerequisite = {
 			focus = NEV_KIA_Slave_Back_From_War
 		}
-		available={}
+		available={
+			always = no
+		}
 		mutually_exclusive = {}
 		bypass = {}
 		search_filters = {FOCUS_FILTER_POLITICAL FOCUS_FILTER_STABILITY}
@@ -152,11 +155,17 @@ focus_tree = {
 		completion_reward = {
 			add_stability = 0.2
 			add_war_support = 0.05
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
+			}
 		}
 	}
 	focus = {#建立本土化学园军队
 		id = NEV_KIA_Slave_Rebuild_the_Army
 		icon = GFX_focus_generic_little_entente
+		allow_branch = {
+			has_completed_focus = NEV_KIA_Slave_Rebuild_the_Goverment
+		}
 		relative_position_id = NEV_KIA_Slave_Rebuild_the_Goverment
 		cost = 4
 		x=0
@@ -177,6 +186,7 @@ focus_tree = {
 				}
 			}
 			division_template = {
+				is_locked = yes
 				name = "新式学园作战旅"
 				division_names_group = NEV_INF_02
 				regiments = {
@@ -361,6 +371,7 @@ focus_tree = {
 		completion_reward = {
 			hidden_effect = {
 				division_template = {
+					is_locked = yes
 					name = "常规步兵旅"
 					division_names_group = NEV_INF_02
 					regiments = { 
@@ -479,10 +490,14 @@ focus_tree = {
 		cost = 4
 		allow_branch = {
 			has_idea = NEV_is_puppet_of_Kivotos
+			has_completed_focus = NEV_KIA_Slave_Rebuild_the_Goverment
+			NOT = {
+				has_completed_focus = NEV_KIA_Slave_Stay_Still
+			}
 		}
 		x=-8
 		y=1
-		ai_will_do = {factor = 80}
+		ai_will_do = {factor = 50}
 		prerequisite = {
 			focus = NEV_KIA_Slave_Rebuild_the_Goverment
 		}
@@ -496,6 +511,9 @@ focus_tree = {
 			add_ideas = NEV_Hug_The_Academy
 			hidden_effect = {
 				set_country_leader_ideology = sub_Academia
+			}
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
 			}
 		}
 	}
@@ -737,16 +755,17 @@ focus_tree = {
 	focus = {#坚持自主独立
 		id = NEV_KIA_Slave_Stay_Still
 		icon = GFX_focus_spr_torchbearers_of_tomorrow
+		allow_branch = {
+			NOT = {
+				has_completed_focus = NEV_KIA_Slave_Hug_the_Academy
+			}
+			has_completed_focus = NEV_KIA_Slave_Rebuild_the_Goverment
+		}
 		relative_position_id = NEV_KIA_Slave_Rebuild_the_Goverment
-		#allow_branch = {
-		#	NOT ={
-		#		has_idea = NEV_is_puppet_of_Kivotos
-		#	}
-		#}
 		cost = 4
 		x=8
 		y=1
-		ai_will_do = {factor = 80}
+		ai_will_do = {factor = 50}
 		prerequisite = {
 			focus = NEV_KIA_Slave_Rebuild_the_Goverment
 		}
@@ -765,13 +784,15 @@ focus_tree = {
 				}
 				set_country_leader_ideology = sub_autocracy_subideology
 			}
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
+			}
 		}
 	}
 	focus = {#坚持自主独立
 		id = NEV_KIA_Slave_Stay_Still_I
 		icon = GFX_goal_generic_neutrality_focus
 		relative_position_id = NEV_KIA_Slave_Stay_Still
-		
 		cost = 4
 		x=0
 		y=1
@@ -788,6 +809,882 @@ focus_tree = {
 				remove_idea = NEV_Escape_The_Academy
 				add_idea = NEV_Escape_The_Academy_I
 			}
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
+			}
+		}
+	}
+	focus = {#自主独立的国度
+		id = NEV_KIA_Slave_Independent_Country
+		icon = GFX_goal_anschluss
+		relative_position_id = NEV_KIA_Slave_Stay_Still_I
+		cost = 0
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_Stay_Still_I
+		}
+		available={
+			NOT = {
+				has_idea = NEV_is_puppet_of_Kivotos
+			}
+			has_completed_focus = NEV_KIA_Slave_Stay_Still_I
+		}
+		mutually_exclusive = {}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
+			}
+		}
+	}
+	focus = {#继续政府统治
+		id = NEV_KIA_Slave_Independent_Country_Still
+		icon = GFX_goal_generic_political_pressure
+		relative_position_id = NEV_KIA_Slave_Independent_Country
+		allow_branch = {
+			NOT = {
+				has_completed_focus = NEV_KIA_Slave_Independent_Country_Democratic
+			}
+			NOT = {
+				has_idea = NEV_is_puppet_of_Kivotos
+			}
+			has_completed_focus = NEV_KIA_Slave_Independent_Country
+		}
+		cost = 2
+		x=-2
+		y=1
+		ai_will_do = {factor = 50}
+		prerequisite = {
+			focus = NEV_KIA_Slave_Independent_Country
+		}
+		available={}
+		mutually_exclusive = {
+			focus = NEV_KIA_Slave_Independent_Country_Democratic
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			set_country_leader_ideology = sub_enlightened_despotism
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.2
+			}
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
+			}
+		}
+	}
+	focus = {#切换民主统治
+		id = NEV_KIA_Slave_Independent_Country_Democratic
+		icon = GFX_focus_generic_democratic_europe
+		relative_position_id = NEV_KIA_Slave_Independent_Country
+		allow_branch = {
+			NOT = {
+				has_completed_focus = NEV_KIA_Slave_Independent_Country_Still
+			}
+			NOT = {
+				has_idea = NEV_is_puppet_of_Kivotos
+			}
+			has_completed_focus = NEV_KIA_Slave_Independent_Country
+		}
+		cost = 2
+		x=2
+		y=1
+		ai_will_do = {factor = 50}
+		prerequisite = {
+			focus = NEV_KIA_Slave_Independent_Country
+		}
+		available={}
+		mutually_exclusive = {
+			focus = NEV_KIA_Slave_Independent_Country_Still
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			set_country_leader_ideology = sub_Social_Liberalism
+			add_popularity = {
+				ideology = democratic
+				popularity = 0.2
+			}
+			hidden_effect = {
+				mark_focus_tree_layout_dirty = yes
+			}
+		}
+	}
+	focus = {#重返自主的国家
+		id = NEV_KIA_Slave_White_Reback_to_itSelf
+		icon = GFX_focus_generic_strike_at_democracy2
+		relative_position_id = NEV_KIA_Slave_Back_From_War
+		allow_branch = {
+			has_completed_focus = NEV_KIA_Slave_Independent_Country_Still
+		}
+		cost = 2
+		x=13
+		y=0
+		ai_will_do = {factor = 80}
+		prerequisite = {
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			add_ideas = NEV_Independent_Politic_Stand
+			hidden_effect = {
+				leave_faction = yes
+			}
+		}
+	}
+	focus = {#解散学园党
+		id = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		icon = GFX_focus_CZE_german_puppet
+		relative_position_id = NEV_KIA_Slave_White_Reback_to_itSelf
+		
+		cost = 2
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Reback_to_itSelf
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			set_party_name = {
+				ideology = neutrality
+				long_name = NEV_People_Democatic_Party_long
+				name = NEV_People_Democatic_Party
+			}
+			set_party_name = {
+				ideology = democratic
+				long_name = NEV_LFP_long
+				name = NEV_LFP
+			}
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.2
+			}
+		}
+	}
+	focus = {#复仇计划
+		id = NEV_KIA_Slave_White_Revenge_Plan
+		icon = GFX_goal_generic_more_territorial_claims
+		relative_position_id = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		
+		cost = 3
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			add_war_support = 0.2
+			add_political_power = 300
+			
+		}
+	}
+	focus = {#加入战车道
+		id = NEV_KIA_Slave_White_Into_the_Panzer_Team
+		icon = GFX_goal_tripartite_pact
+		relative_position_id = NEV_KIA_Slave_White_Revenge_Plan
+		cost = 1
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Revenge_Plan
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			USR = {
+				country_event = {
+					id = nev_slave_kiv.5
+					days = 3
+				}
+			}
+		}
+	}
+	focus = {#她们的土地，她们的血
+		id = NEV_KIA_Slave_White_Their_Land_Their_Blood
+		icon = GFX_SOV_keep_commissars_organization_ccp_2d_sov_compatibility
+		relative_position_id = NEV_KIA_Slave_White_Into_the_Panzer_Team
+		cost = 3
+		x=0
+		y=3
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Into_the_Panzer_Team
+		}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Revenge_Army
+		}
+		available={
+			num_divisions > 100
+		}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			custom_effect_tooltip = NEV_The_West_The_South_Tip_desc
+            create_wargoal = {
+                type = annex_everything
+                target = PCC
+            }
+			create_wargoal = {
+                type = annex_everything
+                target = KIV
+            }
+			create_wargoal = {
+                type = annex_everything
+                target = KPC
+            }
+            hidden_effect = {
+				345 = {
+					add_core_of = NEV
+				}
+				349 = {
+					add_core_of = NEV
+				}
+				358 = {
+					add_core_of = NEV
+				}
+				318 = {
+					add_claim_by = NEV
+				}
+				319 = {
+					add_claim_by = NEV
+				}
+				343 = {
+					add_claim_by = NEV
+				}
+				344 = {
+					add_claim_by = NEV
+				}
+				364 = {
+					add_claim_by = NEV
+				}
+				374 = {
+					add_claim_by = NEV
+				}
+				387 = {
+					add_claim_by = NEV
+				}
+				364 = {
+					add_claim_by = NEV
+				}
+				402 = {
+					add_claim_by = NEV
+				}
+				424 = {
+					add_claim_by = NEV
+				}
+                add_timed_idea = {
+                    idea = NEV_Attack_to_PCC
+                    days = 300
+                }
+                add_ideas = NEV_Protect_it_self
+            }
+		}
+	}
+	focus = {#复仇的军队
+		id = NEV_KIA_Slave_White_Revenge_Army
+		icon = GFX_focus_SOV_womens_fascist_movement
+		relative_position_id = NEV_KIA_Slave_White_Into_the_Panzer_Team
+		cost = 2
+		x=2
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Into_the_Panzer_Team
+		}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Hired_the_Military
+		}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Cannons
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			add_ideas = NEV_Exchange_Army_2
+		}
+	}
+	focus = {#陆军军备
+		id = NEV_KIA_Slave_White_Rebuild_the_Army
+		icon = GFX_goal_generic_allies_build_infantry
+		relative_position_id = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		cost = 2
+		x=4
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			army_experience = 100
+			hidden_effect = {
+				country_lock_all_division_template = no
+				set_division_template_lock = {
+					division_template = "新式学园作战旅"
+					is_locked = no
+				}
+				set_division_template_lock = {
+					division_template = "常规步兵旅"
+					is_locked = no
+				}
+			}
+			
+		}
+	}
+	focus = {#炮兵部队
+		id = NEV_KIA_Slave_White_Cannons
+		icon = GFX_goal_generic_army_artillery2
+		relative_position_id = NEV_KIA_Slave_White_Rebuild_the_Army
+		cost = 4
+		x=2
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Rebuild_the_Army
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			add_tech_bonus = {
+                name = GER_kriegslokomotiven
+                bonus = 0.5
+                uses = 3
+                category = artillery
+            }
+			add_ideas = NEV_MI_Artillery_Improve_I
+		}
+	}
+	focus = {#穿甲部队
+		id = NEV_KIA_Slave_White_AT
+		icon = GFX_focus_generic_anti_tank_guns
+		relative_position_id = NEV_KIA_Slave_White_Cannons
+		cost = 3
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Cannons
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			add_tech_bonus = {
+                name = GER_kriegslokomotiven
+                bonus = 0.5
+                uses = 3
+                category = cat_anti_tank
+            }
+		}
+	}
+	focus = {#招募民兵
+		id = NEV_KIA_Slave_White_Hired_the_Military
+		icon = GFX_focus_generic_manpower
+		relative_position_id = NEV_KIA_Slave_White_Rebuild_the_Army
+		cost = 3
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Rebuild_the_Army
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			set_technology = {
+				militia_tech = 1
+			}
+			division_template = {
+				name = "征召民兵旅"
+				division_names_group = NEV_MIL_01
+				regiments = { 
+					militia = {x = 0 y = 0}
+					militia = {x = 0 y = 1}
+					militia = {x = 0 y = 2}
+					militia = {x = 1 y = 0}
+					militia = {x = 1 y = 1}
+					militia = {x = 1 y = 2}
+				}
+				support = {
+					military_police = {
+						x = 0
+						y = 0
+					}
+				}
+			}
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+		}
+	}
+	focus = {#招募民兵1
+		id = NEV_KIA_Slave_White_Hired_the_Military_I
+		icon = GFX_focus_generic_manpower
+		relative_position_id = NEV_KIA_Slave_White_Hired_the_Military
+		cost = 3
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Hired_the_Military
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+		}
+	}
+	focus = {#招募民兵2
+		id = NEV_KIA_Slave_White_Hired_the_Military_II
+		icon = GFX_focus_generic_manpower
+		relative_position_id = NEV_KIA_Slave_White_Hired_the_Military_I
+		cost = 3
+		x=-1
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Hired_the_Military_I
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_ARMY_XP }
+		completion_reward = {
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"征召民兵旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }
+		}
+	}
+	focus = {#扩充精锐突击部队
+		id = NEV_KIA_Slave_White_Prove_Special_Force
+		icon = GFX_goal_generic_special_forces
+		relative_position_id = NEV_KIA_Slave_White_Hired_the_Military
+		cost = 4
+		x=1
+		y=2
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Hired_the_Military
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 0.5 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 1 "
+                    owner = NEV
+                }
+            }    
+			325 = {
+                create_unit = {
+                    division = "name = \"\" division_template = \"新式学园作战旅\" start_experience_factor = 0.5 start_equipment_factor = 0.5 "
+                    owner = NEV
+                }
+            }    
+		}
+	}
+	focus = {#海军军备
+		id = NEV_KIA_Slave_White_Rebuild_the_Navy
+		icon = GFX_goal_generic_amphibious_assault
+		relative_position_id = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		cost = 2
+		x=2
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+		completion_reward = {
+			navy_experience = 100
+		}
+	}
+	focus = {#水下部队
+		id = NEV_KIA_Slave_White_Navy_Under_Surface
+		icon = GFX_goal_generic_wolf_pack
+		relative_position_id = NEV_KIA_Slave_White_Rebuild_the_Navy
+		cost = 5
+		x=0
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Rebuild_the_Navy
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_NAVY_XP }
+		completion_reward = {
+			add_tech_bonus = {
+                bonus = 0.5
+                uses = 2
+                category = ss_tech
+            }
+			add_tech_bonus = {
+                bonus = 0.5
+                uses = 2
+                category = cat_torpedoes
+            }
+			add_ideas = NEV_Sea_Wolf
+		}
+	}
+	focus = {#空军军备
+		id = NEV_KIA_Slave_White_Rebuild_the_Air
+		icon = GFX_focus_generic_multi_role_aircraft
+		relative_position_id = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		cost = 2
+		x=8
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Dismissed_the_Students_Party
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		completion_reward = {
+			air_experience = 100
+		}
+	}
+	focus = {#自研空军
+		id = NEV_KIA_Slave_White_Air_Research
+		icon = GFX_focus_generic_air_research_boost
+		relative_position_id = NEV_KIA_Slave_White_Rebuild_the_Air
+		cost = 6
+		x=1
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Rebuild_the_Air
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		completion_reward = {
+			air_experience = 100
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 3
+                category = air_equipment
+            }
+		}
+	}
+	focus = {#对空武器
+		id = NEV_KIA_Slave_White_AA
+		icon = GFX_goal_generic_air_production
+		relative_position_id = NEV_KIA_Slave_White_Air_Research
+		cost = 2
+		x=-1
+		y=1
+		ai_will_do = {factor = 80}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Air_Research
+		}
+		prerequisite = {
+			focus = NEV_KIA_Slave_White_Cannons
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = { FOCUS_FILTER_AIR_XP }
+		completion_reward = {
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 3
+                category = cat_anti_air
+            }
+			add_tech_bonus = {
+                bonus = 1.0
+                uses = 2
+                category = cat_air_guns
+            }
+		}
+	}
+	focus = {#学园都市的一员
+		id = NEV_KIA_Slave_One_of_Academy
+		icon = GFX_goal_generic_national_unity
+		relative_position_id = NEV_KIA_Slave_Back_From_War
+		allow_branch = {
+				has_completed_focus = NEV_KIA_Slave_Independent_Country_Democratic
+		}
+		cost = 2
+		x=20
+		y=0
+		ai_will_do = {factor = 80}
+		prerequisite = {
+		}
+		available={}
+		mutually_exclusive = {
+		}
+		bypass = {}
+		search_filters = {FOCUS_FILTER_POLITICAL}
+		completion_reward = {
+			
 		}
 	}
 }
