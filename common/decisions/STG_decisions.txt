@@ -1420,6 +1420,11 @@ STG_parliament_issues = {
         }
         remove_effect = {
 			add_research_slot = 1
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.02
+                tooltip_side = STG_road_to_socialism_left_side
+            }
             set_country_flag = STG_com_issue_3_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 60}
             clr_country_flag = STG_issue_passed_flag
@@ -1452,6 +1457,11 @@ STG_parliament_issues = {
                 uses = 1
                 category = land_doctrine
             }
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.04
+                tooltip_side = STG_road_to_socialism_left_side
+            }
             set_country_flag = STG_com_issue_4_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 60}
             clr_country_flag = STG_issue_passed_flag
@@ -1480,6 +1490,11 @@ STG_parliament_issues = {
         }
         remove_effect = {
             add_stability = 0.03
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.02
+                tooltip_side = STG_road_to_socialism_left_side
+            }
             set_country_flag = STG_com_issue_5_passed
             set_country_flag = {flag = STG_debate_in_process value = 1 days = 60}
             clr_country_flag = STG_issue_passed_flag
@@ -1539,6 +1554,11 @@ STG_parliament_issues = {
         complete_effect = {
         }
         remove_effect = {
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.03
+                tooltip_side = STG_road_to_socialism_left_side
+            }
             random_core_state = {
                 add_extra_state_shared_building_slots = 2
             }
@@ -1556,8 +1576,33 @@ STG_parliament_issues = {
 		    IRIS_add_law = yes
 		}
     }
-    #陆军战备
-    STG_rev_policy_army = {
+    #折叠政策
+    STG_hide_rev_policy = {
+        visible = {
+            NOT = {has_country_flag = STG_rev_policy_hided}
+            has_country_flag = STG_rev_par_mechanics
+        }
+        complete_effect = {
+            set_country_flag = STG_rev_policy_hided
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    #显示政策
+    STG_show_rev_policy = {
+        visible = {
+            has_country_flag = STG_rev_policy_hided
+        }
+        complete_effect = {
+            clr_country_flag = STG_rev_policy_hided
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    #加强军队战备
+    STG_rev_millitary_training = {
         available = {
             NOT = {
                 has_country_flag = STG_rencetly_policy
@@ -1566,73 +1611,29 @@ STG_parliament_issues = {
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
+            NOT = {has_country_flag = STG_rev_policy_hided}
         }
-        cost = 10
-        days_remove = 30
+        cost = 35
+        days_remove = 50
         complete_effect = {
             set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
             clr_country_flag = STG_policy_passed_flag
             set_country_flag = STG_policy_passed_flag
         }
         remove_effect = {
-            army_experience = 25
+            army_experience = 20
+            navy_experience = 20
+            air_experience = 20
             STG_reduce_army_discontent = yes
         }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #海军战备
-    STG_rev_policy_navy = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 10
-        days_remove = 30
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-        }
-        remove_effect = {
-            navy_experience = 25
+        modifier = {
+            training_time_army_factor = -0.10
         }
         ai_will_do = {
             factor = 10
         }
     }
-    #空军战备
-    STG_rev_policy_air = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 10
-        days_remove = 30
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-        }
-        remove_effect = {
-            air_experience = 25
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #教育经费
+    #教科文事业
     STG_rev_policy_edu = {
         available = {
             NOT = {
@@ -1642,8 +1643,9 @@ STG_parliament_issues = {
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
+            NOT = {has_country_flag = STG_rev_policy_hided}
         }
-        cost = 30
+        cost = 40
         days_remove = 90
         complete_effect = {
             set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
@@ -1654,112 +1656,11 @@ STG_parliament_issues = {
             research_speed_factor = 0.15
             stability_weekly = 0.003
         }
-        remove_effect = {
-            STG_decrease_global_unrest = yes
-            custom_effect_tooltip =  STG_mobalise_people_effect_1
-            hidden_effect = {
-                STG = {add_to_variable = {STG_national_security = 2}}
-            }
-        }
         ai_will_do = {
             factor = 10
         }
     }
-    #安全经费
-    STG_rev_policy_sec = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 30
-        days_remove = 90
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            hidden_effect = {
-                STG = {add_to_variable = {STG_rev_national_security_weekly_change = 0.2}}
-            }
-        }
-        modifier = {
-            stability_weekly = 0.01
-            custom_modifier_tooltip = STG_rev_policy_sec_modifier
-        }
-        remove_effect = {
-            STG_decrease_global_unrest = yes
-            custom_effect_tooltip = STG_countryside_security_effect
-            hidden_effect = {
-                STG = {add_to_variable = {STG_national_security = 5}}
-                STG = {add_to_variable = {STG_rev_national_security_weekly_change = -0.2}}
-            }
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #削减冗官
-    STG_rev_policy_beu_reform = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 10
-        days_remove = 30
-        days_re_enable = 365
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
-        }
-        remove_effect = {
-            add_political_power = 100
-            STG_rev_random_lose_a_supporter = yes
-            STG_rev_random_lose_a_supporter = yes
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #清扫运动
-    STG_rev_policy_adm_reform = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 5
-        days_remove = 30
-        days_re_enable = 180
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
-        }
-        remove_effect = {
-            add_political_power = 50
-            STG_rev_random_lose_a_supporter = yes
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #工业建设
+    #加强建设工作
     STG_rev_policy_industry = {
         available = {
             NOT = {
@@ -1769,8 +1670,9 @@ STG_parliament_issues = {
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
+            NOT = {has_country_flag = STG_rev_policy_hided}
         }
-        cost = 35
+        cost = 50
         days_remove = 120
         complete_effect = {
             set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
@@ -1779,35 +1681,11 @@ STG_parliament_issues = {
             
         }
         modifier = {
+            production_speed_buildings_factor = 0.05
             production_speed_industrial_complex_factor = 0.10
             production_speed_arms_factory_factor = 0.10
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #基建
-    STG_rev_policy_infrastructure = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 35
-        days_remove = 90
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
-        }
-        modifier = {
-            production_speed_buildings_factor = 0.05
-            production_speed_infrastructure_factor = 0.25
+            production_speed_dockyard_factor = 0.10
+            production_speed_infrastructure_factor = 0.20
         }
         ai_will_do = {
             factor = 10
@@ -1823,6 +1701,7 @@ STG_parliament_issues = {
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
+            NOT = {has_country_flag = STG_rev_policy_hided}
         }
         cost = 25
         days_remove = 60
@@ -1850,8 +1729,9 @@ STG_parliament_issues = {
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
+            NOT = {has_country_flag = STG_rev_policy_hided}
         }
-        cost = 25
+        cost = 40
         days_remove = 90
         complete_effect = {
             set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
@@ -1861,61 +1741,7 @@ STG_parliament_issues = {
         }
         modifier = {
             industrial_capacity_factory = 0.10
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #宣传
-    STG_rev_policy_propaganda = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 25
-        days_remove = 120
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
-        }
-        modifier = {
-            political_power_gain = 0.3
-            communism_drift = 0.01
-            democratic_drift = -0.01
-            neutrality_drift = -0.01
-        }
-        ai_will_do = {
-            factor = 10
-        }
-    }
-    #大建！！！
-    STG_rev_policy_dockyard = {
-        available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
-            }
-            STG_rev_can_pass_issue_trigger = yes
-        }
-        visible = {
-            has_country_flag = STG_rev_par_mechanics
-        }
-        cost = 25
-        days_remove = 90
-        complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
-        }
-        modifier = {
-            industrial_capacity_dockyard = 0.20
+            industrial_capacity_dockyard = 0.10
         }
         ai_will_do = {
             factor = 10
@@ -1988,58 +1814,58 @@ STG_parliament_issues = {
             factor = 100
         }
     }
-    #战争宣传
-    STG_rev_policy_war_propaganda = {
+    STG_increase_left_opinion = {
         available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
+            custom_trigger_tooltip = {
+                tooltip = STG_possible_to_increase_opinion
+                check_variable = {STG_left_opinion < 75}
             }
-            STG_rev_can_pass_issue_trigger = yes
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
-            has_war = yes
         }
-        cost = 75
-        days_remove = 360
+        cost = 10
+        days_re_enable = 60
         complete_effect = {
-            add_war_support = 0.15
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
-        }
-        modifier = {
-            production_speed_arms_factory_factor = 0.15
+            STG_increase_left_opinion_2 = yes
         }
         ai_will_do = {
             factor = 10
         }
     }
-    #战争宣传
-    STG_rev_policy_war_production = {
+    STG_increase_sd_opinion = {
         available = {
-            NOT = {
-                has_country_flag = STG_rencetly_policy
+            custom_trigger_tooltip = {
+                tooltip = STG_possible_to_increase_opinion
+                check_variable = {STG_sd_opinion < 75}
             }
-            STG_rev_can_pass_issue_trigger = yes
         }
         visible = {
             has_country_flag = STG_rev_par_mechanics
-            has_war = yes
         }
-        cost = 50
-        days_remove = 90
+        cost = 10
+        days_re_enable = 60
         complete_effect = {
-            set_country_flag = {flag = STG_rencetly_policy value = 1 days = 60}
-            clr_country_flag = STG_policy_passed_flag
-            set_country_flag = STG_policy_passed_flag
-            
+            STG_increase_sd_opinion_2 = yes
         }
-        modifier = {
-            political_power_cost = 0.2
-            industrial_capacity_factory = 0.20
-            industrial_capacity_dockyard = 0.20
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    STG_increase_dem_opinion = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_possible_to_increase_opinion
+                check_variable = {STG_dem_opinion < 75}
+            }
+        }
+        visible = {
+            has_country_flag = STG_rev_par_mechanics
+        }
+        cost = 10
+        days_re_enable = 60
+        complete_effect = {
+            STG_increase_dem_opinion_2 = yes
         }
         ai_will_do = {
             factor = 10
@@ -2060,44 +1886,25 @@ STG_parliament_issues = {
         }
         cost = 20
         days_remove = 5
-        days_re_enable = 60
-        complete_effect = {
+        days_re_enable = 120
+        remove_effect = {
             random_list = {
-                40 = {
-                    custom_effect_tooltip = STG_rev_gain_4_support_left
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_left_supporter = 4}
-                        }
-                    }
+                10 = {
+                    STG_rev_gain_1_support_left = yes
                 }
-                30 = {
-                    custom_effect_tooltip = STG_rev_gain_6_support_left
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_left_supporter = 6}
-                        }
-                    }
+                40 = {
+                    STG_rev_gain_2_support_left = yes
                 }
                 20 = {
-                    custom_effect_tooltip = STG_rev_gain_8_support_left
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_left_supporter = 8}
-                        }
-                    }
+                    STG_rev_gain_3_support_left = yes
                 }
                 10 = {
-                    custom_effect_tooltip = STG_rev_gain_10_support_left
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_left_supporter = 10}
-                        }
-                    }
+                    STG_rev_gain_4_support_left = yes
                 }
-            }
-            hidden_effect = {
-                STG_calculate_rev_par_support = yes
+                5 = {
+                    STG_rev_gain_5_support_left = yes
+                }
+                15 = {}
             }
         }
         ai_will_do = {
@@ -2119,47 +1926,28 @@ STG_parliament_issues = {
         }
         cost = 20
         days_remove = 5
-        days_re_enable = 60
-        complete_effect = {
+        days_re_enable = 120
+        remove_effect = {
             random_list = {
-                40 = {
-                    custom_effect_tooltip = STG_rev_gain_4_support_sd
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_sd_supporter = 4}
-                        }
-                    }
-                }
-                30 = {
-                    custom_effect_tooltip = STG_rev_gain_6_support_sd
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_sd_supporter = 6}
-                        }
-                    }
+                10 = {
+                    STG_rev_gain_1_support_sd = yes
                 }
                 20 = {
-                    custom_effect_tooltip = STG_rev_gain_8_support_sd
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_sd_supporter = 8}
-                        }
-                    }
+                    STG_rev_gain_2_support_sd = yes
                 }
-                9 = {
-                    custom_effect_tooltip = STG_rev_gain_10_support_sd
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_sd_supporter = 10}
-                        }
-                    }
+                20 = {
+                    STG_rev_gain_3_support_sd = yes
                 }
-                1 = {
+                20 = {
+                    STG_rev_gain_4_support_sd = yes
+                }
+                5 = {
+                    STG_rev_gain_5_support_sd = yes
+                }
+                5 = {
                     country_event = {id = STG_rev.98}
                 }
-            }
-            hidden_effect = {
-                STG_calculate_rev_par_support = yes
+                20 = {}
             }
         }
         ai_will_do = {
@@ -2176,35 +1964,26 @@ STG_parliament_issues = {
         cost = 10
         days_remove = 5
         days_re_enable = 60
-        complete_effect = {
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = 0.01
+                tooltip_side = STG_road_to_socialism_right_side
+            }
             random_list = {
-                40 = {
-                    custom_effect_tooltip = STG_rev_gain_2_support_dem
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_dem_supporter = 2}
-                        }
-                    }
-                }
-                40 = {
-                    custom_effect_tooltip = STG_rev_gain_4_support_dem
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_dem_supporter = 4}
-                        }
-                    }
+                25 = {
+                    STG_rev_gain_1_support_dem = yes
                 }
                 20 = {
-                    custom_effect_tooltip = STG_rev_gain_5_support_dem
-                    hidden_effect = {
-                        STG = {
-                            add_to_variable = {STG_dem_supporter = 5}
-                        }
-                    }
+                    STG_rev_gain_2_support_dem = yes
                 }
-            }
-            hidden_effect = {
-                STG_calculate_rev_par_support = yes
+                10 = {
+                    STG_rev_gain_3_support_dem = yes
+                }
+                10 = {
+                    country_event = {id = STG_rev.145}
+                }
+                35 = {}
             }
         }
         ai_will_do = {
@@ -5837,6 +5616,16 @@ STG_syn_union = {
         }
         remove_effect = {
             custom_effect_tooltip = STG_syn_union_gain_ung_core_desc
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                hidden_effect = {
+                    drop_cosmetic_tag = yes
+                }
+                set_cosmetic_tag = STG_rep_of_western_eu
+                
+            }
             hidden_effect = {
                 every_state = {
                     if = {
@@ -5958,6 +5747,16 @@ Unite_Anglia = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                hidden_effect = {
+                    drop_cosmetic_tag = yes
+                }
+                set_cosmetic_tag = STG_rep_of_western_eu
+                
+            }
             hidden_effect = {
                 news_event = {id = STG_news.8 days = 3}
                 set_global_flag = ANGLIA_UNITED_FLAG
@@ -6052,6 +5851,16 @@ Unite_Anglia = {
         }
         remove_effect = {
             custom_effect_tooltip = ANGLIA_UNITED
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                hidden_effect = {
+                    drop_cosmetic_tag = yes
+                }
+                set_cosmetic_tag = STG_rep_of_western_eu
+                
+            }
             hidden_effect = {
                 news_event = {id = STG_news.15 days = 3}
                 set_global_flag = ANGLIA_UNITED_FLAG
@@ -8752,6 +8561,489 @@ STG_cross_the_strait = {
         }
         ai_will_do = {
             factor = 1000
+        }
+    }
+}
+#国有化改造
+STG_nationalization_decisions = {
+    STG_nationalize_armor_org = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 90
+        remove_effect = {
+            set_country_flag = STG_armor_organization_nationalized
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.02
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            add_to_variable = {STG.STG_nationalization_counter = 1}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    STG_nationalize_Arsenal_of_New_Alexander = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 90
+        remove_effect = {
+            set_country_flag = STG_Arsenal_of_New_Alexander_nationalized
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.02
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            add_to_variable = {STG.STG_nationalization_counter = 1}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    STG_nationalize_Reisenburg_Military_Group = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 90
+        remove_effect = {
+            set_country_flag = STG_Reisenburg_Military_Group_nationalized
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.02
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            add_to_variable = {STG.STG_nationalization_counter = 1}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    STG_nationalize_key_companies = {
+        cost = 30
+        fire_only_once = yes
+        days_remove = 90
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.02
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            add_to_variable = {STG.STG_nationalization_counter = 1}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    STG_end_nationalization = {
+        available = {
+            hidden_trigger = {
+                check_variable = {STG.STG_nationalization_counter > 3}
+            }
+        }
+        fire_only_once = yes
+        complete_effect = {
+            add_political_power = 100
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.03
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            add_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_1
+            }
+        }
+    }
+}
+STG_rev_bop_decisions = {
+    #党内审查
+    STG_rev_party_investigation = {
+        visible = {has_completed_focus = STG_com_34}
+        cost = 40
+        days_remove = 60
+        days_re_enable = 100
+        complete_effect = {
+            add_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_2
+            }
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.01
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            remove_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_2
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    #剔除政府内堕落分子
+    STG_rev_gov_investigation = {
+        visible = {has_completed_focus = STG_com_34}
+        cost = 35
+        days_remove = 60
+        days_re_enable = 200
+        complete_effect = {
+            add_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_3
+            }
+        }
+        remove_effect = {
+            add_political_power = 100
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.01
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            remove_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_3
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    #加强群众对政府的监督
+    STG_rev_report_to_our_people = {
+        visible = {has_completed_focus = STG_com_34}
+        cost = 20
+        days_remove = 30
+        days_re_enable = 90
+        complete_effect = {
+            add_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_4
+            }
+        }
+        remove_effect = {
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.005
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            remove_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_4
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    #加强社会主义教育
+    STG_rev_education = {
+        visible = {has_completed_focus = STG_com_34}
+        cost = 20
+        days_remove = 50
+        days_re_enable = 150
+        complete_effect = {
+            add_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_5
+            }
+        }
+        remove_effect = {
+            add_political_power = 50
+            add_power_balance_value = {
+                id = STG_road_to_socialism
+                value = -0.01
+                tooltip_side = STG_road_to_socialism_left_side
+            }
+            remove_power_balance_modifier = {
+                id = STG_road_to_socialism
+                modifier = STG_rev_weekly_5
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+}
+STG_com_corruption = {
+    STG_com_corruption_count_down = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            has_country_flag = STG_com_corruption_investigation_ended
+        }
+        days_mission_timeout = 90
+        selectable_mission = no
+        timeout_effect = {
+            country_event = {id = STG_rev.161}
+        }
+    }
+    STG_com_start_investigation = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_has_available_action_point_picket
+                check_variable = {STG_armed_picket_action_point > 0}
+            }
+        }
+        cost = 10
+        days_remove = 10
+        fire_only_once = yes
+        complete_effect = {
+            add_to_variable = {STG_armed_picket_action_point = -1}
+        }
+        remove_effect = {
+            add_to_variable = {STG_com_investigation = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_visit_people = {
+        visible = {
+            check_variable = {STG_com_investigation > 0}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.150}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_check_account = {
+        visible = {
+            check_variable = {STG_com_investigation > 0}
+        }
+        cost = 10
+        days_remove = 3
+        fire_only_once = yes
+        remove_effect = {
+            add_to_variable = {STG_com_investigation = 1}
+            hidden_effect = {
+                random_list = {
+                    70 = {
+                        country_event = {id = STG_rev.152}
+                    }
+                    30 = {
+                        country_event = {id = STG_rev.151}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_find_the_target = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_has_available_action_point_picket
+                check_variable = {STG_armed_picket_action_point > 0}
+            }
+        }
+        visible = {
+            check_variable = {STG_com_investigation > 0}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            add_to_variable = {STG_com_investigation = 1}
+            hidden_effect = {
+                country_event = {id = STG_rev.153}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_dig_in = {
+        visible = {
+            check_variable = {STG_com_investigation > 2}
+        }
+        days_remove = 3
+        fire_only_once = yes
+        remove_effect = {
+            add_to_variable = {STG_com_investigation = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_check_the_project = {
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.154}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_listen_to_report = {
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.155}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_find_evidence = {
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.156}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_visit_the_army = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_has_available_action_point_picket
+                check_variable = {STG_armed_picket_action_point > 0}
+            }
+        }
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        complete_effect = {
+            add_to_variable = {STG_armed_picket_action_point = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.156}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_inspect_life_style = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_has_available_action_point_picket
+                check_variable = {STG_armed_picket_action_point > 0}
+            }
+        }
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        complete_effect = {
+            add_to_variable = {STG_armed_picket_action_point = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.157}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_listen_to_farmers = {
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.158}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_call_other_comerades_for_help = {
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.159}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_call_the_security_agency = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = STG_has_available_action_point_agency
+                check_variable = {STG_security_agency_action_point > 0}
+            }
+        }
+        visible = {
+            check_variable = {STG_com_investigation > 3}
+        }
+        cost = 10
+        days_remove = 21
+        fire_only_once = yes
+        complete_effect = {
+            add_to_variable = {STG_security_agency_action_point = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                country_event = {id = STG_rev.160}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    STG_end_the_corruption = {
+        visible = {
+            check_variable = {STG_com_evidence > 49}
+        }
+        complete_effect = {
+            set_country_flag = STG_com_corruption_investigation_ended
+            clr_country_flag = STG_com_corruption_flag
+            country_event = {id = STG_rev.162}
         }
     }
 }

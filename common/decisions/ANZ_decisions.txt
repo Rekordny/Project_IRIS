@@ -713,6 +713,22 @@ ANZ_strike_on_mafia_cat = {
 					add_to_array = {
 						ANZ.ANZ_mafia_states_num = THIS
 					}
+					if = {
+						limit = {
+							check_variable = {
+								ANZ.ANZ_mafia_states_num > 9
+							}
+						}
+						ANZ = {
+							set_country_flag = ANZ_mafia_states_more_than_10
+						}
+					}
+					if = {
+						limit = {
+							has_state_flag = ANZ_solved_mafia_once
+						}
+						clr_state_flag = ANZ_solved_mafia_once
+					}
 				}
 			}
 			else = {
@@ -740,6 +756,18 @@ ANZ_strike_on_mafia_cat = {
 							}
 							has_dynamic_modifier = {
 								modifier = ANZ_mafia_allowed_state_modifier
+							}
+						}
+						any_neighbor_state = {
+							is_core_of = ANZ
+							is_controlled_by = ANZ
+							NOT = {
+								has_dynamic_modifier = {
+									modifier = ANZ_mafia_problem_state_modifier
+								}
+								has_dynamic_modifier = {
+									modifier = ANZ_mafia_allowed_state_modifier
+								}
 							}
 						}
 					}
@@ -873,11 +901,19 @@ ANZ_strike_on_mafia_cat = {
 				remove_from_array = {
 					ANZ.ANZ_mafia_states_num = THIS
 				}
+				set_state_flag = ANZ_solved_mafia_once
 			}
 		}
 
 		ai_will_do = {
 			base = 1
+
+			modifier = {
+				factor = 0
+				NOT = {
+					has_country_flag = ANZ_mafia_states_more_than_10
+				}
+			}
 		}
 	}
 
@@ -895,6 +931,52 @@ ANZ_strike_on_mafia_cat = {
 
 #披萨经济学
 ANZ_pizza_economy_cat = {
+
+	#保障食品供应
+	ANZ_ensur_food_supply = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = no
+		days_remove = 180
+
+		visible = {
+			has_completed_focus = ANZ_anzio_delicious_economy
+			has_stability < 0.75
+		}
+
+		available = {
+			has_stability < 0.75
+		}
+
+		cost = 0
+
+		available = {
+			has_equipment = {
+				ANZ_spicy_sausage_pizza > 99
+			}
+		}
+
+		complete_effect = {
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = ANZ_spicy_sausage_pizza
+					amount = -100
+				}
+			}
+		}
+
+		modifier = {
+			stability_weekly = 0.005
+			weekly_manpower = 2000
+		}
+
+		ai_will_do = {
+			base = 1
+		}
+	}
 
 	#美味储备
 	ANZ_delicious_reserve_mission = {
@@ -960,7 +1042,7 @@ ANZ_pizza_economy_cat = {
 		fire_only_once = no
 
 		visible = {
-			has_completed_focus = ANZ_anzio_delicious_economy
+			has_completed_focus = ANZ_fuel_preparation
 			NOT = {
 				has_country_flag = ANZ_cancel_delicious_reserve
 			}
@@ -987,7 +1069,7 @@ ANZ_pizza_economy_cat = {
 		fire_only_once = no
 
 		visible = {
-			has_completed_focus = ANZ_anzio_delicious_economy
+			has_completed_focus = ANZ_fuel_preparation
 			has_country_flag = ANZ_cancel_delicious_reserve
 		}
 
@@ -1309,8 +1391,204 @@ operations = {
 			factor = 1
 		}
 	}
+
+	#先进技术捕获
+	ANZ_operation_on_state845 = {
+		icon = generic_operation
+
+		allowed = {
+			always = no
+		}
+
+		available = {
+			845 = {	
+				is_controlled_by_ROOT_or_ally = yes
+			}
+		}
+
+		highlight_states = {
+			highlight_state_targets = { state = 845 }
+			highlight_provinces = { 16221 }
+		}
+
+		days_mission_timeout = 90
+		fire_only_once = yes
+
+		activation = {
+
+		}
+
+		is_good = no
+
+		complete_effect = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = infantry_weapons
+			}
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
 }
 
+formable_nations = {
+	#应允之地
+	ANZ_form_HSP = {
+		allowed = {
+			original_tag = ANZ
+		}
+
+		fire_only_once = yes
+
+		visible = {
+			has_completed_focus = ANZ_accept_blue_division
+		}
+
+		available = {
+			is_subject = no
+			STG = {
+				exists = no
+			}
+			custom_trigger_tooltip = {
+				tooltip = ANZ_form_HSP_required_states
+				206 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				213 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				222 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				230 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				231 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				717 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				718 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+			}
+		}
+
+		highlight_states = {
+			highlight_state_targets = {
+				state = 206
+				state = 213
+				state = 222
+				state = 230
+				state = 231
+				state = 717
+				state = 718
+			}
+		}
+
+		cost = 0
+
+		ai_will_do = {
+			base = 1
+		}
+
+		complete_effect = {
+
+			231 = {
+				IF = {
+					limit = {
+						OWNER = {
+							NOT = {
+								original_tag = GER
+							}
+						}
+					}
+					OWNER = {
+						set_country_flag = GER_RK_capital_state_trasferred_RKK_victim_flag
+						set_country_flag = GER_reichskommissariats_puppet_flag
+					}
+				}
+				transfer_state_to = RKK
+				set_state_flag = GER_RK_capital_state_trasferred_RKK_flag
+				add_compliance = 25
+			}
+
+			custom_effect_tooltip = GER_reichskommissariat_kaukasien_effect_tt
+			
+			set_autonomy = { 
+				target = RKK 
+				autonomy_state = autonomy_integrated_puppet 
+			}
+			
+			hidden_effect = {
+				every_state = {
+					limit = {
+						GER_is_RKK_state = yes
+						NOT = {
+							state = 231
+						}
+						OR = {
+							is_owned_by = ROOT
+							owner = { is_subject_of = ROOT }
+						}
+					}
+					transfer_state_to = RKK
+					add_compliance = 25
+				}
+				every_state = {	
+					limit = {
+						GER_is_RKK_state = yes
+						NOT = {
+							state = 231
+						}
+						NOT = {
+							OR = {
+								is_owned_by = ROOT
+								any_country = {
+									is_subject_of = ROOT
+									owns_state = PREV
+								}
+							}
+						}
+					}
+					add_contested_owner = RKK
+					set_state_controller_to = RKK
+					add_claim_by = RKK
+					add_compliance = 25
+				}
+
+				RKK = {
+					add_manpower = 50000
+					add_equipment_to_stockpile = { 
+						type = infantry_equipment
+						amount = 5000
+						producer = GER
+					}	
+					add_equipment_to_stockpile = { 
+						type = support_equipment
+						amount = 500
+						producer = GER
+					}	
+					inherit_technology = GER
+					add_offsite_building = { type = arms_factory level = 3 }
+					load_oob = "RK_OOB"
+				}
+			}
+
+			custom_effect_tooltip = generic_skip_one_line_tt
+
+			country_event = {
+				id = wuw_GER_reichskommissariats.6
+				hours = 0
+			}	
+			
+		}
+	}
+}
 
 #争夺军队和军官
 ANZ_scramble_for_troops_and_officers = {
