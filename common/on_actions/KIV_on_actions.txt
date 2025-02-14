@@ -436,6 +436,18 @@ on_actions = {
 						traits = {
 						}
 					}
+					create_field_marshal = {
+						name = PCC_KIV_saten_ruiko
+						desc = "PCC_KIV_saten_ruiko_desc"
+						portrait_path = "gfx/leaders/PCC/PCC_KIV_saten_ruiko.dds"
+						traits = {
+						}
+						skill = 2
+						attack_skill = 1
+						defense_skill = 3
+						planning_skill = 2
+						logistics_skill = 1
+					}
 					create_wargoal = {
 						target = NEV
 						type = annex_everything
@@ -482,7 +494,6 @@ on_actions = {
 					}
 					set_global_flag = KIV_GSC_faction_collapse_flag
 					create_faction = KIV_faction_name
-					
 					KIV_GSC_faction_array = yes
 					random_list = {
 						1 = {
@@ -601,15 +612,40 @@ on_actions = {
 						}
 					}
 				}
-				PCC = {
-					annex_country = {
-						target = NEV
-						transfer_troops = no
+				if = {
+					limit = {
+						KIV = {
+							has_government = democratic
+						}
+					}
+					NEV = {
+						transfer_navy = {
+							target = KIV
+						}
+					}
+					KIV = {
+						annex_country = {
+							target = NEV
+							transfer_troops = no
+						}
+						release_autonomy = {
+							target = PREV
+							autonomy_state = autonomy_integrated_puppet
+							freedom_level = 0.5
+						}
 					}
 				}
-				NEV = {
-					transfer_navy = {
-						target = PCC
+				else = {
+					NEV = {
+						transfer_navy = {
+							target = PCC
+						}
+					}
+					PCC = {
+						annex_country = {
+							target = NEV
+							transfer_troops = no
+						}
 					}
 				}
 				if = {
@@ -793,52 +829,220 @@ on_actions = {
 				limit = {
 					ROOT = {
 						original_tag = KIV
+						has_country_leader = {
+							character = KIV_shiranui_kaya
+							ruling_only = yes
+						}
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							original_tag = PCC
+							is_puppet = no
+						}
+					}
+					FROM = {
+						white_peace = {
+							tag = ROOT
+							# message = OCF_WIN_OCE_TT
+						}
+					}
+					KIV = {
+						remove_ideas = KIV_WAR_TO_PCC
+						transfer_navy = {
+							target = PCC
+						}
+						PCC = {
+							annex_country = {
+								target = KIV
+								transfer_troops = no
+							}
+						}
+						every_state = {
+							limit = {
+								is_core_of = KIV
+								is_owned_by = PCC
+							}
+							KIV = {
+								transfer_state = PREV
+							}
+							create_unit = {
+								division = "name = \"联邦学生军\" division_template = \"联邦学生军\" start_experience_factor = 0.1 start_equipment_factor = 1 "
+								owner = KIV
+							}
+						}
+					}
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_ally_with = ROOT
+							}
+						}
+						KIV = {
+							annex_country = {
+								target = PREV
+								transfer_troops = no
+							}
+							release_autonomy = {
+								target = PREV
+								autonomy_state = autonomy_integrated_puppet
+								freedom_level = 0.5
+							}
+						}
+					}
+				}
+				else = {
+					every_country = {
+						limit = {
+							OR = {
+								tag = ROOT
+								is_puppet_of = ROOT
+							}
+						}
+						KIV = {
+							annex_country = {
+								target = PREV
+								transfer_troops = no
+							}
+							release_autonomy = {
+								target = PREV
+								autonomy_state = autonomy_integrated_puppet
+								freedom_level = 0.5
+							}
+						}
+					}
+				}
+				every_country = {
+					limit = {
+						OR = {
+							original_tag = KIV
+							is_ally_with = KIV
+						}
+					}
+					set_temp_variable = {
+						temp = this
+					}
+					every_state = {
+						limit = {
+							is_owned_by = KIV
+							NOT = {
+								is_core_of = KIV
+							}
+							is_core_of = var:temp
+						}
+						var:temp = {
+							transfer_state = PREV
+						}
+					}
+				}
+				every_state = {
+					limit = {
+						is_owned_by = KIV
+						NOT = {
+							is_core_of = KIV
+						}
+					}
+					add_to_temp_array = {
+						temp_array = this
+					}
+				}
+				every_possible_country = {
+					limit = {
+						OR = {
+							exists = no
+							is_puppet_of = KIV
+						}
+					}
+					set_temp_variable = {
+						temp = this
+					}
+					for_each_scope_loop = {
+						array = temp_array
+						if = {
+							limit = {
+								is_core_of = var:temp
+							}
+							KIV = {
+								release_autonomy = {
+									target = var:temp
+									autonomy_state = autonomy_integrated_puppet
+									freedom_level = 0.5
+								}
+							}
+						}
+					}
+				}
+				KIV_GSC_faction_array = yes
+			}
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = KIV
 					}
 					FROM = {
 						original_tag = PCC
 					}
 				}
-				FROM = {
-					white_peace = {
-						tag = ROOT
-						# message = OCF_WIN_OCE_TT
-					}
+				country_event = {
+					id = KIV_incomplete.5
 				}
-				KIV = {
-					remove_ideas = KIV_WAR_TO_PCC
-					transfer_navy = {
-						target = PCC
-					}
-					PCC = {
-						annex_country = {
-							target = KIV
-							transfer_troops = no
-						}
-					}
-					every_state = {
-						limit = {
-							is_core_of = KIV
-							is_owned_by = PCC
-						}
+				# country_event = {
+				# 	id = kivnews.5
+				# }
+				country_event = {
+					id = KIV_incomplete.6
+					days = 7
+				}
+				if = {
+					limit = {
 						KIV = {
-							transfer_state = PREV
-						}
-						create_unit = {
-							division = "name = \"联邦学生军\" division_template = \"联邦学生军\" start_experience_factor = 0.1 start_equipment_factor = 1 "
-							owner = KIV
+							has_dynamic_modifier = {
+								modifier = KIV_campus_city_modifier
+							}
 						}
 					}
-					country_event = {
-						id = KIV_incomplete.5
-					}
-					# country_event = {
-					# 	id = kivnews.5
-					# }
-					country_event = {
-						id = KIV_incomplete.6
-						days = 7
+					every_country = {
+						limit = {
+							OR = {
+								has_war_with = KIV
+								tag = FROM
+								is_ally_with = FROM
+							}
+						}
+						set_country_flag = KIV_not_superman_flag
 					}
 				}
+				KIV_GSC_faction_array = yes
+			}
+		}
+	}
+	on_offer_join_faction = {
+		effect = {
+			FROM = {
+				if = {
+					limit = {
+						is_in_faction_with = KIV
+						KIV = {
+							is_faction_leader = yes
+						}
+					}
+					add_dynamic_modifier = {
+						modifier = KIV_campus_city_modifier
+					}
+				}
+				KIV_GSC_faction_array = yes
+			}
+		}
+	}
+	on_leave_faction = {
+		effect = {
+			FROM = {
+				remove_dynamic_modifier = {
+					modifier = KIV_campus_city_modifier
+				}
+				KIV_GSC_faction_array = yes
 			}
 		}
 	}
