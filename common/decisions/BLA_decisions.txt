@@ -147,7 +147,20 @@ BLA_rule_of_tsar = {
                         modifier = BLA_municipality_modifier
                         scope = BLA
                     }
+                    set_variable = {BLA_city_dev = 1}
                 }
+                every_state = {
+					limit = {
+						OR = {
+							has_state_flag = BLA_free_city_region
+							has_state_flag = BLA_municipality_region
+						}
+					}
+					add_to_array = {
+                        array = BLA.city_dev_array
+                        value = THIS.id
+                    }
+				}
             }
         }
         ai_will_do = {
@@ -1220,6 +1233,97 @@ BLA_secret_police = {
 }
 #工业化
 BLA_industralization = {
+    BLA_show_municipality_on_map = {
+        available = {
+            hidden_trigger = {always = no}
+        }
+        visible = {
+            NOT = {has_country_flag = BLA_hide_municipality_decisions}
+        }
+        highlight_states = {
+            highlight_states_trigger = {
+                OR = {
+                    has_state_flag = BLA_municipality_region
+                    has_state_flag = BLA_free_city_region
+                }
+            }
+        }
+    }
+    BLA_city_dev = {
+        state_target = yes
+        target_array = BLA.city_dev_array
+        on_map_mode = map_and_decisions_view
+        icon = generic_construction
+        target_root_trigger = {
+            tag = BLA
+        }
+        target_trigger = {
+            FROM = {
+                is_owned_by = ROOT
+                check_variable = {BLA_city_dev < 3}
+            }
+        }
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = BLA_has_1000_fund
+                BLA = {check_variable = {BLA_industralization_fund > 999}}
+            }
+        }
+        days_remove = 350
+        complete_effect = {
+            hidden_effect = {
+                BLA = {
+                    add_to_variable = {BLA_industralization_fund = -1000}
+                }
+            }
+        }
+        remove_effect = {
+            FROM = {
+                if = {
+                    limit = {
+                        check_variable = {BLA_city_dev = 1}
+                    }
+                    add_to_variable = {BLA_city_dev = 1}
+                    add_manpower = 50000
+                    add_extra_state_shared_building_slots = 4
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_city_dev = 2}
+                    }
+                    add_manpower = 75000
+                    add_dynamic_modifier = {modifier = BLA_industrial_core_modifier scope = BLA}
+                    if = {
+                        limit = {
+                            state = 871
+                        }
+                        add_victory_points = {
+                            province = 10289
+                            value = 10
+                        }
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
     #外国投资
     BLA_foreign_investment = {
         icon = mission_icon
@@ -1273,7 +1377,32 @@ BLA_industralization = {
             }
         }
     }
+    BLA_hide_industralization_general_decisions = {
+        visible = {
+            NOT = {has_country_flag = BLA_hide_industralization_general_decisions_flag}
+        }
+        complete_effect = {
+            set_country_flag = BLA_hide_industralization_general_decisions_flag
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
+    BLA_show_industralization_general_decisions = {
+        visible = {
+            has_country_flag = BLA_hide_industralization_general_decisions_flag
+        }
+        complete_effect = {
+            clr_country_flag = BLA_hide_industralization_general_decisions_flag
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
     BLA_export_grain = {
+        visible = {
+            NOT = {has_country_flag = BLA_hide_industralization_general_decisions_flag}
+        }
         cost = 10
         days_remove = 20
         days_re_enable = 60
@@ -1306,10 +1435,9 @@ BLA_industralization = {
             }
         }
         visible = {
+            NOT = {has_country_flag = BLA_hide_industralization_general_decisions_flag}
         }
-        cost = 0
         days_remove = 60
-        days_re_enable = 0
         ai_will_do = {
             base = 10
             modifier = {
@@ -1354,10 +1482,9 @@ BLA_industralization = {
             NOT = {
                 BLA = {check_variable = {BLA_num_of_ic_invested > 29}}
             }
+            NOT = {has_country_flag = BLA_hide_industralization_general_decisions_flag}
         }
-        cost = 0
         days_remove = 150
-        days_re_enable = 0
         ai_will_do = {
             base = 1000
         }
@@ -1400,10 +1527,9 @@ BLA_industralization = {
                 BLA = {check_variable = {BLA_num_of_af_invested > 24}}
             }
             BLA = {check_variable = {BLA_industralization_status > 1}}
+            NOT = {has_country_flag = BLA_hide_industralization_general_decisions_flag}
         }
-        cost = 0
         days_remove = 150
-        days_re_enable = 0
         ai_will_do = {
             base = 100
         }
@@ -1447,10 +1573,9 @@ BLA_industralization = {
                 BLA = {check_variable = {BLA_num_of_dockyard_invested > 24}}
             }
             BLA = {check_variable = {BLA_industralization_status > 1}}
+            NOT = {has_country_flag = BLA_hide_industralization_general_decisions_flag}
         }
-        cost = 0
         days_remove = 120
-        days_re_enable = 0
         ai_will_do = {
             base = 5
         }
@@ -1482,248 +1607,6 @@ BLA_industralization = {
             }
         }
     }
-    #投资工业研发
-    BLA_invest_tech = {
-        available = {
-            has_completed_focus = BLA_Anna_industry_1
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_500_fund
-                BLA = {check_variable = {BLA_industralization_fund > 499}}
-            }
-        }
-        visible = {
-            NOT = {
-                BLA = {check_variable = {BLA_num_of_tech_invested > 5}}
-            }
-        }
-        days_remove = 120
-        days_re_enable = 60
-        ai_will_do = {
-            base = 100
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_industralization_fund = -500}
-                }
-            }
-        }
-        remove_effect = {
-            add_tech_bonus = {
-                bonus = 0.50
-                uses = 1
-                category = industry
-            }
-            hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_tech_invested = 1}}
-            }
-        }
-    }
-    #投资步兵装备研发
-    BLA_invest_tech_infantry_equipment = {
-        available = {
-            has_completed_focus = BLA_Anna_industry_1
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_300_fund
-                BLA = {check_variable = {BLA_industralization_fund > 299}}
-            }
-        }
-        visible = {
-            BLA = {
-                check_variable = {BLA_industralization_status > 1}
-            }
-            NOT = {
-                BLA = {check_variable = {BLA_num_of_infantry_equipment_invested > 5}}
-            }
-        }
-        cost = 0
-        days_remove = 30
-        days_re_enable = 60
-        ai_will_do = {
-            base = 10
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_industralization_fund = -300}
-                }
-            }
-        }
-        remove_effect = {
-            add_tech_bonus = {
-                bonus = 0.50
-                uses = 1
-                category = infantry_weapons
-            }
-            hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_infantry_equipment_invested = 1}}
-            }
-        }
-    }
-    #投资炮兵装备研发
-    BLA_invest_tech_atrillery = {
-        available = {
-            has_completed_focus = BLA_Anna_industry_1
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_400_fund
-                BLA = {check_variable = {BLA_industralization_fund > 399}}
-            }
-        }
-        visible = {
-            BLA = {
-                check_variable = {BLA_industralization_status > 1}
-            }
-            NOT = {
-                BLA = {check_variable = {BLA_num_of_atrillery_invested > 5}}
-            }
-        }
-        cost = 0
-        days_remove = 30
-        days_re_enable = 60
-        ai_will_do = {
-            base = 10
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_industralization_fund = -400}
-                }
-            }
-        }
-        remove_effect = {
-            add_tech_bonus = {
-                bonus = 0.50
-                uses = 1
-                category = artillery
-            }
-            hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_atrillery_invested = 1}}
-            }
-        }
-    }
-    #投资装甲研发
-    BLA_invest_tech_panzer = {
-        available = {
-            has_completed_focus = BLA_Anna_industry_1
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_400_fund
-                BLA = {check_variable = {BLA_industralization_fund > 399}}
-            }
-        }
-        visible = {
-            BLA = {
-                check_variable = {BLA_industralization_status > 2}
-            }
-            NOT = {
-                BLA = {check_variable = {BLA_num_of_panzer_invested > 5}}
-            }
-        }
-        cost = 0
-        days_remove = 40
-        days_re_enable = 60
-        ai_will_do = {
-            base = 10
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_industralization_fund = -400}
-                }
-            }
-        }
-        remove_effect = {
-            add_tech_bonus = {
-                bonus = 0.50
-                uses = 1
-                category = armor
-            }
-            hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_panzer_invested = 1}}
-            }
-        }
-    }
-    #投资空军研发
-    BLA_invest_tech_air = {
-        available = {
-            has_completed_focus = BLA_Anna_industry_1
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_400_fund
-                BLA = {check_variable = {BLA_industralization_fund > 399}}
-            }
-        }
-        visible = {
-            BLA = {
-                check_variable = {BLA_industralization_status > 2}
-            }
-            NOT = {
-                BLA = {check_variable = {BLA_num_of_air_invested > 5}}
-            }
-        }
-        cost = 0
-        days_remove = 50
-        days_re_enable = 60
-        ai_will_do = {
-            base = 10
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_industralization_fund = -400}
-                }
-            }
-        }
-        remove_effect = {
-            add_tech_bonus = {
-                bonus = 0.50
-                uses = 1
-                category = air_equipment
-            }
-            hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_air_invested = 1}}
-            }
-        }
-    }
-    #投资海军研发
-    BLA_invest_tech_naval = {
-        available = {
-            has_completed_focus = BLA_Anna_industry_1
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_400_fund
-                BLA = {check_variable = {BLA_industralization_fund > 399}}
-            }
-        }
-        visible = {
-            BLA = {
-                check_variable = {BLA_industralization_status > 2}
-            }
-            NOT = {
-                BLA = {check_variable = {BLA_num_of_naval_invested > 5}}
-            }
-        }
-        cost = 0
-        days_remove = 50
-        days_re_enable = 60
-        ai_will_do = {
-            base = 10
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_industralization_fund = -400}
-                }
-            }
-        }
-        remove_effect = {
-            add_tech_bonus = {
-                bonus = 0.50
-                uses = 1
-                category = naval_equipment
-            }
-            hidden_effect = {
-                BLA = {add_to_variable = {BLA_num_of_naval_invested = 1}}
-            }
-        }
-    }
 }
 #债务管理
 BLA_debt_management = {
@@ -1740,15 +1623,18 @@ BLA_debt_management = {
             }
             BLA = {check_variable = {BLA_debt > 0}}
         }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
         ai_will_do = {
             base = 0
         }
         complete_effect = {
+            add_stability = -0.5
+            add_war_support = -0.5
+            add_political_power = -1000
             custom_effect_tooltip = BLA_default_time_desc
-            set_country_flag = {flag = BLA_default value = 1 days = 365}
+            set_country_flag = {flag = BLA_default value = 1 days = 800}
+            every_other_country = {
+                send_embargo = BLA
+            }
             hidden_effect = {
                 BLA = {
                     set_variable = {BLA_debt = 0}
@@ -1761,7 +1647,70 @@ BLA_debt_management = {
                 }
             }
         }
+    }
+    #隐藏借债决议
+    BLA_hide_borrow_debt_decision = {
+        available = {
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_hide_borrow_debt_decision
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_hide_borrow_debt_decision
+        }
         remove_effect = {
+        }
+    }
+    #显示还债决议
+    BLA_show_borrow_debt_decision = {
+        available = {
+        }
+        visible = {
+            has_country_flag = BLA_hide_borrow_debt_decision
+        }
+        complete_effect = {
+            clr_country_flag = BLA_hide_borrow_debt_decision
+        }
+        remove_effect = {
+        }
+    }
+    BLA_borrow_money = {
+        target_array = BLA.debt_array
+        target_root_trigger = {
+            tag = BLA
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                NOT = {has_government = communism}
+                NOT = {has_war_with = BLA}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = BLA_hide_borrow_debt_decision
+            }
+        }
+        cost = 30
+        days_remove = 30
+        remove_effect = {
+            hidden_effect = {
+                BLA = {
+                    set_temp_variable = {target = FROM}
+                    add_to_variable = {BLA_industralization_fund = 200}
+                    meta_effect = { 
+                        text = {
+                            add_to_variable = {BLA_[TARGET]_debt = 200}
+                        }
+                        TARGET = "[?target.GetTag]"
+                    }
+                }
+                FROM = {
+                    add_to_variable = {BLA_debt = 200}
+                }
+            }
         }
     }
     #隐藏还债决议
@@ -1773,9 +1722,6 @@ BLA_debt_management = {
                 has_country_flag = BLA_hide_pay_debt_decision
             }
         }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
         complete_effect = {
             set_country_flag = BLA_hide_pay_debt_decision
         }
@@ -1789,1344 +1735,50 @@ BLA_debt_management = {
         visible = {
             has_country_flag = BLA_hide_pay_debt_decision
         }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
         complete_effect = {
             clr_country_flag = BLA_hide_pay_debt_decision
         }
         remove_effect = {
         }
     }
-    #爱丽诺
-    BLA_borrow_from_ELN = {
-        available = {
-            country_exists = ELN
-            NOT = {
-                has_country_flag = BLA_default
-                has_war_with = ELN
+    BLA_pay_debt = {
+        target_array = BLA.debt_array
+        target_root_trigger = {
+            tag = BLA
+        }
+        target_trigger = {
+            FROM = {
+                exists = yes
+                NOT = {has_government = communism}
+                NOT = {has_war_with = BLA}
+                check_variable = {BLA_debt > 0}
             }
         }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = ELN
-        }
-        days_remove = 30
-        days_re_enable = 100
-        ai_will_do = {
-            base = 0
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund < 1000}}
-            }
-        }
-        complete_effect = {}
-        remove_effect = {
-            custom_effect_tooltip = BLA_borrow_200_from_ELN_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_ELN_debt = 200}
-                    add_to_variable = {BLA_industralization_fund = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_ELN_debt_small = {
-        available = {
-            country_exists = ELN
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_100_desc
-                BLA = {check_variable = {BLA_ELN_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-            NOT = {
-                has_war_with = ELN
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            country_exists = ELN
-            BLA = {check_variable = {BLA_ELN_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_100_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ELN_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_ELN_debt = {
-        available = {
-            country_exists = ELN
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_200_desc
-                BLA = {check_variable = {BLA_ELN_debt > 199 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 199 }}
-            }
-            NOT = {
-                has_war_with = ELN
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            country_exists = ELN
-            BLA = {check_variable = {BLA_ELN_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 200}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_200_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ELN_debt = 200}
-                    subtract_from_variable = {BLA_debt = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_ELN_debt_all = {
-        available = {
-            country_exists = ELN
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_ELN_debt > 0 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > BLA_ELN_debt}}
-            }
-            NOT = {
-                has_war_with = ELN
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            country_exists = ELN
-            BLA = {check_variable = {BLA_ELN_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_industralization_fund = BLA_ELN_debt}
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_all_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ELN_debt = BLA_ELN_debt}
-                    subtract_from_variable = {BLA_debt = BLA_ELN_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_clear_ELN_debt = {
         available = {
             custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_ELN_debt > 0 }}
-            }
-            OR = {
-                NOT = {
-                    country_exists = ELN
-                }
-                has_war_with = ELN
-            }
-        }
-        visible = {
-            OR = {
-                NOT = {
-                    country_exists = ELN
-                }
-                has_war_with = ELN
-            }
-            BLA = {check_variable = {BLA_ELN_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1000
-        }
-        complete_effect = {
-            custom_effect_tooltip = BLA_no_debt_now
-            hidden_effect = {
-                BLA = {
-                    set_variable = {BLA_ELN_debt = 0}
-                    subtract_from_variable = {BLA_debt = BLA_ELN_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-        remove_effect = {
-        }
-    }
-    #ANZ
-    BLA_borrow_from_ANZ = {
-        available = {
-            country_exists = ANZ
-            NOT = {
-                has_country_flag = BLA_default
-                has_war_with = ANZ
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = ANZ
-        }
-        days_remove = 30
-        days_re_enable = 100
-        ai_will_do = {
-            base = 0
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund < 1000}}
-            }
-        }
-        complete_effect = {}
-        remove_effect = {
-            custom_effect_tooltip = BLA_borrow_200_from_ANZ_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_ANZ_debt = 200}
-                    add_to_variable = {BLA_industralization_fund = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_ANZ_debt_small = {
-        available = {
-            country_exists = ANZ
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_100_desc
-                BLA = {check_variable = {BLA_ANZ_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-            NOT = {
-                has_war_with = ANZ
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            country_exists = ANZ
-            BLA = {check_variable = {BLA_ANZ_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_100_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_ANZ_debt = {
-        available = {
-            country_exists = ANZ
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_200_desc
-                BLA = {check_variable = {BLA_ANZ_debt > 199 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 199 }}
-            }
-            NOT = {
-                has_war_with = ANZ
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            country_exists = ANZ
-            BLA = {check_variable = {BLA_ANZ_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 200}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_200_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = 200}
-                    subtract_from_variable = {BLA_debt = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_ANZ_debt_all = {
-        available = {
-            country_exists = ANZ
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_ANZ_debt > 0 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > BLA_ANZ_debt}}
-            }
-            NOT = {
-                has_war_with = ANZ
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            country_exists = ANZ
-            BLA = {check_variable = {BLA_ANZ_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_industralization_fund = BLA_ANZ_debt}
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_all_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = BLA_ANZ_debt}
-                    subtract_from_variable = {BLA_debt = BLA_ANZ_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_clear_ANZ_debt = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_ANZ_debt > 0 }}
-            }
-            OR = {
-                NOT = {
-                    country_exists = ANZ
-                }
-                has_war_with = ANZ
-            }
-        }
-        visible = {
-            OR = {
-                NOT = {
-                    country_exists = ANZ
-                }
-                has_war_with = ANZ
-            }
-            BLA = {check_variable = {BLA_ANZ_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1000
-        }
-        complete_effect = {
-            custom_effect_tooltip = BLA_no_debt_now
-            hidden_effect = {
-                BLA = {
-                    set_variable = {BLA_ANZ_debt = 0}
-                    subtract_from_variable = {BLA_debt = BLA_ANZ_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-        remove_effect = {
-        }
-    }
-    #USR
-    BLA_borrow_from_USR = {
-        available = {
-            country_exists = USR
-            NOT = {
-                has_country_flag = BLA_default
-                has_war_with = USR
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USR
-        }
-        days_remove = 30
-        days_re_enable = 100
-        ai_will_do = {
-            base = 0
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund < 1000}}
-            }
-        }
-        complete_effect = {}
-        remove_effect = {
-            custom_effect_tooltip = BLA_borrow_200_from_USR_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_USR_debt = 200}
-                    add_to_variable = {BLA_industralization_fund = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_USR_debt_small = {
-        available = {
-            country_exists = USR
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_100_desc
-                BLA = {check_variable = {BLA_USR_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-            NOT = {
-                has_war_with = USR
+                tooltip = BLA_has_200_fund
+                BLA = {check_variable = {BLA_industralization_fund > 199}}
             }
         }
         visible = {
             NOT = {
                 has_country_flag = BLA_hide_pay_debt_decision
             }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USR
-            BLA = {check_variable = {BLA_USR_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
         }
         remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_100_desc
             hidden_effect = {
                 BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
+                    set_temp_variable = {target = FROM}
+                    add_to_variable = {BLA_industralization_fund = -200}
+                    meta_effect = { 
+                        text = {
+                            add_to_variable = {BLA_[TARGET]_debt = -200}
+                        }
+                        TARGET = "[?target.GetTag]"
+                    }
                 }
-            }
-        }
-    }
-    BLA_pay_USR_debt = {
-        available = {
-            country_exists = USR
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_200_desc
-                BLA = {check_variable = {BLA_USR_debt > 199 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 199 }}
-            }
-            NOT = {
-                has_war_with = USR
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USR
-            BLA = {check_variable = {BLA_USR_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 200}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_200_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_USR_debt = 200}
-                    subtract_from_variable = {BLA_debt = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_USR_debt_all = {
-        available = {
-            country_exists = USR
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_USR_debt > 0 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > BLA_USR_debt}}
-            }
-            NOT = {
-                has_war_with = USR
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USR
-            BLA = {check_variable = {BLA_USR_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_industralization_fund = BLA_USR_debt}
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_all_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_USR_debt = BLA_USR_debt}
-                    subtract_from_variable = {BLA_debt = BLA_USR_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_clear_USR_debt = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_USR_debt > 0 }}
-            }
-            OR = {
-                NOT = {
-                    country_exists = USR
-                }
-                has_war_with = USR
-            }
-        }
-        visible = {
-            OR = {
-                NOT = {
-                    country_exists = USR
-                }
-                has_war_with = USR
-            }
-            BLA = {check_variable = {BLA_USR_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1000
-        }
-        complete_effect = {
-            custom_effect_tooltip = BLA_no_debt_now
-            hidden_effect = {
-                BLA = {
-                    set_variable = {BLA_USR_debt = 0}
-                    subtract_from_variable = {BLA_debt = BLA_USR_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-        remove_effect = {
-        }
-    }
-    #USF
-    BLA_borrow_from_USF = {
-        available = {
-            country_exists = USF
-            NOT = {
-                has_country_flag = BLA_default
-                has_war_with = USF
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USF
-        }
-        days_remove = 30
-        days_re_enable = 100
-        ai_will_do = {
-            base = 0
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund < 1000}}
-            }
-        }
-        complete_effect = {}
-        remove_effect = {
-            custom_effect_tooltip = BLA_borrow_200_from_USF_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_USF_debt = 200}
-                    add_to_variable = {BLA_industralization_fund = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_USF_debt_small = {
-        available = {
-            country_exists = USF
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_100_desc
-                BLA = {check_variable = {BLA_USF_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-            NOT = {
-                has_war_with = USF
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USF
-            BLA = {check_variable = {BLA_USF_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_100_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_USF_debt = {
-        available = {
-            country_exists = USF
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_200_desc
-                BLA = {check_variable = {BLA_USF_debt > 199 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 199 }}
-            }
-            NOT = {
-                has_war_with = USF
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USF
-            BLA = {check_variable = {BLA_USF_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 200}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_200_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_USF_debt = 200}
-                    subtract_from_variable = {BLA_debt = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_USF_debt_all = {
-        available = {
-            country_exists = USF
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_USF_debt > 0 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > BLA_USF_debt}}
-            }
-            NOT = {
-                has_war_with = USF
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = USF
-            BLA = {check_variable = {BLA_USF_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_industralization_fund = BLA_USF_debt}
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_all_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_USF_debt = BLA_USF_debt}
-                    subtract_from_variable = {BLA_debt = BLA_USF_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_clear_USF_debt = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_USF_debt > 0 }}
-            }
-            OR = {
-                NOT = {
-                    country_exists = USF
-                }
-                has_war_with = USF
-            }
-        }
-        visible = {
-            OR = {
-                NOT = {
-                    country_exists = USF
-                }
-                has_war_with = USF
-            }
-            BLA = {check_variable = {BLA_USF_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1000
-        }
-        complete_effect = {
-            custom_effect_tooltip = BLA_no_debt_now
-            hidden_effect = {
-                BLA = {
-                    set_variable = {BLA_USF_debt = 0}
-                    subtract_from_variable = {BLA_debt = BLA_USF_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-        remove_effect = {
-        }
-    }
-    #STG
-    BLA_borrow_from_STG = {
-        available = {
-            country_exists = STG
-            NOT = {
-                has_country_flag = BLA_default
-                has_war_with = STG
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = STG
-        }
-        days_remove = 30
-        days_re_enable = 100
-        ai_will_do = {
-            base = 0
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund < 1000}}
-            }
-        }
-        complete_effect = {}
-        remove_effect = {
-            custom_effect_tooltip = BLA_borrow_200_from_STG_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_STG_debt = 200}
-                    add_to_variable = {BLA_industralization_fund = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_STG_debt_small = {
-        available = {
-            country_exists = STG
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_100_desc
-                BLA = {check_variable = {BLA_STG_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-            NOT = {
-                has_war_with = STG
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = STG
-            BLA = {check_variable = {BLA_STG_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_100_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_STG_debt = {
-        available = {
-            country_exists = STG
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_200_desc
-                BLA = {check_variable = {BLA_STG_debt > 199 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 199 }}
-            }
-            NOT = {
-                has_war_with = STG
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = STG
-            BLA = {check_variable = {BLA_STG_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 200}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_200_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_STG_debt = 200}
-                    subtract_from_variable = {BLA_debt = 200}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_STG_debt_all = {
-        available = {
-            country_exists = STG
-            custom_trigger_tooltip = {
-                tooltip= BLA_has_debt_desc
-                BLA = {check_variable = {BLA_STG_debt > 0 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > BLA_STG_debt}}
-            }
-            NOT = {
-                has_war_with = STG
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            country_exists = STG
-            BLA = {check_variable = {BLA_STG_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_industralization_fund = BLA_STG_debt}
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_all_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_STG_debt = BLA_STG_debt}
-                    subtract_from_variable = {BLA_debt = BLA_STG_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_clear_STG_debt = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_STG_debt > 0 }}
-            }
-            OR = {
-                NOT = {
-                    country_exists = STG
-                }
-                has_war_with = STG
-            }
-        }
-        visible = {
-            OR = {
-                NOT = {
-                    country_exists = STG
-                }
-                has_war_with = STG
-            }
-            BLA = {check_variable = {BLA_STG_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1000
-        }
-        complete_effect = {
-            custom_effect_tooltip = BLA_no_debt_now
-            hidden_effect = {
-                BLA = {
-                    set_variable = {BLA_STG_debt = 0}
-                    subtract_from_variable = {BLA_debt = BLA_STG_debt}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-        remove_effect = {
-        }
-    }
-    #other
-    BLA_borrow_from_other = {
-        available = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_default
-            }
-        }
-        days_remove = 30
-        days_re_enable = 100
-        ai_will_do = {
-            base = 0
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund < 1000}}
-            }
-        }
-        complete_effect = {}
-        remove_effect = {
-            custom_effect_tooltip = BLA_borrow_100_from_other_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_other_debt = 100}
-                    add_to_variable = {BLA_industralization_fund = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_other_debt_small = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_100_desc
-                BLA = {check_variable = {BLA_other_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            BLA = {check_variable = {BLA_other_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_100_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_ANZ_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_other_debt = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_200_desc
-                BLA = {check_variable = {BLA_other_debt > 99 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > 99 }}
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            BLA = {check_variable = {BLA_other_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {subtract_from_variable = {BLA_industralization_fund = 100}}
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_200_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_other_debt = 100}
-                    subtract_from_variable = {BLA_debt = 100}
-                    BLA_calculate_total_debt = yes
-                }
-            }
-        }
-    }
-    BLA_pay_other_debt_all = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = BLA_has_debt_desc
-                BLA = {check_variable = {BLA_other_debt > 0 }}
-            }
-            custom_trigger_tooltip = {
-                tooltip = BLA_can_pay_desc
-                BLA = {check_variable = {BLA_industralization_fund > BLA_other_debt}}
-            }
-        }
-        visible = {
-            NOT = {
-                has_country_flag = BLA_hide_pay_debt_decision
-            }
-            NOT = {
-                has_country_flag = BLA_default
-            }
-            BLA = {check_variable = {BLA_other_debt > 0 }}
-        }
-        cost = 0
-        days_remove = 0
-        days_re_enable = 1
-        ai_will_do = {
-            base = 1
-            modifier = {
-                add = 10
-                BLA = {check_variable = {BLA_industralization_fund > 2000}}
-            }
-        }
-        complete_effect = {
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_industralization_fund = BLA_other_debt}
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = BLA_pay_debt_all_desc
-            hidden_effect = {
-                BLA = {
-                    subtract_from_variable = {BLA_other_debt = BLA_other_debt}
-                    subtract_from_variable = {BLA_debt = BLA_other_debt}
-                    BLA_calculate_total_debt = yes
+                FROM = {
+                    add_to_variable = {BLA_debt = -200}
                 }
             }
         }
