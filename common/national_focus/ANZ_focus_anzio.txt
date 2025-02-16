@@ -1495,7 +1495,7 @@ focus_tree = {
 			base = 10
 		}
 		completion_reward = {
-			
+			unlock_decision_category_tooltip = ANZ_acquire_north_private_industry_cat
 		}
 	}
 
@@ -1679,11 +1679,13 @@ focus_tree = {
 					}
 				}
 				custom_effect_tooltip = ANZ_invest_south_land_w_tt
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				effect_tooltip = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
 				}
 			}
 			else = {
@@ -2025,11 +2027,13 @@ focus_tree = {
 					}
 				}
 				custom_effect_tooltip = ANZ_invest_south_land_s_tt
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				effect_tooltip = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
 				}
 			}
 			else = {
@@ -2287,11 +2291,13 @@ focus_tree = {
 					}
 				}
 				custom_effect_tooltip = ANZ_invest_south_land_e_tt
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				effect_tooltip = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
 				}
 			}
 			else = {
@@ -2526,11 +2532,13 @@ focus_tree = {
 					}
 				}
 				custom_effect_tooltip = ANZ_invest_south_land_n_tt
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = infrastructure
-					level = 1
-					instant_build = yes
+				effect_tooltip = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
 				}
 			}
 			else = {
@@ -2698,7 +2706,7 @@ focus_tree = {
 					ANZ_local_resources_factor_tmp = 0.05
 				}
 				multiply_temp_variable = {
-					ANZ_subjects_autonomy_gain_tmp = -0.25
+					ANZ_subjects_autonomy_gain_tmp = -0.5
 				}
 				set_variable = {
 					ANZ_local_resources_factor = ANZ_local_resources_factor_tmp
@@ -2724,9 +2732,91 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 		}
+		available = {
+			OR = {
+				TAU = {
+					exists = no
+					all_core_state = {
+						if = {
+							limit = {
+								NOT = { #这块地初始不在特雷森控制下
+									state = 713
+								}
+							}
+							is_owned_by = ROOT
+						}
+					}
+				}
+				TAU = {
+					is_puppet_of = ROOT
+				}
+			}
+		}
 
 		completion_reward = {
-
+			hidden_effect = {
+				puppet = TAU
+				every_state = {
+					limit = {
+						is_core_of = TAU
+						OR = {
+							is_owned_by = ROOT
+							owner = { is_subject_of = ROOT }
+						}
+					}
+					transfer_state_to = TAU
+				}
+			}
+			if = {
+				limit = {
+					has_government = fascism
+				}
+				TAU = {
+					set_cosmetic_tag = ANZ_subject
+					add_country_leader_role = {
+						character = TAU_ManhattanCafe
+						promote_leader = yes
+						country_leader = {
+							ideology = sub_Facism
+							#expire = "1965.1.1.1"
+							#traits = { war_industrialist }
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_government = neutrality
+				}
+				TAU = {
+					set_cosmetic_tag = ANZ_subject_neutrality
+					add_country_leader_role = {
+						character = TAU_ManhattanCafe
+						promote_leader = yes
+						country_leader = {
+							ideology = sub_Oligarchy
+							#expire = "1965.1.1.1"
+							#traits = { war_industrialist }
+						}
+					}
+				}
+			}
+			custom_effect_tooltip = ANZ_south_land_joint_office_tt
+			hidden_effect = {
+				TAU = {
+					TAU_retire_vice_country_leader = yes
+					add_ideas = TAU_another_leader_CurrenChan
+				}
+			}
+			set_temp_variable = {
+				ANZ_consumer_goods_expected_value_tmp = TAU.num_controlled_states
+			}
+			multiply_temp_variable = {
+				ANZ_consumer_goods_expected_value_tmp = -0.001
+			}
+			set_variable = {
+				ANZ_consumer_goods_expected_value = ANZ_consumer_goods_expected_value_tmp
+			}
 		}
 	}
 
@@ -2745,7 +2835,17 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			
+			custom_effect_tooltip = ANZ_colonial_supply_chain_tt
+			if = {
+				limit = {
+					TAU = {
+						is_puppet_of = ROOT
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = ANZ_idea_colonial_supply_chain
+				}
+			}
 		}
 	}
 
@@ -2764,7 +2864,12 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = ANZ_fake_suppression_from_TAU_law
+					add_idea = ANZ_fake_suppression_from_TAU_law_2
+				}
+			}
 		}
 	}
 
@@ -2783,7 +2888,12 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = ANZ_fake_suppression_from_TAU_law
+					add_idea = ANZ_fake_suppression_from_TAU_law_3
+				}
+			}
 		}
 	}
 
@@ -2795,13 +2905,44 @@ focus_tree = {
 		prerequisite = { focus = ANZ_strengthen_control focus = ANZ_partial_indulgence }
 		x = 1
 		y = 1
-		cost = 5
+		cost = 8
 		ai_will_do = {
 			base = 10
 		}
 
 		completion_reward = {
-			
+			custom_effect_tooltip = ANZ_we_are_boundless_tt
+			every_state = {
+				limit = {
+					OR = {
+						is_core_of = BOW
+						is_core_of = TAU
+						is_core_of = KIV
+						is_core_of = PCC
+						is_core_of = NEV
+						is_core_of = LZH
+						is_core_of = MAG
+						is_core_of = LAD
+						is_core_of = LAC
+						is_core_of = YUZ
+						is_core_of = OCO
+						is_core_of = RLN
+						is_core_of = NIN
+						is_core_of = SAK
+						is_core_of = THZ
+						is_core_of = SXB
+						is_core_of = SOR
+						is_core_of = HTJ
+						is_core_of = ALA
+						is_core_of = SHN
+						is_core_of = TSK
+					}
+				}
+				hidden_effect = {
+					add_core_of = TAU
+				}
+				custom_effect_tooltip = ANZ_expand_south_land_joint_office_tt
+			}
 		}
 	}
 
@@ -2987,33 +3128,88 @@ focus_tree = {
 				}
 			}
 			hidden_effect = {
-				add_corps_commander_role = {
-					character = HSP_El
-					traits={ armor_officer yuanqi chihuo }
-					skill=3
-					attack_skill=3
-					defense_skill=2
-					planning_skill=3
-					logistics_skill=2
+				if = {
+					limit = {
+						HSP_El = {
+							is_army_leader = no
+						}
+					}
+					add_corps_commander_role = {
+						character = HSP_El
+						traits={ armor_officer yuanqi chihuo }
+						skill=3
+						attack_skill=3
+						defense_skill=2
+						planning_skill=3
+						logistics_skill=2
+					}
 				}
-				add_corps_commander_role = {
-					character = HSP_Viridiana
-					traits={ armor_officer yuanqi chihuo }
-					skill=3
-					attack_skill=2
-					defense_skill=2
-					planning_skill=3
-					logistics_skill=3
+				if = {
+					limit = {
+						HSP_Viridiana = {
+							is_army_leader = no
+						}
+					}
+					add_corps_commander_role = {
+						character = HSP_Viridiana
+						traits={ armor_officer yuanqi chihuo }
+						skill=3
+						attack_skill=2
+						defense_skill=2
+						planning_skill=3
+						logistics_skill=3
+					}
 				}
-				add_corps_commander_role = {
-					character = HSP_Tristana
-					traits={ armor_officer yuanqi chihuo }
-					skill=3
-					attack_skill=2
-					defense_skill=2
-					planning_skill=4
-					logistics_skill=2
+				if = {
+					limit = {
+						HSP_Tristana = {
+							is_army_leader = no
+						}
+					}
+					add_corps_commander_role = {
+						character = HSP_Tristana
+						traits={ armor_officer yuanqi chihuo }
+						skill=3
+						attack_skill=2
+						defense_skill=2
+						planning_skill=4
+						logistics_skill=2
+					}
 				}
+				if = {
+					limit = {
+						has_completed_focus = ANZ_restructure_grey_hall
+					}
+					add_trait = {
+						character = HSP_El
+						trait = ANZ_ml_trial_of_grey_hall
+					}
+					add_trait = {
+						character = HSP_Viridiana
+						trait = ANZ_ml_trial_of_grey_hall
+					}
+					add_trait = {
+						character = HSP_Tristana
+						trait = ANZ_ml_trial_of_grey_hall
+					}
+				}
+				#if = {
+				#	limit = {
+				#		has_completed_focus = ANZ_allow_underground_transactions
+				#	}
+				#	add_trait = {
+				#		character = HSP_El
+				#		trait = ANZ_ml_assist_of_fawn_farsia_bit
+				#	}
+				#	add_trait = {
+				#		character = HSP_Viridiana
+				#		trait = ANZ_ml_assist_of_fawn_farsia_bit
+				#	}
+				#	add_trait = {
+				#		character = HSP_Tristana
+				#		trait = ANZ_ml_assist_of_fawn_farsia_bit
+				#	}
+				#}
 			}
 			hidden_effect = {
 				create_equipment_variant = {
@@ -3081,7 +3277,7 @@ focus_tree = {
 		prerequisite = { focus = ANZ_anzio_delicious_economy }
 		x = -1
 		y = 2
-		cost = 5
+		cost = 8
 		ai_will_do = {
 			base = 10
 		}
@@ -3222,14 +3418,14 @@ focus_tree = {
 			base = 10
 		}
 		bypass = {
-			CTC = {
-				OR = {
-					NOT = { country_exists = CTC }
-					has_war_with = ROOT
-					is_puppet_of = ROOT
-					is_in_faction_with = ROOT
-				}
-			}
+			#CTC = {
+			#	OR = {
+			#		NOT = { country_exists = CTC }
+			#		has_war_with = ROOT
+			#		is_puppet_of = ROOT
+			#		is_in_faction_with = ROOT
+			#	}
+			#}
 			URU = {
 				OR = {
 					NOT = { country_exists = URU }
@@ -3265,22 +3461,22 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			if = {
-				limit = {
-					country_exists = CTC
-					CTC = {
-						NOT = {
-							has_war_with = ROOT
-							is_puppet_of = ROOT
-							is_in_faction_with = ROOT
-						}
-					}
-				}
-				create_wargoal = {
-					type = annex_everything
-					target = CTC
-				}
-			}
+			#if = {
+			#	limit = {
+			#		country_exists = CTC
+			#		CTC = {
+			#			NOT = {
+			#				has_war_with = ROOT
+			#				is_puppet_of = ROOT
+			#				is_in_faction_with = ROOT
+			#			}
+			#		}
+			#	}
+			#	create_wargoal = {
+			#		type = annex_everything
+			#		target = CTC
+			#	}
+			#}
 			if = {
 				limit = {
 					country_exists = URU
@@ -3469,6 +3665,10 @@ focus_tree = {
 				bonus = 1
 				uses = 1
 				category = marine_tech
+			}
+			swap_ideas = {
+				remove_idea = zhuozhongbenguo
+				add_idea = youxianganshe
 			}
 		}
 	}
@@ -3695,8 +3895,8 @@ focus_tree = {
 				limit = {
 					is_ai = yes
 				}
+				has_global_flag = ELN_capitulation_immediate_flag
 			}
-			has_global_flag = ELN_capitulation_immediate_flag
 		}
 		bypass = {
 			TAU = {
@@ -3782,8 +3982,10 @@ focus_tree = {
 		available = {
 			OR = {
 				TAU = {
-					is_puppet_of = ROOT
-					is_in_faction_with = ROOT
+					OR = {
+						is_puppet_of = ROOT
+						is_in_faction_with = ROOT
+					}
 				}
 				AND = {
 					NOT = { country_exists = TAU }
@@ -4080,6 +4282,7 @@ focus_tree = {
 
 		completion_reward = {
 			country_event = ANZ.47
+			set_country_flag = ANZ_Siracusa
 			effect_tooltip = {
 				custom_effect_tooltip = anz_47_tt
 				set_politics = {
@@ -4139,6 +4342,9 @@ focus_tree = {
 			add_timed_idea = {
 				idea = ANZ_dealing_with_nobles_going_on
 				days = 200
+			}
+			hidden_effect = {
+				country_event = { id = anz.53 days = 50 random_days = 50 }
 			}
 		}
 	}
@@ -4243,6 +4449,13 @@ focus_tree = {
 			set_country_flag = ANZ_show_ark
 			custom_effect_tooltip = generic_skip_one_line_tt
 			custom_effect_tooltip = ANZ_allow_underground_transactions_tt_2
+			#effect_tooltip = {
+			#	every_unit_leader = {
+			#		add_trait = {
+			#			trait = ANZ_ml_assist_of_fawn_farsia_bit
+			#		}
+			#	}
+			#}
 			add_corps_commander_role = {
 				character = ANZ_Lappland
 				traits={ kuangqi trickster }
@@ -4280,6 +4493,31 @@ focus_tree = {
 				planning_skill = 5
 				logistics_skill = 4
 			}
+
+			hidden_effect = {
+				#every_unit_leader = {
+				#	add_trait = {
+				#		trait = ANZ_ml_assist_of_fawn_farsia_bit
+				#	}
+				#}
+				if = {
+					limit = {
+						has_completed_focus = ANZ_restructure_grey_hall
+					}
+					add_trait = {
+						character = ANZ_Lappland
+						trait = ANZ_ml_trial_of_grey_hall
+					}
+					add_trait = {
+						character = ANZ_Penance
+						trait = ANZ_ml_trial_of_grey_hall
+					}
+					add_trait = {
+						character = ANZ_Vigil
+						trait = ANZ_ml_trial_of_grey_hall
+					}
+				}
+			}
 		}
 	}
 
@@ -4306,7 +4544,7 @@ focus_tree = {
 		}
 
 		completion_reward = {
-			add_stability = 0.1
+			add_stability = 0.15
 			custom_effect_tooltip = ANZ_ban_mafia_tt
 			every_state = {
 				limit = {
@@ -4323,9 +4561,7 @@ focus_tree = {
 					}
 				}
 				effect_tooltip = {
-					every_state = {
-						add_extra_state_shared_building_slots = 2
-					}
+					add_extra_state_shared_building_slots = 2
 				}
 			}
 		}
