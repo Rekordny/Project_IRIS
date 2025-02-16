@@ -1113,16 +1113,8 @@ ANZ_pizza_economy_cat = {
 		state_target = yes
 
 		target_trigger = {
-			any_country = {
-				limit = {
-					tag = ROOT
-					is_in_faction_with = ROOT
-					is_puppet_of = ROOT
-					is_subject_of = ROOT
-				}
-				owns_state = FROM
-			}
 			FROM = {
+				is_core_of = controller
 				is_controlled_by_ROOT_or_ally = yes
 				free_building_slots = {
 					building = arms_factory
@@ -1195,16 +1187,8 @@ ANZ_pizza_economy_cat = {
 		state_target = yes
 
 		target_trigger = {
-			any_country = {
-				limit = {
-					tag = ROOT
-					is_in_faction_with = ROOT
-					is_puppet_of = ROOT
-					is_subject_of = ROOT
-				}
-				owns_state = FROM
-			}
 			FROM = {
+				is_core_of = controller
 				is_controlled_by_ROOT_or_ally = yes
 				free_building_slots = {
 					building = dockyard
@@ -1277,6 +1261,63 @@ ANZ_pizza_economy_cat = {
 					has_state_flag = ANZ_invest_nav_once
 				}
 			}
+		}
+	}
+
+	#投资美乐蒂省份-披萨投资
+	ANZ_invest_south_land_decision = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = yes
+		#days_remove = 100
+
+		on_map_mode = map_only
+		state_target = yes
+
+		target_trigger = {
+			FROM = {
+				has_state_flag = ANZ_invest_south_land_decision_target
+			}
+		}
+
+		visible = {
+			OR = {
+				has_completed_focus = ANZ_invest_south_land_w
+				has_completed_focus = ANZ_invest_south_land_s
+				has_completed_focus = ANZ_invest_south_land_e
+				has_completed_focus = ANZ_invest_south_land_n
+			}
+		}
+
+		cost = 0
+
+		available = {
+			has_equipment = {
+				ANZ_spicy_sausage_pizza > 19
+			}
+		}
+
+		complete_effect = {
+			set_temp_variable = {
+				anz_infrastructure_level_tmp = FROM.infrastructure_level
+			}
+			multiply_temp_variable = {
+				anz_infrastructure_level_tmp = 2500
+			}
+			add_cic = var:anz_infrastructure_level_tmp
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = ANZ_spicy_sausage_pizza
+					amount = -20
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 1
 		}
 	}
 }
@@ -1422,7 +1463,7 @@ operations = {
 }
 
 formable_nations = {
-	#应允之地
+	###
 	ANZ_form_HSP = {
 		allowed = {
 			original_tag = ANZ
@@ -1480,98 +1521,10 @@ formable_nations = {
 		cost = 0
 
 		ai_will_do = {
-			base = 1
+			base = 0
 		}
 
-		complete_effect = {
-
-			231 = {
-				IF = {
-					limit = {
-						OWNER = {
-							NOT = {
-								original_tag = GER
-							}
-						}
-					}
-					OWNER = {
-						set_country_flag = GER_RK_capital_state_trasferred_RKK_victim_flag
-						set_country_flag = GER_reichskommissariats_puppet_flag
-					}
-				}
-				transfer_state_to = RKK
-				set_state_flag = GER_RK_capital_state_trasferred_RKK_flag
-				add_compliance = 25
-			}
-
-			custom_effect_tooltip = GER_reichskommissariat_kaukasien_effect_tt
-			
-			set_autonomy = { 
-				target = RKK 
-				autonomy_state = autonomy_integrated_puppet 
-			}
-			
-			hidden_effect = {
-				every_state = {
-					limit = {
-						GER_is_RKK_state = yes
-						NOT = {
-							state = 231
-						}
-						OR = {
-							is_owned_by = ROOT
-							owner = { is_subject_of = ROOT }
-						}
-					}
-					transfer_state_to = RKK
-					add_compliance = 25
-				}
-				every_state = {	
-					limit = {
-						GER_is_RKK_state = yes
-						NOT = {
-							state = 231
-						}
-						NOT = {
-							OR = {
-								is_owned_by = ROOT
-								any_country = {
-									is_subject_of = ROOT
-									owns_state = PREV
-								}
-							}
-						}
-					}
-					add_contested_owner = RKK
-					set_state_controller_to = RKK
-					add_claim_by = RKK
-					add_compliance = 25
-				}
-
-				RKK = {
-					add_manpower = 50000
-					add_equipment_to_stockpile = { 
-						type = infantry_equipment
-						amount = 5000
-						producer = GER
-					}	
-					add_equipment_to_stockpile = { 
-						type = support_equipment
-						amount = 500
-						producer = GER
-					}	
-					inherit_technology = GER
-					add_offsite_building = { type = arms_factory level = 3 }
-					load_oob = "RK_OOB"
-				}
-			}
-
-			custom_effect_tooltip = generic_skip_one_line_tt
-
-			country_event = {
-				id = wuw_GER_reichskommissariats.6
-				hours = 0
-			}	
+		complete_effect = {	
 			
 		}
 	}
