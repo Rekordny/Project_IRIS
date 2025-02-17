@@ -526,3 +526,43 @@ USR_create_corps_for_everyone = {
 		}
 	}
 }
+
+# Initialize the ipb and add it to current Country Scope
+USR_initialize_ipb = {
+	# basic vars
+	set_variable = { usr_ipb_consumer_factor = 0.35 }
+	set_variable = { usr_ipb_build_army_factory_factor = 0.4 }
+	set_variable = { usr_ipb_build_dockyard_factor = 0.4 }
+	set_variable = { usr_ipb_payment_bonus_factor = 1 }
+
+	# vars for decision manipulation
+	set_variable = { usr_ipb_force_enlong_pp_cost = 50 }
+	set_variable = { usr_ipb_force_enlong_days_to_add = 180 }
+
+	add_dynamic_modifier = {
+		modifier = USR_imperial_promissory_bill
+	}
+	USR_update_ipb_amount_to_pay = yes
+}
+
+
+# Update the ipb cashout amount to pay
+USR_update_ipb_amount_to_pay = {
+	set_variable = {
+		usr_ipb_amount_to_pay = usr_ipb_consumer_factor
+	}
+	multiply_variable = {
+		usr_ipb_amount_to_pay = 100
+	}
+	set_temp_variable = {
+		usr_ipb_pay_bonus_modifier_temp = modifier@usr_ipb_payment_bonus_modifier
+	}
+	log = "Current pay modifier for ipb is [?usr_ipb_pay_bonus_modifier_temp]"
+	add_to_temp_variable = {
+		usr_ipb_pay_bonus_modifier_temp = 1
+	}
+	multiply_variable = {
+		usr_ipb_amount_to_pay = usr_ipb_pay_bonus_modifier_temp
+	}
+	log = "Current amount of factory to pay for ipb is [?usr_ipb_amount_to_pay]"
+}
