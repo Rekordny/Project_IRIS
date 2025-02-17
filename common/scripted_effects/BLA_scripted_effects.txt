@@ -518,12 +518,43 @@ BLA_calculate_total_debt = {
             var = BLA_STG_debt
             min = 0
         }
+        clamp_variable = {
+            var = BLA_UNG_debt
+            min = 0
+        }
+        every_country = {
+            limit = {
+                OR = {
+                    tag = ELN
+                    tag = USF
+                    tag = USR
+                    tag = OCF
+                    tag = STG
+                    tag = ANZ
+                    tag = UNG
+                }
+                OR = {
+                    has_war_with = BLA
+                    exists = no
+                }
+            }
+            set_temp_variable = {target = THIS}
+            BLA = {
+                meta_effect = { 
+                    text = {
+                        set_variable = {BLA_[TARGET]_debt = 0}
+                    }
+                    TARGET = "[?target.GetTag]"
+                }
+            }
+        }
         add_to_variable = {BLA_debt = BLA_other_debt}
         add_to_variable = {BLA_debt = BLA_ELN_debt}
         add_to_variable = {BLA_debt = BLA_ANZ_debt}
         add_to_variable = {BLA_debt = BLA_USR_debt}
         add_to_variable = {BLA_debt = BLA_USF_debt}
         add_to_variable = {BLA_debt = BLA_STG_debt}
+        add_to_variable = {BLA_debt = BLA_UNG_debt}
         set_variable = {BLA_total_interest = BLA_debt}
 		multiply_variable = {BLA_total_interest = 0.01}
     }
@@ -1000,6 +1031,72 @@ Big_Game_result_effect = {
         }
     }
 }
+Rossiya_Revolution_BLA_army_effect = {
+    hidden_effect = {
+        BLA = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_template = "帝国征召军"
+                    }
+                }
+                division_template = {
+                    name = "帝国征召军"
+                    is_locked = no
+                    priority = 0
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 2 y = 0 }
+                        infantry = { x = 2 y = 1 }
+                    }
+                    support = {
+                        artillery = {x = 0 y = 0}
+                    }
+                }
+            }
+        }
+        create_unit = {
+            division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+            owner = BLA
+        }
+        create_unit = {
+            division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+            owner = BLA
+        }
+        create_unit = {
+            division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+            owner = BLA
+        }
+        create_unit = {
+            division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+            owner = BLA
+        }
+        create_unit = {
+            division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+            owner = BLA
+        }
+        create_unit = {
+            division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+            owner = BLA
+        }
+        if = {
+            limit = {
+                BLA = {is_ai = yes}
+            }
+            create_unit = {
+                division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+                owner = BLA
+            }
+            create_unit = {
+                division = "name = \"帝国征召军\" division_template = \"帝国征召军\" start_experience_factor = 0.15"
+                owner = BLA
+            }
+        }
+    }
+}
 Rossiya_Revolution_NAC_army_effect = {
     hidden_effect = {
         NAC = {
@@ -1011,8 +1108,6 @@ Rossiya_Revolution_NAC_army_effect = {
                 }
                 division_template = {
                     name = "真理解放军"
-                    is_locked = no
-                    priority = 0
                     regiments = {
                         infantry = { x = 0 y = 0 }
                         infantry = { x = 0 y = 1 }
@@ -1053,9 +1148,6 @@ Rossiya_Revolution_NAC_army_effect = {
                 }
                 division_template = {
                     name = "自由农民旅"
-                    is_locked = no
-                    priority = 0
-                    template_counter = 0
                     regiments = {
                         militia = { x = 0 y = 0 }
                         militia = { x = 0 y = 1 }
@@ -1094,6 +1186,7 @@ Rossiya_Revolution_NAC_army_effect = {
         if = {
             limit = {
                 is_historical_focus_on = yes
+                NAC = {is_ai = yes}
             }
             create_unit = {
                 division = "name = \"罗西亚红军\" division_template = \"罗西亚红军\" start_experience_factor = 0.25"
@@ -1126,8 +1219,6 @@ Rossiya_Revolution_ORE_army_effect = {
                 }
                 division_template = {
                     name = "奥伦堡民兵"
-                    is_locked = no
-                    priority = 0
                     regiments = {
                         infantry = { x = 0 y = 0 }
                         infantry = { x = 0 y = 1 }
@@ -1147,9 +1238,6 @@ Rossiya_Revolution_ORE_army_effect = {
                 }
                 division_template = {
                     name = "自由农民旅"
-                    is_locked = no
-                    priority = 0
-                    template_counter = 0
                     regiments = {
                         militia = { x = 0 y = 0 }
                         militia = { x = 0 y = 1 }
@@ -1226,6 +1314,12 @@ Rossiya_Revolution_Map_effect = {
         76 = {
             Rossiya_Revolution_NAC_army_effect = yes
         }
+        126 = {
+            Rossiya_Revolution_BLA_army_effect = yes
+        }
+        855 = {
+            Rossiya_Revolution_BLA_army_effect = yes
+        }
         if = {
             limit = {
                 BLA = {
@@ -1282,7 +1376,6 @@ Rossiya_Revolution_Map_effect = {
             }
             256 = {
                 transfer_state_to = NAC
-                Rossiya_Revolution_NAC_army_effect = yes
                 Rossiya_Revolution_NAC_army_effect = yes
             }
             248 = {
