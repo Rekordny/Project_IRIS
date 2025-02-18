@@ -214,10 +214,10 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				50 = {
 
 				}
-				25 = {
+				20 = {
 					country_event = { id = anz.3 }
 				}
-				25 = {
+				30 = {
 					if = {
 						#如果已经累计10个bop，事实上你已经快完蛋了
 						limit = { check_variable = {
@@ -307,6 +307,66 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 			}
 		}
 	}
+
+	#举行罢工
+	ANZ_organize_strike = {
+		allowed = {
+			original_tag = ANZ
+		}
+		visible = {
+			has_completed_focus = ANZ_ignite_the_black_flame
+		}
+		cost = 0
+		remove_effect = {
+			add_power_balance_value = {
+				id = ANZ_industrialization_against_manalisation
+				value = 0.06
+			}
+			random_list = {
+				20 = { 
+					
+				}
+				40 = {
+					add_stability = -0.01
+					add_popularity = {
+						ideology = fascism
+						popularity = 0.01
+					}
+				}
+				40 = {
+					add_stability = -0.02
+					add_popularity = {
+						ideology = fascism
+						popularity = 0.02
+					}
+				}
+			}
+		}
+		days_remove = 90  
+		days_re_enable = 5
+		complete_effect = {
+			add_political_power = 45
+		}
+		ai_will_do = {
+			base = 0
+			modifier = {
+				has_country_flag = ANZ_ANZIO
+				power_balance_value = {
+					id = ANZ_industrialization_against_manalisation
+					value < 0.65
+				}
+				add = 1
+			}
+			modifier = {
+				has_country_flag = ANZ_LOTHIAN
+				power_balance_value = {
+					id = ANZ_industrialization_against_manalisation
+					value < 0.55
+				}
+				add = 2
+			}
+		}
+	}
 }
 #洛蒂安玛娜教内谕
 ANZ_secret_papacy_cat ={
@@ -315,79 +375,6 @@ ANZ_secret_papacy_cat ={
 
 #战车道与工业化举措
 ANZ_secret_senshado_cat = {
-	#建立战车道学院
-	ANZ_establish_senshado_school = {
-		allowed = {
-			original_tag = ANZ
-		}
-		icon = generic_construction
-		modifier = {
-			consumer_goods_factor = 0.05
-		}
-		on_map_mode = map_only
-		state_target = yes
-		target_trigger = {
-			FROM = {
-				is_core_of = ANZ
-				is_controlled_by = ANZ
-				NOT = { has_dynamic_modifier = {
-					modifier = ANZ_senshado_school_state_modifier
-				} }
-			}
-		}
-		cost = 30
-		visible = {
-			has_completed_focus = ANZ_political_loyal
-		}
-		# fire_only_once = yes
-		days_remove = 30
-		complete_effect = {
-			set_country_flag = ANZ_BUILDING_SCHOOL
-		}
-		remove_effect = {
-			clr_country_flag = ANZ_BUILDING_SCHOOL
-			FROM = {
-				add_dynamic_modifier = {
-					modifier = ANZ_senshado_school_state_modifier
-				}
-			}
-			add_to_variable = {
-				anz_nationalized_senshado_var = 1
-			}
-		}
-		ai_will_do = {
-			base = 15
-		}
-	}
-
-	#战车道全国化
-	ANZ_nationalized_senshado = {
-		allowed = {
-			original_tag = ANZ
-		}
-		visible = {
-			has_completed_focus = ANZ_political_loyal
-		}
-		available = {
-			custom_trigger_tooltip = {
-				tooltip = ANZ_tooltip24
-				check_variable = {
-					anz_nationalized_senshado_var > 5
-				}
-			}
-		}
-		fire_only_once = yes
-		complete_effect = {
-			swap_ideas = {
-				remove_idea = ANZ_senshado_industrialization
-				add_idea = ANZ_nationalized_senshado
-			}
-		}
-		ai_will_do = {
-			base = 100
-		}
-	}
-
 	#向乌斯拉尔寻求帮助
 	ANZ_ask_help_USR = {
 		allowed = {
@@ -399,7 +386,7 @@ ANZ_secret_senshado_cat = {
 			has_country_flag = ANZ_ignite_the_black_flame
 			NOT = { has_country_flag = ANZ_CIVIL_ENDED }
 		}
-		cost = 10
+		cost = 20
 		remove_effect = {
 			USR = { country_event = { id = anz.6 } }
 			if = {
@@ -1126,16 +1113,8 @@ ANZ_pizza_economy_cat = {
 		state_target = yes
 
 		target_trigger = {
-			any_country = {
-				limit = {
-					tag = ROOT
-					is_in_faction_with = ROOT
-					is_puppet_of = ROOT
-					is_subject_of = ROOT
-				}
-				owns_state = FROM
-			}
 			FROM = {
+				is_core_of = controller
 				is_controlled_by_ROOT_or_ally = yes
 				free_building_slots = {
 					building = arms_factory
@@ -1208,16 +1187,8 @@ ANZ_pizza_economy_cat = {
 		state_target = yes
 
 		target_trigger = {
-			any_country = {
-				limit = {
-					tag = ROOT
-					is_in_faction_with = ROOT
-					is_puppet_of = ROOT
-					is_subject_of = ROOT
-				}
-				owns_state = FROM
-			}
 			FROM = {
+				is_core_of = controller
 				is_controlled_by_ROOT_or_ally = yes
 				free_building_slots = {
 					building = dockyard
@@ -1290,6 +1261,63 @@ ANZ_pizza_economy_cat = {
 					has_state_flag = ANZ_invest_nav_once
 				}
 			}
+		}
+	}
+
+	#投资美乐蒂省份-披萨投资
+	ANZ_invest_south_land_decision = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = yes
+		#days_remove = 100
+
+		on_map_mode = map_only
+		state_target = yes
+
+		target_trigger = {
+			FROM = {
+				has_state_flag = ANZ_invest_south_land_decision_target
+			}
+		}
+
+		visible = {
+			OR = {
+				has_completed_focus = ANZ_invest_south_land_w
+				has_completed_focus = ANZ_invest_south_land_s
+				has_completed_focus = ANZ_invest_south_land_e
+				has_completed_focus = ANZ_invest_south_land_n
+			}
+		}
+
+		cost = 0
+
+		available = {
+			has_equipment = {
+				ANZ_spicy_sausage_pizza > 19
+			}
+		}
+
+		complete_effect = {
+			set_temp_variable = {
+				anz_infrastructure_level_tmp = FROM.infrastructure_level
+			}
+			multiply_temp_variable = {
+				anz_infrastructure_level_tmp = 2500
+			}
+			add_cic = var:anz_infrastructure_level_tmp
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = ANZ_spicy_sausage_pizza
+					amount = -20
+				}
+			}
+		}
+
+		ai_will_do = {
+			base = 1
 		}
 	}
 }
@@ -1391,8 +1419,297 @@ operations = {
 			factor = 1
 		}
 	}
+
+	#先进技术捕获
+	ANZ_operation_on_state845 = {
+		icon = generic_operation
+
+		allowed = {
+			always = no
+		}
+
+		available = {
+			845 = {	
+				is_controlled_by_ROOT_or_ally = yes
+			}
+		}
+
+		highlight_states = {
+			highlight_state_targets = { state = 845 }
+			highlight_provinces = { 16221 }
+		}
+
+		days_mission_timeout = 90
+		fire_only_once = yes
+
+		activation = {
+
+		}
+
+		is_good = no
+
+		complete_effect = {
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = infantry_weapons
+			}
+		}
+
+		ai_will_do = {
+			factor = 1
+		}
+	}
 }
 
+formable_nations = {
+	###
+	ANZ_form_HSP = {
+		allowed = {
+			original_tag = ANZ
+		}
+
+		fire_only_once = yes
+
+		visible = {
+			has_completed_focus = ANZ_accept_blue_division
+		}
+
+		available = {
+			is_subject = no
+			STG = {
+				exists = no
+			}
+			custom_trigger_tooltip = {
+				tooltip = ANZ_form_HSP_required_states
+				206 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				213 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				222 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				230 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				231 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				717 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+				718 = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+			}
+		}
+
+		highlight_states = {
+			highlight_state_targets = {
+				state = 206
+				state = 213
+				state = 222
+				state = 230
+				state = 231
+				state = 717
+				state = 718
+			}
+		}
+
+		cost = 0
+
+		ai_will_do = {
+			base = 0
+		}
+
+		complete_effect = {	
+			
+		}
+	}
+}
+
+#收编罗曼尼亚贵族工厂
+ANZ_acquire_north_private_industry_cat = {
+	#
+	ANZ_acquire_north_private_industry_decision = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = yes
+		#days_remove = 100
+
+		on_map_mode = decision_view_only
+		state_target = yes
+
+		target_trigger = {
+			FROM = {
+				OR = {
+					state = 180
+					state = 203
+					state = 193
+					state = 171
+					state = 170
+				}
+				is_fully_controlled_by = ROOT
+				NOT = {
+					has_state_flag = ANZ_acquire_north_private_industry_once
+				}
+			}
+		}
+
+		visible = {
+			has_completed_focus = ANZ_acquire_north_private_industry
+		}
+
+		cost = 150
+
+		complete_effect = {
+			FROM = {
+				set_state_flag = ANZ_acquire_north_private_industry_once
+			}
+			effect_tooltip = {
+				add_offsite_building = {
+					type = arms_factory 
+					level = 2
+				}
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_idea = ANZ_idea_acquire_north_private_industry_4
+					}
+					swap_ideas = {
+						remove_idea = ANZ_idea_acquire_north_private_industry_4
+						add_idea = ANZ_idea_acquire_north_private_industry_5
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = ANZ_idea_acquire_north_private_industry_3
+					}
+					swap_ideas = {
+						remove_idea = ANZ_idea_acquire_north_private_industry_3
+						add_idea = ANZ_idea_acquire_north_private_industry_4
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = ANZ_idea_acquire_north_private_industry_2
+					}
+					swap_ideas = {
+						remove_idea = ANZ_idea_acquire_north_private_industry_2
+						add_idea = ANZ_idea_acquire_north_private_industry_3
+					}
+				}
+				else_if = {
+					limit = {
+						has_idea = ANZ_idea_acquire_north_private_industry
+					}
+					swap_ideas = {
+						remove_idea = ANZ_idea_acquire_north_private_industry
+						add_idea = ANZ_idea_acquire_north_private_industry_2
+					}
+				}
+				else_if = {
+					limit = {
+						NOT = {
+							has_idea = ANZ_idea_acquire_north_private_industry
+							has_idea = ANZ_idea_acquire_north_private_industry_2
+							has_idea = ANZ_idea_acquire_north_private_industry_3
+							has_idea = ANZ_idea_acquire_north_private_industry_4
+							has_idea = ANZ_idea_acquire_north_private_industry_5
+						}
+					}
+					add_ideas = ANZ_idea_acquire_north_private_industry
+				}
+			}
+			if = {
+				limit = {
+					FROM = {
+						state = 180
+					}
+				}
+				mio:ANZ_fiat_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				mio:ITA_officine_meccaniche_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				set_country_flag = ANZ_acquire_north_private_industry_tank
+			}
+			if = {
+				limit = {
+					FROM = {
+						state = 170
+					}
+				}
+				mio:ITA_breda_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				mio:ANZ_reggione_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				set_country_flag = ANZ_acquire_north_private_industry_artillery
+			}
+			if = {
+				limit = {
+					FROM = {
+						state = 171
+					}
+				}
+				mio:ITA_beretta_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				mio:ANZ_aviation_infantry_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				set_country_flag = ANZ_acquire_north_private_industry_infantry
+			}
+			if = {
+				limit = {
+					FROM = {
+						state = 203
+					}
+				}
+				mio:ITA_beretta_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				mio:ANZ_aviation_infantry_organization = {
+					complete_mio_trait = ANZ_mio_trait_acquire_north_private_industry
+				}
+				set_country_flag = ANZ_acquire_north_private_industry_plane
+			}
+			if = {
+				limit = {
+					FROM = {
+						state = 193
+					}
+				}
+				if = {
+					limit = {
+						has_idea = ANZ_ppln_pizza
+					}
+					hidden_effect = {
+						swap_ideas = {
+							remove_idea = ANZ_ppln_pizza
+							add_idea = ANZ_ppln_pizza_2
+						}
+					}
+				}
+				custom_effect_tooltip = ANZ_ppln_pizza_upgrade_tt
+				set_country_flag = ANZ_ppln_pizza_upgrade
+			}
+		}
+
+		ai_will_do = {
+			base = 1
+		}
+	}
+}
 
 #争夺军队和军官
 ANZ_scramble_for_troops_and_officers = {
@@ -1404,7 +1721,7 @@ ANZ_scramble_for_troops_and_officers = {
 		activation = {
 			has_completed_focus = ANZ_salute_to_shout
 		}
-		days_mission_timeout = 70
+		days_mission_timeout = 80
 		timeout_effect = {
 			random_unit_leader = {
 				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
@@ -1431,7 +1748,7 @@ ANZ_scramble_for_troops_and_officers = {
 		activation = {
 			has_completed_focus = ANZ_santa_sede_and_its_children
 		}
-		days_mission_timeout = 70
+		days_mission_timeout = 80
 		timeout_effect = {
 			random_unit_leader = {
 				limit = { 
@@ -1558,6 +1875,30 @@ ANZ_after_civil = {
 }
 
 IRIS_debug_decisions = {
+	ANZ_test_trigger = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = no
+		days_remove = 100
+
+		on_map_mode = map_only
+		state_target = yes
+
+		target_trigger = {
+			FROM = {
+				is_controlled_by_ROOT_or_ally = yes
+				free_building_slots = {
+					building = arms_factory
+					size > 0
+					include_locked = yes
+				}
+			}
+		}
+	}
+
 	ANZ_pact_with_mana_secular_state = {
 		complete_effect = {
 			ANZ = {
