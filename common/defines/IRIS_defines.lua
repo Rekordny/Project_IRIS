@@ -277,6 +277,6 @@ NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
 -- Military
 --------------------------------------------------------------------------------------------------------------
 
-NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0002 -- 0.0001
-NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
-NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.60 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0002 -- 0.0001
+NDefines.NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
+NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.60 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
