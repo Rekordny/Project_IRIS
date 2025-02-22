@@ -264,11 +264,19 @@ NDefines.NAI.AREA_DEFENSE_OTHER_BASE_WEIGHT = { 0.5, 0.5, 1.0 }
 
 --------------------------------------------------------------------------------------------------------------
 
-NDefines.NNavy.NAVAL_RANGE_TO_INGAME_DISTANCE = 0.18
+NDefines.NNavy.NAVAL_RANGE_TO_INGAME_DISTANCE = 0.18 -- Scale the ship stats "naval_range" to the ingame distance
 
 NDefines.NCountry.MAJOR_MIN_FACTORIES = 50
 NDefines.NDiplomacy.BASE_SURRENDER_LEVEL = 0.85
-NDefines.NDiplomacy.VOLUNTEERS_PER_TARGET_PROVINCE = 0.0
-NDefines.NDiplomacy.VOLUNTEERS_PER_COUNTRY_ARMY = 0.01
+-- NDefines.NDiplomacy.VOLUNTEERS_PER_TARGET_PROVINCE = 0.0
+-- NDefines.NDiplomacy.VOLUNTEERS_PER_COUNTRY_ARMY = 0.01
 NDefines.NDiplomacy.VOLUNTEERS_RETURN_EQUIPMENT = 0.95
 NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
+
+--------------------------------------------------------------------------------------------------------------
+-- Military
+--------------------------------------------------------------------------------------------------------------
+
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0002 -- 0.0001
+NDefines.NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
+NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.60 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1

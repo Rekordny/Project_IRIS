@@ -1015,7 +1015,7 @@ country_event = {
 	id = usr.32
 	title = usr.32.t
 	desc = usr.32.desc
-	picture = GFX_USR_CE1
+	picture = GFX_USR_CE32
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -1815,7 +1815,7 @@ country_event = {
 	id = usr.66
 	title = usr.66.t
 	desc = usr.66.desc
-	picture = GFX_USR_CE66
+	picture = GFX_USR_CE65
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -1850,7 +1850,7 @@ country_event = {
 	id = usr.67
 	title = usr.67.t
 	desc = usr.67.desc
-	picture = GFX_USR_CE67
+	picture = GFX_USR_CE65
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -1941,7 +1941,7 @@ country_event = {
 	id = usr.69
 	title = usr.69.t
 	desc = usr.69.desc
-	picture = GFX_USR_CE7
+	picture = GFX_USR_CE69
 	is_triggered_only = yes
 	fire_only_once = yes
 	
@@ -2344,6 +2344,7 @@ country_event = {
 			}
 		}
 		custom_effect_tooltip = USR_tooltip56
+		set_country_flag = USR_ALLOW_EMPIRE_BANK_REGROUP
 		ai_chance = {
 			base = 10
 		}
@@ -2377,7 +2378,7 @@ country_event = {
 	id = usr.84
 	title = usr.84.t
 	desc = usr.84.desc
-	picture = GFX_USR_CE84
+	picture = GFX_USR_CE86
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -2406,6 +2407,7 @@ country_event = {
 			multiply_temp_variable = {
 				usr_ipb_payment_factor_temp = 2
 			}
+			
 		}
 	}
 	option = {
@@ -2413,27 +2415,129 @@ country_event = {
 		trigger = { 
 			industrial_complex > usr.usr_ipb_payment_factor
 		}
+		USR_update_ipb_amount_to_pay = yes
 		remove_dynamic_modifier = {
 			modifier = USR_imperial_promissory_bill
 		}
 		add_dynamic_modifier = {
 			modifier = USR_imperial_promissory_bill_cashout
 		}
+		USR_ipb_cashout_all_ally_debt = yes
 		ai_chance = {
 			base = 10
 		}
 	}
 	option = {
 		name = usr.85.b
-		remove_dynamic_modifier = {
-			modifier = USR_imperial_promissory_bill
+		USR_ipb_bankrupt_effect = yes
+		ai_chance = {
+			base = 10
 		}
-		add_stability = -1
-		add_war_support = -1
-		add_political_power = -1000
-		add_popularity = {
-			ideology = USR
-			popularity = -0.35
+	}
+}
+
+#TARGET:乌斯拉尔想要我们购买帝国本票
+country_event = {
+	id = usr.86
+	title = usr.86.t
+	desc = usr.86.desc
+	picture = GFX_USR_CE86
+	is_triggered_only = yes
+	fire_only_once = no
+	immediate = {
+	}
+	option = {
+		name = usr.86.a
+		add_ideas = USR_ally_ipb_purchased_1
+		FROM = { 
+			add_to_variable = {
+				usr_ipb_consumer_factor = -0.05
+			} 
+			add_to_variable = {
+				usr_ipb_payment_bonus_factor = 0.05
+			}
+			country_event = { id = usr.87 days = 3 }
+		}
+		ai_chance = {
+			base = 10
+			modifier = {
+				industrial_complex < 50
+				add = -5
+			}
+			modifier = {
+				industrial_complex > 100
+				add = 5
+			}
+		}
+	}
+	option = {
+		name = usr.86.b
+		add_ideas = USR_ally_ipb_purchased_2
+		FROM = { 
+			add_to_variable = {
+				usr_ipb_consumer_factor = -0.1
+			}
+			add_to_variable = {
+				usr_ipb_payment_bonus_factor = 0.1
+			}
+			country_event = { id = usr.87 days = 7 } 
+		}
+		ai_chance = {
+			base = 10
+			modifier = {
+				industrial_complex < 50
+				factor = 0
+			}
+			modifier = {
+				industrial_complex < 70
+				add = -5
+			}
+		}
+	}
+	option = {
+		name = usr.86.c
+		FROM = { 
+			country_event = { id = usr.88 days = 7 } 
+		}
+		ai_chance = {
+			base = 10
+			modifier = {
+				industrial_complex < 70
+				add = 5
+			}
+			modifier = {
+				industrial_complex > 100
+				add = -5
+			}
+		}
+	}
+}
+
+#盟友愿意购买帝国本票
+country_event = {
+	id = usr.87
+	title = usr.87.t
+	desc = usr.87.desc
+	picture = GFX_USR_CE87
+	is_triggered_only = yes
+	fire_only_once = no
+	immediate = {
+		#because we have already altered the var and few days passed
+		USR_update_ipb_amount_to_pay = yes
+	}
+	option = {
+		name = usr.87.a
+		if = {
+			limit = {
+				FROM = { has_idea = USR_ally_ipb_purchased_1 }
+			}
+			custom_effect_tooltip = USR_tooltip60
+		}
+		if = {
+			limit = {
+				FROM = { has_idea = USR_ally_ipb_purchased_2 }
+			}
+			custom_effect_tooltip = USR_tooltip61
 		}
 		ai_chance = {
 			base = 10
@@ -2441,6 +2545,118 @@ country_event = {
 	}
 }
 
+#盟友拒绝购买帝国本票
+country_event = {
+	id = usr.88
+	title = usr.88.t
+	desc = usr.88.desc
+	picture = GFX_USR_CE7
+	is_triggered_only = yes
+	fire_only_once = no
+	immediate = {
+	}
+	option = {
+		name = usr.88.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#ALLY：帝国本票被兑现
+country_event = {
+	id = usr.89
+	title = usr.89.t
+	desc = usr.89.desc
+	picture = GFX_USR_CE86
+	is_triggered_only = yes
+	fire_only_once = no
+	immediate = {
+	}
+	option = {
+		name = usr.89.a
+		if = {
+			limit = { has_idea = USR_ally_ipb_purchased_1 }
+			remove_ideas = USR_ally_ipb_purchased_1
+			add_timed_idea = {
+				idea = USR_ally_ipb_return_1
+				days = 365
+			}
+		}
+		if = {
+			limit = { has_idea = USR_ally_ipb_purchased_2 }
+			remove_ideas = USR_ally_ipb_purchased_2
+			add_timed_idea = {
+				idea = USR_ally_ipb_return_2
+				days = 365
+			}
+		}
+		if = {
+			limit = { has_idea = USR_ally_ipb_purchased_3 }
+			remove_ideas = USR_ally_ipb_purchased_3
+			add_timed_idea = {
+				idea = USR_ally_ipb_return_3
+				days = 365
+			}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#ALLY：帝国银行破产
+country_event = {
+	id = usr.90
+	title = usr.90.t
+	desc = usr.90.desc
+	picture = GFX_USR_CE90
+	is_triggered_only = yes
+	fire_only_once = no
+	immediate = {
+	}
+	option = {
+		name = usr.90.a
+		if = {
+			limit = { has_idea = USR_ally_ipb_purchased_1 }
+			remove_ideas = USR_ally_ipb_purchased_1
+			add_stability = -0.05
+		}
+		if = {
+			limit = { has_idea = USR_ally_ipb_purchased_2 }
+			remove_ideas = USR_ally_ipb_purchased_2
+			add_stability = -0.1
+		}
+		if = {
+			limit = { has_idea = USR_ally_ipb_purchased_3 }
+			remove_ideas = USR_ally_ipb_purchased_3
+			add_stability = -0.2
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+#PUPPET：乌斯拉尔强制向我们发行帝国本票
+country_event = {
+	id = usr.91
+	title = usr.91.t
+	desc = usr.91.desc
+	picture = GFX_USR_CE91
+	is_triggered_only = yes
+	fire_only_once = no
+	immediate = {
+	}
+	option = {
+		name = usr.91.a
+		add_ideas = USR_puppet_establish_ipb
+		add_stability = -0.05
+		ai_chance = {
+			base = 10
+		}
+	}
+}
 
 #####################################################
 #####################NEWS_EVENTS####################
@@ -2749,14 +2965,14 @@ news_event = {
 	option = {
 		name = usr_news.9.b
 		trigger = {
-			not = { tag = USR }
+			NOT = { tag = USR }
 			USR = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = usr_news.9.c
 		trigger = {
-			not = { tag = USR }
+			NOT = { tag = USR }
 			USR = { has_same_ideology = no }
 		}
 	}
@@ -2786,14 +3002,14 @@ news_event = {
 	option = {
 		name = usr_news.10.b
 		trigger = {
-			not = { tag = USR }
+			NOT = { tag = USR }
 			USR = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = usr_news.10.c
 		trigger = {
-			not = { tag = USR }
+			NOT = { tag = USR }
 			USR = { has_same_ideology = no }
 		}
 	}
@@ -2823,15 +3039,62 @@ news_event = {
 	option = {
 		name = usr_news.11.b
 		trigger = {
-			not = { tag = USR }
+			NOT = { tag = USR }
 			USR = { has_same_ideology = yes }
 		}
 	}
 	option = {
 		name = usr_news.11.c
 		trigger = {
-			not = { tag = USR }
+			NOT = { tag = USR }
 			USR = { has_same_ideology = no }
+		}
+	}
+}
+
+#乌斯拉尔帝国银行宣布破产
+news_event = {
+	id = usr_news.12
+	title = usr_news.12.t
+	picture = GFX_USR_NE12
+	desc = usr_news.12.desc
+	is_triggered_only = yes
+	major = yes
+	immediate = {  
+		USR = {
+			if = {
+				limit = { NOT = { is_in_array = { USR.Stamp_ID_list = 13 } } }
+				add_to_array = { USR.Stamp_ID_list = 13 }
+				USR_add_stamp_utility = yes
+			}
+		}
+	}
+	option = {
+		name = usr_news.12.a
+		trigger = { OR = { tag = USR } }
+	}
+	option = {
+		name = usr_news.12.b
+		trigger = {
+			NOT = { tag = USR }
+			OR = {
+				has_idea = USR_ally_ipb_purchased_1
+				has_idea = USR_ally_ipb_purchased_2
+				has_idea = USR_ally_ipb_purchased_3
+			}
+		}
+	}
+	option = {
+		name = usr_news.12.c
+		trigger = {
+			NOT = { tag = USR }
+			NOT = {
+				OR = {
+					has_idea = USR_ally_ipb_purchased_1
+					has_idea = USR_ally_ipb_purchased_2
+					has_idea = USR_ally_ipb_purchased_3
+				}
+			}
 		}
 	}
 }
