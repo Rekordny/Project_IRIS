@@ -25,8 +25,10 @@ del_IRIS_alert = {
 	if = {
 		limit = {
 			is_in_array = { IRIS_alerts = alert_id }#在列表中
+
 		}
-        remove_from_array = { IRIS_alerts = alert_id }
+		remove_from_array = { IRIS_alerts = alert_id }
+		log = "[GetDateText]: [Root.GetName]：del_IRIS_alert-[?alert_id.GetTokenKey]"
 		# add_to_array = { array = IRIS_alerts value = alert_id index = 0 }
 		# add_to_array = { array = IRIS_alert_data value = alert_data index = 0 }
 
@@ -35,15 +37,33 @@ del_IRIS_alert = {
 
 #点击事件
 IRIS_alert_click = {
-
+	if = {
+		limit = {
+			check_variable = { alert_id = token:alert_IRIS_world_conflict_marker }#区域冲突
+		}
+		set_variable = { crisisoverview_window = 1 }
+	}
+	if = {
+		limit = {
+			check_variable = { alert_id = token:alert_USR_new_stamp }
+		}
+		set_country_flag = USR_STAMP_ALBUM_ON
+		del_IRIS_alert = yes
+	}
 }
 
 #右键隐藏
 IRIS_alert_right_button = {
-    remove_from_array = { array = IRIS_alerts index = alert_idx }
-	# remove_from_array = { array = IRIS_alert_data index = alert_idx }
+	if = {
+		limit = {
+			NOT = { check_variable = { alert_id = token:alert_IRIS_world_conflict_marker } } #区域冲突
+		}
+		remove_from_array = { array = IRIS_alerts index = alert_idx }
+		# remove_from_array = { array = IRIS_alert_data index = alert_idx }
+		log = "[GetDateText]: [Root.GetName]：IRIS_alert_right_button-[?alert_id.GetTokenKey]"
+		suppress_IRIS_alert = yes
+	}
 
-	suppress_IRIS_alert = yes
 }
 
 #隐藏5周
@@ -54,9 +74,9 @@ suppress_IRIS_alert = {
 		}
 
 		set_temp_variable = { suppression_weeks = 5 }
-        if = {
+		if = {
 			limit = { check_variable = { suppression_weeks > 0 } }
-			
+
 			add_to_array = { IRIS_alert_types_hide = alert_id }
 			add_to_array = { IRIS_alert_types_hide_time = suppression_weeks }
 		}
@@ -71,7 +91,7 @@ IRIS_alert_suppression_weekly_countdown = {
 		limit = { check_variable = { idx < IRIS_alert_types_hide^num } }
 
 		subtract_from_variable = { IRIS_alert_types_hide_time^idx = 1 }
-		if = { 
+		if = {
 			limit = { check_variable = { IRIS_alert_types_hide_time^idx = 0 } }
 
 			set_temp_variable = { alert_id = IRIS_alert_types_hide^idx }

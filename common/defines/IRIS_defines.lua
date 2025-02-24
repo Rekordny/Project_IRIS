@@ -15,7 +15,7 @@ NDefines.NSupply.RIVER_RAILWAY_LEVEL = 3                            -- 水路=3�
 -- DESIGNS
 --------------------------------------------------------------------------------------------------------------
 
-NDefines.NAI.DEFAULT_MODULE_VARIANT_CREATION_XP_CUTOFF_LAND = 35 --35	-- Army XP needed before attempting to create a variant of a type that uses the tank designer (the tank designer DLC feature must be active).
+NDefines.NAI.DEFAULT_MODULE_VARIANT_CREATION_XP_CUTOFF_LAND = 25 --35	-- Army XP needed before attempting to create a variant of a type that uses the tank designer (the tank designer DLC feature must be active).
 NDefines.NAI.DEFAULT_MODULE_VARIANT_CREATION_XP_CUTOFF_NAVY = 25 --50	-- Same as above but for the ship designer.
 NDefines.NAI.DEFAULT_MODULE_VARIANT_CREATION_XP_CUTOFF_AIR = 25 --25	-- Same as above but for the ship designer.
 
@@ -68,7 +68,7 @@ NDefines.NAI.DESIRE_USE_XP_TO_UNLOCK_AIR_DOCTRINE = 0.1     -- How quickly is de
 
 --EAI: make sure land template desire is always at the top, if the doctrine desire is high but the mod blocks it, AI wont create templates
 NDefines.NAI.DESIRE_USE_XP_TO_UPDATE_LAND_TEMPLATE = 100.0 --2.0    -- How quickly is desire to update/create templates accumulated?
-NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_LAND_EQUIPMENT = 0.1  -- How quickly is desire to update/create land equipment variants accumulated?
+NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_LAND_EQUIPMENT = 2.0 --0.1  -- How quickly is desire to update/create land equipment variants accumulated?
 
 NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_NAVAL_EQUIPMENT = 100.0 -- How quickly is desire to update/create naval equipment variants accumulated?
 NDefines.NAI.DESIRE_USE_XP_TO_UPGRADE_AIR_EQUIPMENT = 100.0   -- How quickly is desire to update/create air equipment variants accumulated?
@@ -264,11 +264,19 @@ NDefines.NAI.AREA_DEFENSE_OTHER_BASE_WEIGHT = { 0.5, 0.5, 1.0 }
 
 --------------------------------------------------------------------------------------------------------------
 
-NDefines.NNavy.NAVAL_RANGE_TO_INGAME_DISTANCE = 0.18
+NDefines.NNavy.NAVAL_RANGE_TO_INGAME_DISTANCE = 0.18 -- Scale the ship stats "naval_range" to the ingame distance
 
 NDefines.NCountry.MAJOR_MIN_FACTORIES = 50
 NDefines.NDiplomacy.BASE_SURRENDER_LEVEL = 0.85
-NDefines.NDiplomacy.VOLUNTEERS_PER_TARGET_PROVINCE = 0.0
-NDefines.NDiplomacy.VOLUNTEERS_PER_COUNTRY_ARMY = 0.01
+-- NDefines.NDiplomacy.VOLUNTEERS_PER_TARGET_PROVINCE = 0.0
+-- NDefines.NDiplomacy.VOLUNTEERS_PER_COUNTRY_ARMY = 0.01
 NDefines.NDiplomacy.VOLUNTEERS_RETURN_EQUIPMENT = 0.95
 NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
+
+--------------------------------------------------------------------------------------------------------------
+-- Military
+--------------------------------------------------------------------------------------------------------------
+
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0002 -- 0.0001
+NDefines.NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
+NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.60 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
