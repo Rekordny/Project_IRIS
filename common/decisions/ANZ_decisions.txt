@@ -24,9 +24,9 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 		fire_only_once = yes
 		complete_effect = {
-			add_power_balance_value = {
+			set_power_balance = {
 				id = ANZ_industrialization_against_manalisation
-				value = -0.35
+				set_value = 0
 			}
 			add_stability = 0.1
 			TAU = {
@@ -205,10 +205,15 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 	
 	#放缓工业化
 	ANZ_slow_the_industrial_trend = {
+		icon = GFX_decision_generic_wreckers
 		allowed = {
 			original_tag = ANZ
 		}
-		cost = 20
+		cost = 0
+		modifier = {
+			production_speed_buildings_factor = -0.1
+			stability_weekly = 0.01
+		}
 		remove_effect = {
 			random_list = {
 				50 = {
@@ -235,7 +240,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		complete_effect = {
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
-				value = -0.05
+				value = -0.06
 			}
 			
 		}
@@ -261,24 +266,69 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 			}
 		}
 	}
-	#关闭工厂
-	ANZ_remove_factory = {
+	#重点投资基础建设
+	ANZ_invest_industrial_infrastructure = {
+		icon = generic_fundraising
 		allowed = {
 			original_tag = ANZ
 		}
 		cost = 0
+		days_remove = 70
+		available = {
+			any_controlled_state = { infrastructure < 5 }
+		}
+		days_re_enable = 20
+		complete_effect = {
+			add_stability = -0.01
+			add_power_balance_value = {
+				id = ANZ_industrialization_against_manalisation
+				value = 0.07
+			}
+		}
 		remove_effect = {
 			random_controlled_state = {
+				limit = { infrastructure < 5 }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+				}
+			}
+			random_list = {
+				30 = { country_event = anz.5 }
+				70 = { }
+			}
+		}
+	}
+
+	#关闭工厂
+	ANZ_remove_factory = {
+		icon = generic_scorched_earth
+		allowed = {
+			original_tag = ANZ
+		}
+		cost = 0
+		available = {
+			any_controlled_state = {
+				industrial_complex > 0
+			}
+		}
+		remove_effect = {
+			random_controlled_state = {
+				limit = {
+					industrial_complex > 0
+				}
 				remove_building = {
 					type = industrial_complex
 					level = 1
 				}
 			}
 		}
-		days_remove = 100  
+		days_remove = 50  
 		days_re_enable = 20
 		complete_effect = {
-			add_political_power = 100
+			add_stability = 0.03
+			add_political_power = 150
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
 				value = -0.1
