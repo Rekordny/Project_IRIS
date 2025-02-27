@@ -756,6 +756,7 @@ STG_became_USR_puppet = {
         }
         set_country_flag = STG_disable_internal_ememy_decisions
         set_country_flag = STG_disable_parliament_issues_decisions
+        STG_clear_state_flag = yes
         set_country_flag = STG_disable_the_sword_of_Damocles_decisions
         set_country_flag = disallow_stg_leaders
         set_cosmetic_tag = STG_usr_subject_fascism
@@ -870,6 +871,7 @@ STG_establish_puppet_aglia_government = {
         set_country_flag = STG_disable_internal_ememy_decisions
         set_country_flag = STG_disable_parliament_issues_decisions
         set_country_flag = STG_disable_the_sword_of_Damocles_decisions
+        STG_clear_state_flag = yes
         if = {
             limit = {
                 NOT = {
@@ -1563,6 +1565,11 @@ STG_rev_national_security_weekly_change_effect = {
             }
             add_to_variable = {STG_national_security = STG_rev_national_security_weekly_change}
             add_to_variable = {STG_national_security = STG_rev_national_security_picket}
+            add_to_variable = {STG_national_security = modifier@STG_rev_national_security_weekly_change_modifier}
+            set_variable = {STG_rev_national_security_weekly_change_display = 0}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_weekly_change}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_picket}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = modifier@STG_rev_national_security_weekly_change_modifier}
             STG_rev_national_security_check = yes
             STG_action_point_recovery = yes
         }
@@ -1728,7 +1735,7 @@ STG_picket_level_worsen = {
                     }
                 }
                 add_to_variable = {STG_armed_picket_level = -1}
-                set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 180 value = 1}
+                set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 270 value = 1}
             }
             clamp_variable = {
                 var = STG_armed_picket_level
@@ -1745,6 +1752,8 @@ STG_rev_damage_security_very_big = {
         STG = {
             add_to_variable = {STG_national_security = -15}
             add_to_variable = {STG_rev_national_security_weekly_change = -0.5}
+            set_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_weekly_change}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_picket}
         }
     }
 }
@@ -1755,6 +1764,8 @@ STG_rev_damage_security_big = {
         STG = {
             add_to_variable = {STG_national_security = -5}
             add_to_variable = {STG_rev_national_security_weekly_change = -0.1}
+            set_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_weekly_change}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_picket}
         }
     }
 }
@@ -1783,6 +1794,8 @@ STG_rev_strengthen_security_big = {
         STG = {
             add_to_variable = {STG_national_security = 5}
             add_to_variable = {STG_rev_national_security_weekly_change = 0.1}
+            set_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_weekly_change}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_picket}
         }
     }
 }
@@ -1793,6 +1806,8 @@ STG_rev_strengthen_security_very_big = {
         STG = {
             add_to_variable = {STG_national_security = 15}
             add_to_variable = {STG_rev_national_security_weekly_change = 0.5}
+            set_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_weekly_change}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_picket}
         }
     }
 }
@@ -1820,15 +1835,35 @@ STG_calculate_rev_par_support = {
             max = STG_labor_seat
             min = 0
         }
-        clamp_variable = {
-            var = STG_left_supporter
-            max = STG_left_seat
-            min = 0
+        if = {
+            limit = {check_variable = {STG_left_in_gov = 1}}
+            clamp_variable = {
+                var = STG_left_supporter
+                max = STG_left_seat
+                min = 4
+            }
         }
-        clamp_variable = {
-            var = STG_sd_supporter
-            max = STG_sd_seat
-            min = 0
+        else = {
+            clamp_variable = {
+                var = STG_left_supporter
+                max = STG_left_seat
+                min = 0
+            }
+        }
+        if = {
+            limit = {check_variable = {STG_sd_in_gov = 1}}
+            clamp_variable = {
+                var = STG_sd_supporter
+                max = STG_sd_seat
+                min = 4
+            }
+        }
+        else = {
+            clamp_variable = {
+                var = STG_sd_supporter
+                max = STG_sd_seat
+                min = 0
+            }
         }
         clamp_variable = {
             var = STG_lsd_supporter
@@ -1948,6 +1983,682 @@ STG_rev_random_lose_a_supporter = {
                 }
             }
             STG_calculate_rev_par_support = yes
+        }
+    }
+}
+#红线好感度计算
+STG_rev_galgame_check = {
+    STG = {
+        clamp_variable = {
+            var = STG_left_opinion
+            max = 75
+            min = 0
+        }
+        clamp_variable = {
+            var = STG_sd_opinion
+            max = 75
+            min = 0
+        }
+        clamp_variable = {
+            var = STG_dem_opinion
+            max = 75
+            min = 0
+        }
+        if = {
+            limit = {
+                check_variable = {STG_left_opinion > 50}
+                NOT = {has_country_flag = STG_left_bonus_seat_cooldown}
+            }
+            add_to_variable = {STG_left_supporter = 1}
+            set_country_flag = {flag = STG_left_bonus_seat_cooldown days = 120 value = 1}
+        }
+        if = {
+            limit = {check_variable = {STG_left_opinion < 26}}
+            add_to_variable = {STG_left_supporter = -1}
+        }
+        if = {
+            limit = {
+                check_variable = {STG_sd_opinion > 50}
+                NOT = {has_country_flag = STG_sd_bonus_seat_cooldown}
+            }
+            add_to_variable = {STG_sd_supporter = 1}
+            set_country_flag = {flag = STG_sd_bonus_seat_cooldown days = 120 value = 1}
+        }
+        if = {
+            limit = {check_variable = {STG_sd_opinion < 26}}
+            add_to_variable = {STG_sd_supporter = -1}
+        }
+        if = {
+            limit = {
+                check_variable = {STG_dem_opinion > 50}
+                NOT = {has_country_flag = STG_dem_bonus_seat_cooldown}
+            }
+            add_to_variable = {STG_dem_supporter = 1}
+            set_country_flag = {flag = STG_dem_bonus_seat_cooldown days = 120 value = 1}
+        }
+        if = {
+            limit = {check_variable = {STG_dem_opinion < 26}}
+            add_to_variable = {STG_dem_supporter = -1}
+        }
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_2_support_labor = {
+    custom_effect_tooltip = STG_rev_lose_2_support_labor_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_labor_supporter = -2}}
+    }
+}
+STG_rev_lose_1_support_left = {
+    custom_effect_tooltip = STG_rev_lose_1_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= -1}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_2_support_left = {
+    custom_effect_tooltip = STG_rev_lose_2_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= -2}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_5_support_left = {
+    custom_effect_tooltip = STG_rev_lose_5_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= -5}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_1_support_left = {
+    custom_effect_tooltip = STG_rev_gain_1_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 1}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_2_support_left = {
+    custom_effect_tooltip = STG_rev_gain_2_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 2}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_3_support_left = {
+    custom_effect_tooltip = STG_rev_gain_3_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 3}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_4_support_left = {
+    custom_effect_tooltip = STG_rev_gain_4_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 4}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_5_support_left = {
+    custom_effect_tooltip = STG_rev_gain_5_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 5}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_6_support_left = {
+    custom_effect_tooltip = STG_rev_gain_6_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 6}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_8_support_left = {
+    custom_effect_tooltip = STG_rev_gain_8_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 8}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_10_support_left = {
+    custom_effect_tooltip = STG_rev_gain_10_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 10}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_12_support_left = {
+    custom_effect_tooltip = STG_rev_gain_12_support_left_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_supporter= 12}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+
+STG_rev_lose_1_support_sd = {
+    custom_effect_tooltip = STG_rev_lose_1_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= -1}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_2_support_sd = {
+    custom_effect_tooltip = STG_rev_lose_2_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= -2}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_5_support_sd = {
+    custom_effect_tooltip = STG_rev_lose_5_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= -5}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_1_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_1_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 1}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_2_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_2_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 2}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_3_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_3_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 3}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_4_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_4_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 4}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_5_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_5_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 5}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_6_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_6_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 6}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_8_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_8_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 8}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_10_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_10_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 10}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_12_support_sd = {
+    custom_effect_tooltip = STG_rev_gain_12_support_sd_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_supporter= 12}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+
+STG_rev_lose_1_support_dem = {
+    custom_effect_tooltip = STG_rev_lose_1_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= -1}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_2_support_dem = {
+    custom_effect_tooltip = STG_rev_lose_2_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= -2}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_lose_5_support_dem = {
+    custom_effect_tooltip = STG_rev_lose_5_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= -5}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_1_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_1_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 1}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_2_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_2_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 2}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_3_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_3_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 3}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_4_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_4_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 4}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_5_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_5_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 5}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_6_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_6_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 6}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_8_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_8_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 8}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_10_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_10_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 10}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+STG_rev_gain_12_support_dem = {
+    custom_effect_tooltip = STG_rev_gain_12_support_dem_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_supporter= 12}}
+        STG_calculate_rev_par_support = yes
+    }
+}
+
+STG_increase_left_opinion_2 = {
+    custom_effect_tooltip = STG_increase_left_opinion_2_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = 2}}
+    }
+}
+STG_increase_left_opinion_3 = {
+    custom_effect_tooltip = STG_increase_left_opinion_3_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = 3}}
+    }
+}
+STG_increase_left_opinion_5 = {
+    custom_effect_tooltip = STG_increase_left_opinion_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = 5}}
+    }
+}
+STG_increase_left_opinion_6 = {
+    custom_effect_tooltip = STG_decrease_left_opinion_6_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = 6}}
+    }
+}
+STG_decrease_left_opinion_2 = {
+    custom_effect_tooltip = STG_decrease_left_opinion_2_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = -2}}
+    }
+}
+STG_decrease_left_opinion_3 = {
+    custom_effect_tooltip = STG_decrease_left_opinion_3_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = -3}}
+    }
+}
+STG_decrease_left_opinion_5 = {
+    custom_effect_tooltip = STG_decrease_left_opinion_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = -5}}
+    }
+}
+STG_decrease_left_opinion_6 = {
+    custom_effect_tooltip = STG_decrease_left_opinion_6_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_left_opinion = -6}}
+    }
+}
+STG_increase_sd_opinion_2 = {
+    custom_effect_tooltip = STG_increase_sd_opinion_2_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = 2}}
+    }
+}
+STG_increase_sd_opinion_3 = {
+    custom_effect_tooltip = STG_increase_sd_opinion_3_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = 3}}
+    }
+}
+STG_increase_sd_opinion_5 = {
+    custom_effect_tooltip = STG_increase_sd_opinion_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = 5}}
+    }
+}
+STG_increase_sd_opinion_6 = {
+    custom_effect_tooltip = STG_decrease_sd_opinion_6_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = 6}}
+    }
+}
+STG_decrease_sd_opinion_2 = {
+    custom_effect_tooltip = STG_decrease_sd_opinion_2_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = -2}}
+    }
+}
+STG_decrease_sd_opinion_3 = {
+    custom_effect_tooltip = STG_decrease_sd_opinion_3_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = -3}}
+    }
+}
+STG_decrease_sd_opinion_5 = {
+    custom_effect_tooltip = STG_decrease_sd_opinion_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = -5}}
+    }
+}
+STG_decrease_sd_opinion_6 = {
+    custom_effect_tooltip = STG_decrease_sd_opinion_6_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_sd_opinion = -6}}
+    }
+}
+STG_increase_dem_opinion_2 = {
+    custom_effect_tooltip = STG_increase_dem_opinion_2_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = 2}}
+    }
+}
+STG_increase_dem_opinion_3 = {
+    custom_effect_tooltip = STG_increase_dem_opinion_3_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = 3}}
+    }
+}
+STG_increase_dem_opinion_5 = {
+    custom_effect_tooltip = STG_increase_dem_opinion_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = 5}}
+    }
+}
+STG_increase_dem_opinion_6 = {
+    custom_effect_tooltip = STG_decrease_dem_opinion_6_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = 6}}
+    }
+}
+STG_decrease_dem_opinion_2 = {
+    custom_effect_tooltip = STG_decrease_dem_opinion_2_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = -2}}
+    }
+}
+STG_decrease_dem_opinion_3 = {
+    custom_effect_tooltip = STG_decrease_dem_opinion_3_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = -3}}
+    }
+}
+STG_decrease_dem_opinion_5 = {
+    custom_effect_tooltip = STG_decrease_dem_opinion_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = -5}}
+    }
+}
+STG_decrease_dem_opinion_6 = {
+    custom_effect_tooltip = STG_decrease_dem_opinion_6_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_dem_opinion = -6}}
+    }
+}
+STG_add_evidence_5 = {
+    custom_effect_tooltip = STG_add_evidence_5_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_com_evidence = 10}}
+    }
+}
+STG_add_evidence_10 = {
+    custom_effect_tooltip = STG_add_evidence_10_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_com_evidence = 10}}
+    }
+}
+STG_add_evidence_30 = {
+    custom_effect_tooltip = STG_add_evidence_30_desc
+    hidden_effect = {
+        STG = {add_to_variable = {STG_com_evidence = 30}}
+    }
+}
+STG_clear_state_flag = {
+    STG = {
+        every_core_state = {
+            clr_state_flag = normal_seats_flag
+            clr_state_flag = new_england_special_seats_flag
+            clr_state_flag = einzbern_seats_flag
+        }
+    }
+}
+STG_shipbuilding_setup = {
+    custom_effect_tooltip = STG_unlock_shipbuilding
+    set_country_flag = STG_unlock_shipbuilding_flag
+    create_equipment_variant = {
+		name = "机动级"
+		type = ship_hull_light_2
+		parent_version = 0
+		modules = {
+			fixed_ship_battery_slot = ship_light_battery_2
+			fixed_ship_anti_air_slot = ship_anti_air_1
+			fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+			fixed_ship_radar_slot = ship_sonar_1
+			fixed_ship_engine_slot = light_ship_engine_2
+			fixed_ship_torpedo_slot = ship_torpedo_1
+			mid_1_custom_slot = ship_torpedo_1
+			rear_1_custom_slot = ship_depth_charge_1
+		}
+	}
+    if = {
+        limit = {
+            has_government = communism
+        }
+        create_equipment_variant = {
+            name = "五月起义级"
+            type = ship_hull_heavy_1
+            parent_version = 0
+            allow_without_tech = yes
+            modules = {
+                fixed_ship_battery_slot = ship_heavy_battery_2
+                fixed_ship_anti_air_slot = ship_anti_air_1
+                fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+                fixed_ship_radar_slot = empty
+                fixed_ship_engine_slot = heavy_ship_engine_2
+                fixed_ship_secondaries_slot = dp_ship_secondaries_2
+                fixed_ship_armor_slot = ship_armor_bc_2
+                front_1_custom_slot = ship_heavy_battery_1
+                mid_1_custom_slot = ship_anti_air_1
+                mid_2_custom_slot = ship_secondaries_1
+                rear_1_custom_slot = ship_heavy_battery_2
+            }
+        }
+        create_equipment_variant = {
+            name = "焰火级"
+            type = ship_hull_cruiser_2
+            allow_without_tech = yes
+            parent_version = 0
+            modules = {
+                fixed_ship_battery_slot = ship_light_medium_battery_2
+                fixed_ship_anti_air_slot = ship_anti_air_2
+                fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+                fixed_ship_radar_slot = empty
+                fixed_ship_engine_slot = cruiser_ship_engine_2
+                fixed_ship_armor_slot = ship_armor_cruiser_2
+                front_1_custom_slot = ship_anti_air_2
+                mid_1_custom_slot = ship_torpedo_1
+                mid_2_custom_slot = ship_secondaries_2
+                rear_1_custom_slot = ship_light_medium_battery_2
+            }
+        }
+    }
+    else = {
+        create_equipment_variant = {
+            name = "加里波莉级"
+            type = ship_hull_heavy_1
+            parent_version = 0
+            allow_without_tech = yes
+            modules = {
+                fixed_ship_battery_slot = ship_heavy_battery_2
+                fixed_ship_anti_air_slot = ship_anti_air_1
+                fixed_ship_fire_control_system_slot = ship_fire_control_system_1
+                fixed_ship_radar_slot = empty
+                fixed_ship_engine_slot = heavy_ship_engine_2
+                fixed_ship_secondaries_slot = dp_ship_secondaries_2
+                fixed_ship_armor_slot = ship_armor_bc_2
+                front_1_custom_slot = ship_heavy_battery_1
+                mid_1_custom_slot = ship_anti_air_1
+                mid_2_custom_slot = ship_secondaries_1
+                rear_1_custom_slot = ship_heavy_battery_2
+            }
+        }
+        create_equipment_variant = {
+            name = "剑鞘级"
+            type = ship_hull_cruiser_2
+            allow_without_tech = yes
+            parent_version = 0
+            modules = {
+                fixed_ship_battery_slot = ship_light_medium_battery_2
+                fixed_ship_anti_air_slot = ship_anti_air_2
+                fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+                fixed_ship_radar_slot = empty
+                fixed_ship_engine_slot = cruiser_ship_engine_2
+                fixed_ship_armor_slot = ship_armor_cruiser_2
+                front_1_custom_slot = ship_anti_air_2
+                mid_1_custom_slot = ship_torpedo_1
+                mid_2_custom_slot = ship_secondaries_2
+                rear_1_custom_slot = ship_light_medium_battery_2
+            }
+        }
+    }
+}
+STG_add_landing_plan_5 = {
+    custom_effect_tooltip = STG_add_landing_plan_5_desc
+    add_to_variable = {STG.STG_landing_plan = 5}
+}
+STG_add_landing_plan_10 = {
+    custom_effect_tooltip = STG_add_landing_plan_10_desc
+    add_to_variable = {STG.STG_landing_plan = 10}
+}
+STG_add_landing_plan_15 = {
+    custom_effect_tooltip = STG_add_landing_plan_15_desc
+    add_to_variable = {STG.STG_landing_plan = 15}
+}
+STG_ways_of_st_gloriana_bonus_setup = {
+    hidden_effect = {
+        STG = {
+            set_variable = {STG_ways_of_st_gloriana_army_attack_factor_t = 0.01}
+            set_variable = {STG_ways_of_st_gloriana_army_defence_factor_t = 0.01}
+            set_variable = {STG_ways_of_st_gloriana_breakthrough_factor_t = 0.02}
+            set_variable = {STG_ways_of_st_gloriana_army_org_factor_t = 0.02}
+            set_variable = {STG_ways_of_st_gloriana_army_attack_factor = STG_ways_of_st_gloriana_army_attack_factor_t}
+            set_variable = {STG_ways_of_st_gloriana_army_defence_factor = STG_ways_of_st_gloriana_army_defence_factor_t}
+            set_variable = {STG_ways_of_st_gloriana_breakthrough_factor = STG_ways_of_st_gloriana_breakthrough_factor_t}
+            set_variable = {STG_ways_of_st_gloriana_army_org_factor = STG_ways_of_st_gloriana_army_org_factor_t}
+        }
+    }
+}
+STG_ways_of_st_gloriana_bonus_update = {
+    hidden_effect = {
+        STG = {
+            set_variable = {STG_ways_of_st_gloriana_skill_counter = 0}
+            set_variable = {STG_ways_of_st_gloriana_armor_counter = 0}
+            set_variable = {STG_ways_of_st_gloriana_infantry_counter = 0}
+            every_unit_leader = {
+                if = {
+                    limit = {
+                        OR = {
+                            has_trait = STG_Reformists_Trait
+                            has_trait = STG_Academic_Trait
+                            has_trait = STG_Shimada_Trait
+                        }
+                    }
+                    if = {
+                        limit = {
+                            skill > 3
+                        }
+                        add_to_variable = {STG.STG_ways_of_st_gloriana_skill_counter = 1}
+                    }
+                    if = {
+                        limit = {
+                            has_trait = armor_officer
+                        }
+                        add_to_variable = {STG.STG_ways_of_st_gloriana_armor_counter = 1}
+                    }
+                    if = {
+                        limit = {
+                            has_trait = infantry_officer
+                        }
+                        add_to_variable = {STG.STG_ways_of_st_gloriana_infantry_counter = 1}
+                    }
+                }
+            }
+            set_variable = {STG_ways_of_st_gloriana_army_attack_factor = STG_ways_of_st_gloriana_army_attack_factor_t}
+            set_variable = {STG_ways_of_st_gloriana_army_defence_factor = STG_ways_of_st_gloriana_army_defence_factor_t}
+            set_variable = {STG_ways_of_st_gloriana_breakthrough_factor = STG_ways_of_st_gloriana_breakthrough_factor_t}
+            set_variable = {STG_ways_of_st_gloriana_army_org_factor = STG_ways_of_st_gloriana_army_org_factor_t}
+            multiply_variable = {STG_ways_of_st_gloriana_army_attack_factor = STG_ways_of_st_gloriana_skill_counter}
+            multiply_variable = {STG_ways_of_st_gloriana_army_defence_factor = STG_ways_of_st_gloriana_skill_counter}
+            multiply_variable = {STG_ways_of_st_gloriana_breakthrough_factor = STG_ways_of_st_gloriana_armor_counter}
+            multiply_variable = {STG_ways_of_st_gloriana_army_org_factor = STG_ways_of_st_gloriana_infantry_counter}
+            if = {
+                limit = {
+                    is_puppet = no
+                    is_in_faction = yes
+                    has_idea = USR_senshado_alliance_idea
+                }
+                set_variable = {STG_ways_of_st_gloriana_industrial_capacity_factory = 0.1}
+                set_variable = {STG_ways_of_st_gloriana_army_core_attack_factor = 0}
+                set_variable = {STG_ways_of_st_gloriana_army_core_defence_factor = 0}
+            }
+            else = {
+                set_variable = {STG_ways_of_st_gloriana_industrial_capacity_factory = 0}
+                set_variable = {STG_ways_of_st_gloriana_army_core_attack_factor = 0.1}
+                set_variable = {STG_ways_of_st_gloriana_army_core_defence_factor = 0.1}
+            }
         }
     }
 }

@@ -1,4 +1,8 @@
 scripted_gui = {
+    OCF_EASTER_EGG_window = {
+        window_name = "OCF_EASTER_EGG_window"
+        context_type = decision_category
+    }
     OCF_gridbox_seat_window = {
         window_name = "OCF_gridbox_seat_window"
         context_type = decision_category
@@ -73,7 +77,7 @@ scripted_gui = {
         }
     }
 
-    #议会变化
+    #议会变化 父窗口
     OCF_changes_in_parliamentary_history_bg_window = {
         window_name = "OCF_changes_in_parliamentary_history_bg_window"
         context_type = player_context
@@ -85,15 +89,18 @@ scripted_gui = {
             close_button_click = {
                 clr_country_flag = OCF_changes_in_parliamentary_history_flag
             }
+            OCF_major_bills_tab_click = {
+                set_variable = { OCF_all_records_tab_frame = 2 }
+                set_variable = { OCF_major_bills_tab_frame = 1 }
+                set_variable = { OCF_changes_in_parliamentary_history_variable = 1 }
+            }
+            OCF_all_records_tab_click = {
+                set_variable = { OCF_all_records_tab_frame = 1 }
+                set_variable = { OCF_major_bills_tab_frame = 2 }
+                set_variable = { OCF_changes_in_parliamentary_history_variable = 2 }
+            }
         }
         dynamic_lists = {
-            OCF_changes_in_parliamentary_history_list_change = {
-                array = global.OCF_changes_in_parliamentary_history_change_record_array
-                index = OCF_changes_in_parliamentary_history_change_record_array_i
-                entry_container = OCF_changes_in_parliamentary_history_list_assembly
-                value = OCF_changes_in_parliamentary_history_change_record_array_v
-            }
-
             OCF_historical_parliament_segmentation_1_gridboxtype = {
                 array = global.OCF_historical_parliament_segmentation_1
                 entry_container = OCF_historical_parliament_segmentation_1
@@ -144,8 +151,11 @@ scripted_gui = {
             }
         }
         properties = {
-            OCF_changes_in_parliamentary_history_list_assembly_iconType = {
-                image = "[OCF_changes_image]"
+            OCF_major_bills_tab = {
+                frame = OCF_major_bills_tab_frame
+            }
+            OCF_all_records_tab = {
+                frame = OCF_all_records_tab_frame
             }
             line_segment = {
                 frame = segment_value
@@ -192,6 +202,52 @@ scripted_gui = {
         }
     }
 
+    #议会变化 重大
+    OCF_record_bills_passed_parliament = {
+        window_name = "OCF_record_bills_passed_parliament"
+        context_type = player_context
+        parent_window_name = OCF_detail_record_anchor_point
+        visible = {
+            check_variable = { OCF_changes_in_parliamentary_history_variable = 1 }
+        }
+        dynamic_lists = {
+            OCF_record_bills_passed_parliament_gridboxtype = {
+                array = global.OCF_record_bills_passed_parliament_array
+                index = i
+                entry_container = OCF_record_bills_passed_parliament_list
+                value = v
+            }
+        }
+        properties = {
+            OCF_record_bills_passed_parliament_list_iconType = {
+                image = "[GetOcfRecordBillsPassedParliamentListIconTypeImage]"
+            }
+        }
+    }
+
+    #议会变化 全部
+    OCF_changes_in_parliamentary_history_list_container = {
+        window_name = "OCF_changes_in_parliamentary_history_list_container"
+        context_type = player_context
+        parent_window_name = OCF_detail_record_anchor_point
+        visible = {
+            check_variable = { OCF_changes_in_parliamentary_history_variable = 2 }
+        }
+        dynamic_lists = {
+            OCF_changes_in_parliamentary_history_list_change = {
+                array = global.OCF_changes_in_parliamentary_history_change_record_array
+                index = OCF_changes_in_parliamentary_history_change_record_array_i
+                entry_container = OCF_changes_in_parliamentary_history_list_assembly
+                value = OCF_changes_in_parliamentary_history_change_record_array_v
+            }
+        }
+        properties = {
+            OCF_changes_in_parliamentary_history_list_assembly_iconType = {
+                image = "[OCF_changes_image]"
+            }
+        }
+    }
+
     #政府详情
     OCF_parliament_detailed_interface = {
         window_name = "OCF_parliament_detailed_interface"
@@ -202,6 +258,9 @@ scripted_gui = {
         effects = {
             OCF_Party_icon_0_click = {
                 set_country_flag = OCF_changes_in_parliamentary_history_flag
+                set_variable = { OCF_changes_in_parliamentary_history_variable = 1 }
+                set_variable = { OCF_all_records_tab_frame = 2 }
+                set_variable = { OCF_major_bills_tab_frame = 1 }
             }
 
             IRIS_Obtain_items_close_key_click = {
@@ -663,11 +722,11 @@ scripted_gui = {
             }
         }
     }
-    OCF_Party = {
-        window_name = OCF_Party_parent
-        context_type = player_context
-        parent_window_name = OCF_parliament_detailed
-    }
+    # OCF_Party = {
+    #     window_name = OCF_Party_parent
+    #     context_type = player_context
+    #     parent_window_name = OCF_parliament_detailed
+    # }
 
     OCF_Party_SubGUI = {
         window_name = OCF_Party_SubGUI
@@ -689,205 +748,75 @@ scripted_gui = {
             OCF_Party_1_window_TT_5_click = {
                 if = {
                     limit = {
-                        check_variable = {
-                            v = 1
-                        }
+                        root = { OCF_has_bill_20 = yes }
                     }
-                    OCF_supporting_political_parties_1 = yes
+                    add_stability = 0.01
+                    add_to_variable = { OCF_bill = -20 }
+                    custom_effect_tooltip = OCF_spending_funds_change
+                    custom_effect_tooltip = OCF_spending_funds_20_del
+                    meta_effect = {
+                        text = {
+                            OCF_supporting_political_parties_[temp_v] = yes
+                        }
+                        temp_v = "[?v]"
+                    }
                 }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 2
+                else = {
+                    effect_tooltip = {
+                        add_stability = 0.01
+                        add_to_variable = { OCF_bill = -20 }
+                        custom_effect_tooltip = OCF_spending_funds_change
+                        custom_effect_tooltip = OCF_spending_funds_20_del
+                        meta_effect = {
+                            text = {
+                                OCF_supporting_political_parties_[temp_v] = yes
+                            }
+                            temp_v = "[?v]"
                         }
                     }
-                    OCF_supporting_political_parties_2 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 3
-                        }
-                    }
-                    OCF_supporting_political_parties_3 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 4
-                        }
-                    }
-                    OCF_supporting_political_parties_4 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 5
-                        }
-                    }
-                    OCF_supporting_political_parties_5 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 6
-                        }
-                    }
-                    OCF_supporting_political_parties_6 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 7
-                        }
-                    }
-                    OCF_supporting_political_parties_7 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 8
-                        }
-                    }
-                    OCF_supporting_political_parties_8 = yes
                 }
             }
 
             #打压
             OCF_Party_1_window_TT_6_click = {
-                #OCF_suppress_political_parties_1 = yes
                 if = {
                     limit = {
-                        check_variable = {
-                            v = 1
-                        }
+                        root = { OCF_has_bill_10 = yes }
                     }
-                    OCF_suppress_political_parties_1 = yes
+                    add_stability = 0.01
+                    add_to_variable = { OCF_bill = -10 }
+                    custom_effect_tooltip = OCF_spending_funds_change
+                    custom_effect_tooltip = OCF_spending_funds_10_del
+                    meta_effect = {
+                        text = {
+                            OCF_suppress_political_parties_[temp_v] = yes
+                        }
+                        temp_v = "[?v]"
+                    }
                 }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 2
+                else = {
+                    effect_tooltip = {
+                        add_stability = -0.05
+                        add_to_variable = { OCF_bill = -10 }
+                        custom_effect_tooltip = OCF_spending_funds_change
+                        custom_effect_tooltip = OCF_spending_funds_10_del
+                        meta_effect = {
+                            text = {
+                                OCF_suppress_political_parties_[temp_v] = yes
+                            }
+                            temp_v = "[?v]"
                         }
                     }
-                    OCF_suppress_political_parties_2 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 3
-                        }
-                    }
-                    OCF_suppress_political_parties_3 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 4
-                        }
-                    }
-                    OCF_suppress_political_parties_4 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 5
-                        }
-                    }
-                    OCF_suppress_political_parties_5 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 6
-                        }
-                    }
-                    OCF_suppress_political_parties_6 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 7
-                        }
-                    }
-                    OCF_suppress_political_parties_7 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 8
-                        }
-                    }
-                    OCF_suppress_political_parties_8 = yes
                 }
             }
 
             button_1_click = {
                 set_variable = { OCF_party_opened_tab = 2 }
-                #OCF_show_all_party_leaders_1 = yes
-                if = {
-                    limit = {
-                        check_variable = {
-                            v = 1
-                        }
+                meta_effect = {
+                    text = {
+                        OCF_show_all_party_leaders_[temp_v] = yes
                     }
-                    OCF_show_all_party_leaders_1 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 2
-                        }
-                    }
-                    OCF_show_all_party_leaders_2 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 3
-                        }
-                    }
-                    OCF_show_all_party_leaders_3 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 4
-                        }
-                    }
-                    OCF_show_all_party_leaders_4 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 5
-                        }
-                    }
-                    OCF_show_all_party_leaders_5 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 6
-                        }
-                    }
-                    OCF_show_all_party_leaders_6 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 7
-                        }
-                    }
-                    OCF_show_all_party_leaders_7 = yes
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 8
-                        }
-                    }
-                    OCF_show_all_party_leaders_8 = yes
+                    temp_v = "[?v]"
                 }
             }
 
@@ -903,262 +832,42 @@ scripted_gui = {
             }
         }
         triggers = {
+            #扶持
+            OCF_Party_1_window_TT_5_enabled = {
+                root = { OCF_has_bill_20 = yes }
+            }
+            #打压
+            OCF_Party_1_window_TT_6_enabled = {
+                root = { OCF_has_bill_10 = yes }
+            }
             #按钮
             OCF_Party_1_window_TT_5_visible = {
-                if = {
-                    limit = {
-                        check_variable = {
-                            v = 1
-                        }
+                meta_trigger = {
+                    text = {
+                        NOT = { has_country_flag = OCF_control_government_flag_[V] }
                     }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_1
-                    }
+                    V = "[?v]"
                 }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 2
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_2
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 3
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_3
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 4
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_4
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 5
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_5
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 6
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_6
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 7
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_7
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 8
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_8
-                    }
-                }
-
             }
             OCF_Party_1_window_TT_6_visible = {
-                if = {
-                    limit = {
-                        check_variable = {
-                            v = 1
-                        }
+                meta_trigger = {
+                    text = {
+                        NOT = { has_country_flag = OCF_control_government_flag_[V] }
                     }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_1
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 2
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_2
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 3
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_3
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 4
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_4
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 5
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_5
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 6
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_6
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 7
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_7
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 8
-                        }
-                    }
-                    NOT = {
-                        has_country_flag = OCF_control_government_flag_8
-                    }
+                    V = "[?v]"
                 }
             }
 
             #光芒
             idea_alert_glow_1_visible = {
-                if = {
-                    limit = {
-                        check_variable = {
-                            v = 1
+                meta_trigger = {
+                    text = {
+                        OR = {
+                            has_country_flag = OCF_control_government_flag_[V]
+                            has_country_flag = OCF_control_government_flag_[V]_yes
                         }
                     }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_1
-                        has_country_flag = OCF_control_government_flag_1_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 2
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_2
-                        has_country_flag = OCF_control_government_flag_2_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 3
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_3
-                        has_country_flag = OCF_control_government_flag_3_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 4
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_4
-                        has_country_flag = OCF_control_government_flag_4_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 5
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_5
-                        has_country_flag = OCF_control_government_flag_5_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 6
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_6
-                        has_country_flag = OCF_control_government_flag_6_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 7
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_7
-                        has_country_flag = OCF_control_government_flag_7_yes
-                    }
-                }
-                else_if = {
-                    limit = {
-                        check_variable = {
-                            v = 8
-                        }
-                    }
-                    OR = {
-                        has_country_flag = OCF_control_government_flag_8
-                        has_country_flag = OCF_control_government_flag_8_yes
-                    }
+                    V = "[?v]"
                 }
             }
         }
@@ -1194,12 +903,9 @@ scripted_gui = {
             }
         }
         triggers = {
+            #是可替换党魁
             OCF_Party_SubGUI_2_lists_container_buttonType_visible = {
-                OR = {
-                    check_variable = { OCF_Party_SubGUI_2_lists_v = token:OCF_Izumi_Sojiro }
-                    check_variable = { OCF_Party_SubGUI_2_lists_v = token:OCF_Hiiragi_Tsukasa }
-                    check_variable = { OCF_Party_SubGUI_2_lists_v = token:OCF_Kuroi_Nanako }
-                }
+                OCF_it_is_a_replaceable_party_leader = yes
             }
         }
     }

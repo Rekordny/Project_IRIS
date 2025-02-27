@@ -49,6 +49,25 @@ on_actions = {
         }
     }
     on_weekly_NAC = {
+		effect = {
+			NAC = {
+				if = {
+					limit = {
+                        has_completed_focus = NAC_prewar_12
+						NOT = {has_global_flag = End_Big_Game_flag}
+						NOT = {has_country_flag = NAC_propaganda_in_progress}
+					}
+					set_temp_variable = { alert_id = token:alert_Rossiya_avaiable_propaganda }
+					add_IRIS_alert_unless_exists = yes
+				}
+				else = {
+					set_temp_variable = { alert_id = token:alert_Rossiya_avaiable_propaganda }
+					del_IRIS_alert = yes
+				}
+			}
+		}
+	}
+    on_weekly_NAC = {
         effect = {
             if = {
                 limit = {
@@ -60,31 +79,75 @@ on_actions = {
                 NAC_check_civ_food_cost = yes
                 NAC_check_food_balance = yes
             }
-            every_country = {
+            if = {
                 limit = {
-                    NOT = {
-                        tag = NAC
-                    }
-                    NOT = {
-                        tag = WRQ
-                    }
-                    NOT = {
-                        tag = WST
-                    }
-                    NOT = {
-                        has_government = NAC
-                    }
-                    NOT = {
-                        has_country_flag = recoginized_NAC
+                    NAC = {
+                        NOT = {has_completed_focus = NAC_dip_3}
                     }
                 }
-                send_embargo = NAC
+                every_country = {
+                    limit = {
+                        NOT = {
+                            tag = NAC
+                        }
+                        NOT = {
+                            tag = WRQ
+                        }
+                        NOT = {
+                            tag = WST
+                        }
+                        NOT = {
+                            has_government = NAC
+                        }
+                        NOT = {
+                            has_country_flag = recoginized_NAC
+                        }
+                    }
+                    send_embargo = NAC
+                }
             }
             NAC = {
                 NAC_update_dynamic_modifier = yes
             }
+            if = {
+                limit = {
+                    is_faction_leader = yes
+                }
+                every_country = {
+                    limit = {
+                        is_in_faction_with = NAC
+                        NOT = {
+                            tag = NAC
+                        }
+                        NOT = {
+                            is_in_array = {
+                                array = NAC.faction_member
+                                value = THIS
+                            }
+                        }
+                    }
+                    add_to_array = {
+                        array = NAC.faction_member
+                        value = THIS
+                    }
+                }
+                every_country = {
+                    limit = {
+                        NOT = {
+                            is_in_faction_with = NAC
+                        }
+                        is_in_array = {
+                            array = NAC.faction_member
+                            value = THIS
+                        }
+                    }
+                    remove_from_array = {
+                        array = NAC.faction_member
+                        value = THIS
+                    }
+                }
+            }
         }
-
     }
     on_monthly_NAC = {
         effect = {
@@ -103,11 +166,143 @@ on_actions = {
             if = {
                 limit = {
                     FROM = {tag = NAC}
-                    ROOT = {tag = WPU}
+                    ROOT = {
+                        OR = {
+                            tag = SVI
+                            tag = WPU
+                        }
+                    }
                 }
                 FROM = {
                     annex_country = {
                         target = ROOT
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    FROM = {
+                        OR = {
+                            tag = NAC
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            tag = KAM
+                            tag = MZL
+                            tag = IKR
+                        }
+                    }
+                }
+                NAC = {
+                    annex_country = {
+                        target = ROOT
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    NSN = {
+                        is_in_faction_with = NAC
+                    }
+                    FROM = {
+                        OR = {
+                            tag = NAC
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    ROOT = {
+                        tag = SSN
+                    }
+                }
+                NSN = {
+                    annex_country = {
+                        target = ROOT
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = SSN
+                    }
+                    add_core_of = NSN
+                }
+            }
+            if = {
+                limit = {
+                    OR = {
+                        KAM = {
+                            is_in_faction_with = NAC
+                        }
+                        IKR = {
+                            is_in_faction_with = NAC
+                        }
+                        MZL = {
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    FROM = {
+                        OR = {
+                            tag = NAC
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    ROOT = {
+                        tag = RUM
+                    }
+                }
+                if = {
+                    limit = {
+                        MZL = {
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    MZL = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = ROOT
+                        }
+                        add_core_of = MZL
+                    }
+                }
+                else_if = {
+                    limit = {
+                        KAM = {
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    KAM = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = ROOT
+                        }
+                        add_core_of = KAM
+                    }
+                }
+                else_if = {
+                    limit = {
+                        IKR = {
+                            is_in_faction_with = NAC
+                        }
+                    }
+                    IKR = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = ROOT
+                        }
+                        add_core_of = IKR
                     }
                 }
             }

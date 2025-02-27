@@ -51,30 +51,30 @@ OCF_war_OCE_prophase = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-		#认为软弱
-		type = consider_weak
-		id = OCE
-		value = 20
-	}
+        #认为软弱
+        type = consider_weak
+        id = OCE
+        value = 20
+    }
     ai_strategy = {
-		#更倾向占领南部和首都
-		type = force_concentration_target_weight
-		state = 115
-		state = 841
-		state = 842
-		state = 843
-		state = 844
-		state = 108
+        #更倾向占领南部和首都
+        type = force_concentration_target_weight
+        state = 115
+        state = 841
+        state = 842
+        state = 843
+        state = 844
+        state = 108
 
-		value = 20
-	}
+        value = 20
+    }
 }
 
 #塔拉已经汗流浃背了
 OCF_war_INP_prophase = {
     allowed = {
         original_tag = OCF
-        
+
     }
     enable = {
         country_exists = INP
@@ -235,7 +235,7 @@ OCF_Weapon_guaranteed_output = {
     }
 }
 
-#不要守家，多发动登陆
+#不要守家
 OCF_Dont_guard_your_home = {
     allowed = {
         original_tag = OCF
@@ -246,44 +246,82 @@ OCF_Dont_guard_your_home = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
+        type = garrison
+        value = -200 #卫戍部队
+    }
+}
+
+#帮助盟友
+OCF_Assist_allies = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        has_war = yes
+        OR = {
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        enemies_naval_strength_ratio < 0.75
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = spare_unit_factor
+        value = 200
+    }
+    ai_strategy = {
+        type = front_unit_request
+        country_trigger = {
+            OR = {
+                original_tag = USR
+                is_ally_with = USR
+            }
+            has_war_with = OCF
+        }
+        value = 200
+    }
+}
+
+#多发动登陆
+OCF_launch_multiple_login_attempts = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        OR = {
+            has_war_with = CTC
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        enemies_naval_strength_ratio < 0.9
+        check_variable = { num_divisions > 96 }
+        date > 3097.1.1
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
         type = invasion_unit_request
         state = 207
-        value = 300
+        value = 10
     }
     ai_strategy = {
         type = invasion_unit_request
         state = 227
-        value = 300
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state = 171
-        value = -3000
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state = 193
-        value = -3000
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state = 143
-        value = -3000
+        value = 10
     }
     ai_strategy = {
         type = invasion_unit_request
         state = 223
-        value = 300
+        value = 10
     }
     ai_strategy = {
         type = invasion_unit_request
         state = 226
-        value = 300
+        value = 10
     }
     ai_strategy = {
         type = invade
         id = ANZ
-        value = 100
+        value = 30
     }
     ai_strategy = {
         type = front_control
@@ -297,13 +335,25 @@ OCF_Dont_guard_your_home = {
         execution_type = rush_weak
         execute_order = yes
     }
+}
+
+#守家
+OCF_guard_your_home = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        has_war = yes
+        check_variable = { num_divisions < 24 }
+    }
+    abort_when_not_enabled = yes
     ai_strategy = {
-        type = garrison
-        value = -200 #卫戍部队
+        type = naval_invasion_focus
+        value = -300
     }
     ai_strategy = {
-        type = spare_unit_factor
-        value = 50
+        type = garrison
+        value = 30
     }
 }
 
@@ -316,15 +366,15 @@ OCF_AI_armor = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-		type = build_army
-		id = armor
-		value = 100
-	}
+        type = build_army
+        id = armor
+        value = 100
+    }
     ai_strategy = {
-		type = build_army
-		id = infantry
-		value = -100
-	}
+        type = build_army
+        id = infantry
+        value = -100
+    }
     ai_strategy = {
         type = equipment_production_min_factories
         id = medium_armor
@@ -344,8 +394,8 @@ OCF_AI_MANA = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-		type = build_army
-		id = infantry
-		value = 45
-	}
+        type = build_army
+        id = infantry
+        value = 45
+    }
 }

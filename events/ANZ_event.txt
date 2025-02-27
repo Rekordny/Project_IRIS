@@ -3,6 +3,7 @@
 #####################################################
 add_namespace = anz
 add_namespace = anz_news
+add_namespace = anz_test
 
 #着眼南方问题
 country_event = {
@@ -71,7 +72,7 @@ country_event = {
 	id = anz.2
 	title = anz.2.t
 	desc = anz.2.desc
-	picture = GFX_ANZ_CE2
+	picture = GFX_ANZ_CE1
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -126,7 +127,7 @@ country_event = {
 	id = anz.4
 	title = anz.4.t
 	desc = anz.4.desc
-	picture = GFX_ANZ_CE4
+	picture = GFX_ANZ_CE3
 	is_triggered_only = yes
 	trigger = {
 		has_power_balance = {
@@ -247,13 +248,13 @@ country_event = {
 	id = anz.5
 	title = anz.5.t
 	desc = anz.5.desc
-	picture = GFX_ANZ_CE5
+	picture = GFX_ANZ_CE3
 	#is_triggered_only = yes
 	#fire_only_once = yes
 	mean_time_to_happen = {
 		days = 240
 		modifier = {
-			has_stability < 0.25
+			has_stability < 0.3
 			add = -80
 		}
 		modifier = {
@@ -261,7 +262,7 @@ country_event = {
 			add = -35
 		}
 		modifier = {
-			has_stability < 0.05
+			has_stability < 0
 			add = -10
 		}
 	}
@@ -305,7 +306,6 @@ country_event = {
 	option = {
 		name = anz.6.a
 		FROM = { country_event = anz.7 }
-		add_political_power = -30
 		add_command_power = -20
 		if = {
 			limit = {
@@ -353,7 +353,7 @@ country_event = {
 		text = anz.7.desc2
 	}
 	desc = anz.7.desc
-	picture = GFX_ANZ_CE7
+	picture = GFX_USR_CE7
 	is_triggered_only = yes
 	#fire_only_once = yes
 	
@@ -403,7 +403,7 @@ country_event = {
 	id = anz.8
 	title = anz.8.t
 	desc = anz.8.desc
-	picture = GFX_ANZ_CE8
+	picture = GFX_ANZ_CE1
 	is_triggered_only = yes
 	#fire_only_once = yes
 	
@@ -415,23 +415,69 @@ country_event = {
 		}
 	}
 }
+
 #逐渐浮现的黑帮势力
 country_event = {
 	id = anz.9
 	title = anz.9.t
 	desc = anz.9.desc
 	picture = GFX_ANZ_CE9
-	is_triggered_only = yes
-	fire_only_once = yes
+
+	trigger = {
+		tag = ANZ
+		NOT = { has_country_flag = anz_9_fired }
+		has_country_flag = ANZ_CIVIL_ENDED
+	}
+	
+	immediate = {
+		set_country_flag = anz_9_fired
+	}
+
+	mean_time_to_happen = {
+		days = 100
+	}
 	
 	option = {
 		name = anz.9.a
-		add_ideas = ANZ_maffia_issue
+		random_core_state = {
+			limit = {
+				is_controlled_by = ROOT
+			}
+			prioritize = { 237 220 227 239 251 } 
+			add_dynamic_modifier = {
+				modifier = ANZ_mafia_problem_state_modifier
+			}
+			add_to_array = {
+				ANZ.ANZ_mafia_states_num = THIS
+			}
+			hidden_effect = {
+				random_neighbor_state = {
+					limit = {
+						is_core_of = ANZ
+						is_controlled_by = ANZ
+						NOT = {
+							has_dynamic_modifier = {
+								modifier = ANZ_mafia_problem_state_modifier
+							}
+						}
+					}
+					set_state_flag = ANZ_mafia_target_state
+				}
+			}
+		}
+		set_variable = {
+			ANZ_mafia_spreading_mission_timeout = 80
+		}
+
+		set_country_flag = ANZ_mafia_setup
+		mark_focus_tree_layout_dirty = yes
+
 		ai_chance = {
 			base = 10
 		}
 	}
 }
+
 #安齐奥走出内战
 country_event = {
 	id = anz.10
@@ -461,34 +507,30 @@ country_event = {
 		}
 	}
 }
-#FROM安齐奥要求合并的最后通牒
+#狼的祭奠
 country_event = {
 	id = anz.11
 	title = anz.11.t
 	desc = anz.11.desc
 	picture = GFX_ANZ_CE11
-	is_triggered_only = yes
+	fire_only_once = yes
+	trigger = {
+		original_tag = ANZ
+		date > 3090.3.3
+	}
+	mean_time_to_happen = {
+		days = 1
+	}
 	
 	option = {
 		name = anz.11.a
-		hidden_effect = {
-			ANZ = { country_event = { id = anz.12 } }
-		}
+		add_political_power = 25
 		ai_chance = {
 			base = 10
 		}
 	}
-	option = {
-		name = anz.11.a
-		hidden_effect = {
-			ANZ = { country_event = { id = anz.13 } }
-		}
-		ai_chance = {
-			base = 5
-		}
-	}
 }
-#FROM同意合并
+#魂断一倾
 country_event = {
 	id = anz.12
 	title = anz.12.t
@@ -498,56 +540,67 @@ country_event = {
 	
 	option = {
 		name = anz.12.a
-		annex_country = {
-			target = FROM
-		}
-		hidden_effect = {
-			
-		}
+		add_stability = -0.05
 		ai_chance = {
 			base = 10
 		}
+		hidden_effect = {
+			news_event = { id = anz_news.5 days = 1 }
+			country_event = { id = anz.57 days = 30 }
+		}
 	}
 }
-#FROM拒绝合并
+#教会的慈善活动
 country_event = {
 	id = anz.13
 	title = anz.13.t
 	desc = anz.13.desc
-	picture = GFX_ANZ_CE13
+	picture = GFX_ANZ_CE22
 	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			country_event = { id = anz.12 days = 25 }
+		}
+	}
 	
 	option = {
 		name = anz.13.a
-		create_wargoal = {
-			target = FROM
-			type = annex_everything
+		add_stability = 0.05
+		add_power_balance_value = {
+			id = ANZ_industrialization_against_manalisation
+			value = -0.1
 		}
-		hidden_effect = {
-			
+		add_political_power = -65
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.05
 		}
 		ai_chance = {
-			base = 10
+			base = 0
+		}
+	}
+
+	option = {
+		name = anz.13.b
+		add_popularity = {
+			ideology = democratic
+			popularity = -0.05
+		}
+		ai_chance = {
+			base = 1
 		}
 	}
 }
 
-#密谋的清晨：开启拉拢军官决议
+#喧闹的清晨：开启拉拢军官决议
 country_event = {
 	id = anz.14
 	title = anz.14.t
 	picture = GFX_ANZ_CE14
 	is_triggered_only = yes
 	fire_only_once = yes
-	desc = {
-		trigger = {
-			has_country_flag = ANZ_ANZIO
-		}
-		text = anz.14.desc
-	}
-	desc = {
-		text = anz.14.desc2
-	}
+	desc = anz.14.desc
 	
 	option = {
 		name = anz.14.a
@@ -559,7 +612,7 @@ country_event = {
 			activate_mission_tooltip = ANZ_senshado_is_securing_officers
 		}
 		hidden_effect = {
-			
+			country_event = { id = anz.28 days = 100 random_days = 30 }
 		}
 		ai_chance = {
 			base = 10
@@ -597,7 +650,7 @@ country_event = {
 country_event = {
 	id = anz.16
 	title = anz.16.t
-	picture = GFX_ANZ_CE16
+	picture = GFX_ANZ_CE6
 	is_triggered_only = yes
 	fire_only_once = yes
 	desc = anz.16.desc
@@ -628,7 +681,7 @@ country_event = {
 	id = anz.17
 	title = anz.17.t
 	desc = anz.17.desc
-	picture = GFX_ANZ_CE17
+	picture = GFX_USR_CE7
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -644,7 +697,7 @@ country_event = {
 	id = anz.18
 	title = anz.18.t
 	desc = anz.18.desc
-	picture = GFX_ANZ_CE18
+	picture = GFX_USR_CE1
 	is_triggered_only = yes
 	fire_only_once = yes
 	option = {
@@ -655,6 +708,2089 @@ country_event = {
 		}
 	}
 }
+
+#进军罗曼
+country_event = {
+	id = anz.19
+	title = anz.19.t
+	desc = anz.19.desc
+	picture = GFX_ANZ_CE3
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = { #我们需要和军阀联手-军阀的援助
+		name = anz.19.a
+		ANZ_Panettone = {
+			add_trait = {
+				trait = ANZ_fazione_di_mana
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_trait = ANZ_scuola_industriale
+					}
+					remove_trait = {
+						trait = ANZ_scuola_industriale
+					}
+				}
+			}
+		}
+		add_ideas = ANZ_pantaloni_rossi
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	option = { #教会不信任这些忘恩负义者-军阀的背叛
+		name = anz.19.b
+		ANZ_Panettone = {
+			add_trait = {
+				trait = ANZ_scuola_industriale
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						has_trait = ANZ_fazione_di_mana
+					}
+					remove_trait = {
+						trait = ANZ_fazione_di_mana
+					}
+				}
+			}
+		}
+		add_political_power = 200
+		set_country_flag = ANZ_betrayal_of_warlords
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#释放卢西亚娜
+country_event = {
+	id = anz.20
+	title = anz.20.t
+	desc = anz.20.desc
+	picture = GFX_ANZ_CE20
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.20.a
+		effect_tooltip = {
+			ANZ_Luciana = {
+				add_field_marshal_role = {
+					traits={ ANZ_fazione_di_mana infantry_officer }
+					skill=3
+					attack_skill=2
+					defense_skill=2
+					planning_skill=2
+					logistics_skill=3
+				}
+				add_advisor_role = {
+					advisor = {
+						slot = theorist
+						idea_token = ANZ_Luciana
+						traits = { superior_firepower_expert }
+					}
+				}
+			}
+		}
+		hidden_effect = {
+			ANZ_Luciana = {
+				set_character_flag = ANZ_Luciana_released
+				set_portraits = {
+					army={
+						small="gfx/interface/ideas/ANZ/Luciana.dds"
+					}
+					civilian={
+						small="gfx/interface/ideas/ANZ/Luciana.dds"
+					}
+				}
+			}
+		}	
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#大圣座的呼唤
+country_event = {
+	id = anz.21
+	title = anz.21.t
+	desc = anz.21.desc
+	picture = GFX_ANZ_CE21
+	is_triggered_only = yes
+	option = {
+		name = anz.21.a
+		if = {
+			limit = {
+				is_ai = no
+			}
+			add_political_power = -100
+		}
+		effect_tooltip = {
+			add_opinion_modifier = {
+				target = FROM
+				modifier = ANZ_connection_of_the_holy_see
+			}
+			FROM = {
+				add_opinion_modifier = {
+					target = ROOT
+					modifier = ANZ_connection_of_the_holy_see
+				}
+			}
+		}
+		FROM = {
+			add_to_variable = {
+				var = anz_num_pact_with_mana_secular_state
+    			value = 1
+			}
+		}
+		#add_to_array = {
+		#	array = FROM.anz_pact_with_mana_secular_state_detail
+		#	value = ROOT.id
+		#}
+		set_country_flag = ANZ_pact_with_mana_secular_state_agreed
+		
+		ai_chance = {
+			base = 1
+
+			modifier = {
+				factor = 0
+				
+				is_major = no
+				if = {
+					limit = {
+						is_in_faction = yes
+					}
+					faction_leader = {
+						NOT = {
+							has_idea = mana_priority
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						is_puppet = yes
+					}
+					overlord = {
+						NOT = {
+							has_idea = mana_priority
+						}
+					}
+				}
+				else = {
+					is_in_faction = no
+				}
+			}
+		}
+	}
+
+	option = {
+		name = anz.21.b
+		
+		ai_chance = {
+			base = 1
+
+			modifier = {
+				factor = 0
+
+				OR = {
+					is_major = yes
+					if = {
+						limit = {
+							is_in_faction = yes
+						}
+						faction_leader = {
+							has_idea = mana_priority
+						}
+					}
+					else_if = {
+						limit = {
+							is_puppet = yes
+						}
+						overlord = {
+							has_idea = mana_priority
+						}
+					}
+					else = {
+						always = no
+					}
+				}
+			}
+		}
+	}
+}
+
+#大圣座的呼唤-test
+country_event = {
+	id = anz_test.21
+	title = anz.21.t
+	desc = anz.21.desc
+	picture = GFX_ANZ_CE21
+	is_triggered_only = yes
+	option = {
+		name = anz.21.a
+		every_country = {
+			limit = {
+				is_ai = no
+			}
+			country_event = anz.21
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
+}
+
+#与玛娜世俗国家的约定-正
+country_event = {
+	id = anz.22
+	title = anz.22.t
+	desc = anz.22.desc
+	picture = GFX_ANZ_CE22
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.22.a
+		custom_effect_tooltip = anz.22.a.tt_1
+		every_country = {
+			limit = {
+				has_country_flag = ANZ_pact_with_mana_secular_state_agreed
+			}
+			add_opinion_modifier = {
+				target = ROOT
+				modifier = ANZ_connection_of_the_holy_see
+			}
+			hidden_effect = {
+				ROOT = {
+					add_opinion_modifier = {
+						target = PREV
+						modifier = ANZ_connection_of_the_holy_see
+					}
+				}
+			}
+		}
+		custom_effect_tooltip = anz.22.a.tt_2
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#与玛娜世俗国家的约定-反
+country_event = {
+	id = anz.23
+	title = anz.23.t
+	desc = anz.23.desc
+	picture = GFX_ANZ_CE23
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.23.a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#与玛娜世俗国家的约定-检测
+country_event = {
+	id = anz.24
+	hidden = yes
+	is_triggered_only = yes
+	fire_only_once = yes
+	immediate = {
+		if = {
+			limit = {
+				check_variable = {
+					anz_num_pact_with_mana_secular_state > 0
+				}
+			}
+			country_event = anz.22
+		}
+		else = {
+			country_event = anz.23
+		}
+	}
+}
+
+#安提乌姆别墅纵火案
+country_event = {
+	id = anz.25
+	title = anz.25.t
+	desc = anz.25.desc
+	picture = GFX_ANZ_CE25
+	is_triggered_only = yes
+	fire_only_once = yes
+	option = {
+		name = anz.25.a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#大圣座的胜利
+country_event = {
+	id = anz.26
+	title = anz.26.t
+	desc = anz.26.desc
+	picture = GFX_ANZ_CE22
+	is_triggered_only = yes
+	option = {
+		name = anz.26.a
+		if = {
+			limit = {
+				NOT = {
+					original_tag = ANZ
+				}
+				is_ai = no
+			}
+			add_political_power = 200
+		}
+		if = {
+			limit = {
+				NOT = {
+					original_tag = ANZ
+				}
+			}
+			add_stability = 0.05
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#“教皇”
+country_event = {
+	id = anz.27
+	title = anz.27.t
+	desc = anz.27.desc
+	picture = GFX_ANZ_CE27
+
+	trigger = {
+		tag = ANZ
+		NOT = { has_country_flag = anz_27_fired }
+	}
+	
+	immediate = {
+		set_country_flag = anz_27_fired
+
+		#初始化塔罗牌
+		set_country_flag = ANZ_tarot_ui_get
+	}
+
+	mean_time_to_happen = {
+		days = 30
+	}
+
+	option = {
+		name = anz.27.a
+
+		#获得塔罗牌-教皇
+		add_to_array = {
+			ANZ_tarot_list = 1 #塔罗牌-教皇
+		}
+		if = {
+			limit = {
+				is_ai = no
+			}
+			set_variable = {
+				ANZ_tarot_get = 1
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#虔诚的夜晚
+country_event = {
+	id = anz.28
+	title = anz.28.t
+	desc = anz.28.desc
+	picture = GFX_ANZ_CE28
+	is_triggered_only = yes
+	option = {
+		name = anz.28.a
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#安齐奥希望组建/加入战车道联盟
+country_event = {
+	id = anz.29
+	title = {
+		text = anz.29.t.join
+		trigger = {
+			USR = {
+				is_faction_leader = yes
+			}
+		}
+	}
+	title = {
+		text = anz.29.t.create
+		trigger = {
+			USR = {
+				is_faction_leader = no
+			}
+		}
+	}
+	desc = {
+		text = anz.29.d.join
+		trigger = {
+			USR = {
+				is_faction_leader = yes
+			}
+		}
+	}
+	desc = {
+		text = anz.29.d.create
+		trigger = {
+			USR = {
+				is_faction_leader = no
+			}
+		}
+	}
+	picture = GFX_ANZ_CE3
+	is_triggered_only = yes
+	option = {
+		name = anz.29.a
+		if = {
+			limit = {
+				ROOT = {
+					is_faction_leader = no
+				}
+			}
+			create_faction = USR_senshado_alliance_idea
+			add_ideas = USR_senshado_alliance_idea
+			add_war_support = 0.05
+			add_to_faction = FROM
+			FROM = { 
+				add_ideas = USR_senshado_alliance_idea
+				add_war_support = 0.05
+			}
+			if = {
+				limit = { YMD = { is_in_faction = no is_subject = no } }
+				add_to_faction = YMD
+				YMD = { add_ideas = USR_senshado_alliance_idea }
+			}
+			#if = {
+			#	limit = { CTC = { is_in_faction = no is_subject = no } }
+			#	add_to_faction = CTC
+			#	CTC = { add_ideas = USR_senshado_alliance_idea }
+			#}
+			if = {
+				limit = { TAU = { is_in_faction = no is_subject = no has_government = USR } }
+				add_to_faction = TAU
+				TAU = { add_ideas = USR_senshado_alliance_idea }
+			}
+			news_event = { id = usr_news.3 days = 1 }
+		}
+		else_if = {
+			limit = {
+				ROOT = {
+					is_faction_leader = yes
+				}
+			}
+			add_war_support = 0.05
+			add_to_faction = FROM
+			FROM = { 
+				add_ideas = USR_senshado_alliance_idea
+				add_war_support = 0.05
+			}
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	option = {
+		name = anz.29.b
+		ANZ = {
+			country_event = ANZ.30
+		}
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#乌斯拉尔拒绝同盟
+country_event = {
+	id = anz.30
+	title = anz.30.t
+	desc = anz.30.desc
+	picture = GFX_USR_CE1
+	is_triggered_only = yes
+	option = {
+		name = anz.30.a
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#加利亚遗留问题/索取苏瓦尔
+country_event = {
+	id = anz.31
+	title = {
+		text = anz.31.t.gal
+		trigger = {
+			ANZ = {
+				NOT = {
+					has_country_flag = ANZ_demand_request_to_swa
+				}
+			}
+		}
+	}
+	title = {
+		text = anz.31.t.swa
+		trigger = {
+			ANZ = {
+				has_country_flag = ANZ_demand_request_to_swa
+			}
+		}
+	}
+	desc = {
+		text = anz.31.d.gal
+		trigger = {
+			ANZ = {
+				NOT = {
+					has_country_flag = ANZ_demand_request_to_swa
+				}
+			}
+		}
+	}
+	desc = {
+		text = anz.31.d.swa
+		trigger = {
+			ANZ = {
+				has_country_flag = ANZ_demand_request_to_swa
+			}
+		}
+	}
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+	option = {
+		name = anz.31.a
+		#要求合并
+		if = {
+			limit = {
+				ANZ = {
+					NOT = {
+						has_country_flag = ANZ_demand_request_to_swa
+					}
+				}
+			}
+			GAL = {
+				country_event = {
+					id = ANZ.32
+					days = 1
+				}
+			}
+		}
+		else = {
+			SWA = {
+				country_event = {
+					id = ANZ.32
+					days = 1
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = anz.31.a
+		#要求傀儡
+		if = {
+			limit = {
+				ANZ = {
+					NOT = {
+						has_country_flag = ANZ_demand_request_to_swa
+					}
+				}
+			}
+			GAL = {
+				country_event = {
+					id = ANZ.33
+					days = 1
+				}
+			}
+		}
+		else = {
+			SWA = {
+				country_event = {
+					id = ANZ.33
+					days = 1
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#安齐奥要求亚合并
+country_event = {
+	id = anz.32
+	title = {
+		text = anz.32.t.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	title = {
+		text = anz.32.t.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	desc = {
+		text = anz.32.d.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	desc = {
+		text = anz.32.d.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+	option = {
+		name = anz.32.a
+		#同意
+		custom_effect_tooltip = anz_32_a_tt
+		FROM = {
+			country_event = ANZ.35
+		}
+
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = -1
+				ANZ = {
+					is_faction_leader = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = anz.32.a
+		#拒绝
+		FROM = {
+			country_event = ANZ.36
+		}
+		effect_tooltip = {
+			FROM = {
+				declare_war_on = {
+					target = ROOT
+					type = annex_everything
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1
+				ANZ = {
+					is_faction_leader = yes
+				}
+			}
+		}
+	}
+}
+
+#安齐奥要求亚傀儡
+country_event = {
+	id = anz.33
+	title = {
+		text = anz.33.t.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	title = {
+		text = anz.33.t.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	desc = {
+		text = anz.33.d.gal
+		trigger = {
+			tag = GAL
+		}
+	}
+	desc = {
+		text = anz.33.d.swa
+		trigger = {
+			tag = SWA
+		}
+	}
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+	option = {
+		name = anz.33.a
+		#同意
+		custom_effect_tooltip = anz_32_a_tt
+		FROM = {
+			country_event = ANZ.34
+		}
+
+		ai_chance = {
+			base = 1
+			modifier = {
+				add = -1
+				ANZ = {
+					is_faction_leader = yes
+				}
+			}
+		}
+	}
+
+	option = {
+		name = anz.33.a
+		#拒绝
+		FROM = {
+			country_event = ANZ.36
+		}
+		effect_tooltip = {
+			FROM = {
+				declare_war_on = {
+					target = ROOT
+					type = annex_everything
+				}
+			}
+		}
+
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 1
+				ANZ = {
+					is_faction_leader = yes
+				}
+			}
+		}
+	}
+}
+
+#同意傀儡
+country_event = {
+	id = anz.34
+	title = {
+		text = anz.34.t.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	title = {
+		text = anz.34.t.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	desc = {
+		text = anz.34.d.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	desc = {
+		text = anz.34.d.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	picture = GFX_ANZ_CE6
+	is_triggered_only = yes
+	option = {
+		name = anz.34.a
+		puppet = FROM
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#同意合并
+country_event = {
+	id = anz.35
+	title = {
+		text = anz.35.t.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	title = {
+		text = anz.35.t.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	desc = {
+		text = anz.35.d.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	desc = {
+		text = anz.35.d.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	picture = GFX_USR_CE2
+	is_triggered_only = yes
+	option = {
+		name = anz.35.a
+		annex_country = {
+			target = FROM
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#拒绝要求
+country_event = {
+	id = anz.36
+	title = {
+		text = anz.36.t.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	title = {
+		text = anz.36.t.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	desc = {
+		text = anz.36.d.gal
+		trigger = {
+			FROM = {
+				tag = GAL
+			}
+		}
+	}
+	desc = {
+		text = anz.36.d.swa
+		trigger = {
+			FROM = {
+				tag = SWA
+			}
+		}
+	}
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+	option = {
+		name = anz.36.a
+		declare_war_on = {
+			target = FROM
+			type = annex_everything
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#最后通牒-仅展示
+country_event = {
+	id = anz.37
+	title = anz.37.t
+	is_triggered_only = yes
+	hidden = yes
+}
+
+#安齐奥邀请加入大罗曼尼亚
+country_event = {
+	id = anz.38
+	title = anz.38.t
+	desc = anz.38.desc
+	picture = GFX_USR_CE2
+	is_triggered_only = yes
+	option = {
+		name = anz.38.a
+		FROM = {
+			add_to_faction = ROOT
+			country_event = anz.39
+		}
+
+		ai_chance = {
+			base = 1
+		}
+	}
+	
+	option = {
+		name = anz.38.b
+
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#**同意加入大罗曼尼亚
+country_event = {
+	id = anz.39
+	title = anz.39.t
+	desc = anz.39.desc
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+	option = {
+		name = anz.39.a
+
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#玛蒂娜之死
+country_event = {
+	id = anz.40
+	title = anz.40.t
+	desc = anz.40.desc
+	picture = GFX_ANZ_CE40
+	is_triggered_only = yes
+
+	option = {
+		name = anz.40.a
+
+		add_stability = -0.001
+		#获得塔罗牌-教皇
+		add_to_array = {
+			ANZ_tarot_list = 2 #塔罗牌-死亡
+		}
+		if = {
+			limit = {
+				is_ai = no
+			}
+			set_variable = {
+				ANZ_tarot_get = 2
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#安齐奥庇护希斯帕尼亚的流亡者领袖
+country_event = {
+	id = anz.41
+	title = anz.41.t
+	desc = anz.41.desc
+	picture = GFX_USR_CE2
+	is_triggered_only = yes
+
+	option = { #询问安齐奥加入阵营
+		name = anz.41.a
+		FROM = {
+			country_event = {
+				id = ANZ.42
+				days = 5
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = anz.41.b
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#康塔西亚询问加入阵营
+country_event = {
+	id = anz.42
+	title = anz.42.t
+	desc = anz.42.desc
+	picture = GFX_ANZ_CE42
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.42.a
+		FROM = {
+			country_event = {
+				id = ANZ.43
+			}
+		}
+		effect_tooltip = {
+			add_to_faction = FROM
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = {
+		name = anz.42.b
+		FROM = {
+			country_event = {
+				id = ANZ.44
+			}
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#安齐奥同意康塔西亚加入
+country_event = {
+	id = anz.43
+	title = anz.43.t
+	desc = anz.43.desc
+	picture = GFX_ANZ_CE6
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.43.a
+		FROM = {
+			add_to_faction = ROOT
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#安齐奥不同意
+country_event = {
+	id = anz.44
+	title = anz.44.t
+	desc = anz.44.desc
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.44.a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#希斯帕尼亚劳工
+country_event = {
+	id = anz.45
+	title = anz.45.t
+	desc = anz.45.desc
+	picture = GFX_ANZ_CE3
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.45.a
+		add_ideas = ANZ_hispanic_work_vis_a
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = { 
+		name = anz.45.b
+		add_ideas = ANZ_hispanic_work_vis_b
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#叙拉古的来客
+country_event = {
+	id = anz.46
+	title = anz.46.t
+	desc = anz.46.desc
+	picture = GFX_ANZ_CE46
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.46.a
+		custom_effect_tooltip = available_political_advisor
+		add_advisor_role = {
+			character = ANZ_Texas
+			advisor = {
+				slot = political_advisor
+				idea_token = ANZ_Texas
+				traits = {
+					ANZ_texas_avenger
+				}
+			}
+		}
+		add_field_marshal_role = {
+			character = ANZ_Texas
+			traits={ brilliant_strategist wudechongpei logistics_wizard }
+			skill = 4
+			attack_skill = 4
+			defense_skill = 2
+			planning_skill = 2
+			logistics_skill = 5
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#终结过去I
+country_event = {
+	id = anz.47
+	title = anz.47.t
+	desc = anz.47.desc
+	picture = GFX_ANZ_CE47
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.47.a
+		country_event = anz.56
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#引入新战车
+country_event = {
+	id = anz.48
+	title = anz.48.t
+	desc = anz.48.desc
+	picture = GFX_ANZ_CE48
+	is_triggered_only = yes
+
+	option = { #乌斯拉尔
+		name = anz.48.a
+		effect_tooltip = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis
+				amount = 500
+			}
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = armor
+			}
+		}
+		USR = {
+			country_event = {
+				id = anz.49
+				days = 1
+			}
+		}
+		custom_effect_tooltip = anz_48_tt
+		effect_tooltip = {
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = USR_kuromorimine_organization
+			mio:USR_kuromorimine_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+		}
+		
+		ai_chance = {
+			base = 0
+
+			modifier = {
+				add = 1
+				USR = {
+					has_government = ROOT
+				}
+			}
+
+			modifier = {
+				add = 1
+				is_in_faction_with = USR
+			}
+		}
+	}
+
+	option = { #圣葛
+		name = anz.48.b
+		effect_tooltip = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis
+				amount = 500
+			}
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = armor
+			}
+		}
+		STG = {
+			country_event = {
+				id = anz.49
+				days = 1
+			}
+		}
+		custom_effect_tooltip = anz_48_tt
+		effect_tooltip = {
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = STG_armor_organization
+			mio:STG_armor_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+		}
+		
+		ai_chance = {
+			base = 0
+
+			modifier = {
+				add = 1
+				is_in_faction_with = STG
+				NOT = {
+					is_in_faction_with = USR
+				}
+			}
+		}
+	}
+
+	option = { #合众国
+		name = anz.48.c
+		effect_tooltip = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis
+				amount = 500
+			}
+			add_tech_bonus = {
+				bonus = 0.75
+				uses = 2
+				category = armor
+			}
+		}
+		USF = {
+			country_event = {
+				id = anz.49
+				days = 1
+			}
+		}
+		custom_effect_tooltip = anz_48_tt
+		effect_tooltip = {
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = USF_saunders_university_tank_department_organization
+			mio:USF_saunders_university_tank_department_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+		}
+		
+		ai_chance = {
+			base = 0
+
+			modifier = {
+				add = 1
+				is_in_faction_with = USF
+				NOT = {
+					is_in_faction_with = USR
+				}
+			}
+		}
+	}
+
+	option = { #本土
+		name = anz.48.d
+		add_equipment_to_stockpile = {
+			type = medium_tank_chassis
+			amount = 500
+		}
+		add_tech_bonus = {
+			bonus = 0.75
+			uses = 2
+			category = armor
+		}
+		show_mio_tooltip = ANZ_fiat_organization
+		mio:ANZ_fiat_organization = {
+			add_mio_funds = 3000
+			add_mio_size = 1
+		}
+		create_equipment_variant = {
+			name = "P26/40"
+			type = medium_tank_chassis_1
+			allow_without_tech = yes
+			parent_version = 0
+			modules = {
+				main_armament_slot = tank_medium_cannon
+				turret_type_slot = tank_medium_three_man_tank_turret
+				suspension_type_slot = tank_torsion_bar_suspension
+				armor_type_slot = tank_riveted_armor
+				engine_type_slot = tank_gasoline_engine
+				special_type_slot_1 = tank_radio_1
+				special_type_slot_2 = secondary_turret_hmg
+				special_type_slot_3 = secondary_turret_hmg
+				special_type_slot_4 = empty
+			}
+			upgrades = {
+				tank_nsb_engine_upgrade = 0
+				tank_nsb_armor_upgrade = 4
+			}
+			icon = "GFX_ITA_improved_heavy_tank_medium"
+			model = "ITA_heavy_armor_2_entity"
+			design_team = mio:ANZ_fiat_organization
+		}
+		hidden_effect = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis_3
+				amount = 500
+				variant_name = "P26/40"
+			}
+		}
+		
+		ai_chance = {
+			base = 0
+
+			modifier = {
+				add = 1
+				NOT = {
+					is_in_faction_with = USR
+				}
+				USR = {
+					NOT = {
+						has_government = ROOT
+					}
+				}
+			}
+		}
+	}
+}
+
+#引入新战车-回应
+country_event = {
+	id = anz.49
+	title = anz.49.t
+	desc = anz.49.desc
+	picture = GFX_ANZ_CE6
+	is_triggered_only = yes
+
+	option = { #同意
+		name = anz.49.a
+		FROM = {
+			country_event = anz.50
+		}
+		if = {
+			limit = {
+				tag = USR
+			}
+			show_mio_tooltip = USR_kuromorimine_organization
+			mio:USR_kuromorimine_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+			FROM = {
+				set_country_flag = ANZ_introduce_tanks_from_usr
+			}
+		}
+		if = {
+			limit = {
+				tag = STG
+			}
+			show_mio_tooltip = STG_armor_organization
+			mio:STG_armor_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+			FROM = {
+				set_country_flag = ANZ_introduce_tanks_from_stg
+			}
+		}
+		if = {
+			limit = {
+				tag = USF
+			}
+			show_mio_tooltip = USF_saunders_university_tank_department_organization
+			mio:USF_saunders_university_tank_department_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+			FROM = {
+				set_country_flag = ANZ_introduce_tanks_from_usf
+			}
+		}
+		add_cic = 20000
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+
+	option = { #  拒绝
+		name = anz.49.b
+		FROM = {
+			country_event = anz.51
+		}
+		
+		ai_chance = {
+			base = 0
+		}
+	}
+}
+
+#引入新战车-成功
+country_event = {
+	id = anz.50
+	title = anz.50.t
+	desc = anz.50.desc
+	picture = GFX_USR_CE2
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.50.a
+		effect_tooltip = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis
+				amount = 500
+			}
+		}
+		add_tech_bonus = {
+			bonus = 0.75
+			uses = 2
+			category = armor
+		}
+		if = {
+			limit = {
+				FROM = {
+					tag = USR
+				}
+			}
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = USR_kuromorimine_organization
+			mio:USR_kuromorimine_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+			if = {
+				limit = {
+					FROM = {
+						has_tech = advanced_medium_tank_chassis
+					}
+				}
+				create_equipment_variant = {
+					name = "Panther Ausf. A"
+					type = medium_tank_chassis_3
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_medium_cannon_2
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_3
+						special_type_slot_2 = secondary_turret_hmg
+						special_type_slot_3 = secondary_turret_hmg
+						special_type_slot_4 = easy_maintenance
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 14
+						tank_nsb_armor_upgrade = 14
+					}
+					icon = "GFX_GER_advanced_medium_tank_medium"
+					model = "GER_medium_armor_2_entity"
+					design_team = mio:USR_kuromorimine_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_3
+						amount = 500
+    					variant_name = "Panther Ausf. A"
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = {
+						has_tech = improved_medium_tank_chassis
+					}
+				}
+				create_equipment_variant = {
+					name = "Panzer IV Ausf. G"
+					type = medium_tank_chassis_2
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_medium_cannon
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_2
+						special_type_slot_2 = secondary_turret_hmg
+						special_type_slot_3 = secondary_turret_hmg
+						special_type_slot_4 = easy_maintenance
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 9
+						tank_nsb_armor_upgrade = 9
+					}
+					icon = "GFX_GER_improved_medium_tank_medium"
+					model = "GER_medium_armor_entity"
+					design_team = mio:USR_kuromorimine_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_2
+						amount = 500
+    					variant_name = "Panzer IV Ausf. G"
+					}
+				}
+			}
+			else = {
+				create_equipment_variant = {
+					name = "Panzer III Ausf. N"
+					type = medium_tank_chassis_1
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_close_support_gun
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_1
+						special_type_slot_2 = secondary_turret_hmg
+						special_type_slot_3 = secondary_turret_hmg
+						special_type_slot_4 = empty
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 4
+						tank_nsb_armor_upgrade = 4
+					}
+					icon = "GFX_GER_basic_medium_tank_medium"
+					model = "GER_medium_armor_0_entity"
+					design_team = mio:USR_kuromorimine_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_1
+						amount = 500
+    					variant_name = "Panzer III Ausf. N"
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					tag = STG
+				}
+			}
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = STG_armor_organization
+			mio:STG_armor_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+			if = {
+				limit = {
+					FROM = {
+						has_tech = advanced_medium_tank_chassis
+					}
+				}
+				create_equipment_variant = {
+					name = "Comet I"
+					type = medium_tank_chassis_3
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_medium_cannon_2
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_3
+						special_type_slot_2 = wet_ammo_storage
+						special_type_slot_3 = easy_maintenance
+						special_type_slot_4 = empty
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 20
+						tank_nsb_armor_upgrade = 9
+					}
+					icon = "GFX_ENG_advanced_medium_tank_medium"
+					model = "ENG_medium_armor_2_entity"
+					design_team = mio:STG_armor_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_3
+						amount = 500
+    					variant_name = "Comet I"
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = {
+						has_tech = improved_medium_tank_chassis
+					}
+				}
+				create_equipment_variant = {
+					name = "Cromwell IV"
+					type = medium_tank_chassis_2
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_medium_cannon
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_2
+						special_type_slot_2 = empty
+						special_type_slot_3 = empty
+						special_type_slot_4 = empty
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 14
+						tank_nsb_armor_upgrade = 0
+					}
+					icon = "GFX_ENG_improved_medium_tank_medium"
+					model = "ENG_medium_armor_1_entity"
+					design_team = mio:STG_armor_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_2
+						amount = 500
+    					variant_name = "Cromwell IV"
+					}
+				}
+			}
+			else = {
+				create_equipment_variant = {
+					name = "Crusader Mk III"
+					type = medium_tank_chassis_1
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_small_cannon_2
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_1
+						special_type_slot_2 = empty
+						special_type_slot_3 = empty
+						special_type_slot_4 = empty
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 9
+						tank_nsb_armor_upgrade = 0
+					}
+					icon = "GFX_ENG_basic_medium_tank_medium"
+					model = "commonwealth_gfx_medium_armor_entity"
+					design_team = mio:STG_armor_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_1
+						amount = 500
+    					variant_name = "Crusader Mk III"
+					}
+				}
+			}
+		}
+		if = {
+			limit = {
+				FROM = {
+					tag = USF
+				}
+			}
+			custom_effect_tooltip = available_mio_tt
+			show_mio_tooltip = USF_saunders_university_tank_department_organization
+			mio:USF_saunders_university_tank_department_organization = {
+				add_mio_funds = 1000
+				add_mio_size = 1
+			}
+			if = {
+				limit = {
+					FROM = {
+						has_tech = advanced_medium_tank_chassis
+					}
+				}
+				create_equipment_variant = {
+					name = "M4A3E8"
+					type = medium_tank_chassis_3
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_medium_cannon_2
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_3
+						special_type_slot_2 = secondary_turret_hmg
+						special_type_slot_3 = secondary_turret_hmg
+						special_type_slot_4 = easy_maintenance
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 14
+						tank_nsb_armor_upgrade = 14
+					}
+					icon = "GFX_USA_improved_medium_tank_medium"
+					model = "USA_medium_armor_entity"
+					design_team = mio:USF_saunders_university_tank_department_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_3
+						amount = 500
+    					variant_name = "M4A3E8"
+					}
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = {
+						has_tech = improved_medium_tank_chassis
+					}
+				}
+				create_equipment_variant = {
+					name = "M4A2(76)W HVSS"
+					type = medium_tank_chassis_2
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_medium_cannon
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_2
+						special_type_slot_2 = secondary_turret_hmg
+						special_type_slot_3 = secondary_turret_hmg
+						special_type_slot_4 = easy_maintenance
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 9
+						tank_nsb_armor_upgrade = 9
+					}
+					icon = "GFX_USA_improved_medium_tank_medium"
+					model = "USA_medium_armor_entity"
+					design_team = mio:USF_saunders_university_tank_department_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_2
+						amount = 500
+    					variant_name = "M4A2(76)W HVSS"
+					}
+				}
+			}
+			else = {
+				create_equipment_variant = {
+					name = "M4 Sherman"
+					type = medium_tank_chassis_1
+					allow_without_tech = yes
+					parent_version = 0
+					modules = {
+						main_armament_slot = tank_small_cannon_2
+						turret_type_slot = tank_medium_three_man_tank_turret
+						suspension_type_slot = tank_torsion_bar_suspension
+						armor_type_slot = tank_riveted_armor
+						engine_type_slot = tank_gasoline_engine
+						special_type_slot_1 = tank_radio_1
+						special_type_slot_2 = secondary_turret_hmg
+						special_type_slot_3 = secondary_turret_hmg
+						special_type_slot_4 = empty
+					}
+					upgrades = {
+						tank_nsb_engine_upgrade = 0
+						tank_nsb_armor_upgrade = 4
+					}
+					icon = "GFX_USA_improved_medium_tank_medium"
+					model = "USA_medium_armor_entity"
+					design_team = mio:USF_saunders_university_tank_department_organization
+				}
+				hidden_effect = {
+					add_equipment_to_stockpile = {
+						type = medium_tank_chassis_1
+						amount = 500
+    					variant_name = "M4 Sherman"
+					}
+				}
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#引入新战车-失败
+country_event = {
+	id = anz.51
+	title = anz.51.t
+	desc = anz.51.desc
+	picture = GFX_USR_CE3
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.51.a
+		effect_tooltip = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis
+				amount = 500
+			}
+		}
+		add_tech_bonus = {
+			bonus = 0.75
+			uses = 2
+			category = armor
+		}
+		show_mio_tooltip = ANZ_fiat_organization
+		mio:ANZ_fiat_organization = {
+			add_mio_funds = 3000
+			add_mio_size = 1
+		}
+		create_equipment_variant = {
+			name = "P26/40"
+			type = medium_tank_chassis_1
+			allow_without_tech = yes
+			parent_version = 0
+			modules = {
+				main_armament_slot = tank_medium_cannon
+				turret_type_slot = tank_medium_three_man_tank_turret
+				suspension_type_slot = tank_torsion_bar_suspension
+				armor_type_slot = tank_riveted_armor
+				engine_type_slot = tank_gasoline_engine
+				special_type_slot_1 = tank_radio_1
+				special_type_slot_2 = secondary_turret_hmg
+				special_type_slot_3 = secondary_turret_hmg
+				special_type_slot_4 = empty
+			}
+			upgrades = {
+				tank_nsb_engine_upgrade = 0
+				tank_nsb_armor_upgrade = 4
+			}
+			icon = "GFX_ITA_improved_heavy_tank_medium"
+			model = "ITA_heavy_armor_2_entity"
+			design_team = mio:ANZ_fiat_organization
+		}
+		hidden_effect = {
+			add_equipment_to_stockpile = {
+				type = medium_tank_chassis_3
+				amount = 500
+				variant_name = "P26/40"
+			}
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#内战开幕
+country_event = {
+	id = anz.52
+	title = anz.52.t
+	desc = {
+		text = anz.52.desc
+		trigger = {
+			has_country_flag = ANZ_LOTHIAN
+		}
+	}
+	desc = anz.52.desc2
+	
+	picture = GFX_ANZ_CE52
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.52.a
+		add_war_support = 0.1
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#抓捕卢西亚娜
+country_event = {
+	id = anz.53
+	title = anz.53.t
+	desc = anz.53.desc
+	
+	picture = GFX_ANZ_CE53
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.53.a
+		add_stability = 0.05
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#揭露腐败
+country_event = {
+	id = anz.54
+	title = anz.54.t
+	desc = anz.54.desc
+	
+	picture = GFX_ANZ_CE54
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.54.a
+		add_political_power = 30
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#夜晚与香气
+country_event = {
+	id = anz.55
+	title = anz.55.t
+	desc = anz.55.desc
+	
+	picture = GFX_ANZ_CE55
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.55.a
+		add_political_power = 30
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#终结过去II
+country_event = {
+	id = anz.56
+	title = anz.56.t
+	desc = anz.56.desc
+	picture = GFX_ANZ_CE47
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.56.a
+		custom_effect_tooltip = anz_56_tt
+		set_politics = {
+			ruling_party = neutrality
+		}
+		add_country_leader_role = {
+			character = ANZ_Texas
+			promote_leader = yes
+			country_leader = {
+				ideology = sub_Oligarchy
+				#expire = "9999.1.1.1"
+				traits = { ANZ_texas_imprint_of_the_past ANZ_texas_blueberry_and_dark_chocolate }
+			}
+		}
+		hidden_effect = {
+			remove_advisor_role = {
+				character = "ANZ_Texas"
+  				slot = political_advisor
+			}
+			set_cosmetic_tag = ANZ_Siracusa
+		}
+		
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
+#挽魄一断
+country_event = {
+	id = anz.57
+	title = anz.57.t
+	desc = anz.57.desc
+	picture = GFX_ANZ_CE57
+	is_triggered_only = yes
+
+	option = { 
+		name = anz.57.a
+		if = {
+			limit = { has_country_flag = ANZ_LOTHIAN }
+			add_stability = 0.05
+			add_political_power = 30
+		}
+		ai_chance = {
+			base = 1
+		}
+	}
+}
+
 #####################################################
 #####################NEWS_EVENTS####################
 #####################################################
@@ -662,7 +2798,7 @@ country_event = {
 news_event = {
 	id = anz_news.1
 	title = anz_news.1.t
-	picture = GFX_USR_NE1
+	picture = GFX_ANZ_NE1
 	desc = anz_news.1.desc
 	is_triggered_only = yes
 	major = yes
@@ -690,7 +2826,7 @@ news_event = {
 news_event = {
 	id = anz_news.2
 	title = anz_news.2.t
-	picture = GFX_USR_NE2
+	picture = GFX_ANZ_NE2
 	desc = anz_news.2.desc
 	is_triggered_only = yes
 	major = yes
@@ -718,7 +2854,7 @@ news_event = {
 news_event = {
 	id = anz_news.3
 	title = anz_news.3.t
-	picture = GFX_USR_NE3
+	picture = GFX_ANZ_NE3
 	desc = anz_news.3.desc
 	is_triggered_only = yes
 	major = yes
@@ -741,4 +2877,144 @@ news_event = {
 			ANZ = { has_same_ideology = no }
 		}
 	}
+}
+
+#“那棵树”
+news_event = {
+	id = anz_news.4
+	title = anz_news.4.t
+	picture = GFX_ANZ_NE4
+	desc = anz_news.4.desc
+
+	trigger = {
+		original_tag = ANZ
+		date > 3090.3.4
+		NOT = { has_global_flag = anz_news_4_fired }
+	}
+	
+	immediate = {
+		set_global_flag = anz_news_4_fired
+	}
+
+	mean_time_to_happen = {
+		days = 1
+	}
+
+	option = {
+		name = anz_news.4.a
+	}
+}
+
+#洛蒂安玛娜大主教迪-拉戈遭遇保皇党刺杀去世
+news_event = {
+	id = anz_news.5
+	title = anz_news.5.t
+	picture = GFX_ANZ_NE5
+	desc = anz_news.5.desc
+	is_triggered_only = yes
+	
+	immediate = {
+		hidden_effect = {
+			news_event = {
+				id = anz_news.6
+				days = 10
+			}
+		}
+	}
+
+	option = {
+		name = anz_news.5.a
+	}
+}
+
+#新生一世加冕
+news_event = {
+	id = anz_news.6
+	title = anz_news.6.t
+	picture = GFX_ANZ_NE6
+	desc = anz_news.6.desc
+	is_triggered_only = yes
+
+	option = {
+		name = anz_news.6.a
+	}
+}
+
+#安齐奥宣告大罗曼尼亚成立
+news_event = {
+	id = anz_news.7
+	title = anz_news.7.t
+	picture = GFX_ANZ_NE7
+	desc = anz_news.7.desc
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = anz_news.7.a
+		trigger = {
+			is_in_faction_with = ANZ
+		}
+	}
+
+	option = {
+		name = anz_news.7.b
+		trigger = {
+			tag = USR
+		}
+	}
+
+	option = {
+		name = anz_news.7.c
+		trigger = {
+			NOT = { tag = USR } 
+			NOT = { is_in_faction_with = ANZ }
+			ANZ = { has_same_ideology = yes }
+		}
+	}
+
+	option = {
+		name = anz_news.7.d
+		trigger = {
+			NOT = { tag = USR } 
+			NOT = { is_in_faction_with = ANZ }
+			ANZ = { has_same_ideology = no }
+		}
+	}
+}
+
+#新国王加冕
+news_event = {
+	id = anz_news.8
+	title = anz_news.8.t
+	picture = GFX_ANZ_NE8
+	desc = anz_news.8.desc
+	is_triggered_only = yes
+	major = yes
+
+	option = {
+		name = anz_news.8.a
+		trigger = {
+			tag = ANZ
+		}
+	}
+
+	option = {
+		name = anz_news.8.b
+		trigger = {
+			OR = {
+				ANZ = { has_same_ideology = yes }
+				is_in_faction_with = ANZ
+			}
+		}
+	}
+
+	option = {
+		name = anz_news.8.c
+		trigger = {
+			NOT = { tag = ANZ } 
+			NOT = { is_in_faction_with = ANZ }
+			ANZ = { has_same_ideology = no }
+		}
+	}
+
 }
