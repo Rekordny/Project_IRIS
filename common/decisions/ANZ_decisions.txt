@@ -24,9 +24,9 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 		fire_only_once = yes
 		complete_effect = {
-			add_power_balance_value = {
+			set_power_balance = {
 				id = ANZ_industrialization_against_manalisation
-				value = -0.35
+				set_value = 0
 			}
 			add_stability = 0.1
 			TAU = {
@@ -205,10 +205,15 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 	
 	#放缓工业化
 	ANZ_slow_the_industrial_trend = {
+		icon = GFX_decision_generic_wreckers
 		allowed = {
 			original_tag = ANZ
 		}
-		cost = 20
+		cost = 0
+		modifier = {
+			production_speed_buildings_factor = -0.1
+			stability_weekly = 0.01
+		}
 		remove_effect = {
 			random_list = {
 				50 = {
@@ -235,7 +240,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		complete_effect = {
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
-				value = -0.05
+				value = -0.06
 			}
 			
 		}
@@ -261,24 +266,69 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 			}
 		}
 	}
-	#关闭工厂
-	ANZ_remove_factory = {
+	#重点投资基础建设
+	ANZ_invest_industrial_infrastructure = {
+		icon = generic_fundraising
 		allowed = {
 			original_tag = ANZ
 		}
 		cost = 0
+		days_remove = 70
+		available = {
+			any_controlled_state = { infrastructure < 5 }
+		}
+		days_re_enable = 20
+		complete_effect = {
+			add_stability = -0.01
+			add_power_balance_value = {
+				id = ANZ_industrialization_against_manalisation
+				value = 0.07
+			}
+		}
 		remove_effect = {
 			random_controlled_state = {
+				limit = { infrastructure < 5 }
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+				}
+			}
+			random_list = {
+				30 = { country_event = anz.5 }
+				70 = { }
+			}
+		}
+	}
+
+	#关闭工厂
+	ANZ_remove_factory = {
+		icon = generic_scorched_earth
+		allowed = {
+			original_tag = ANZ
+		}
+		cost = 0
+		available = {
+			any_controlled_state = {
+				industrial_complex > 0
+			}
+		}
+		remove_effect = {
+			random_controlled_state = {
+				limit = {
+					industrial_complex > 0
+				}
 				remove_building = {
 					type = industrial_complex
 					level = 1
 				}
 			}
 		}
-		days_remove = 100  
+		days_remove = 50  
 		days_re_enable = 20
 		complete_effect = {
-			add_political_power = 100
+			add_stability = 0.03
+			add_political_power = 150
 			add_power_balance_value = {
 				id = ANZ_industrialization_against_manalisation
 				value = -0.1
@@ -545,7 +595,7 @@ ANZ_demanarization = {
 		modifier = {
 			civilian_factory_use = 3
 		}
-		on_map_mode = map_and_decisions_view
+		on_map_mode = decision_view_only
 		state_target = yes
 		available = {
 			num_of_civilian_factories_available_for_projects > 2
@@ -950,6 +1000,10 @@ ANZ_pizza_economy_cat = {
 			}
 		}
 
+		cancel_trigger = {
+			has_stability > 0.75
+		}
+
 		complete_effect = {
 			hidden_effect = {
 				add_equipment_to_stockpile = {
@@ -1111,25 +1165,33 @@ ANZ_pizza_economy_cat = {
 		#icon = GFX_decision_ANZ_mafia
 
 		fire_only_once = no
-		days_remove = 100
+		days_remove = var:ANZ_invest_mil_decision_time
 
-		on_map_mode = map_only
-		state_target = yes
+		#on_map_mode = map_only
+		#state_target = yes
 
-		target_trigger = {
-			FROM = {
-				is_core_of = controller
-				is_controlled_by_ROOT_or_ally = yes
+		#target_trigger = {
+			#FROM = {
+			#	is_core_of = controller
+			#	is_controlled_by_ROOT_or_ally = yes
+			#	free_building_slots = {
+			#		building = arms_factory
+			#		size > 0
+			#		include_locked = yes
+			#	}
+			#}
+		#}
+
+		visible = {
+			has_completed_focus = ANZ_improve_balanced_development
+			any_core_state = {
+				is_fully_controlled_by = FROM
 				free_building_slots = {
 					building = arms_factory
 					size > 0
 					include_locked = yes
 				}
 			}
-		}
-
-		visible = {
-			has_completed_focus = ANZ_improve_balanced_development
 		}
 
 		cost = 0
@@ -1156,7 +1218,15 @@ ANZ_pizza_economy_cat = {
 		
 		remove_effect = {
 			clr_country_flag = ANZ_investing_mil_or_nav
-			FROM = {
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = FROM
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
+				}
 				add_extra_state_shared_building_slots = 1
 				add_building_construction = {
 					type = arms_factory
@@ -1167,13 +1237,100 @@ ANZ_pizza_economy_cat = {
         }
 
 		ai_will_do = {
-			base = 0
-			modifier = {
-				add = 50
-				FROM = {
-					is_owned_by	= ROOT
+			base = 50
+		}
+	}
+
+	#投资军工-盟友
+	ANZ_invest_mil_ally = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = no
+		days_remove = var:ANZ_invest_mil_decision_time
+
+		#on_map_mode = map_only
+		#state_target = yes
+
+		target_trigger = {
+			#FROM = {
+			#	is_core_of = controller
+			#	is_controlled_by_ROOT_or_ally = yes
+			#	free_building_slots = {
+			#		building = arms_factory
+			#		size > 0
+			#		include_locked = yes
+			#	}
+			#}
+
+			FROM = {
+				OR = {
+					is_in_faction_with = ROOT
+					is_puppet_of = ROOT
+				}
+				any_core_state = {
+					is_fully_controlled_by = FROM
+					free_building_slots = {
+						building = arms_factory
+						size > 0
+						include_locked = yes
+					}
 				}
 			}
+		}
+
+		visible = {
+			has_completed_focus = ANZ_improve_balanced_development
+		}
+
+		cost = 0
+
+		available = {
+			has_equipment = {
+				ANZ_spicy_sausage_pizza > 29
+			}
+			custom_trigger_tooltip = {
+				tooltip = ANZ_investing_mil_or_nav_tt
+				NOT = { has_country_flag = ANZ_investing_mil_or_nav }
+			}
+		}
+
+		complete_effect = {
+			#set_country_flag = ANZ_investing_mil_or_nav
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = ANZ_spicy_sausage_pizza
+					amount = -30
+				}
+			}
+		}
+		
+		remove_effect = {
+			#clr_country_flag = ANZ_investing_mil_or_nav
+			FROM = {
+				random_core_state = {
+					limit = {
+						is_fully_controlled_by = FROM
+						free_building_slots = {
+							building = arms_factory
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = arms_factory
+						level = 1
+						instant_build = yes
+					}
+				}
+			}
+        }
+
+		ai_will_do = {
+			base = 0
 		}
 	}
 
@@ -1185,19 +1342,134 @@ ANZ_pizza_economy_cat = {
 		#icon = GFX_decision_ANZ_mafia
 
 		fire_only_once = no
-		days_remove = 100
+		days_remove = var:ANZ_invest_nav_decision_time
 
-		on_map_mode = map_only
-		state_target = yes
+		#on_map_mode = map_only
+		#state_target = yes
 
-		target_trigger = {
-			FROM = {
-				is_core_of = controller
-				is_controlled_by_ROOT_or_ally = yes
+		#target_trigger = {
+		#	FROM = {
+		#		is_core_of = controller
+		#		is_controlled_by_ROOT_or_ally = yes
+		#		free_building_slots = {
+		#			building = dockyard
+		#			size > 0
+		#			include_locked = yes
+		#		}
+		#	}
+		#}
+
+		visible = {
+			has_completed_focus = ANZ_improve_balanced_development
+			any_core_state = {
+				is_fully_controlled_by = FROM
 				free_building_slots = {
 					building = dockyard
 					size > 0
 					include_locked = yes
+				}
+			}
+		}
+
+		cost = 0
+
+		available = {
+			has_equipment = {
+				ANZ_spicy_sausage_pizza > 19
+			}
+			custom_trigger_tooltip = {
+				tooltip = ANZ_investing_mil_or_nav_tt
+				NOT = { has_country_flag = ANZ_investing_mil_or_nav }
+			}
+		}
+
+		complete_effect = {
+			set_country_flag = ANZ_investing_mil_or_nav
+			hidden_effect = {
+				add_equipment_to_stockpile = {
+					type = ANZ_spicy_sausage_pizza
+					amount = -20
+				}
+			}
+		}
+		
+		remove_effect = {
+			clr_country_flag = ANZ_investing_mil_or_nav
+			random_core_state = {
+				limit = {
+					is_fully_controlled_by = FROM
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = dockyard
+					level = 1
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = coastal_bunker
+					level = 1
+					instant_build = yes
+					province = {
+						all_provinces = yes
+						#limit_to_naval_base = yes
+				    }
+				}
+				set_state_flag = ANZ_invest_nav_once
+			}
+        }
+
+		ai_will_do = {
+			base = 100
+			modifier = {
+				factor = 0.5
+				FROM = {
+					has_state_flag = ANZ_invest_nav_once
+				}
+			}
+		}
+	}
+
+	#投资船坞-盟友
+	ANZ_invest_nav_ally = {
+		allowed = {
+			original_tag = ANZ
+		}
+		#icon = GFX_decision_ANZ_mafia
+
+		fire_only_once = no
+		days_remove = var:ANZ_invest_nav_decision_time
+
+		#on_map_mode = map_only
+		#state_target = yes
+
+		target_trigger = {
+		#	FROM = {
+		#		is_core_of = controller
+		#		is_controlled_by_ROOT_or_ally = yes
+		#		free_building_slots = {
+		#			building = dockyard
+		#			size > 0
+		#			include_locked = yes
+		#		}
+		#	}
+
+			FROM = {
+				OR = {
+					is_in_faction_with = ROOT
+					is_puppet_of = ROOT
+				}
+				any_core_state = {
+					is_fully_controlled_by = FROM
+					free_building_slots = {
+						building = dockyard
+						size > 0
+						include_locked = yes
+					}
 				}
 			}
 		}
@@ -1231,40 +1503,36 @@ ANZ_pizza_economy_cat = {
 		remove_effect = {
 			clr_country_flag = ANZ_investing_mil_or_nav
 			FROM = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = dockyard
-					level = 1
-					instant_build = yes
+				random_core_state = {
+					limit = {
+						is_fully_controlled_by = FROM
+						free_building_slots = {
+							building = dockyard
+							size > 0
+							include_locked = yes
+						}
+					}
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = dockyard
+						level = 1
+						instant_build = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 1
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							#limit_to_naval_base = yes
+						}
+					}
 				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 1
-					instant_build = yes
-					province = {
-						all_provinces = yes
-						#limit_to_naval_base = yes
-				    }
-				}
-				set_state_flag = ANZ_invest_nav_once
 			}
         }
 
 		ai_will_do = {
 			base = 0
-			modifier = {
-				add = 100
-				FROM = {
-					is_owned_by	= ROOT
-				}
-			}
-
-			modifier = {
-				factor = 0.5
-				FROM = {
-					has_state_flag = ANZ_invest_nav_once
-				}
-			}
 		}
 	}
 
@@ -1704,6 +1972,13 @@ ANZ_acquire_north_private_industry_cat = {
 						}
 					}
 				}
+				else = {
+					custom_effect_tooltip = available_industrial_concern
+					show_ideas_tooltip = ANZ_ppln_pizza
+					set_country_flag = ANZ_PPLN_PIZZA_ALLOWED
+					custom_effect_tooltip = generic_skip_one_line_tt
+				}
+
 				custom_effect_tooltip = ANZ_ppln_pizza_upgrade_tt
 				set_country_flag = ANZ_ppln_pizza_upgrade
 			}
