@@ -21,7 +21,11 @@ on_actions = {
 				}
 				THIS = {
 					set_country_flag = having_reserved_land_flag
-				}				#拥有保留地
+				}
+				#拥有保留地
+			}
+			881 = {
+				add_claim_by = CID
 			}
 			BFS = {
 				add_manpower = 90000
@@ -31,14 +35,15 @@ on_actions = {
 				}
 				add_offsite_building = {
 					type = industrial_complex
-					level = 4
+					level = 2
 				}
 				add_offsite_building = {
 					type = dockyard
-					level = 5
+					level = 2
 				}
 			}
 			OCE = {
+				add_ideas = TEST_TEMP_IDEA
 				country_event = {
 					id = OCE.0
 				}
@@ -84,11 +89,11 @@ on_actions = {
 							}
 							has_game_rule = {
 								rule = OCE_ai_behavior
-								option = OCE_democratic_preservation_TT								#§C大洋联邦民主党-改组派民主保全会§!
+								option = OCE_democratic_preservation_TT								#§C大洋联邦同盟党-改组派民主保全会§!
 							}
 							has_game_rule = {
 								rule = OCE_ai_behavior
-								option = OCE_platinum_legion_TT								#§g大洋联邦民族共和党-白金军团§!
+								option = OCE_platinum_legion_TT								#§g大洋联邦同盟党-白金军团§!
 							}
 							has_game_rule = {
 								rule = OCE_ai_behavior
@@ -455,7 +460,7 @@ on_actions = {
 				set_variable = {
 					OCE_confederate_party = 16
 				}
-				#大洋联邦民主党（同盟党）
+				#大洋联邦同盟党
 				set_variable = {
 					OCE_socialist_league = 23
 				}
@@ -545,6 +550,15 @@ on_actions = {
 					OCF = {
 						add_ideas = OCF_idea_fleet_blockade
 					}
+					EIA = {
+						add_ideas = OCF_idea_fleet_blockade
+					}
+					CKR = {
+						add_ideas = OCF_idea_fleet_blockade
+					}
+					CID = {
+						add_ideas = OCF_idea_fleet_blockade
+					}
 					156 = {
 						add_dynamic_modifier = {
 							modifier = OCF_fleet_blockade
@@ -576,6 +590,54 @@ on_actions = {
 						}
 					}
 					71 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					877 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					876 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					883 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					880 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					881 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					882 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					875 = {
+						add_dynamic_modifier = {
+							modifier = OCF_fleet_blockade
+							scope = OCF
+						}
+					}
+					879 = {
 						add_dynamic_modifier = {
 							modifier = OCF_fleet_blockade
 							scope = OCF
@@ -927,9 +989,21 @@ on_actions = {
 						}
 					}
 					FROM = {
-						white_peace = {
-							tag = ROOT
-							message = OCE_WIN_OCF_TT
+						if = {
+							limit = {
+								FROM = {
+									original_tag = OCE
+								}
+							}
+							white_peace = {
+								tag = ROOT
+								message = OCE_WIN_OCF_TT
+							}
+						}
+						else = {
+							white_peace = {
+								tag = ROOT
+							}
 						}
 						annex_country = {
 							target = ROOT
@@ -972,6 +1046,38 @@ on_actions = {
 					}
 				}
 			}
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = CKR
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							OR = {
+								original_tag = INP
+								original_tag = OCE
+							}
+						}
+					}
+					ROOT = {
+						transfer_navy = {
+							target = FROM
+						}
+					}
+					FROM = {
+						white_peace = {
+							tag = ROOT
+							# message = OCE_WIN_EIA_TT
+						}
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+			}
 			#原住民宣布投降废弃
 			if = {
 				limit = {
@@ -986,23 +1092,55 @@ on_actions = {
 								original_tag = OCE
 								original_tag = OCF
 								original_tag = EIA
+								original_tag = CKR
 							}
 						}
 					}
 					log = "[GetDateText]: [Root.GetNameWithFlag]: 通过on_capitulation被[FROM.GetNameWithFlag]击败了"
-					ROOT = {
-						transfer_navy = {
-							target = FROM
+					if = {
+						limit = {
+							FROM = {
+								OR = {
+									original_tag = EIA
+									original_tag = CKR
+								}
+							}
+							country_exists = OCF
+							NOT = {
+								has_war_with = OCF
+							}
+						}
+						ROOT = {
+							transfer_navy = {
+								target = OCF
+							}
+						}
+						OCF = {
+							white_peace = {
+								tag = ROOT
+								message = OCE_WIN_INP_TT
+							}
+							annex_country = {
+								target = ROOT
+								transfer_troops = no
+							}
 						}
 					}
-					FROM = {
-						white_peace = {
-							tag = ROOT
-							message = OCE_WIN_INP_TT
+					else = {
+						ROOT = {
+							transfer_navy = {
+								target = FROM
+							}
 						}
-						annex_country = {
-							target = ROOT
-							transfer_troops = no
+						FROM = {
+							white_peace = {
+								tag = ROOT
+								message = OCE_WIN_INP_TT
+							}
+							annex_country = {
+								target = ROOT
+								transfer_troops = no
+							}
 						}
 					}
 				}
