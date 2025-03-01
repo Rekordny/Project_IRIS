@@ -293,6 +293,46 @@ USR_imperial_promissory_bill_cat = {
 		}
 	}
 
+	#战时基础建设
+	USR_wartime_infrastructure_construct = {
+		icon = generic_construction
+		days_remove = 150
+		available = {
+			has_war = yes
+		}
+		days_re_enable = 30
+		cost = 0
+		complete_effect = {
+			hidden_effect = {
+				if = {
+					limit = { is_ai = no }
+					add_to_variable = {
+						usr_ipb_consumer_factor = 0.02
+					}
+					USR_update_ipb_amount_to_pay = yes
+				}
+			}
+		}
+		remove_effect = {
+			random_core_state = {
+				limit = { is_controlled_by = ROOT }
+				add_extra_state_shared_building_slots = 1
+			}
+			random_core_state = {
+				limit = { is_controlled_by = ROOT }
+				add_extra_state_shared_building_slots = 1
+			}
+			random_core_state = {
+				limit = { is_controlled_by = ROOT }
+				add_extra_state_shared_building_slots = 1
+			}
+			custom_effect_tooltip = USR_tooltip70
+		}
+		ai_will_do = {
+			base = 50
+		}
+	}
+
 	#向盟友出售本票:盟友/AI根据工业能力评估消费品系数减益
 	USR_sell_ipb_to_ally = {
 		icon = GFX_decision_eng_trade_unions_support
@@ -340,16 +380,39 @@ USR_imperial_promissory_bill_cat = {
 			FROM = {
 				country_event = usr.91
 			}
-			custom_effect_tooltip = USR_tooltip64
+			if = {
+				limit = { 
+					has_autonomy_state = autonomy_reichskommissariat
+				}
+				custom_effect_tooltip = USR_tooltip64
+			}
+			else = {
+				custom_effect_tooltip = USR_tooltip66
+			}
+			
 			USR_update_ipb_amount_to_pay = yes
 		}
 		complete_effect = {
-			add_to_variable = {
-				usr_ipb_payment_bonus_factor = -0.15
+			if = {
+				limit = { 
+					has_autonomy_state = autonomy_reichskommissariat
+				}
+				add_to_variable = {
+					usr_ipb_payment_bonus_factor = -0.15
+				}
+				add_to_variable = {
+					usr_ipb_consumer_factor = -0.075
+				}
 			}
-			add_to_variable = {
-				usr_ipb_consumer_factor = -0.075
+			else = {
+				add_to_variable = {
+					usr_ipb_payment_bonus_factor = -0.1
+				}
+				add_to_variable = {
+					usr_ipb_consumer_factor = -0.05
+				}
 			}
+			
 		}
 		ai_will_do = {
 			base = 100
@@ -980,12 +1043,204 @@ USR_privatization_priority_order = {
 
 #大乌斯拉尔方案
 USR_panuslarism = {
+	#盎格利亚专员辖区
+	USR_establish_STG_reichskommissariat = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_the_anglian_problem
+				is_testing = yes
+			}
+		}
+		cost = 150
+		available = {
+			STG = { exists = no }
+			UNG = {
+				all_core_state = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			USR_release_STG_reichskommissariat = yes
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	#和大吉岭商榷希斯帕尼亚归属问题
+	USR_negotiate_with_STG_about_HSP = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_the_anglian_problem
+				is_testing = yes
+			}
+		}
+		available = {
+			STG = { 
+				exists = yes 
+				NOT = {  
+					has_cosmetic_tag = STG_reichskommissariat
+				}
+			}
+			UNG = {
+				all_core_state = {
+					is_controlled_by_USR_or_STG = yes
+				}
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			STG = { country_event = { id = usr.92 days = 1 } }
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	#重组BC爱丽诺民族国
+	USR_establish_senshado_governor_ELN = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_the_central_europa_problem
+				is_testing = yes
+			}
+		}
+		cost = 50
+		available = {
+			ELN = { 
+				exists = no 
+				all_core_state = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			USR_release_ELN_alliance = yes
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	#思故边区的命运
+	USR_the_fate_of_SCK = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_peripheral_provinces
+				is_testing = yes
+			}
+		}
+		cost = 300
+		available = {
+			SCK = { 
+				exists = yes 
+				is_in_faction_with = USR
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			annex_country = {
+				target = SCK
+				transfer_troops = yes
+			}
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+
+	#为康塔西亚仲裁
+	USR_arbitration_for_CTC = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_harmonized_manage_eastern_europa
+				is_testing = yes
+			}
+		}
+		cost = 75
+		available = {
+			CTC = { 
+				exists = yes 
+				is_in_faction_with = USR
+				all_core_state = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			CTC = {
+				every_core_state = {
+					transfer_state_to = PREV
+				}
+			}
+		}
+	}
+
+	#建立东欧罗巴专员辖区
+	USR_establish_DOC_reichskommissariat = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_harmonized_manage_eastern_europa
+				is_testing = yes
+			}
+		}
+		cost = 150
+		available = {
+			DOC = {
+				exists = no
+				all_core_state = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			USR_release_DOC_reichskommissariat = yes
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+	#建立安齐奥专员辖区
+	USR_establish_ANZ_reichskommissariat = {
+		visible = {
+			OR = {
+				has_completed_focus = USR_harmonized_manage_eastern_europa
+				is_testing = yes
+			}
+		}
+		cost = 150
+		available = {
+			ANZ = {
+				exists = no
+				all_core_state = {
+					is_controlled_by_ROOT_or_subject = yes
+				}
+			}
+		}
+		fire_only_once = yes
+		complete_effect = {
+			USR_release_ANZ_reichskommissariat = yes
+		}
+		ai_will_do = {
+			base = 100
+		}
+	}
+
+
+
+
 	#重新建立希斯帕尼亚行省
 	USR_hispania_merge = {
 		icon = hol_draw_up_staff_plans
 		visible = {
 			TAG = USR
-			OR = { USR = { has_completed_focus = USR_eminent_country } is_testing = yes }
+			OR = { USR = { has_completed_focus = USR_the_anglian_problem } is_testing = yes }
 		}
 		available = {
 			STG = {
@@ -1014,7 +1269,7 @@ USR_panuslarism = {
 		icon = hol_draw_up_staff_plans
 		visible = {
 			TAG = USR
-			OR = { USR = { has_completed_focus = USR_eminent_country } is_testing = yes }
+			OR = { USR = { has_completed_focus = USR_peripheral_provinces } is_testing = yes }
 		}
 		available = {
 			MDS = {
@@ -1043,7 +1298,7 @@ USR_panuslarism = {
 		icon = hol_draw_up_staff_plans
 		visible = {
 			TAG = USR
-			OR = { USR = { has_completed_focus = USR_eminent_country } is_testing = yes }
+			OR = { USR = { has_completed_focus = USR_peripheral_provinces } is_testing = yes }
 		}
 		available = {
 			GAL = {
@@ -1072,7 +1327,7 @@ USR_panuslarism = {
 		icon = hol_draw_up_staff_plans
 		visible = {
 			TAG = USR
-			OR = { USR = { has_completed_focus = USR_eminent_country } is_testing = yes }
+			OR = { USR = { has_completed_focus = USR_peripheral_provinces } is_testing = yes }
 		}
 		available = {
 			SCK = {
@@ -1115,6 +1370,11 @@ USR_panuslarism = {
 		fire_only_once = yes
 		complete_effect = {
 			set_cosmetic_tag = USR_GROS_USLAR
+			# trigger se
+			set_variable = {
+				se_display = 25
+			}
+			SE_center = yes
 		}
 		ai_will_do = {
 			base = 100
@@ -1238,7 +1498,7 @@ USR_industrialization = {
 		complete_effect = {
 			FROM = {
 				set_temp_variable = { temp = 0 }
-				set_temp_variable = { temp1 = 1000 }
+				set_temp_variable = { temp1 = 1500 }
 				subtract_from_temp_variable = { temp = resource@raw_mana }
 				multiply_temp_variable = { temp1 = resource@raw_mana }
 				add_resource = {
@@ -1274,7 +1534,8 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 179
-			add_cic = 25000
+			add_cic = 60000
+			USR_expand_market = yes
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -1300,7 +1561,8 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 149
-			add_cic = 75000
+			add_cic = 120000
+			USR_expand_market = yes
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -1326,7 +1588,8 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 159
-			add_cic = 60000
+			add_cic = 120000
+			USR_expand_market = yes
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -1352,7 +1615,8 @@ USR_industrialization = {
 		cost = 30
 		complete_effect = {
 			remove_resource_rights = 177
-			add_cic = 30000
+			add_cic = 60000
+			USR_expand_market = yes
 		}
 		fire_only_once = yes
 		ai_will_do = {
@@ -1605,66 +1869,6 @@ USR_increase_literacy_rate = {
 		}
 	}
 }
-
-#It is Mygo
-USR_it_is_mygo_cat = {
-	USR_it_is_mygo_start_a_live = {
-		icon = generic_political_rally
-		cost = 100
-		days_remove = 30
-		fire_only_once = no
-		modifier = {
-			command_power_gain_mult = -0.5
-		}
-		complete_effect = {
-			add_dynamic_modifier = {
-				modifier = USR_it_is_mygo
-			}
-			custom_effect_tooltip = USR_tooltip54
-			random_list = {
-				20 = {
-					USR_Chihaya = {
-						add_skill_level = 1
-					}
-				}
-				20 = {
-					USR_Nagasaki = {
-						add_skill_level = 1
-					}
-				}
-				20 = {
-					USR_Takamatsu = {
-						add_skill_level = 1
-					}
-				}
-				20 = {
-					USR_Kaname = {
-						add_skill_level = 1
-					}
-				}
-				20 = {
-					USR_Shiina = {
-						add_skill_level = 1
-					}
-				}
-			}
-		}
-		remove_effect = {
-			remove_dynamic_modifier = {
-				modifier = USR_it_is_mygo
-			}
-		}
-		ai_will_do = {
-			base = 0
-			modifier = {
-				date > 3097.1.1
-				has_war = yes
-				add = 1
-			}
-		}
-	}
-}
-
 
 
 USR_ai_decisions = {

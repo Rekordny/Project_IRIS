@@ -1557,272 +1557,777 @@ NAC_north_route = {
         }
     }
 }
-#外国支援罗西亚革命
-Rossiya_Revolution = {
-    Support_NAC = {
+#罗西亚重建
+NAC_reconstruction_decisions = {
+    NAC_reconstruction_decisions_tt = {
         available = {
-            has_equipment = {
-                infantry_equipment > 1999
+            hidden_trigger = {
+                always = no
             }
+        }
+        visible = {
             NOT = {
-                has_war_with = NAC
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            BLA = {
-                NOT = {
-                    has_volunteers_amount_from = {
-                        tag = ROOT
-                        count > 0
-                    }
+        }
+        complete_effect = {
+        }
+    }
+    #完成重建
+    NAC_finish_reconstruction = {
+        available = {
+            check_variable = {NAC_rb > 99}
+            check_variable = {NAC_lr > 99}
+            check_variable = {NAC_rc > 99}
+            OR = {
+                has_completed_focus = NAC_rsr_14
+                has_completed_focus = NAC_katyusha_9
+            }
+            has_completed_focus = NAC_econ_1
+            has_completed_focus = NAC_econ_2
+        }
+        fire_only_once = yes
+        complete_effect = {
+            remove_dynamic_modifier = {modifier = NAC_ruined_rossiya}
+            clr_country_flag = NAC_reconstruction_decisions_flag
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+ #重建
+    #重建进行中 自动抽卡
+    NAC_reconstruction_in_progress = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_country_flag = NAC_reconstruction_decisions_flag
+            check_variable = {NAC_rc < 100}
+        }
+        cancel_trigger = {
+            check_variable = {NAC_rc > 99}
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            random_list = {
+                25 = {
+                    NAC_add_rc_1 = yes
                 }
+                30 = {
+                    NAC_add_rc_2 = yes
+                }
+                40 = {
+                    NAC_add_rc_3 = yes
+                }
+                5 = {
+                    NAC_add_rc_5 = yes
+                }
+            }
+            
+        }
+    }
+    #重建行政机构
+    NAC_rebuild_adm = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        days_remove = 30
+        days_re_enable = 40
+        remove_effect = {
+            NAC_add_rc_2 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #吸纳旧官员
+    NAC_integrate_BLA_adm = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+            has_country_flag = NAC_reconstruction_17_flag
+        }
+        cost = 10
+        days_remove = 30
+        days_re_enable = 60
+        remove_effect = {
+            NAC_add_rc_2 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #恢复生产
+    NAC_reopen_the_factories = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        cost = 25
+        days_remove = 60
+        days_re_enable = 30
+        modifier = {
+            industrial_capacity_factory = 0.15
+            industrial_capacity_dockyard = 0.15
+        }
+        remove_effect = {
+            NAC_add_rc_3 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #动员军队参与重建
+    NAC_send_army_to_join_reconstruction = {
+        available = {
+            has_army_manpower = {
+                size > 29999
             }
         }
         visible = {
             OR = {
-                has_government = communism
-                has_government = democratic
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            NOT = {
-                has_war_with = NAC
-            }
-            ROOT = {
-                check_variable = {infantry_equipment_shipped_to_NAC < 3}
+            has_country_flag = NAC_reconstruction_14_flag
+        }
+        cost = 5
+        days_remove = 40
+        days_re_enable = 40
+        complete_effect = {
+            add_manpower = -30000
+        }
+        remove_effect = {
+            add_manpower = 30000
+            NAC_add_rc_3 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #恢复外贸
+    NAC_open_trade = {
+        available = {
+            any_other_country = {
+                NOT = {is_embargoing = NAC}
             }
         }
-        days_remove = 30
-        remove_effect = {
-            send_equipment = {
-                equipment = infantry_equipment
-                amount = 2000
-                target = NAC
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            hidden_effect = {
-                ROOT = {
-                    add_to_variable = {infantry_equipment_shipped_to_NAC = 1}
+        }
+        cost = 10
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            NAC_add_rc_2 = yes
+            add_cic = 200
+            set_variable = {NAC_trade = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #接管旧国有企业
+    NAC_takeover_state_owned_companies = {
+        visible = {
+            check_variable = {NAC_takeover_state_owned_companies < 3}
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+            has_country_flag = NAC_reconstruction_19_flag
+        }
+        cost = 30
+        days_remove = 100
+        days_re_enable = 60
+        remove_effect = {
+            NAC_add_rc_5 = yes
+            random_owned_controlled_state = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+                    type = industrial_complex
+                    level = 1
+                    instant_build = yes
                 }
             }
         }
         ai_will_do = {
-            base = 10
-            modifier = {
-                factor = 100
-                has_government = NAC
+            factor = 1000
+        }
+    }
+    #动员群众参与义务劳动
+    NAC_voluntary_labor = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 1}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 25 }
+        }
+        cost = 20
+        days_remove = 60
+        days_re_enable = 60
+        modifier = {
+            production_speed_buildings_factor = 0.1
+        }
+        remove_effect = {
+            NAC_add_rc_2 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+ #土改
+    #人口普查
+    NAC_census = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 50 }
+        }
+        cost = 10
+        days_remove = 30
+        days_re_enable = 10
+        remove_effect = {
+            NAC_add_lr_2 = yes
+            add_manpower = 1000
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #公审地主
+    NAC_beat_the_landlord = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 74 }
+            has_country_flag = NAC_reconstruction_4_flag
+        }
+        cost = 10
+        days_remove = 20
+        days_re_enable = 30
+        remove_effect = {
+            NAC_add_lr_2 = yes
+            add_popularity = {
+                ideology = fascism
+                popularity = -0.01
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 99 }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #党员下乡
+    NAC_go_to_countryside = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+            has_country_flag = NAC_reconstruction_4_flag
+        }
+        cost = 20
+        days_remove = 30
+        days_re_enable = 30
+        remove_effect = {
+            NAC_add_lr_3 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #降低农业税
+    NAC_reduce_tax = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        days_remove = 60
+        days_re_enable = 30
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        remove_effect = {
+            NAC_add_lr_3 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #鼓励农村民主
+    NAC_emcourage_rural_democracy = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        days_remove = 40
+        days_re_enable = 30
+        modifier = {
+            political_power_factor = -0.1
+        }
+        remove_effect = {
+            NAC_add_lr_2 = yes
+            add_to_variable = {NAC_rural_democracy = 1}
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {has_country_flag = NAC_70_triggered}
+                    }
+                    country_event = {id = NAC.70 days = 3}
+                    set_country_flag = NAC_70_triggered
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #召开公社会议
+    NAC_peasant_assembly = {
+        visible = {
+            check_variable = {NAC_rural_democracy > 2}
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        days_remove = 10
+        remove_effect = {
+            add_political_power = 20
+            NAC_add_lr_5 = yes
+            add_to_variable = {NAC_rural_democracy = -3}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #农村扫盲阅读室
+    NAC_rural_reading_house = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 2}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+            has_country_flag = NAC_reconstruction_6_flag
+        }
+        cost = 30
+        days_remove = 80
+        days_re_enable = 30
+        remove_effect = {
+            NAC_add_lr_3 = yes
+            NAC_add_rb_3 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #土改进行中 自动抽卡
+    NAC_land_reform_in_progress = {
+        icon = mission_icon
+        is_good = yes
+        available = {
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_country_flag = NAC_reconstruction_decisions_flag
+            check_variable = {NAC_lr < 100}
+        }
+        cancel_trigger = {
+            check_variable = {NAC_lr > 99}
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            random_list = {
+                10 = {
+                    NAC_add_lr_1 = yes
+                }
+                30 = {
+                    NAC_add_lr_2 = yes
+                }
+                40 = {
+                    NAC_add_lr_3 = yes
+                }
+                20 = {
+                    NAC_add_lr_5 = yes
+                }
             }
         }
     }
-    Give_heavy_weapons_to_NAC = {
+ ##平叛
+    #平叛进行中 自动抽卡
+    NAC_supress_in_progress = {
+        icon = mission_icon
+        is_good = yes
         available = {
-            has_equipment = {
-                artillery_equipment > 199
-            }
-            NOT = {
-                has_war_with = NAC
-            }
-            BLA = {
-                NOT = {
-                    has_volunteers_amount_from = {
-                        tag = ROOT
-                        count > 0
-                    }
+            always = no
+        }
+        activation = {
+            tag = NAC
+            has_country_flag = NAC_reconstruction_decisions_flag
+            check_variable = {NAC_rb < 100}
+        }
+        cancel_trigger = {
+            check_variable = {NAC_rb > 99}
+        }
+        days_mission_timeout = 60
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            random_list = {
+                25 = {
+                    NAC_add_rb_1 = yes
+                }
+                30 = {
+                    NAC_add_rb_2 = yes
+                }
+                40 = {
+                    NAC_add_rb_3 = yes
+                }
+                5 = {
+                    NAC_add_rb_5 = yes
                 }
             }
+            
         }
+    }
+    #扩大联盟保卫局权限
+    NAC_expand_national_security_agency = {
         visible = {
             OR = {
-                has_government = communism
-                has_government = democratic
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            NOT = {
-                has_war_with = NAC
+        }
+        fire_only_once = yes
+        cost = 50
+        days_remove = 40
+        remove_effect = {
+            add_ideas = NAC_national_security_agency
+            custom_effect_tooltip = NAC_unlock_find_bad_guy
+            gain_random_agency_upgrade = yes
+            hidden_effect = {
+                add_to_variable = {NAC_katyusha_power = 10}
             }
-            ROOT = {
-                check_variable = {artillery_equipment_shipped_to_NAC < 3}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #定位叛军
+    NAC_find_the_bad_guy = {
+        visible = {
+            has_idea = NAC_national_security_agency
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
             }
         }
         days_remove = 30
         remove_effect = {
-            send_equipment = {
-                equipment = artillery_equipment
-                amount = 200
-                target = NAC
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = -200
+                producer = NAC
+            }
+            NAC_add_rb_1 = yes
+            random_list = {
+                60 = {
+                    custom_effect_tooltip = NAC_we_found_it
+                    add_to_variable = {NAC_rebellion_base_found = 1}
+                }
+                40 = {
+                }
             }
             hidden_effect = {
-                ROOT = {
-                    add_to_variable = {artillery_equipment_shipped_to_NAC = 1}
+                if = {
+                    limit = {
+                        NOT = {has_country_flag = NAC_72_triggered}
+                    }
+                    country_event = {id = NAC.72 days = 5}
+                    set_country_flag = NAC_72_triggered
                 }
             }
         }
         ai_will_do = {
-            base = 10
-            modifier = {
-                factor = 100
-                has_government = NAC
+            factor = 1000
+        }
+    }
+    #摧毁叛军
+    NAC_kill_the_bad_guy = {
+        visible = {
+            has_idea = NAC_national_security_agency
+            check_variable = {NAC_rebellion_base_found > 0}
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 25 }
+        }
+        days_remove = 40
+        remove_effect = {
+            NAC_add_rb_5 = yes
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = -300
+                producer = NAC
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 50 }
+            add_to_variable = {NAC_rebellion_base_found = -1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #动员群众检举
+    NAC_mobalise_the_people = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 74 }
+        }
+        cost = 10
+        days_remove = 30
+        days_re_enable = 30
+        remove_effect = {
+            NAC_add_rb_2 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #用战车送他们上天
+    NAC_send_panzer = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
             }
-            modifier = {
-                add = 5
-                has_opinion = { target = NAC value > 99 }
+        }
+        available = {
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                has_army_size = {
+                    size > 0
+                    type = armor
+                }
+            }
+        }
+        days_remove = 10
+        days_re_enable = 100
+        remove_effect = {
+            NAC_add_rb_5 = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #组建基层民兵
+    NAC_establish_militia = {
+        visible = {
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        days_remove = 100
+        fire_only_once = yes
+        remove_effect = {
+            set_variable = {NAC_militia = 1}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #大规模清剿
+    NAC_send_militia = {
+        visible = {
+            check_variable = {NAC_militia > 0}
+            OR = {
+                is_ai = yes
+                check_variable = {NAC_reconstruction_display = 3}
+                check_variable = {NAC_reconstruction_display = 4}
+            }
+        }
+        days_remove = 35
+        days_re_enable = 30
+        remove_effect = {
+            NAC_add_rb_3 = yes
+        }
+    }
+    #摧毁正教会反动堡垒
+    NAC_destory_the_rebellion = {
+        highlight_states = {
+            state = 118
+        }
+        available = {
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                divisions_in_state = {
+                    size > 2
+                    state = 118
+                }
+            }
+        }
+        visible = {
+            has_country_flag = NAC_church_rebel_flag
+        }
+        days_remove = 3
+        fire_only_once = yes
+        remove_effect = {
+            add_manpower = -250
+            add_popularity = {
+                ideology = reactionism
+                popularity = -0.1
+            }
+            country_event = {id = NAC.60}
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+}
+NAC_city_dev_decisions = {
+    NAC_show_new_city_on_map = {
+        available = {
+            hidden_trigger = {always = no}
+        }
+        highlight_states = {
+            highlight_states_trigger = {
+                has_state_flag = NAC_dev_target
             }
         }
     }
-    Support_BLA = {
-        available = {
-            has_equipment = {
-                infantry_equipment > 999
+    NAC_city_dev = {
+        state_target = yes
+        target_array = NAC.city_dev_array
+        on_map_mode = map_and_decisions_view
+        icon = generic_construction
+        target_root_trigger = {
+            tag = NAC
+        }
+        target_trigger = {
+            FROM = {
+                is_owned_and_controlled_by = ROOT
+                check_variable = {NAC_city_dev < 3}
             }
-            NOT = {
-                has_war_with = BLA
-            }
-            NAC = {
-                NOT = {
-                    has_volunteers_amount_from = {
-                        tag = ROOT
-                        count > 0
+        }
+        cost = 80
+        days_remove = 250
+        remove_effect = {
+            FROM = {
+                if = {
+                    limit = {
+                        check_variable = {NAC_city_dev = 1}
+                    }
+                    add_to_variable = {NAC_city_dev = 1}
+                    add_manpower = 50000
+                    add_extra_state_shared_building_slots = 4
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 1
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {NAC_city_dev = 2}
+                    }
+                    add_manpower = 75000
+                    add_dynamic_modifier = {modifier = BLA_industrial_core_modifier scope = NAC}
+                    add_extra_state_shared_building_slots = 4
+                    add_building_construction = {
+                        type = industrial_complex
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = arms_factory
+                        level = 2
+                        instant_build = yes
+                    }
+                    add_building_construction = {
+                        type = infrastructure
+                        level = 1
+                        instant_build = yes
+                    }
+                    if = {
+                        limit = {
+                            state = 871
+                        }
+                        add_victory_points = {
+                            province = 10289
+                            value = 10
+                        }
                     }
                 }
             }
         }
-        visible = {
-            OR = {
-                has_government = neutrality
-                has_government = reactionism
-                has_government = fascism
-            }
-            NOT = {
-                has_war_with = BLA
-            }
-            ROOT = {
-                check_variable = {infantry_equipment_shipped_to_BLA < 3}
-            }
-        }
-        days_remove = 30
-        remove_effect = {
-            send_equipment = {
-                equipment = infantry_equipment
-                amount = 1000
-                target = BLA
-            }
-            hidden_effect = {
-                ROOT = {
-                    add_to_variable = {infantry_equipment_shipped_to_BLA = 1}
-                }
-            }
-        }
         ai_will_do = {
-            base = 10
-            modifier = {
-                factor = 5
-                has_government = BLA
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 25 }
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 50 }
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 74 }
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 99 }
-            }
-        }
-    }
-    Give_heavy_weapons_to_BLA = {
-        available = {
-            has_equipment = {
-                artillery_equipment > 99
-            }
-            NOT = {
-                has_war_with = BLA
-            }
-            NAC = {
-                NOT = {
-                    has_volunteers_amount_from = {
-                        tag = ROOT
-                        count > 0
-                    }
-                }
-            }
-        }
-        visible = {
-            OR = {
-                has_government = neutrality
-                has_government = reactionism
-                has_government = fascism
-            }
-            NOT = {
-                has_war_with = BLA
-            }
-            ROOT = {
-                check_variable = {artillery_equipment_shipped_to_BLA < 3}
-            }
-        }
-        days_remove = 30
-        remove_effect = {
-            send_equipment = {
-                equipment = artillery_equipment
-                amount = 100
-                target = BLA
-            }
-            hidden_effect = {
-                ROOT = {
-                    add_to_variable = {artillery_equipment_shipped_to_BLA = 1}
-                }
-            }
-        }
-        ai_will_do = {
-            base = 10
-            modifier = {
-                factor = 5
-                has_government = BLA
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 25 }
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 50 }
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 74 }
-            }
-            modifier = {
-                add = 5
-                has_opinion = { target = BLA value > 99 }
-            }
+            base = 1000
         }
     }
 }
@@ -1878,6 +2383,11 @@ NAC_debug_decisions = {
                 keep_completed = yes
             }
             mark_focus_tree_layout_dirty = yes
+        }
+    }
+    NAC_load_gui_window = {
+        complete_effect = {
+            set_country_flag = NAC_reconstruction_decisions_flag
         }
     }
 }
