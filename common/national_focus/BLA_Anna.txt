@@ -1362,12 +1362,6 @@ focus_tree = {
             activate_targeted_decision = { target = 112 decision = Rossiya_112_project}
             activate_targeted_decision = { target = 163 decision = Rossiya_163_project}
             activate_targeted_decision = { target = 41 decision = Rossiya_41_project}
-            custom_effect_tooltip = BLA_Anna_industry_24_bonus_desc
-            hidden_effect = {
-                BLA = {
-                    add_to_variable = {BLA_dynamic_production_speed_buildings_factor = 0.05}
-                }
-            }
 		}
     }
     #轻工业
@@ -2302,6 +2296,7 @@ focus_tree = {
         }
         completion_reward = {
             add_political_power = -25
+            add_stability = 0.1
             custom_effect_tooltip = BLA_support_for_reform_increases
             hidden_effect = {
                 BLA = {add_to_variable = {BLA_support_for_reform = 1}}
@@ -2873,6 +2868,8 @@ focus_tree = {
         }
         completion_reward = {
             BLA_gain_random_secret = yes
+            gain_random_agency_upgrade = yes
+            add_stability = 0.05
             hidden_effect = {
                 country_event = {id = BLA_pol.22 days = 3}
             }
@@ -2907,7 +2904,7 @@ focus_tree = {
             clr_country_flag = BLA_serfdom_question
             hidden_effect = {
                 BLA = {set_variable = {BLA_serf_opinion = 20}}
-                NAC = {add_to_variable = {NAC_morale = -25}}
+                NAC = {add_to_variable = {NAC_morale = -40}}
                 set_country_flag = BLA_Anna_TE_enabled
                 every_country = {
                     add_to_variable = {BLA_W_control_point = 3}
@@ -3116,6 +3113,7 @@ focus_tree = {
             NOT = {country_exists = NAC}
         }
         completion_reward = {
+            BLA_upgrade_bureaucracy = yes
             if = {
                 limit = {
                     has_idea = BLA_PM_Sanya
@@ -3761,6 +3759,7 @@ focus_tree = {
                     }
                 }
                 set_country_flag = BLA_allow_PM_branch
+                set_country_flag = BLA_allow_mil_branch
                 mark_focus_tree_layout_dirty = yes
             }
 		}
@@ -5201,6 +5200,34 @@ focus_tree = {
             add_war_support = 0.20
             custom_effect_tooltip =  BLA_morale_increase_by_10
             custom_effect_tooltip = BLA_gain_support_from_other_desc
+            country_lock_all_division_template = no
+            hidden_effect = {
+                clear_division_template_cap = {
+                    division_template = "常备步兵师"
+                }
+                clear_division_template_cap = {
+                    division_template = "新军步兵师"
+                }
+                clear_division_template_cap = {
+                    division_template = "新制军团"
+                }
+                set_division_template_lock = {
+                    division_template = "试验型装甲旅"
+                    is_locked = no
+                }
+                set_division_template_lock = {
+                    division_template = "常备步兵师"
+                    is_locked = no
+                }
+                set_division_template_lock = {
+                    division_template = "新军步兵师"
+                    is_locked = no
+                }
+                set_division_template_lock = {
+                    division_template = "新制军团"
+                    is_locked = no
+                }
+            }
             capital_scope = {
                 create_unit = {
                     division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
@@ -5216,13 +5243,16 @@ focus_tree = {
                 country_event = {id = BLA_rev.7 days = 3}
                 every_other_country = {
                     limit = {
-                        is_major = yes
-                        NOT = {
-                            tag = USR
-                            tag = OCF
+                        OR = {
                             tag = ELN
-                            has_war_with = BLA
-                            has_government = communism
+                            tag = USF
+                            tag = UNG
+                            tag = PCC
+                            tag = LAD
+                            tag = USR
+                            tag = ANZ
+                            tag = BOW
+                            tag = STG
                         }
                     }
                     add_ideas = BLA_foreign_support
@@ -6633,66 +6663,25 @@ focus_tree = {
 		}
     }
     ####首相动态国策####
-    #沙皇的钦点
-    focus = {
-        id = BLA_PM_general
-        icon = GFX_focus_BLA_PM_general
-        x = 0
-        y = 0
-        offset = {
-            x = 20
-            y = 14
-            trigger = {
-                has_country_flag = BLA_debug_display_all_focus
-            }
-        }
-        cost = 1
-        available_if_capitulated = yes
-        ai_will_do = {
-            factor = 100
-		}
-        available = {
-            BLA_is_peaceful = yes
-        }
-        allow_branch = {
-            OR = {
-                AND = {
-                    NOT = {
-                        has_idea = BLA_PM_Katyusha
-                    }
-                    has_country_flag = BLA_allow_PM_branch
-                }
-                has_country_flag = BLA_debug_display_all_focus
-            }
-        }
-        completion_reward = {
-            add_political_power = 25
-            custom_effect_tooltip = BLA_unlock_focus_depends_on_PM_desc
-            set_country_flag = BLA_allow_mil_branch
-            hidden_effect = {
-                load_focus_tree = {
-                    tree = BLA_Anna
-                    keep_completed = yes
-                }
-                mark_focus_tree_layout_dirty = yes
-            }
-		}
-    }
     ####希拉####
     #双城记
     focus = {
         id = BLA_PM_Siera_1
         icon = GFX_focus_
         x = 0
-        y = 1
+        y = 0
+        offset = {
+            y = 20
+            trigger = {
+                has_country_flag = BLA_debug_display_all_focus
+            }
+        }
         cost = 4
-        relative_position_id = BLA_PM_general
-        prerequisite = {focus = BLA_PM_general}
         allow_branch = {
             OR = {
                 AND = {
                     has_idea = BLA_PM_Siera
-                has_completed_focus = BLA_PM_general
+                    has_country_flag = BLA_allow_PM_branch
                 }
                 has_country_flag = BLA_debug_display_all_focus
             }
@@ -6865,6 +6854,7 @@ focus_tree = {
         }
         completion_reward = {
             add_political_power = 150
+            BLA_upgrade_bureaucracy = yes
 		}
     }
     #沙皇格勒的新城区
@@ -7407,6 +7397,7 @@ focus_tree = {
             }
             add_research_slot = 1
             BLA_increase_all_opinion = yes
+            BLA_upgrade_bureaucracy = yes
 		}
     }
     #对愚昧开战
@@ -7582,12 +7573,6 @@ focus_tree = {
         completion_reward = {
             add_political_power = -100
             add_stability = 0.05
-            custom_effect_tooltip = BLA_PM_Siera_31_bonus
-            hidden_effect = {
-                add_to_variable = {BLA_dynamic_political_advisor_cost_factor = -0.10}
-                add_to_variable = {BLA_dynamic_trade_laws_cost_factor = -0.10}
-                add_to_variable = {BLA_dynamic_economy_cost_factor = -0.10}
-            }
 		}
     }
     #模范新军
@@ -7608,13 +7593,7 @@ focus_tree = {
         }
         completion_reward = {
             BLA_increase_army_opinion_big = yes
-            custom_effect_tooltip = BLA_PM_Siera_31_bonus
             custom_effect_tooltip = BLA_PM_Siera_32_decision
-            hidden_effect = {
-                add_to_variable = {BLA_dynamic_political_advisor_cost_factor = -0.10}
-                add_to_variable = {BLA_dynamic_trade_laws_cost_factor = -0.10}
-                add_to_variable = {BLA_dynamic_economy_cost_factor = -0.10}
-            }
             custom_effect_tooltip = BLA_PM_Siera_31_extra_bonus
             if = {
                 limit = {
@@ -7654,12 +7633,6 @@ focus_tree = {
         completion_reward = {
             add_war_support = 0.05
             add_ideas = BLA_sumptuary_law
-            custom_effect_tooltip = BLA_PM_Siera_31_bonus
-            hidden_effect = {
-                add_to_variable = {BLA_dynamic_political_advisor_cost_factor = -0.10}
-                add_to_variable = {BLA_dynamic_trade_laws_cost_factor = -0.10}
-                add_to_variable = {BLA_dynamic_economy_cost_factor = -0.10}
-            }
 		}
     }
     #无私奉献造就帝国荣光
@@ -7829,6 +7802,7 @@ focus_tree = {
             has_completed_focus = BLA_Anna_mil_25
         }
         completion_reward = {
+            BLA_upgrade_bureaucracy = yes
             custom_effect_tooltip = BLA_PM_Siera_39_decision
             custom_effect_tooltip = BLA_PM_Siera_39_combine_ideas
             hidden_effect = {
@@ -7847,16 +7821,15 @@ focus_tree = {
         id = BLA_PM_Sanya_1
         icon = GFX_focus_
         x = 0
-        y = 1
+        y = 0
         offset = {
-            x = -20
+            x = 20
+            y = 20
             trigger = {
                 has_country_flag = BLA_debug_display_all_focus
             }
         }
         cost = 4
-        relative_position_id = BLA_PM_general
-        prerequisite = {focus = BLA_PM_general}
         allow_branch = {
             OR = {
                 AND = {
@@ -7865,10 +7838,10 @@ focus_tree = {
                         has_country_flag = BLA_debug_display_sanya_success_focus_flag
                         has_country_flag = BLA_debug_display_sanya_fail_focus_flag
                     }
+                    has_country_flag = BLA_allow_PM_branch
                     NOT = {
                         has_country_flag = BLA_HEL_crisis_failed
                     }
-                    has_completed_focus = BLA_PM_general
                 }
                 has_country_flag = BLA_debug_display_all_focus
             }
@@ -7879,6 +7852,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             if = {
@@ -7912,6 +7886,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             add_stability = 0.05
@@ -7937,6 +7912,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             add_ideas = BLA_culture_1
@@ -7960,6 +7936,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             swap_ideas = {
@@ -7983,6 +7960,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             custom_effect_tooltip = BLA_strengthen_unity_gain_from_youth
@@ -8009,6 +7987,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             add_cic = 4500
@@ -8056,6 +8035,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_bop_move_leftward = yes
@@ -8077,19 +8057,20 @@ focus_tree = {
         prerequisite = {focus = BLA_PM_Sanya_2}
         available_if_capitulated = yes
         ai_will_do = {
-            factor = 200
+            factor = 1000
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_strengthen_gov_sanya = yes
+            BLA_upgrade_bureaucracy = yes
             custom_effect_tooltip = BLA_unlock_officials_decision
             BLA_bop_move_leftward = yes
             BLA_decrease_nobility_opinion = yes
             custom_effect_tooltip = BLA_PM_Sanya_8_bonus_desc
             hidden_effect = {
-                add_to_variable = {BLA_dynamic_political_advisor_cost_factor = -0.15}
                 add_to_variable = {BLA_dynamic_max_command_power = 20}
             }
 		}
@@ -8109,17 +8090,13 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             custom_effect_tooltip = BLA_strengthen_unity_gain_from_youth
             BLA_bop_move_leftward = yes
             BLA_increase_freeman_opinion = yes
             BLA_increase_capitalist_opinion = yes
-            custom_effect_tooltip = BLA_PM_Sanya_9_bonus_desc
-            hidden_effect = {
-                add_to_variable = {BLA_dynamic_trade_laws_cost_factor = -0.15}
-                add_to_variable = {BLA_dynamic_economy_cost_factor = -0.15}
-            }
 		}
     }
     #罗西亚的天空
@@ -8137,6 +8114,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             air_experience = 100
@@ -8167,6 +8145,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             random_owned_controlled_state = {
@@ -8193,7 +8172,8 @@ focus_tree = {
             factor = 200
 		}
         available = {
-                    BLA_is_peaceful = yes
+            BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             add_ideas = BLA_air_rnd_center
@@ -8226,6 +8206,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             custom_effect_tooltip = BLA_strengthen_unity_gain_from_youth
@@ -8255,6 +8236,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_strengthen_gov_sanya = yes
@@ -8280,6 +8262,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_bop_move_leftward_big = yes
@@ -8306,6 +8289,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_strengthen_gov_sanya = yes
@@ -8318,6 +8302,7 @@ focus_tree = {
                 remove_idea = BLA_Sanyas_reform_1
                 add_idea = BLA_Sanyas_reform_2
             }
+            BLA_upgrade_bureaucracy = yes
             hidden_effect = {
                 country_event = {id = BLA_general.53 days = 20}
             }
@@ -8340,6 +8325,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_gain_tsar_order = yes
@@ -8387,7 +8373,12 @@ focus_tree = {
                 has_country_flag = BLA_debug_display_all_focus
             }
         }
+        available = {
+            BLA_is_peaceful = yes
+            BLA_we_are_united = yes
+        }
         completion_reward = {
+            BLA_upgrade_bureaucracy = yes
             BLA_bop_move_leftward = yes
             swap_ideas = {
                 remove_idea = BLA_duma
@@ -8413,6 +8404,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
             has_country_flag  = BLA_sanyas_position_is_secured
         }
         completion_reward = {
@@ -8435,16 +8427,15 @@ focus_tree = {
         id = BLA_PM_Sanya_20
         icon = GFX_focus_
         x = 0
-        y = 1
+        y = 0
         offset = {
-            x = -10
+            x = 10
+            y = 20
             trigger = {
                 has_country_flag = BLA_debug_display_all_focus
             }
         }
         cost = 3
-        relative_position_id = BLA_PM_general
-        prerequisite = {focus = BLA_PM_general}
         available_if_capitulated = yes
         ai_will_do = {
             factor = 100
@@ -8509,7 +8500,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
-            
+            BLA_we_are_united = yes
         }
         completion_reward = {
             add_political_power = 100
@@ -8538,7 +8529,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
-            
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_bop_move_leftward = yes
@@ -8560,16 +8551,10 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
-            
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_bop_move_leftward = yes
-            custom_effect_tooltip = BLA_reform_bureaucracy
-            hidden_effect = {
-                set_variable = {BLA_dynamic_political_advisor_cost_factor = 0}
-				set_variable = {BLA_dynamic_trade_laws_cost_factor = 0}
-				set_variable = {BLA_dynamic_economy_cost_factor = 0}
-            }
             custom_effect_tooltip = BLA_rot_bonus_big_desc
             hidden_effect = {
                 add_to_variable = {BLA_stability_factor = 0.001}
@@ -8594,7 +8579,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
-            
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_bop_move_leftward = yes
@@ -8635,7 +8620,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
-            
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_bop_move_leftward = yes
@@ -8663,6 +8648,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
             power_balance_value = {
                 id = BLA_legacy_of_August
                 value < -0.50
@@ -8726,6 +8712,7 @@ focus_tree = {
         }
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
             custom_trigger_tooltip = {
                 tooltip = BLA_labor_power_greater_than_29
                 BLA = {
@@ -8734,6 +8721,7 @@ focus_tree = {
             }
         }
         completion_reward = {
+            BLA_upgrade_bureaucracy = yes
             custom_effect_tooltip = BLA_strengthen_unity_gain_from_labor
             BLA_increase_labor_power = yes
             set_temp_variable = {temp_law = token:BLA_compulsory_eduction_act}
@@ -8755,6 +8743,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             custom_effect_tooltip = BLA_unlock_basic_welfare_policy_decision
@@ -8775,6 +8764,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             custom_effect_tooltip = BLA_PM_Sanya_30_bonus
@@ -8801,6 +8791,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         bypass = {
             has_country_flag = BLA_reopen_pravada_opposed
@@ -8853,6 +8844,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             army_experience = 100
@@ -8890,6 +8882,7 @@ focus_tree = {
         }
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_increase_unity = yes
@@ -8915,6 +8908,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             add_tech_bonus = {
@@ -8951,6 +8945,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_decrease_labor_power = yes
@@ -8978,6 +8973,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             BLA_increase_nobility_opinion_big = yes
@@ -9003,6 +8999,7 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
         }
         completion_reward = {
             custom_effect_tooltip = BLA_PM_Sanya_37_bonus_desc
@@ -9065,12 +9062,14 @@ focus_tree = {
 		}
         available = {
             BLA_is_peaceful = yes
+            BLA_we_are_united = yes
             has_completed_focus = BLA_Anna_industry_35
             has_completed_focus = BLA_Anna_mil_25
         }
         completion_reward = {
             add_stability = 0.10
             add_war_support = 0.10
+            BLA_upgrade_bureaucracy = yes
             hidden_effect = {
                 country_event = {id = BLA_general.74 days = 3}
             }
@@ -9999,8 +9998,13 @@ focus_tree = {
 		}
         allow_branch = {
             OR = {
-                has_idea = BLA_PM_Sanya
-                has_idea = BLA_PM_Lyudmila
+                AND = {
+                    has_country_flag = BLA_allow_mil_branch
+                    OR = {
+                        has_idea = BLA_PM_Sanya
+                        has_idea = BLA_PM_Lyudmila
+                    }
+                }
                 has_country_flag = BLA_debug_display_sanya_success_focus_flag
                 has_country_flag = BLA_debug_display_sanya_fail_focus_flag
                 has_country_flag = BLA_debug_display_all_focus
