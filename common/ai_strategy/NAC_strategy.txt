@@ -39,9 +39,99 @@ NAC_after_revolution_production = {
 	}
 
 	ai_strategy = {
+		type = role_ratio
+		id = infantry
+		value = 80
+	}
+	ai_strategy = {
+		type = build_army
+		id = armor
+		value = 200
+	}
+	ai_strategy = {
+		type = build_army
+		id = infantry
+		value = 200
+	}
+	ai_strategy = {
+		type = role_ratio
+		id = cavalry
+		value = -100
+	}
+
+	ai_strategy = {
+		type = role_ratio
+		id = armor
+		value = 100
+	}
+
+	ai_strategy = {
+		type = role_ratio
+		id = mountaineers
+		value = -100
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = infantry
+		value = 100
+	}
+
+	ai_strategy = {
+		type = equipment_production_factor
+		id = artillery
+		value = 10
+	}
+
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = medium_tank_chassis
+		value = 100
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = light_tank_chassis
+		value = -100
+	}
+	ai_strategy = {
+		type = equipment_variant_production_factor
+		id = heavy_tank_chassis
+		value = -100
+	}
+	ai_strategy = {
 		type = equipment_production_factor
 		id = armor
-		value = 50
+		value = 80
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = train
+		value = 1
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = motorized
+		value = 1
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = artillery
+		value = 4
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = anti_air
+		value = 1
+	}
+
+	ai_strategy = {
+		type = equipment_production_min_factories
+		id = anti_tank
+		value = 1
 	}
 }
 NAC_hate_BLA = {
@@ -64,20 +154,6 @@ NAC_hate_BLA = {
         id = BLA
         value = 1000
     }
-    ai_strategy = {
-		type = front_unit_request
-		id = BLA
-		value = 1000
-	}
-	ai_strategy = {
-		type = front_control
-		tag = BLA
-		ordertype = front
-		execution_type = rush_weak
-		execute_order = yes
-		ratio = 0.6
-		priority = 100
-	}
 }
 NAC_liberate_the_east = {
 	allowed = {
@@ -101,7 +177,7 @@ NAC_liberate_the_east = {
     }
     ai_strategy = {
 		type = front_unit_request
-		id = OPA
+		tag = OPA
 		value = 1000
 	}
 	ai_strategy = {
@@ -200,6 +276,7 @@ NAC_rev_strategy_attack = {
 	}
 	enable = {
 		has_war_with = BLA
+		date > 3092.5.1
 	}
 	abort = {
 		BLA = {
@@ -208,7 +285,59 @@ NAC_rev_strategy_attack = {
 	}
 	ai_strategy = {
 		type = front_unit_request
+		tag = BLA
+		value = 1000
+	}
+	ai_strategy = {
+		type = consider_weak
 		id = BLA
+		value = 1000
+	}
+	ai_strategy = {
+        type = garrison
+        strategic_region = 11
+		strategic_region = 12
+
+		value = 10
+    }
+	ai_strategy = {
+        type = front_control
+        ratio = 0.8
+		tag = BLA
+        priority = 1000
+        ordertype = front
+        execution_type = rush_weak
+        execute_order = yes
+    }
+	ai_strategy = {
+        type = front_unit_request
+        strategic_region = 11
+		strategic_region = 12
+
+        value = 70
+	}
+}
+NAC_rev_strategy_defence = {
+	allowed = {
+		original_tag = NAC
+	}
+	enable = {
+		has_war_with = BLA
+		date < 3092.5.1
+	}
+	abort = {
+		BLA = {
+			exists = no
+		}
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = BLA
+		value = 1000
+	}
+	ai_strategy = {
+		type = front_unit_request
+		tag = HBR
 		value = 1000
 	}
 	ai_strategy = {
@@ -221,35 +350,40 @@ NAC_rev_strategy_attack = {
 		tag = BLA
         priority = 1000
         ordertype = front
-        execution_type = rush_weak
+        execution_type = careful
         execute_order = yes
     }
+	ai_strategy = {
+        type = front_unit_request
+        strategic_region = 11
+		strategic_region = 12
+
+        value = 70
+	}
 }
-NAC_rev_strategy_defence = {
+NAC_help_MZL = {
 	allowed = {
 		original_tag = NAC
+		has_country_flag = NAC_united_rossiya
 	}
 	enable = {
-		has_war_with = BLA
+		country_exists = MZL
 	}
 	abort = {
-		BLA = {
-			exists = no
+		NOT = {
+			country_exists = MZL
 		}
 	}
 	ai_strategy = {
-        type = front_unit_request
-        state = 265
-		state = 219
-        state = 256
-		state = 248
-
-        value = 50
-    }
+		type = send_volunteers_desire
+		id = MZL
+		value = 9999
+	}
 }
 NAC_attack_NAS_country = {
 	allowed = {
 		original_tag = NAC
+		is_in_faction = yes
 	}
 	enable = {
 		always = yes
@@ -289,11 +423,76 @@ NAC_attack_NAS_country = {
 	ai_strategy = {
 		type = front_unit_request
 		tag = USF
-		value = 1000
+		value = 80
 	}
 	ai_strategy = {
 		type = prepare_for_war
-		tag = USF
+		id = USF
 		value = 1000
+	}
+}
+AI_support_NAC_in_revolution = {
+    allowed = {
+        OR = {
+            tag = USR
+            tag = ANZ
+			tag = STG
+            tag = BOW
+        }
+    }
+    enable = {
+        BLA = {
+            has_war_with = NAC
+        }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = send_volunteers_desire
+        id = NAC
+        value = 9999
+    }
+	ai_strategy = {
+		type = support
+		id = NAC
+		value = 9999
+	}
+	ai_strategy = {
+		type = befriend
+		id = NAC
+		value = 9999
+	}
+	ai_strategy = {
+		type = diplo_action_desire
+		id = NAC
+		value = 9999
+		target = send_volunteers
+	}
+}
+NAC_accept_help = {
+	allowed = {
+		tag = NAC
+	}
+	enable = {
+		has_war_with = BLA
+	}
+	ai_strategy = {
+		type = befriend
+		id = USR
+		value = 9999
+	}
+	ai_strategy = {
+		type = befriend
+		id = ANZ
+		value = 9999
+	}
+	ai_strategy = {
+		type = befriend
+		id = STG
+		value = 9999
+	}
+	ai_strategy = {
+		type = befriend
+		id = BOW
+		value = 9999
 	}
 }

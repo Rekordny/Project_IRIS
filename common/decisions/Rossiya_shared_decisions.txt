@@ -1,0 +1,2417 @@
+#大博弈
+Big_Game = {
+    BLA_prepare_for_invade_BGN = {
+        available = {
+            date > 3091.1.1
+        }
+        visible = {
+            tag = BLA
+        }
+        fire_only_once = yes
+        complete_effect = {
+            set_global_flag = prepare_for_battle_of_BGN
+            custom_effect_tooltip = BLA_gain_control_point_if_we_win
+            104 = {
+                transfer_state_to = BGA
+            }
+            BLA_RPK16 = {
+                set_nationality = BGA
+            }
+            BLA_AK15 = {
+                set_nationality = BGA
+            }
+            hidden_effect = {
+                840 = {
+                    set_demilitarized_zone = yes
+                }
+                104 = {
+                    add_core_of = BGA
+                }
+                BGA = {
+                    add_manpower = 25000
+                    inherit_technology = BLA
+                    country_lock_all_division_template = yes
+                    create_country_leader = {
+                        name = BLA_RPK16
+                        picture = GFX_BLA_RPK16
+                        expire = "3200.1.1.1"
+                        ideology = sub_Junta
+                    }
+                    set_popularities = {
+                        democratic = 0
+                        neutrality = 85
+                        fascism = 5
+                        communism = 0
+                        reactionism = 10
+                    }
+                    set_politics = {
+                        ruling_party = neutrality
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = BGN
+                    }
+                    add_core_of = BGA
+                }
+                NAC = {
+                    country_event = {id = NAC.52}
+                    activate_mission = Battle_of_BGN_preparing_NAC_counter
+                }
+            }
+            BLA = {
+                activate_mission = Battle_of_BGN_preparing
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    Battle_of_BGN_preparing_NAC_counter = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 100
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            BGN = {
+                add_war_support = 0.20
+            }
+        }
+    }
+    Battle_of_BGN_preparing = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 100
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            clr_global_flag = prepare_for_battle_of_BGN
+            hidden_effect = {
+                NAC = {
+                    end_puppet = BGN
+                }
+            }
+            BGA = {
+                declare_war_on = {
+                    target = BGN
+                    type = annex_everything
+                }
+                840 = {
+                    set_demilitarized_zone = no
+                }
+                hidden_effect = {
+                    load_oob = "BGA_battle"
+                }
+            }
+            hidden_effect = {
+                BLA = {
+                    activate_mission = Battle_of_BGN_ends
+                }
+                NAC = {
+                    activate_mission = Battle_of_BGN_ends_NAC
+                }
+                BGA = {
+                    add_ideas = BGN_landing_legion
+                    add_dynamic_modifier = {modifier = BGA_landing_dynamic_modifier}
+                }
+                if = {
+                    limit = {
+                        has_global_flag = BGA_gained_naval_support_flag
+                    }
+                    BGA = {
+                        add_ideas = BLA_naval_support
+                    }
+                }
+                if = {
+                    limit = {
+                        has_global_flag = BGA_gained_extra_brigade_flag
+                    }
+                    BGA = {
+                        load_oob = "BGA_battle_2"
+                    }
+                }
+            }
+        }
+    }
+    Battle_of_BGN_ends = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 80
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+            hidden_effect = {
+                BGN = {
+                    white_peace = {
+                        tag = BGA
+                        message = BGN_defeated_BGA
+                    }
+                }
+                BGA = {
+                    every_character =  {
+						set_nationality = BLA
+					}
+                }
+                BLA = {
+                    annex_country = {
+                        target = BGA
+                    }
+                }
+                NAC = {
+                    set_autonomy = {
+                        target = BGN
+                        autonomous_state = autonomy_puppet
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = BGA
+                    }
+                    remove_core_of = BGA
+                }
+            }
+        }
+    }
+    Battle_of_BGN_ends_NAC = {
+        icon = mission_icon
+        is_good = no
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        cancel_trigger = {
+            NOT = {
+                country_exists = BGN
+            }
+        }
+        days_mission_timeout = 80
+        fire_only_once = yes
+        selectable_mission = no
+        complete_effect = {
+        }
+        timeout_effect = {
+        }
+    }
+    BLA_send_man = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            add_manpower = -1000
+            custom_effect_tooltip = BLA_strengthen_BGA
+            BGA = {
+                add_manpower = 1000
+                hidden_effect = {
+                    add_to_variable = {BGA_army_attack_factor = 0.04}
+                    add_to_variable = {BGA_army_defence_factor = 0.04}
+                    add_to_variable = {BGA_army_org_factor = 0.04}
+                    add_to_variable = {BGA_army_morale_factor = 0.04}
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+    }
+    BLA_send_weapon = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            has_equipment = {
+                infantry_equipment > 499
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 500
+                target = BGA
+            }
+            custom_effect_tooltip = BLA_strengthen_BGA
+            hidden_effect = {
+                BGA = {
+                    add_to_variable = {BGA_army_attack_factor = 0.04}
+                    add_to_variable = {BGA_army_defence_factor = 0.04}
+                    add_to_variable = {BGA_army_org_factor = 0.04}
+                    add_to_variable = {BGA_army_morale_factor = 0.04}
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 0
+                is_historical_focus_on = yes
+            }
+        }
+    }
+    BLA_send_naval_support = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_extra_brigade_flag
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_extra_brigade_flag
+            }
+        }
+        cost = 50
+        days_remove = 40
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_send_naval_support_flag
+        }
+        remove_effect = {
+            set_global_flag = BGA_gained_naval_support_flag
+            custom_effect_tooltip = BGA_gain_naval_support_in_war
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    BLA_send_extra_brigade = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_naval_support_flag
+            }
+        }
+        visible = {
+            tag = BLA
+            has_global_flag = prepare_for_battle_of_BGN
+            NOT = {
+                has_country_flag = BLA_send_naval_support_flag
+            }
+        }
+        cost = 50
+        days_remove = 40
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        complete_effect = {
+            set_country_flag = BLA_send_extra_brigade_flag
+        }
+        remove_effect = {
+            set_global_flag = BGA_gained_extra_brigade_flag
+            custom_effect_tooltip = BGA_gain_extra_brigade_in_war
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_build_bunker = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        days_remove = 30
+        fire_only_once = yes
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            122 = {
+                add_building_construction ={
+                    type = bunker
+                    province = 10037
+                    level = 2
+                    instant_build = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_send_man = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                add_manpower = 1000
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_send_weapon = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cost = 30
+        days_remove = 30
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 500
+                    producer = NAC
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_train_army = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        fire_only_once = yes
+        days_remove = 60
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+        }
+        remove_effect = {
+            BGN = {
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"波格内民兵\" division_template = \"工农民兵\" start_experience_factor = 0.20"
+                        owner = BGN
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    NAC_ask_OCF_for_help = {
+        available = {
+            has_global_flag = prepare_for_battle_of_BGN
+            country_exists = OCF
+        }
+        visible = {
+            tag = NAC
+            has_global_flag = prepare_for_battle_of_BGN
+        }
+        cancel_trigger = {
+            NOT = {
+                has_global_flag = prepare_for_battle_of_BGN
+            }
+            NOT = {
+                country_exists = OCF
+            }
+        }
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            OCF = {
+                country_event = {id = BLA_dip.5 days = 3}
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    #西部沿海
+    Select_West = {
+        available = {
+            NOT = {
+                has_country_flag = Made_a_choice_in_Big_Game
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                ROOT = {
+                    set_country_flag = Made_a_choice_in_Big_Game
+                    set_country_flag = Big_Game_W
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 10
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    ROOT = {
+                        check_variable = {NAC_W_control_point < BLA_W_control_point}
+                    }
+                }
+            }
+            modifier = {
+                add = 10
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    ROOT = {
+                        check_variable = {BLA_W_control_point < NAC_W_control_point}
+                    }
+                }
+            }
+        }
+    }
+    #奥伦堡
+    Select_East = {
+        available = {
+            NOT = {
+                has_country_flag = Made_a_choice_in_Big_Game
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                ROOT = {
+                    set_country_flag = Made_a_choice_in_Big_Game
+                    set_country_flag = Big_Game_E
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 10
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    ROOT = {
+                        check_variable = {NAC_E_control_point < BLA_E_control_point}
+                    }
+                }
+            }
+            modifier = {
+                add = 10
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    ROOT = {
+                        check_variable = {BLA_E_control_point < NAC_E_control_point}
+                    }
+                }
+            }
+        }
+    }
+    #南部滨海边疆区
+    Select_South = {
+        available = {
+            NOT = {
+                has_country_flag = Made_a_choice_in_Big_Game
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                ROOT = {
+                    set_country_flag = Made_a_choice_in_Big_Game
+                    set_country_flag = Big_Game_S
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 10
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    ROOT = {
+                        check_variable = {NAC_S_control_point < BLA_S_control_point}
+                    }
+                }
+            }
+            modifier = {
+                add = 10
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    ROOT = {
+                        check_variable = {BLA_S_control_point < NAC_S_control_point}
+                    }
+                }
+            }
+        }
+    }
+    #额外下注
+    Extra_input = {
+        available = {
+            has_country_flag = Made_a_choice_in_Big_Game
+            NOT = {
+                has_country_flag = Extra_input_flag
+            }
+        }
+        cost = 20
+        complete_effect = {
+            hidden_effect = {
+                ROOT = {
+                    set_country_flag = Extra_input_flag
+                    if = {
+                        limit = {
+                            tag = NAC
+                        }
+                        set_variable = {NAC_Big_Game_Extra_Point = 1}
+                    }
+                    if = {
+                        limit = {
+                            tag = BLA
+                        }
+                        set_variable = {BLA_NAC_Big_Game_Extra_Point = 1}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    #西部沿海
+    Secret_action_West = {
+        available = {
+            NOT = {
+                has_country_flag = BIg_Game_secret_act_in_progress
+            }
+        }
+        visible = {
+            has_intelligence_agency = yes
+        }
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = BIg_Game_secret_act_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = BIg_Game_secret_act_in_progress
+            custom_effect_tooltip = Big_Game_gain_one_point_desc
+            hidden_effect = {
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    every_country = {
+                        add_to_variable = {NAC_W_control_point = 1}
+                    }
+                }
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    every_country = {
+                        add_to_variable = {BLA_W_control_point = 1}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 100
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    ROOT = {
+                        check_variable = {NAC_W_control_point < BLA_W_control_point}
+                    }
+                }
+            }
+            modifier = {
+                add = 100
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    ROOT = {
+                        check_variable = {BLA_W_control_point < NAC_W_control_point}
+                    }
+                }
+            }
+        }
+    }
+    #西部沿海
+    Secret_action_South = {
+        available = {
+            NOT = {
+                has_country_flag = BIg_Game_secret_act_in_progress
+            }
+        }
+        visible = {
+            has_intelligence_agency = yes
+        }
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = BIg_Game_secret_act_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = BIg_Game_secret_act_in_progress
+            custom_effect_tooltip = Big_Game_gain_one_point_desc
+            hidden_effect = {
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    every_country = {
+                        add_to_variable = {NAC_S_control_point = 1}
+                    }
+                }
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    every_country = {
+                        add_to_variable = {BLA_S_control_point = 1}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 100
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    ROOT = {
+                        check_variable = {NAC_S_control_point < BLA_S_control_point}
+                    }
+                }
+            }
+            modifier = {
+                add = 100
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    ROOT = {
+                        check_variable = {BLA_S_control_point < NAC_S_control_point}
+                    }
+                }
+            }
+        }
+    }
+    #奥伦堡
+    Secret_action_East = {
+        available = {
+            NOT = {
+                has_country_flag = BIg_Game_secret_act_in_progress
+            }
+        }
+        visible = {
+            has_intelligence_agency = yes
+        }
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = BIg_Game_secret_act_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = BIg_Game_secret_act_in_progress
+            custom_effect_tooltip = Big_Game_gain_one_point_desc
+            hidden_effect = {
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    every_country = {
+                        add_to_variable = {NAC_E_control_point = 1}
+                    }
+                }
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    every_country = {
+                        add_to_variable = {BLA_E_control_point = 1}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                add = 100
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    ROOT = {
+                        check_variable = {NAC_E_control_point < BLA_E_control_point}
+                    }
+                }
+            }
+            modifier = {
+                add = 100
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    ROOT = {
+                        check_variable = {BLA_E_control_point < NAC_E_control_point}
+                    }
+                }
+            }
+        }
+    }
+    #改编革命歌曲
+    BLA_modifiy_songs = {
+        visible = {
+            tag = BLA
+            NOT = {has_country_flag = BLA_Propaganda_cooldown_flag}
+        }
+        cost = 30
+        days_remove = 30
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = Rossiya_Propaganda_desc
+            set_country_flag = {flag = BLA_Propaganda_cooldown_flag days = 60 value = 1}
+            add_popularity = {
+                ideology = communism
+                popularity = -0.01
+            }
+            add_popularity = {
+                ideology = neutrality
+                popularity = 0.01
+            }
+            add_power_balance_value = {
+                id = BLA_legacy_of_August
+                value = 0.01
+                tooltip_side = BLA_ice_dream
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 0}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.1}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 1}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.2}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 2}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.3}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {BLA_propaganda_counter = 3}
+                        country_exists = NAC
+                    }
+                    country_event = {id = Rossiya_Propaganda.4}
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+                else = {
+                    every_country = {
+                        add_to_variable = {BLA_propaganda_counter = 1}
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+            modifier = {
+                add = 100
+                communism > 0.10
+            }
+            modifier = {
+                add = 100
+                communism > 0.20
+            }
+            modifier = {
+                add = 100
+                communism > 0.25
+            }
+        }
+    }
+    NAC_jokes = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 30
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                random_list = {
+                    50 = {
+                        add_stability = -0.02
+                        add_popularity = {
+                            ideology = communism
+                            popularity = 0.02
+                        }
+                    }
+                    50 = {
+                    }
+                }
+            }
+            hidden_effect = {
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    NAC_focus_on_army = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                BLA_decrease_army_opinion = yes
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_country_flag = Rossiya_Propaganda_7_triggered
+                        }
+                    }
+                    country_event = {id = Rossiya_Propaganda.7}
+                }
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    NAC_focus_on_freeman = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            BLA = {
+                BLA_decrease_freeman_opinion = yes
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_country_flag = Rossiya_Propaganda_6_triggered
+                        }
+                    }
+                    country_event = {id = Rossiya_Propaganda.6}
+                }
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+    NAC_focus_on_serf = {
+        available = {
+            NOT = {
+                has_country_flag = NAC_propaganda_in_progress
+            }
+        }
+        visible = {
+            tag = NAC
+            has_completed_focus = NAC_prewar_12
+        }
+        cost = 40
+        days_remove = 60
+        complete_effect = {
+            set_country_flag = NAC_propaganda_in_progress
+        }
+        remove_effect = {
+            clr_country_flag = NAC_propaganda_in_progress
+            add_manpower = 500
+            BLA = {
+                add_manpower = -100
+                random_list = {
+                    80 = {
+
+                    }
+                    20 = {
+                        BLA_decrease_serf_opinion = yes
+                    }
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_country_flag = Rossiya_Propaganda_8_triggered
+                        }
+                    }
+                    country_event = {id = Rossiya_Propaganda.8}
+                }
+                every_country = {
+                    add_to_variable = {NAC_propaganda_counter = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 0
+            modifier = {
+                add = 10
+                has_political_power > 100
+            }
+        }
+    }
+}
+#重返荒原
+Back_to_wasteland = {
+    Annex_NWT = {
+        available = {
+            has_war = no
+            if = {
+                limit = {
+                    tag = NAC
+                }
+                NOT = {
+                    country_exists = BLA
+                }
+                OR = {
+                    NOT = {
+                        country_exists = OPA
+                    }
+                    OPA = {
+                        has_government = NAC
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    tag = BLA
+                }
+                NOT = {
+                    country_exists = NAC
+                }
+                NOT = {
+                    country_exists = OPA
+                }
+            }
+            if = {
+                limit = {
+                    tag = OPA
+                }
+                NOT = {
+                    country_exists = NAC
+                }
+                NOT = {
+                    country_exists = BLA
+                }
+            }
+        }
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            annex_country = {
+                target = NWT
+                transfer_troops = no
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+}
+Second_Rossiya_Revolution_decisions = {
+    #鼓舞士气
+    Increase_morale = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = Morale_less_than_120
+                if = {
+                    limit = {
+                        tag = NAC
+                    }
+                    NAC = {
+                        check_variable = {NAC_morale < 120}
+                    }
+                }
+                if = {
+                    limit = {
+                        tag = BLA
+                    }
+                    BLA = {
+                        check_variable = {NAC_morale < 120}
+                    }
+                }
+            }
+        }
+        cost = 25
+        days_remove = 30
+        remove_effect = {
+            random_list = {
+                50 = {
+                    custom_effect_tooltip = Morale_increase_by_5
+                    hidden_effect = {
+                        if = {
+                            limit = {
+                                tag = NAC
+                            }
+                            NAC = {
+                                add_to_variable = {NAC_morale = 5}
+                            }
+                        }
+                        if = {
+                            limit = {
+                                tag = BLA
+                            }
+                            BLA = {
+                                add_to_variable = {BLA_morale = 5}
+                            }
+                        }
+                    }
+                }
+                50 = {
+                    custom_effect_tooltip = Morale_increase_by_3
+                    hidden_effect = {
+                        if = {
+                            limit = {
+                                tag = NAC
+                            }
+                            NAC = {
+                                add_to_variable = {NAC_morale = 3}
+                            }
+                        }
+                        if = {
+                            limit = {
+                                tag = BLA
+                            }
+                            BLA = {
+                                add_to_variable = {BLA_morale = 3}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    BLA_mobalise = {
+        available = {
+            has_war_with = NAC
+        }
+        visible = {
+            tag = BLA
+        }
+        cost = var:BLA_mobalise_cost
+        days_remove = var:BLA_mobalise_time
+        remove_effect = {
+            custom_effect_tooltip = BLA_cost_time_increase_desc
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"动员师\" division_template = \"动员师\" start_experience_factor = 0.15"
+                    owner = BLA
+                }
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {BLA_mobalise_time = 5}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 1000
+        }
+    }
+    #动员群众
+    NAC_mobalise = {
+        cost = 10
+        days_remove = 40
+        complete_effect = {
+        }
+        remove_effect = {
+            custom_effect_tooltip = NAC_comorades_join_us
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 500
+                producer = NAC
+            }
+            hidden_effect = {
+                if = {
+                    limit = {
+                        NOT = {
+                            has_template = "动员兵"
+                        }
+                    }
+                    division_template = {
+                        name = "动员兵"
+                        is_locked = yes
+                        regiments = {
+                            infantry = { x = 0 y = 0 }
+                            infantry = { x = 0 y = 1 }
+                            infantry = { x = 0 y = 2 }
+                            infantry = { x = 0 y = 3 }
+                            infantry = { x = 0 y = 4 }
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        NOT = {
+                            has_template = "志愿师"
+                        }
+                    }
+                    division_template = {
+                        name = "志愿师"
+                        is_locked = yes
+                        priority = 2
+                        template_counter = 0
+                        regiments = {
+                            infantry = { x = 0 y = 0 }
+                            infantry = { x = 0 y = 1 }
+                            infantry = { x = 0 y = 2 }
+                            infantry = { x = 1 y = 0 }
+                            infantry = { x = 1 y = 1 }
+                            infantry = { x = 1 y = 2 }
+                            artillery_brigade = { x = 2 y = 0 }
+                            artillery_brigade = { x = 2 y = 1 }
+                        }
+                    }
+                }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"动员兵\" division_template = \"动员兵\" start_experience_factor = 0.15"
+                        owner = NAC
+                    }
+                    create_unit = {
+                        division = "name = \"志愿师\" division_template = \"志愿师\" start_experience_factor = 0.50"
+                        owner = NAC
+                    }
+                }
+            }
+        }
+    }
+}
+#外国支援罗西亚革命
+Rossiya_Revolution = {
+    RLN_send_support_to_NAC = {
+        available = {
+            NOT = {has_war_with = NAC}
+        }
+        visible = {
+            tag = RLN
+        }
+        fire_only_once = yes
+        days_remove = 60
+        remove_effect = {
+            NAC = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 25000
+                    producer = RLN
+                }
+                add_equipment_to_stockpile = {
+                    type = artillery_equipment
+                    amount = 1000
+                    producer = RLN
+                }
+                add_equipment_to_stockpile = {
+                    type = support_equipment_1
+                    amount = 1000
+                    producer = RLN
+                }
+                set_technology = {railway_gun = 1}
+                create_railway_gun = {
+                    equipment = railway_gun_equipment_1
+                    name = "火车国3085年式铁路攻城炮"
+                }
+                create_railway_gun = {
+                    equipment = railway_gun_equipment_1
+                    name = "火车国3085年式铁路攻城炮"
+                }
+                create_railway_gun = {
+                    equipment = railway_gun_equipment_1
+                    name = "火车国3085年式铁路攻城炮"
+                }
+                create_railway_gun = {
+                    equipment = railway_gun_equipment_1
+                    name = "火车国3085年式铁路攻城炮"
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    Senshado_send_support_to_NAC = {
+        visible = {
+            OR = {
+                tag = STG
+                tag = ANZ
+                AND = {
+                    tag = USR
+                    has_government = fascism
+                }
+            }
+        }
+        cost = 50
+        fire_only_once = yes
+        remove_effect = {
+            NAC = {
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 7500
+                    producer = ROOT
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1
+        }
+    }
+    Support_NAC = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 1999
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+            BLA = {
+                NOT = {
+                    has_volunteers_amount_from = {
+                        tag = ROOT
+                        count > 0
+                    }
+                }
+            }
+        }
+        visible = {
+            OR = {
+                has_government = communism
+                has_government = democratic
+                AND = {
+                    tag = USR
+                    NOT = {has_government = neutrality}
+                }
+                tag = STG
+                tag = ANZ
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+            ROOT = {
+                check_variable = {infantry_equipment_shipped_to_NAC < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 2000
+                target = NAC
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {infantry_equipment_shipped_to_NAC = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 100
+                has_government = NAC
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 99 }
+            }
+        }
+    }
+    Give_heavy_weapons_to_NAC = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 199
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+            BLA = {
+                NOT = {
+                    has_volunteers_amount_from = {
+                        tag = ROOT
+                        count > 0
+                    }
+                }
+            }
+        }
+        visible = {
+            OR = {
+                has_government = communism
+                has_government = democratic
+                AND = {
+                    tag = USR
+                    NOT = {has_government = neutrality}
+                }
+                tag = STG
+                tag = ANZ
+            }
+            NOT = {
+                has_war_with = NAC
+            }
+            ROOT = {
+                check_variable = {artillery_equipment_shipped_to_NAC < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 200
+                target = NAC
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {artillery_equipment_shipped_to_NAC = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 100
+                has_government = NAC
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = NAC value > 99 }
+            }
+        }
+    }
+    Support_BLA = {
+        available = {
+            has_equipment = {
+                infantry_equipment > 999
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+            NAC = {
+                NOT = {
+                    has_volunteers_amount_from = {
+                        tag = ROOT
+                        count > 0
+                    }
+                }
+            }
+        }
+        visible = {
+            OR = {
+                has_government = neutrality
+                has_government = reactionism
+                has_government = fascism
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+            NOT = {
+                tag = ANZ
+                tag = STG
+            }
+            if = {
+                limit = {
+                    tag = USR
+                }
+                has_government = neutrality
+            }
+            ROOT = {
+                check_variable = {infantry_equipment_shipped_to_BLA < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 1000
+                target = BLA
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {infantry_equipment_shipped_to_BLA = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 5
+                has_government = BLA
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 99 }
+            }
+        }
+    }
+    Give_heavy_weapons_to_BLA = {
+        available = {
+            has_equipment = {
+                artillery_equipment > 99
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+            NOT = {
+                tag = ANZ
+                tag = STG
+            }
+            if = {
+                limit = {
+                    tag = USR
+                }
+                has_government = neutrality
+            }
+            NAC = {
+                NOT = {
+                    has_volunteers_amount_from = {
+                        tag = ROOT
+                        count > 0
+                    }
+                }
+            }
+        }
+        visible = {
+            OR = {
+                has_government = neutrality
+                has_government = reactionism
+                has_government = fascism
+            }
+            NOT = {
+                has_war_with = BLA
+            }
+            ROOT = {
+                check_variable = {artillery_equipment_shipped_to_BLA < 3}
+            }
+        }
+        days_remove = 30
+        remove_effect = {
+            send_equipment = {
+                equipment = artillery_equipment
+                amount = 100
+                target = BLA
+            }
+            hidden_effect = {
+                ROOT = {
+                    add_to_variable = {artillery_equipment_shipped_to_BLA = 1}
+                }
+            }
+        }
+        ai_will_do = {
+            base = 10
+            modifier = {
+                factor = 5
+                has_government = BLA
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 25 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 50 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 74 }
+            }
+            modifier = {
+                add = 5
+                has_opinion = { target = BLA value > 99 }
+            }
+        }
+    }
+}
+#重点工业项目
+Rossiya_key_industrial_project = {
+    #扩建克雷姆林重型机械厂
+    Rossiya_857_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 857 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            857 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+            mio:Rossiya_tank_organization = {
+                add_mio_size = 1
+                add_mio_funds = 1000
+            }
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #扩建海涅格勒造船厂
+    Rossiya_855_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 855 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            855 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = dockyard
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+            mio:Rossiya_Arsenal_of_Heynegrad = {
+                add_mio_size = 1
+                add_mio_funds = 1000
+            }
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #规划奥伦堡工业区
+    Rossiya_854_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 854 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            854 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = arms_factory
+				    level = 1
+				    instant_build = yes
+			    }
+                add_resource = {
+					type = steel
+					amount = 25
+				}
+                add_resource = {
+					type = chromium
+					amount = 20
+				}
+                increase_state_category = yes
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #伊尔索维亚-伊尔格勒工业集群
+    Rossiya_183_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 183 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            183 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = infrastructure
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            198 = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = infrastructure
+				    level = 1
+				    instant_build = yes
+			    }
+                increase_state_category = yes
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #绍伊尔河沿岸工业区
+    Rossiya_118_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 118 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            118 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = infrastructure
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            154 = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = infrastructure
+				    level = 1
+				    instant_build = yes
+			    }
+                increase_state_category = yes
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #现代化沃尔加港
+    Rossiya_232_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 232 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time_2
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            232 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = dockyard
+				    level = 2
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = naval_base
+				    level = 2
+				    instant_build = yes
+                    province = {
+                        id = 6209
+                    }
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #现代化尼沃港
+    Rossiya_215_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 215 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time_2
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            215 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = dockyard
+				    level = 2
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = naval_base
+				    level = 2
+				    instant_build = yes
+                    province = {
+                        id = 8613
+                    }
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #现代化罗西亚港
+    Rossiya_87_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 87 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time_2
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            87 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = dockyard
+				    level = 2
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = naval_base
+				    level = 2
+				    instant_build = yes
+                    province = {
+                        id = 8621
+                    }
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #西部沿海工业区
+    Rossiya_146_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 146 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            146 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+            }
+            194 = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+				    type = infrastructure
+				    level = 1
+				    instant_build = yes
+			    }
+            }
+            208 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            217 = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+				    type = dockyard
+				    level = 1
+				    instant_build = yes
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #伊尔卡德罗夫钢铁厂
+    Rossiya_186_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 186 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            186 = {
+                add_extra_state_shared_building_slots = 1
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 1
+				    instant_build = yes
+			    }
+                add_resource = {
+                    type = steel
+                    amount = 30
+                }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #扩建赫萝西查兵工厂
+    Rossiya_126_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 126 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            126 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+                add_resource = {
+                    type = steel
+                    amount = 10
+                }
+            }
+            mio:Rossiya_Arsenal_of_Herosicha = {
+                add_mio_funds = 1000
+                add_mio_size = 1
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #扩建康斯坦丁火炮工厂
+    Rossiya_199_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 199 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            199 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            mio:Rossiya_Arsenal_of_Tsargrad = {
+                add_mio_funds = 1000
+                add_mio_size = 1
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #亚雷尼亚拖拉机厂
+    Rossiya_112_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 112 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            112 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #扩建瓦西里格勒兵工厂
+    Rossiya_163_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 163 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            163 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = arms_factory
+				    level = 2
+				    instant_build = yes
+			    }
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #赫尔诺夫汽车厂
+    Rossiya_853_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 853 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            853 = {
+                add_extra_state_shared_building_slots = 2
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 2
+				    instant_build = yes
+			    }
+                increase_state_category = yes
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+    #伊尔茨卡工业中心
+    Rossiya_41_project = {
+        icon = generic_construction
+        allowed = { always = no }
+		available = {
+			FROM = { is_fully_controlled_by = ROOT }
+            NOT = {has_country_flag = Rossiya_project_in_process}
+		}
+        state_target = yes
+        highlight_states = { highlight_state_targets = { state = 41 } } 
+        fire_only_once = yes
+        days_remove = BLA_project_time_3
+        modifier = {
+            consumer_goods_factor = 0.15
+        }
+        complete_effect = {
+            set_country_flag = Rossiya_project_in_process
+        }
+        remove_effect = {
+            41 = {
+                add_extra_state_shared_building_slots = 4
+                add_building_construction = {
+				    type = industrial_complex
+				    level = 4
+				    instant_build = yes
+			    }
+                add_building_construction = {
+				    type = dam
+				    level = 1
+				    instant_build = yes
+                    province = {id = 7750}
+			    }
+                increase_state_category = yes
+            }
+            clr_country_flag = Rossiya_project_in_process
+        }
+        ai_will_do = {
+            base = 100
+        }
+    }
+}

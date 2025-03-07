@@ -235,7 +235,7 @@ OCF_Weapon_guaranteed_output = {
     }
 }
 
-#不要守家，多发动登陆
+#不要守家
 OCF_Dont_guard_your_home = {
     allowed = {
         original_tag = OCF
@@ -243,7 +243,59 @@ OCF_Dont_guard_your_home = {
     enable = {
         has_war = yes
         enemies_naval_strength_ratio < 0.9
-        check_variable = { num_divisions > 24 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = garrison
+        value = -200 #卫戍部队
+    }
+}
+
+#帮助盟友
+OCF_Assist_allies = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        has_war = yes
+        OR = {
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        enemies_naval_strength_ratio < 0.75
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = spare_unit_factor
+        value = 200
+    }
+    ai_strategy = {
+        type = front_unit_request
+        country_trigger = {
+            OR = {
+                original_tag = USR
+                is_ally_with = USR
+            }
+            has_war_with = OCF
+        }
+        value = 200
+    }
+}
+
+#多发动登陆
+OCF_launch_multiple_login_attempts = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        OR = {
+            has_war_with = CTC
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        enemies_naval_strength_ratio < 0.9
+        check_variable = { num_divisions > 96 }
+        date > 3097.1.1
     }
     abort_when_not_enabled = yes
     ai_strategy = {
@@ -282,14 +334,6 @@ OCF_Dont_guard_your_home = {
         ordertype = invasion
         execution_type = rush_weak
         execute_order = yes
-    }
-    ai_strategy = {
-        type = garrison
-        value = -200 #卫戍部队
-    }
-    ai_strategy = {
-        type = spare_unit_factor
-        value = 50
     }
 }
 

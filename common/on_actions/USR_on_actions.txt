@@ -1,13 +1,26 @@
 on_actions = {
 	on_war = {
 		effect = {
-			USR ={
-				if = {
-					limit = { has_war_with_major = yes is_ai = no }
-					play_song = "Uslar_on_war_1"
-				}
+			if = {
+				limit = { has_war_with_major = yes is_ai = no ROOT = { tag = USR } }
+				play_song = "Uslar_on_war_1"
 			}
 
+		}
+	}
+	on_capitulation = {
+		effect = {
+			if = {
+				limit = {
+					tag = USR
+					has_dynamic_modifier = {
+						modifier = USR_imperial_promissory_bill
+					}
+				}
+				USR = { 
+					USR_ipb_bankrupt_effect = yes
+				}
+			}
 		}
 	}
 	on_daily_USR = {
@@ -116,30 +129,31 @@ on_actions = {
 
 		}
 	}
-	on_war = {
+	on_declare_war = {
 		effect = {
 			if = {
 				limit = {
 					tag = USR
-					has_war_with = BGT
+					FROM = { tag = BGT }
 				}
 				country_event = { id = usr.38 }
 			}
-			# if = {
-			# 	limit = {
-			# 		tag = USR
-			# 		has_war_with = ELN
-			# 		# MDS = {
-			# 		# 	is_puppet_of = ELN
-			# 		# }
-			# 	}
-			# 	news_event = {
-			# 		id = elinonews.014
-			# 	}
-			# }
+			if = {
+				limit = {
+					tag = USR
+					has_active_mission = USR_imperial_promissory_bill_cash_out_countdown
+				}
+				set_temp_variable = {
+					temp_factory_num = ROOT.num_of_factories
+				}
+				add_days_mission_timeout = {
+					mission = USR_imperial_promissory_bill_cash_out_countdown
+					days = temp_factory_num
+				}
+			}
 		}
 	}
-
+	
 	on_offer_join_faction = {
 		effect = {
 			USR = {

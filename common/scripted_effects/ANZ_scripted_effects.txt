@@ -18,10 +18,10 @@ ANZ_let_be_final_civil_war = {
 		#转换中立将
 		every_unit_leader = {
 			limit = { NOT = { has_trait = ANZ_scuola_industriale } NOT = { has_trait = ANZ_fazione_di_mana } }
-			#每有一个敌对将领，对面都会多3师
+			#每有一个敌对将领，对面都会多2师
 			ANZ = {
 				add_to_variable = {
-					anz_civil_enemy_power = 3
+					anz_civil_enemy_power = 2
 				}
 			}
 			add_trait = {
@@ -40,6 +40,7 @@ ANZ_let_be_final_civil_war = {
 		}
 		#内战具体设置
 		start_civil_war = {
+			set_cosmetic_tag = ANZ_LOTHIAN
 			ideology = democratic
 			size = 0.5
 			#ai玩家区分修改
@@ -148,12 +149,40 @@ ANZ_let_be_final_civil_war = {
 		}
 		else = {
 			#为玩家增加常规内战难度
+			set_temp_variable = {
+				anz_civil_enemy_power_tmp = ANZ.anz_civil_enemy_power
+			}
+			divide_temp_variable = {
+				anz_civil_enemy_power_tmp = 2
+			}
+			set_temp_variable = {
+				anz_civil_enemy_power_tmp_2 = anz_civil_enemy_power_tmp
+			}
+			set_temp_variable = {
+				anz_fascism_tmp = ANZ.party_popularity@fascism
+			}
+			set_temp_variable = {
+				anz_democratic_tmp = ANZ.party_popularity@democratic
+			}
+			divide_temp_variable = {
+				anz_democratic_tmp = anz_fascism_tmp
+			}
+			multiply_temp_variable = {
+				anz_civil_enemy_power_tmp_2 = anz_democratic_tmp
+			}
+			add_to_temp_variable = {
+				anz_civil_enemy_power_tmp = anz_civil_enemy_power_tmp_2
+			}
+			set_variable = { #only for check
+				ANZ.anz_civil_enemy_power_fi = anz_civil_enemy_power_tmp
+			}
+
 			while_loop_effect = {
 				limit = { check_variable = {
-					ANZ.anz_civil_enemy_power > 0
+					anz_civil_enemy_power_tmp > 0
 				} }
 				add_to_variable = {
-					ANZ.anz_civil_enemy_power = -1
+					anz_civil_enemy_power_tmp = -1
 				}
 				var:anz_civil_revolter_tag = {
 					205 = {
@@ -218,14 +247,15 @@ ANZ_let_be_final_civil_war = {
 	}
 	#洛蒂安
 	else_if = {
-		limit = { has_country_flag = ANZ_LOTHIAN }
+		limit = { has_country_flag = ANZ_LOTHIAN }	
+		set_cosmetic_tag = ANZ_LOTHIAN
 		#转换中立将
 		every_unit_leader = {
 			limit = { NOT = { has_trait = ANZ_scuola_industriale } NOT = { has_trait = ANZ_fazione_di_mana } }
-			#每有一个敌对将领，对面都会多3师
+			#每有一个敌对将领，对面都会多2师
 			ANZ = {
 				add_to_variable = {
-					anz_civil_enemy_power = 3
+					anz_civil_enemy_power = 2
 				}
 			}
 			add_trait = {
@@ -270,6 +300,10 @@ ANZ_let_be_final_civil_war = {
 				remove_idea = in_transition
 				add_idea = industrial_priority
 			}
+			if = {
+				limit = { ANZ = { has_country_flag = ANZ_betrayal_of_warlords } }
+				add_ideas = ANZ_pantaloni_rossi
+			}
 			ANZ = {
 				swap_ideas = {
 					remove_idea = in_transition
@@ -288,12 +322,40 @@ ANZ_let_be_final_civil_war = {
 		}
 		else = {
 			#为玩家增加常规内战难度
+			set_temp_variable = {
+				anz_civil_enemy_power_tmp = ANZ.anz_civil_enemy_power
+			}
+			divide_temp_variable = {
+				anz_civil_enemy_power_tmp = 2
+			}
+			set_temp_variable = {
+				anz_civil_enemy_power_tmp_2 = anz_civil_enemy_power_tmp
+			}
+			set_temp_variable = {
+				anz_fascism_tmp = ANZ.party_popularity@fascism
+			}
+			set_temp_variable = {
+				anz_democratic_tmp = ANZ.party_popularity@democratic
+			}
+			divide_temp_variable = {
+				anz_fascism_tmp = anz_democratic_tmp
+			}
+			multiply_temp_variable = {
+				anz_civil_enemy_power_tmp_2 = anz_fascism_tmp
+			}
+			add_to_temp_variable = {
+				anz_civil_enemy_power_tmp = anz_civil_enemy_power_tmp_2
+			}
+			set_variable = { #only for check
+				ANZ.anz_civil_enemy_power_fi = anz_civil_enemy_power_tmp
+			}
+
 			while_loop_effect = {
 				limit = { check_variable = {
-					ANZ.anz_civil_enemy_power > 0
+					anz_civil_enemy_power_tmp > 0
 				} }
 				add_to_variable = {
-					ANZ.anz_civil_enemy_power = -1
+					anz_civil_enemy_power_tmp = -1
 				}
 				var:anz_civil_revolter_tag = {
 					205 = {
@@ -361,6 +423,31 @@ ANZ_let_be_final_civil_war = {
 			limit = { has_completed_focus = ANZ_the_blood_crusades }
 			load_oob = "ANZ_crusader"
 		}
+		while_loop_effect = {
+			limit = { 
+				check_variable = {
+					ANZ.anz_num_recruit_devout_individuals > 0
+				} 
+			}
+			add_to_variable = {
+				ANZ.anz_num_recruit_devout_individuals = -1
+			}
+			add_manpower = 10000
+		}
+		while_loop_effect = {
+			limit = { 
+				check_variable = {
+					ANZ.anz_num_pact_with_mana_secular_state > 0
+				} 
+			}
+			add_to_variable = {
+				ANZ.anz_num_pact_with_mana_secular_state = -1
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 1000
+			}
+		}
 		if = {
 			limit = { has_completed_focus = ANZ_icorporation_of_diocese_of_aldrich }
 			246 = { transfer_state_to = ANZ }
@@ -382,10 +469,52 @@ ANZ_let_be_final_civil_war = {
 		#按照标签读取国策
 		if = {
 			limit = { has_country_flag = ANZ_ANZIO }
-			load_focus_tree = ANZ_anzio
+			set_country_flag = ANZ_load_focus_tree_anzio
+			load_focus_tree = {
+				tree = ANZ_anzio
+				keep_completed = yes
+			}
+			mark_focus_tree_layout_dirty = yes
 		}
 		else = {
-			load_focus_tree = ANZ_lothian
+			set_country_flag = ANZ_load_focus_tree_lothian
+			load_focus_tree = {
+				tree = ANZ_lothian
+				keep_completed = yes
+			}
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+
+	#重建安齐奥效果计算
+	divide_variable = {
+		anz_completed_focus_pre_civil = 100
+	}
+
+	every_country = {
+		limit = {
+			OR = {
+				has_country_flag = ANZ_ANZIO
+				has_country_flag = ANZ_LOTHIAN
+			}
+		}
+		every_character = {
+			if = {
+				limit = {
+					has_trait = ANZ_fazione_di_mana
+				}
+				remove_trait = {
+					trait = ANZ_fazione_di_mana
+				}
+			}
+			if = {
+				limit = {
+					has_trait = ANZ_scuola_industriale
+				}
+				remove_trait = {
+					trait = ANZ_scuola_industriale
+				}
+			}
 		}
 	}
 }
@@ -407,6 +536,14 @@ ANZ_retire_vice_country_leader = {
 	if = {
 		limit = { has_idea = ANZ_another_leader_ContediCavour }
 		remove_ideas = ANZ_another_leader_ContediCavour
+	}
+	if = {
+		limit = { has_idea = ANZ_another_leader_Silvie }
+		remove_ideas = ANZ_another_leader_Silvie
+	}
+	if = {
+		limit = { has_idea = ANZ_another_leader_Lappland }
+		remove_ideas = ANZ_another_leader_Lappland
 	}
 }
 
