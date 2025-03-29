@@ -1,5 +1,4 @@
 add_namespace = CID
-
 #寒岛贸易协定
 country_event = {
 	id = CID.10
@@ -12,7 +11,10 @@ country_event = {
 		}
 		name = CID.10.a
 		FROM = {
-			country_event = { id = CID.11 days = 1 }
+			country_event = {
+				id = CID.11
+				days = 1
+			}
 		}
 	}
 	option = {
@@ -21,10 +23,14 @@ country_event = {
 		}
 		name = CID.10.b
 		FROM = {
-			country_event = { id = CID.12 days = 1 }
+			country_event = {
+				id = CID.12
+				days = 1
+			}
 		}
 	}
 }
+
 #同意
 country_event = {
 	id = CID.11
@@ -36,9 +42,13 @@ country_event = {
 			base = 1
 		}
 		name = CID.11.a
-		add_offsite_building = { type = industrial_complex level = 1 }
+		add_offsite_building = {
+			type = industrial_complex
+			level = 1
+		}
 	}
 }
+
 #拒绝
 country_event = {
 	id = CID.12
@@ -54,7 +64,6 @@ country_event = {
 	}
 }
 
-
 #寒岛防御协定
 country_event = {
 	id = CID.20
@@ -67,7 +76,10 @@ country_event = {
 		}
 		name = CID.20.a
 		FROM = {
-			country_event = { id = CID.21 days = 1 }
+			country_event = {
+				id = CID.21
+				days = 1
+			}
 		}
 	}
 	option = {
@@ -76,10 +88,14 @@ country_event = {
 		}
 		name = CID.20.b
 		FROM = {
-			country_event = { id = CID.22 days = 1 }
+			country_event = {
+				id = CID.22
+				days = 1
+			}
 		}
 	}
 }
+
 #同意
 country_event = {
 	id = CID.21
@@ -100,7 +116,7 @@ country_event = {
 		create_equipment_variant = {
 			name = "BBV-SCH-II型"
 			parent_version = 0
-			allow_without_tech = yes #Makes no difference since focus requires appropriate tech (above), but it improves tooltip
+			allow_without_tech = yes			#Makes no difference since focus requires appropriate tech (above), but it improves tooltip
 			type = aviation_battleship_1
 			modules = {
 				fixed_ship_battery_slot = ship_heavy_battery_3
@@ -129,6 +145,7 @@ country_event = {
 		}
 	}
 }
+
 #拒绝
 country_event = {
 	id = CID.22
@@ -152,24 +169,118 @@ country_event = {
 	option = {
 		ai_chance = {
 			base = 1
+			modifier = {
+				factor = 0
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+			modifier = {
+				OR = {
+					original_tag = DOC
+					original_tag = CID
+					original_tag = OCF
+					AND = {
+						FROM = {
+							is_ai = yes
+						}
+						OR = {
+							original_tag = OHR
+							original_tag = OWL
+							original_tag = ELN
+						}
+					}
+				}
+				add = 100
+			}
+			modifier = {
+				add = 3
+				has_opinion = {
+					target = FROM
+					value > 10
+				}
+			}
+			modifier = {
+				add = 12
+				has_opinion = {
+					target = FROM
+					value > 25
+				}
+			}
+			modifier = {
+				add = 24
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
 		}
 		name = CID.30.a
+		if = {
+			limit = {
+				ROOT = {
+					original_tag = ELN
+				}
+			}
+			ROOT = {
+				if = {
+					limit = {
+						is_faction_leader = yes
+					}
+					dismantle_faction = yes
+				}
+				else = {
+					leave_faction = yes
+				}
+			}
+		}
 		FROM = {
-			country_event = { id = CID.31 }
+			country_event = {
+				id = CID.31
+			}
 			#成员国+1
 		}
 	}
 	option = {
 		ai_chance = {
-			base = 0
+			base = 10
+			modifier = {
+				OR = {
+					original_tag = DOC
+					original_tag = CID
+					original_tag = OCF
+					AND = {
+						FROM = {
+							is_ai = yes
+						}
+						OR = {
+							original_tag = OHR
+							original_tag = OWL
+							original_tag = ELN
+						}
+					}
+				}
+				add = 0
+			}
+			modifier = {
+				factor = 0
+				has_opinion = {
+					target = FROM
+					value > 60
+				}
+			}
 		}
 		name = CID.30.b
 		set_global_flag = refusing_defense_agreements_flag
 		FROM = {
-			country_event = { id = CID.32 }
+			country_event = {
+				id = CID.32
+			}
 		}
 	}
 }
+
 #同意
 country_event = {
 	id = CID.31
@@ -181,17 +292,36 @@ country_event = {
 			base = 1
 		}
 		name = CID.31.a
-		add_to_variable = { STEEC = 1 }
+		add_to_variable = {
+			STEEC = 1
+		}
 		if = {
-			limit = { is_faction_leader = yes }
+			limit = {
+				is_faction_leader = no
+			}
+			every_country = {
+				limit = {
+					is_ally_with = ROOT
+					is_faction_leader = yes
+				}
+				add_to_faction = FROM
+			}
+		}
+		else = {
 			add_to_faction = FROM
 		}
 		if = {
-			limit = { check_variable = { STEEC > 1 } }#有2个同意才算成立
+			limit = {
+				check_variable = {
+					STEEC = 2
+				}
+			}
+			#有2个同意才算成立
 			news_event = cidnews.1
 		}
 	}
 }
+
 #拒绝
 country_event = {
 	id = CID.32
@@ -203,12 +333,21 @@ country_event = {
 			base = 1
 		}
 		name = CID.32.a
-		dismantle_faction = yes #任意国家拒绝都会解散阵营
-		set_variable = { STEEC = 0 }
+		if = {
+			limit = {
+				NOT = {
+					check_variable = {
+						STEEC > 1
+					}
+				}
+			}
+			dismantle_faction = yes			#任意国家拒绝都会解散阵营
+			# set_variable = {
+			# 	STEEC = 0
+			# }
+		}
 	}
 }
-
-
 
 #加入银行
 country_event = {
@@ -226,7 +365,10 @@ country_event = {
 		}
 		name = CID.40.a
 		FROM = {
-			country_event = { id = CID.41 days = 1 }
+			country_event = {
+				id = CID.41
+				days = 1
+			}
 		}
 	}
 	option = {
@@ -236,10 +378,14 @@ country_event = {
 		name = CID.40.b
 		#set_global_flag = refusing_defense_agreements_flag
 		FROM = {
-			country_event = { id = CID.42 days = 1 }
+			country_event = {
+				id = CID.42
+				days = 1
+			}
 		}
 	}
 }
+
 #同意
 country_event = {
 	id = CID.41
@@ -259,6 +405,7 @@ country_event = {
 		}
 	}
 }
+
 #拒绝
 country_event = {
 	id = CID.42
@@ -270,7 +417,6 @@ country_event = {
 			base = 1
 		}
 		name = CID.42.a
-
 	}
 }
 
@@ -284,7 +430,6 @@ country_event = {
 			base = 1
 		}
 		name = CID.31.a
-
 	}
 }
 
@@ -296,13 +441,16 @@ country_event = {
 	immediate = {
 		hidden_effect = {
 			if = {
-				limit = { tag = CID }
-				set_variable = { global.qi_time_shengyu = 30 }
+				limit = {
+					tag = CID
+				}
+				set_variable = {
+					global.qi_time_shengyu = 30
+				}
 				calculation_President_now = yes
 				Establishing_investment_bank = yes
 				Establishing_investment_bank_2 = yes
 				member_investment_calculation_del = YES
-
 				clr_country_flag = current_project_has_been_invested_flag
 			}
 		}
@@ -322,7 +470,9 @@ country_event = {
 		}
 		name = CID.51.a
 		add_political_power = -15
-		add_to_variable = { global.touzi_jine = 15 }
+		add_to_variable = {
+			global.touzi_jine = 15
+		}
 		set_country_flag = current_project_has_been_invested_flag
 	}
 	option = {
@@ -340,7 +490,9 @@ country_event = {
 		}
 		name = CID.51.b
 		add_political_power = -25
-		add_to_variable = { global.touzi_jine = 25 }
+		add_to_variable = {
+			global.touzi_jine = 25
+		}
 		set_country_flag = current_project_has_been_invested_flag
 	}
 	option = {
@@ -364,7 +516,9 @@ country_event = {
 		}
 		name = CID.51.c
 		add_political_power = -50
-		add_to_variable = { global.touzi_jine = 50 }
+		add_to_variable = {
+			global.touzi_jine = 50
+		}
 		set_country_flag = current_project_has_been_invested_flag
 	}
 	option = {
@@ -389,23 +543,45 @@ country_event = {
 		clr_country_flag = open_Eastern_European_economies_window_flag
 		add_political_power = 30
 		if = {
-			limit = { has_global_flag = supporting_development_military_industry_flag }
-			add_offsite_building = { type = arms_factory level = 1 }
+			limit = {
+				has_global_flag = supporting_development_military_industry_flag
+			}
+			add_offsite_building = {
+				type = arms_factory
+				level = 1
+			}
 		}
 		else_if = {
-			limit = { has_global_flag = supporting_development_migrant_workers_flag }
-			add_offsite_building = { type = industrial_complex level = 1 }
+			limit = {
+				has_global_flag = supporting_development_migrant_workers_flag
+			}
+			add_offsite_building = {
+				type = industrial_complex
+				level = 1
+			}
 		}
 		else_if = {
-			limit = { has_global_flag = support_navy_development_flag }
-			add_offsite_building = { type = dockyard level = 1 }
+			limit = {
+				has_global_flag = support_navy_development_flag
+			}
+			add_offsite_building = {
+				type = dockyard
+				level = 1
+			}
 		}
 		else_if = {
-			limit = { has_global_flag = renovation_production_unit_flag }
-			add_timed_idea = { idea = refurbishment_production_idea days = 80 }
+			limit = {
+				has_global_flag = renovation_production_unit_flag
+			}
+			add_timed_idea = {
+				idea = refurbishment_production_idea
+				days = 80
+			}
 		}
 		else_if = {
-			limit = { has_global_flag = supporting_national_construction_flag }
+			limit = {
+				has_global_flag = supporting_national_construction_flag
+			}
 			add_cic = 5000
 		}
 	}
@@ -424,6 +600,7 @@ country_event = {
 		clr_country_flag = open_Eastern_European_economies_window_flag
 	}
 }
+
 #集资失败
 country_event = {
 	id = CID.54
@@ -439,6 +616,7 @@ country_event = {
 		add_political_power = 20
 	}
 }
+
 #集资失败
 country_event = {
 	id = CID.55
@@ -469,7 +647,6 @@ country_event = {
 	}
 }
 
-
 country_event = {
 	id = CID.57
 	title = CID.51.title
@@ -492,7 +669,9 @@ country_event = {
 		}
 		name = CID.51.a
 		add_political_power = -15
-		add_to_variable = { global.touzi_jine = 15 }
+		add_to_variable = {
+			global.touzi_jine = 15
+		}
 		set_country_flag = current_project_has_been_invested_flag
 	}
 	option = {
@@ -510,7 +689,9 @@ country_event = {
 		}
 		name = CID.51.b
 		add_political_power = -25
-		add_to_variable = { global.touzi_jine = 25 }
+		add_to_variable = {
+			global.touzi_jine = 25
+		}
 		set_country_flag = current_project_has_been_invested_flag
 	}
 	option = {
@@ -534,7 +715,9 @@ country_event = {
 		}
 		name = CID.51.c
 		add_political_power = -50
-		add_to_variable = { global.touzi_jine = 50 }
+		add_to_variable = {
+			global.touzi_jine = 50
+		}
 		set_country_flag = current_project_has_been_invested_flag
 	}
 	option = {
