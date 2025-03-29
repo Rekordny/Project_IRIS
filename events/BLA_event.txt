@@ -1153,6 +1153,10 @@ country_event = {
 		BLA_increase_sp_preference = yes
 		set_country_flag = BLA_Elina_minister_enabled
 		add_ideas = BLA_Elina_minister
+		custom_effect_tooltip = STG_unlock_a_new_branch_desc
+		hidden_effect = {
+			mark_focus_tree_layout_dirty = yes
+		}
 		ai_chance = {
 			base = 10
 		}
@@ -1265,6 +1269,39 @@ country_event = {
 	is_triggered_only = yes
 	option = {
 		name = BLA_pol.49.a
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#新刊
+country_event = {
+    id = BLA_pol.50
+    title = BLA_pol.50.t
+	desc = BLA_pol.50.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = BLA_pol.50.a
+		hidden_effect = {
+			country_event = {id = BLA_pol.51 days = 15}
+		}
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+#农民委员会
+country_event = {
+    id = BLA_pol.51
+    title = BLA_pol.51.t
+	desc = BLA_pol.51.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+	is_triggered_only = yes
+	option = {
+		name = BLA_pol.51.a
 		ai_chance = {
 			base = 10
 		}
@@ -3228,7 +3265,9 @@ country_event = {
 		name = BLA_general.83.a
 		set_country_flag = BLA_Elina_minister_enabled
 		add_ideas = BLA_Elina_minister
+		custom_effect_tooltip = STG_unlock_a_new_branch_desc
 		hidden_effect = {
+			mark_focus_tree_layout_dirty = yes
 			country_event = {id = BLA_general.84 days = 12}
 		}
 		ai_chance = {
@@ -3639,6 +3678,27 @@ country_event = {
 		name = BLA_rev.1.a
         add_manpower = -14
         custom_effect_tooltip = BLA_revolution_is_coming_desc
+		if = {
+			limit = {check_variable = {BLA_army_opinion > 24}}
+			transfer_units_fraction = {
+				target = NAC
+				size = 0
+				army_ratio = 0.05
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+		}
+		else = {
+			transfer_units_fraction = {
+				target = NAC
+				size = 0
+				army_ratio = 0.15
+				keep_unit_leaders_trigger = {
+					always = yes
+				}
+			}
+		}
         hidden_effect = {
             country_event = {id = BLA_rev.2 days = 15}
 			country_event = {id = BLA_rev.27 days = 3}
@@ -3859,13 +3919,6 @@ country_event = {
 			End_Big_Game = yes
 			NAC = {
 				add_manpower = 500000
-				if = {
-					limit = {
-						is_ai = yes
-						is_historical_focus_on = yes
-					}
-					add_ideas = NAC_ai_historic_bonus
-				}
 				if = {
 					limit = {
 						country_exists = BLB
@@ -4164,17 +4217,21 @@ country_event = {
 					character = BLA_anna
 					ruling_only = yes
 				}
+				NOT = {has_country_flag = 199_lost}
 			}
 			AND = {
 				tag = NAC
 				controls_state = 199
+				NOT = {has_country_flag = 199_lost}
 			}
 		}
+	}
+	immediate = {
+		set_country_flag = 199_lost
 	}
 	mean_time_to_happen = {
 		days = 1
 	}
-	fire_only_once = yes
 	option = {
 		name = BLA_rev.17.a
 		trigger = {
@@ -4182,86 +4239,7 @@ country_event = {
 		}
 		custom_effect_tooltip = BLA_GAME_OVER
 		hidden_effect = {
-			BLA = {
-				Clear_Big_Game_ideas = yes
-				transfer_navy = {
-					target = NAC
-				}
-				white_peace  = {
-					tag = NAC
-					message = NAC_WON_Revolution
-				}
-			}
-			NAC = {
-				Clear_Big_Game_ideas = yes
-				white_peace  = {
-					tag = BLA
-					message = NAC_WON_Revolution
-				}
-				annex_country = {
-					target = BLA
-					transfer_troops = no
-				}
-				news_event = {id = BLA_news.7 days = 3}
-				country_event = {id = BLA_rev.1992 days = 300}
-				if = {
-					limit = {
-						country_exists = HBR
-					}
-					annex_country = {
-						target = HBR
-						transfer_troops = no
-					}
-				}
-				if = {
-					limit = {
-						country_exists = HEL
-					}
-					annex_country = {
-						target = HEL
-						transfer_troops = no
-					}
-				}
-				remove_ideas = NAC_to_freedom
-				remove_ideas = NAC_Second_Rossiya_Revolution
-				remove_ideas = NAC_block
-			}
-			set_global_flag = orenburg_city_story_flag_6
-			every_country = {
-				limit = {
-					has_war_with = SVI
-					OR = {
-						tag = NAC
-						tag = OPA
-					}
-				}
-				white_peace = {
-					tag = SVI
-				}
-			}
-			if = {
-				limit = {
-					country_exists = OPA
-					OPA = {
-						has_country_leader = {
-							character = OPA_Rasputin
-							ruling_only = yes
-						}
-					}
-				}
-				OPA = {
-					country_event = {id = BLA_rev.999 days = 3}
-				}
-			}
-			217 = {
-				remove_core_of = WAR
-			}
-			every_state = {
-				limit = {
-					is_core_of = HEL
-				}
-				remove_core_of = HEL
-			}
+			NAC_end_revolution = yes
 		}
 	}
 	option = {
@@ -6142,6 +6120,40 @@ news_event = {
 		trigger = {
 			is_IRIS_SAS_country = no
 			is_IRIS_NAS_country = no
+		}
+	}
+}
+#罗西亚发动战略反攻
+news_event = {
+	id = BLA_news.25
+	title = BLA_news.25.t
+	desc = BLA_news.25.desc
+	picture = GFX_Current_War
+	
+	major = yes
+	
+	is_triggered_only = yes
+	
+	option = {
+		name = BLA_news.25.a
+		trigger = {
+			tag = NAC
+		}
+	}
+	option = {
+		name = BLA_news.25.b
+		trigger = {
+			tag = BLA
+		}
+	}
+	option = {
+		name = BLA_news.25.c
+		trigger = {
+			NOT = {
+				tag = NAC
+				tag = BLA
+			}
+			
 		}
 	}
 }
