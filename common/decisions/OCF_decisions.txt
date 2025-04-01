@@ -224,7 +224,8 @@ OCF_national_politics_decision_cat = {
 			}
 			custom_effect_tooltip = OCF_changes_party_relations
 			random_list = {
-				2 = {}
+				2 = {
+				}
 				1 = {
 					OCF_gridbox_seat_array_original_relationship_variable_1_add = yes
 					OCF_gridbox_seat_array_original_relationship_variable_2_add = yes
@@ -4411,7 +4412,7 @@ OCF_foreign_policy = {
 	OCF_research_cooperation_organization = {
 		cost = 10
 		ai_will_do = {
-			factor = 50
+			factor = 15
 			modifier = {
 			}
 		}
@@ -4446,6 +4447,214 @@ OCF_foreign_policy = {
 			FROM = {
 				#添加到科研组织
 				add_to_tech_sharing_group = Cross_Strait_Scientific_Research_Cooperation_Association
+			}
+		}
+	}
+	#邀请加入协作组织
+	OCF_invite_join_collaborative_organization = {
+		cost = 15
+		ai_will_do = {
+			factor = 100
+			modifier = {
+			}
+		}
+		#满足的作用域
+		target_trigger = {
+			#此国家
+			FROM = {
+				NOT = {
+					has_war_with = OCF
+				}
+				all_country = {
+					if = {
+						limit = {
+							is_ally_with = OCF
+						}
+						NOT = {
+							has_war_with = FROM
+						}
+					}
+				}
+				NOT = {
+					is_ally_with = OCF
+				}
+				is_puppet = no
+				OR = {
+					if = {
+						limit = {
+							tag = ELN
+						}
+						AND = {
+							count_triggers = {
+								amount = 5
+								NOT = {
+									controls_state = 127
+								}
+								NOT = {
+									controls_state = 52
+								}
+								NOT = {
+									controls_state = 64
+								}
+								NOT = {
+									controls_state = 92
+								}
+								NOT = {
+									controls_state = 95
+								}
+								NOT = {
+									controls_state = 129
+								}
+								NOT = {
+									controls_state = 157
+								}
+								NOT = {
+									controls_state = 96
+								}
+							}
+							num_faction_members < 3
+						}
+					}
+					else = {
+						is_in_faction = no
+						has_war_together_with = OCF
+					}
+				}
+			}
+		}
+		#只能点一下
+		fire_only_once = yes
+		#点击条件
+		available = {
+			NOT = {
+				country_exists = FNC
+			}
+			has_global_flag = FNC_Submissive_OCF_flag
+			has_completed_focus = OCF_waijiao_6
+			is_puppet = no
+			is_in_faction = yes
+			has_capitulated = no
+			115 = {
+				is_owned_and_controlled_by = OCF
+			}
+			DOC = {
+				OR = {
+					is_ally_with = OCF
+					is_ally_with = CID
+				}
+			}
+			OCF = {
+				is_ally_with = CID
+			}
+			OR = {
+				OCF = {
+					is_faction_leader = yes
+				}
+				DOC = {
+					is_faction_leader = yes
+				}
+				CID = {
+					is_faction_leader = yes
+				}
+			}
+			has_completed_focus = Establishing_Eastern_European_Loba_Cooperation
+			NOT = {
+				has_global_flag = refusing_defense_agreements_flag
+			}
+			FROM = {
+				NOT = {
+					has_war_with = OCF
+				}
+				all_country = {
+					if = {
+						limit = {
+							is_ally_with = OCF
+						}
+						NOT = {
+							has_war_with = FROM
+						}
+					}
+				}
+				NOT = {
+					is_ally_with = OCF
+				}
+				is_puppet = no
+				OR = {
+					if = {
+						limit = {
+							tag = ELN
+						}
+						AND = {
+							tag = ELN
+							count_triggers = {
+								amount = 5
+								NOT = {
+									controls_state = 127
+								}
+								NOT = {
+									controls_state = 52
+								}
+								NOT = {
+									controls_state = 64
+								}
+								NOT = {
+									controls_state = 92
+								}
+								NOT = {
+									controls_state = 95
+								}
+								NOT = {
+									controls_state = 129
+								}
+								NOT = {
+									controls_state = 157
+								}
+								NOT = {
+									controls_state = 96
+								}
+							}
+							num_faction_members < 3
+						}
+					}
+					else = {
+						is_in_faction = no
+						has_war_together_with = OCF
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							original_tag = ELN
+						}
+					}
+					OR = {
+						any_controlled_state = {
+							# is_coastal = yes
+							distance_to = {
+								target = 115
+								value < 6500
+							}
+						}
+					}
+				}
+			}
+		}
+		days_remove = 30
+		remove_trigger = {
+			OCF_invite_join_collaborative_organization_remove_trigger = yes
+		}
+		#效果
+		remove_effect = {
+			#此国家
+			FROM = {
+				if = {
+					limit = {
+						OCF_invite_join_collaborative_organization_remove_trigger = no
+					}
+					country_event = {
+						id = CID.30
+					}
+				}
 			}
 		}
 	}
@@ -6462,13 +6671,15 @@ OCF_Anisufia_Win_Parettia_workshop = {
 		}
 		available = {
 			#has_country_flag = OCF_project_has_been_halted_flag
-			not = {
-				has_country_flag = OCF_workshop_has_been_put_into_use_flag
-			}
-			NOT = {
-				OCF = {
-					OCF_Anisufia_Win_Parettia = {
-						is_country_leader = yes
+			OR = {
+				not = {
+					has_country_flag = OCF_workshop_has_been_put_into_use_flag
+				}
+				NOT = {
+					OCF = {
+						OCF_Anisufia_Win_Parettia = {
+							is_country_leader = yes
+						}
 					}
 				}
 			}
@@ -7581,6 +7792,10 @@ IRIS_debug_decisions_OCF = {
 				}
 				promote_character = OCF_Yasumori_Minori
 			}
+			add_power_balance_value = {
+				id = OCF_national_politics
+				value = -2
+			}
 			set_party_name = {
 				ideology = communism
 				long_name = OCF_parliamentary_parties_1
@@ -7614,6 +7829,12 @@ IRIS_debug_decisions_OCF = {
 			hidden_effect = {
 				remove_ideas = OCF_idea_parliament
 				add_ideas = OCF_idea_Yasumori_Minori
+			}
+			hidden_effect = {
+				set_variable = {
+					se_display = 26
+				}
+				SE_center = yes
 			}
 		}
 	}
@@ -7785,7 +8006,7 @@ IRIS_debug_decisions_OCF = {
 			}
 			# every_character = {
 			# 	set_variable = { temp = PREV }
-			# 	meta_effect = { 
+			# 	meta_effect = {
 			# 		text = {
 			# 			generate_character = { token_base = [t_index] }
 			# 			add_to_array = { OCF.IRIS_Historical_leaders_Array = token:[t_index] }
@@ -8162,6 +8383,19 @@ IRIS_debug_decisions_OCF = {
 				alert_id = token:alert_OCF_proposal_passed
 			}
 			add_IRIS_alert_unless_exists = yes
+		}
+	}
+	#展示所有国策
+	debug_OCF_display_all_national_policies = {
+		visible = {
+			is_testing = yes
+		}
+		fire_only_once = no
+		available = {
+		}
+		complete_effect = {
+			set_global_flag = debug_OCF_display_all_national_policies_flag
+			mark_focus_tree_layout_dirty = yes
 		}
 	}
 }
