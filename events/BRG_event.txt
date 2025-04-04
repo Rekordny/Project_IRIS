@@ -16,10 +16,12 @@ country_event = {
 			end_puppet = ROOT
 			country_event = { id = BRG.2 days = 3 }
 		}
-		FROM = {
+		OCF = {
 			set_autonomy = {
 				target = BRG
 				autonomous_state = ocf_federal_district
+				end_wars = yes
+				end_civil_wars = yes
 			}
 		}
 	}
@@ -233,6 +235,7 @@ country_event = {
 						target = OCF
 						value < 0
 					}
+					is_ally_with = USF
 				}
 			}
 		}
@@ -242,7 +245,41 @@ country_event = {
 	#合众国
 	option = {
 		name = BRG.4.b
-		
+		ai_chance = {
+			base = 0
+			modifier = {
+				add = 10
+				has_opinion = {
+					target = USF
+					value > 10
+				}
+			}
+			modifier = {
+				add = 20
+				has_opinion = {
+					target = USF
+					value > 40
+				}
+			}
+			modifier = {
+				add = 30
+				has_opinion = {
+					target = USF
+					value > 80
+				}
+			}
+			modifier = {
+				factor = 0
+				OR = { 
+					has_war_with = USF
+					has_opinion = {
+						target = USF
+						value < 0
+					}
+					is_ally_with = OCF
+				}
+			}
+		}
 		set_temp_variable = { tag_temp = OCF }
 		IRIS_activate_world_defense_member = yes
 	}
@@ -276,10 +313,28 @@ country_event = {
 		set_temp_variable = { tag_temp = OCF }
 		IRIS_closing_world_conflicts = yes
 		declare_war_on = { target = BRG type = take_state_focus }
+		every_country = {
+			limit = {
+				original_tag = BRG
+				is_ally_with = ROOT
+			}
+			add_to_war = {
+			    targeted_alliance = USF
+			    enemy = BRG
+			    hostility_reason = asked_to_join
+			}
+		}
+		OCF = {
+			add_to_war = {
+			    targeted_alliance = BRG
+			    enemy = USF
+			    hostility_reason = asked_to_join
+			}
+		}
 	}
 	#算了不值得。
 	option = {
-		name = BRG.4.b
+		name = BRG.5.b
 		ai_chance = {
 			base = 0
 			modifier = {
