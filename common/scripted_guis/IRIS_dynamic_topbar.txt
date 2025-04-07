@@ -1,0 +1,169 @@
+scripted_gui = {
+    IRIS_dynamic_topbar_container = {
+        context_type = player_context
+
+        window_name = "IRIS_dynamic_topbar_container"
+        parent_window_token = top_bar
+
+        dirty = IRIS_topbar_update
+
+        dynamic_lists = {
+            topbar_list = {
+                array = Root.topbar_array
+                change_scope = yes
+                value = topbar
+                index = topbar_i
+                entry_container = "topbar_list_container"
+            }
+            topbar_menu = {
+                array = topbar_menu@var:topbar_i
+                value = topbar_menu_v
+                index = topbar_menu_i
+                change_scope = yes
+                entry_container = "topbar_menu_container"
+            }
+        }
+
+        properties = {
+            topbar_buttonType = {
+                image = "GFX_[?topbar.GetTokenKey]"
+            }
+            topbar_menu_icon = {
+                image = "GFX_[?topbar_menu_v.GetTokenKey]"
+            }
+            list = {
+                frame = list_frame
+            }
+        }
+
+        effects = {
+            #添加
+            IRIS_add_dynamic_topbar_click = {
+                if = {
+                    limit = {
+                        check_variable = { ROOT.topbar_array^num < 13 }
+                    }
+
+                    add_to_array = { topbar_array = token:topbar_empty }
+                }
+                add_to_variable = { ROOT.IRIS_topbar_update = 1 }
+            }
+
+            #启用界面
+            background_button_click = {
+                for_each_loop = {
+                    array = topbar_array
+
+                    clear_array = ROOT.topbar_menu@var:i
+                }
+                if = {
+                    limit = {
+                        OR = {
+                            NOT = { check_variable = { selected_topbar = topbar_i } }
+                            NOT = { has_variable = selected_topbar }
+                        }
+                    }
+                    log = "Not identical [?selected_topbar] and  [?topbar_i]"
+                    set_variable = { selected_topbar = topbar_i }
+
+                    IRIS_loading_top_display_information = yes
+                }
+                else = {
+                    log = "identical [?selected_topbar] and  [?topbar_i], CLEAR"
+
+                    clear_variable = subcategory_selected
+                    clear_variable = selected_topbar
+                    clear_array = subcategory
+
+                    for_each_loop = {
+                        array = topbar_array
+
+                        clear_array = topbar_menu@var:i
+                    }
+                }
+                add_to_variable = { Root.IRIS_topbar_update = 1 }
+            }
+
+            #添加指定
+            list_click = {
+                IRIS_loading_top_display_information_appoint = yes
+                add_to_variable = { Root.IRIS_topbar_update = 1 }
+            }
+
+            #移除
+            background_button_right_click = {
+                remove_from_array = { array = topbar_array index = topbar_i }
+
+                add_to_variable = { Root.IRIS_topbar_update = 1 }
+            }
+
+            # #退出
+            # options_exit_button_click = {
+            #     clear_variable = subcategory_selected
+            #     clear_variable = selected_topbar
+            #     clear_array = subcategory
+
+            #     for_each_loop = {
+            #         array = topbar_array
+
+            #         clear_array = topbar_menu@var:topbar_menu_i
+            #     }
+            #     add_to_variable = { Root.IRIS_topbar_update = 1 }
+            # }
+
+            #附带按钮
+            topbar_buttonType_click = {
+                meta_effect = {
+                    text = {
+                        topbar_buttonType_[V]_click = yes
+                    }
+                    V = "[?topbar.GetTokenKey]"
+                }
+            }
+        }
+
+        triggers = {
+            list_click_enabled = {
+                if = {
+                    limit = {
+                        meta_trigger = {
+                            text = {
+                                has_country_flag = [V]_EXPAND_OTHER_FLAG
+                            }
+                            V = "[?topbar_menu_v.GetTokenKey]"
+                        }
+                        IRIS_top_information_category_country_triggers = yes
+                    }
+                    set_temp_variable = { list_frame = 2 }
+                }
+                else = {
+                    set_temp_variable = { list_frame = 1 }
+                }
+            }
+            topbar_menu_expand_icon_visible = {
+                IRIS_top_information_category_country_triggers = yes
+            }
+            background_button_highlight_visible = {
+                has_variable = selected_topbar
+                check_variable = { selected_topbar = topbar_i }
+            }
+            topbar_menu_header_visible = {
+                has_variable = selected_topbar
+                check_variable = { selected_topbar = topbar_i }
+            }
+            topbar_menu_background_visible = {
+                has_variable = selected_topbar
+                check_variable = { selected_topbar = topbar_i }
+            }
+            options_exit_button_visible = {
+                has_variable = selected_topbar
+                check_variable = { selected_topbar = topbar_i }
+            }
+            select_target_visible = {
+                always = no
+                has_variable = selected_topbar
+                check_variable = { selected_topbar = topbar_i }
+            }
+        }
+    }
+}
