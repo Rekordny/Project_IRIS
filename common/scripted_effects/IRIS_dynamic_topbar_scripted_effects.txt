@@ -1,0 +1,105 @@
+#载入顶部可显示信息
+IRIS_loading_top_display_information = {
+    clear_array = topbar_menu@var:topbar_i
+
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_stability_factor }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_stability_weekly }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_defensive_war_stability_factor }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_war_support_factor }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_war_support_weekly }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_casualties }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_warscore }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_surrender_limit }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_surrender_progress }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_consumer_goods }
+    add_to_array = { topbar_menu@var:topbar_i = token:IRIS_min_consumer_goods }
+
+    if = {
+        limit = {
+            is_not_IRIS_role_pool_specific = no
+        }
+        add_to_array = { topbar_menu@var:topbar_i = token:IRIS_prize_draw }
+    }
+
+    if = {
+        limit = {
+            original_tag = OCF
+        }
+        add_to_array = { topbar_menu@var:topbar_i = token:OCF_dynamic_topbar_category }
+    }
+    # add_to_array = { topbar_menu@var:topbar_i = token:OCF_parliamentary_support }
+    # add_to_array = { topbar_menu@var:topbar_i = token:OCF_government_stability }
+    # add_to_array = { topbar_menu@var:topbar_i = token:OCF_fund }
+
+}
+
+#载入
+IRIS_loading_top_display_information_appoint = {
+    if = {
+        limit = {
+            IRIS_top_information_category_country_triggers = no
+        }
+        remove_from_array = { array = ROOT.topbar_array index = topbar_i }
+        add_to_array = { array = ROOT.topbar_array value = topbar_menu_v index = topbar_i }
+
+        clear_variable = subcategory_selected
+        clear_array = subcategory
+
+        clear_array = topbar_menu@var:topbar_i
+        clear_variable = selected_topbar
+    }
+    else = {
+        meta_effect = {
+            text = {
+                clear_array = [V]_increasing_top_array
+                [V]_expand_other = yes
+                log = "[GetDateText]: [Root.GetName]：修订顶部分类-[?topbar_menu_v.GetTokenKey]"
+                #移除操作
+                if = {
+                    limit = {
+                        has_country_flag = [V]_EXPAND_OTHER_FLAG
+                    }
+                    for_each_loop = {
+                        array = [V]_increasing_top_array
+                        value = v
+                        remove_from_array = { topbar_menu@var:topbar_i = v }
+                    }
+                    clr_country_flag = [V]_EXPAND_OTHER_FLAG
+                }
+                #添加操作
+                else = {
+                    set_temp_variable = { temp_loading_top_display_information_appoint_index_i = topbar_menu_i }
+                    add_to_temp_variable = { temp_loading_top_display_information_appoint_index_i = 1 }
+                    set_country_flag = [V]_EXPAND_OTHER_FLAG
+                    for_each_loop = {
+                        array = [V]_increasing_top_array
+                        value = v
+                        add_to_array = { array = topbar_menu@var:topbar_i value = v index = temp_loading_top_display_information_appoint_index_i }
+                    }
+                }
+            }
+            V = "[?topbar_menu_v.GetTokenKey]"
+        }
+    }
+}
+
+########附带的按钮要满足topbar_buttonType_[V]_click的格式
+#抽奖
+topbar_buttonType_IRIS_prize_draw_click = {
+    IRIS_role_firing_icon_click_firing = yes
+    set_country_flag = IRIS_role_firing_iconType_visible_flag
+}
+
+
+########展开需要在对应的值后面加上_expand_other
+#展开大洋类别
+OCF_dynamic_topbar_category_expand_other = {
+    meta_effect = {
+        text = {
+            add_to_array = { array = [V]_increasing_top_array value = token:OCF_parliamentary_support }
+            add_to_array = { array = [V]_increasing_top_array value = token:OCF_government_stability }
+            add_to_array = { array = [V]_increasing_top_array value = token:OCF_fund }
+        }
+        V = "[?topbar_menu_v.GetTokenKey]"
+    }
+}
