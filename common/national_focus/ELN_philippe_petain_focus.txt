@@ -345,6 +345,11 @@
 			}
 		}
 		bypass = {
+			NOT = {
+				127 = {
+					is_controlled_by = USR
+				}
+			}
 		}
 		cancel_if_invalid = yes
 		continue_if_invalid = no
@@ -444,17 +449,31 @@
 		}
 		will_lead_to_war_with = USR
 		relative_position_id = VIC_a_nation_reborn
-		cost = 10
+		cost = 5
 		ai_will_do = {
 			factor = 0
+			modifier = {
+				USR = {
+					is_faction_leader = no
+					num_of_factories < 75
+				}
+				add = 100
+			}
+			modifier = {
+				USR = {
+					surrender_progress > 0.5
+				}
+				add = 100
+			}
 		}
 		available = {
-			127 = {
-				NOT = {
-					is_controlled_by = ROOT
-				}
-			}
-			is_ally_with = USR
+			# 127 = {
+			# 	NOT = {
+			# 		is_controlled_by = ROOT
+			# 	}
+			# }
+			# is_ally_with = USR
+			# is_faction_leader = no
 		}
 		bypass = {
 		}
@@ -470,10 +489,73 @@
 					end_puppet = PEN
 				}
 			}
-			leave_faction = yes
-			declare_war_on = {
-				target = USR
-				type = take_state_focus
+			division_template = {
+				name = "国防军"
+				priority = 0
+				is_locked = yes
+				force_allow_recruiting = yes
+				regiments = {
+					anti_tank_brigade = {x = 0 y = 0}
+					artillery_brigade = {x = 0 y = 1}
+					artillery_brigade = {x = 0 y = 2}
+					infantry = {x = 1 y = 0}
+					infantry = {x = 1 y = 1}
+					infantry = {x = 1 y = 2}
+					infantry = {x = 2 y = 0}
+					infantry = {x = 2 y = 1}
+					infantry = {x = 2 y = 2}
+				}
+				support = {
+					engineer = {x = 0 y = 0}
+					anti_air = {x = 0 y = 1}
+					logistics_company = {x = 0 y = 2}
+					recon = {x = 0 y = 3}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "division_template = \"国防军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+					owner = FROM
+					count = 20
+				}
+			}
+			division_template = {
+				name = "起义军"
+				priority = 0
+				is_locked = yes
+				force_allow_recruiting = yes
+				regiments = {
+					infantry = {x = 0 y = 0}
+					infantry = {x = 0 y = 1}
+					infantry = {x = 0 y = 2}
+					infantry = {x = 1 y = 0}
+					infantry = {x = 1 y = 1}
+					infantry = {x = 1 y = 2}
+					infantry = {x = 2 y = 0}
+					infantry = {x = 2 y = 1}
+					infantry = {x = 2 y = 2}
+				}
+				support = {
+					engineer = {x = 0 y = 0}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "division_template = \"起义军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+					owner = FROM
+					count = 40
+				}
+			}
+			if = {
+				limit = {
+					is_ally_with = USR
+					is_faction_leader = no
+				}
+				leave_faction = yes
+				declare_war_on = {
+					target = USR
+					type = puppet_wargoal_focus
+				}
 			}
 			load_focus_tree = {
 				tree = ELN_focus_tree_old
@@ -621,9 +703,7 @@
 		continue_if_invalid = no
 		available_if_capitulated = no
 		completion_reward = {
-			add_ideas = {
-				FRA_anti_volunteers
-			}
+			add_ideas = FRA_anti_volunteers
 		}
 	}
 	focus = {
