@@ -1605,8 +1605,8 @@ OCF_Post_war_reconstruction = {
 			has_war_support < 0.5
 		}
 		fire_only_once = no
-		days_remove = 90
-		days_re_enable = 180
+		days_remove = 180
+		days_re_enable = 90
 		custom_cost_text = OCF_spending_funds_50
 		custom_cost_trigger = {
 			check_variable = {
@@ -1628,9 +1628,9 @@ OCF_Post_war_reconstruction = {
 			clr_country_flag = war_propaganda_campaign_running
 		}
 		ai_will_do = {
-			base = 0
+			base = 100
 			modifier = {
-				add = 1
+				add = 200
 				has_war_support < 0.4
 				has_war = yes
 			}
@@ -1672,11 +1672,7 @@ OCF_Post_war_reconstruction = {
 			consumer_goods_factor = -0.2
 		}
 		ai_will_do = {
-			factor = 1
-			modifier = {
-				has_political_power < 100
-				factor = 0				#use as pp dump
-			}
+			factor = 100
 		}
 		custom_cost_text = OCF_spending_funds_30
 		custom_cost_trigger = {
@@ -4651,8 +4647,23 @@ OCF_foreign_policy = {
 					limit = {
 						OCF_invite_join_collaborative_organization_remove_trigger = no
 					}
-					country_event = {
-						id = CID.30
+					if = {
+						limit = {
+							is_in_faction = yes
+						}
+						every_country = {
+							limit = {
+								is_ally_with = FROM
+							}
+							country_event = {
+								id = CID.30
+							}
+						}
+					}
+					else = {
+						country_event = {
+							id = CID.30
+						}
 					}
 				}
 			}
@@ -5563,6 +5574,1774 @@ OCF_manufacturing_core = {
 				add_core_of = ROOT
 			}
 			transfer_state = FROM
+		}
+	}
+}
+
+#彼岸花联合司令部
+OCF_combined_forces_command = {
+	#军队方面
+
+	#军事扩编
+	OCF_military_expansion = {
+		icon = GFX_decision_eng_blackshirt_march
+		available = {
+			has_war_support > 0.2
+		}
+		custom_cost_trigger = {
+			command_power > 49
+		}
+		custom_cost_text = OCF_cost_cp_50
+		visible = {
+			has_idea = OCE_idea_population_problem
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -50
+			}
+		}
+		days_remove = 150
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			swap_ideas = {
+				remove_idea = OCE_idea_population_problem
+				add_idea = OCE_idea_population_problem_2
+			}
+		}
+	}
+
+	#进修士官
+	OCF_continuing_education_officer = {
+		icon = GFX_decision_generic_military
+		available = {
+			all_army_leader = {
+				skill < 9
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 10
+		}
+		custom_cost_text = OCF_cost_cp_10
+		visible = {
+
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -10
+			}
+		}
+		days_remove = 75
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			random_army_leader = {
+				limit = {
+					skill < 9
+				}
+				gain_xp = 1500
+			}
+		}
+	}
+
+	#作战联合会议
+	OCF_joint_operations_meeting = {
+		icon = GFX_decision_generic_police_action
+		available = {
+			command_power < 101
+			has_war = yes
+		}
+		cost = 50
+		visible = {}
+		days_remove = 10
+		ai_will_do = {
+			base = 50
+		}
+		modifier = {
+			planning_speed = 0.15
+			army_speed_factor = 0.1
+		}
+		remove_effect = {
+			add_command_power = 50
+		}
+	}
+
+
+
+
+
+	#战略行动
+	#保卫彼岸洋
+	OCF_defend_other_side_of_ocean = {
+		icon = GFX_decision_generic_coastal_fortification
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			115 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+			841 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+			842 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+			843 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+			844 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 20
+		}
+		custom_cost_text = OCF_cost_cp_20
+		state_target = yes
+		visible = {
+			FROM = {
+				state = 115
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_state_targets = {
+				state = 773
+				state = 88
+				state = 826
+				state = 108
+				state = 137
+				state = 142
+				state = 135
+				state = 768
+				state = 767
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 10
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			773 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			88 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			826 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			108 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			137 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			142 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			135 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			768 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			767 = {
+				add_dynamic_modifier = {
+					modifier = OCF_defend_other_side_of_ocean_dynamic_modifiers
+					scope = OCF
+				}
+			}
+		}
+	}
+
+
+	#群岛丛林战争
+	OCF_archipelago_jungle_war = {
+		icon = GFX_decision_generic_coastal_fortification
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			count_triggers = {
+				amount = 4
+				877 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				876 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				129 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				772 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				771 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				116 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				156 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 20
+		}
+		custom_cost_text = OCF_cost_cp_20
+		state_target = yes
+		visible = {
+			FROM = {
+				state = 877
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_state_targets = {
+				state = 877
+				state = 876
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 10
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			877 = {
+				add_dynamic_modifier = {
+					modifier = OCF_archipelago_jungle_war_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			876 = {
+				add_dynamic_modifier = {
+					modifier = OCF_archipelago_jungle_war_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			if = {
+				limit = {
+					EIA = {
+						is_ally_with = ROOT
+					}
+				}
+				877 = {
+					add_dynamic_modifier = {
+						modifier = EIA_archipelago_jungle_war_dynamic_modifiers
+						scope = EIA
+					}
+				}
+				876 = {
+					add_dynamic_modifier = {
+						modifier = EIA_archipelago_jungle_war_dynamic_modifiers
+						scope = EIA
+					}
+				}
+			}
+		}
+	}
+
+	#保卫航线
+	OCF_sefend_air_route = {
+		icon = GFX_decision_generic_coastal_fortification
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			766 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+			165 = {
+				is_controlled_by_ROOT_or_ally = yes
+			}
+			has_navy_size = {
+				size > 99
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 10
+		}
+		custom_cost_text = OCF_cost_cp_10
+		state_target = yes
+		visible = {
+			FROM = {
+				state = 875
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -10
+			}
+		}
+		fire_only_once = yes
+		days_remove = 20
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			add_mines = {
+				region = 126
+				amount = 200
+			}
+			add_mines = {
+				region = 124
+				amount = 200
+			}
+			add_mines = {
+				region = 129
+				amount = 200
+			}
+			add_mines = {
+				region = 141
+				amount = 200
+			}
+			add_mines = {
+				region = 123
+				amount = 200
+			}
+		}
+	}
+
+	#彼岸洋防卫阵线
+	OCF_transoceanic_defense_front = {
+		icon = GFX_decision_generic_fortification
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			count_triggers = {
+				amount = 4
+				881 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				71 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				880 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				91 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				879 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				875 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				878 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				883 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				303 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				266 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				825 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				226 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 20
+		}
+		custom_cost_text = OCF_cost_cp_20
+		state_target = yes
+		visible = {
+			FROM = {
+				state = 91
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_state_targets = {
+				state = 881
+				state = 71
+				state = 880
+				state = 91
+				state = 879
+				state = 875
+				state = 878
+				state = 883
+				state = 303
+				state = 266
+				state = 825
+				state = 226
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 30
+		ai_will_do = {
+			base = 1000
+		}
+		remove_effect = {
+			881 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							# limit_to_border = yes #边界
+							limit_to_coastal = yes #沿海
+							# limit_to_victory_point > 1胜利点
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			71 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			880 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			91 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			879 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			875 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			878 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			883 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			303 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			266 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			825 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+			226 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_transoceanic_defense_front_dynamic_modifiers
+					scope = OCF
+				}
+			}
+		}
+	}
+
+	#博林克尼亚防卫区
+	OCF_defend_BRG_territory = {
+		icon = eng_trade_unions_support
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			count_triggers = {
+				amount = 1
+				226 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				825 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+		}
+		target_trigger = {
+			FROM = {
+				tag = BRG
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 20
+		}
+		custom_cost_text = OCF_cost_cp_20
+		visible = {
+
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_state_targets = {
+				state = 226
+				state = 825
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 15
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			FROM = {
+				enable_ocf_improved_logistics = yes
+				division_template = {
+					name = "博林克尼亚防卫区-联防军"
+					priority = 0
+					is_locked = yes
+					force_allow_recruiting = yes
+					regiments = {
+						anti_tank_brigade = {x = 0 y = 0}
+						artillery_brigade = {x = 0 y = 1}
+						artillery_brigade = {x = 0 y = 2}
+						infantry = {x = 1 y = 0}
+						infantry = {x = 1 y = 1}
+						infantry = {x = 1 y = 2}
+						infantry = {x = 2 y = 0}
+						infantry = {x = 2 y = 1}
+						infantry = {x = 2 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+						anti_air = {x = 0 y = 1}
+						logistics_company = {x = 0 y = 2}
+						recon = {x = 0 y = 3}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"博林克尼亚防卫区-联防军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+						owner = FROM
+						count = 10
+					}
+				}
+			}
+			226 = {
+				add_dynamic_modifier = {
+					modifier = BRG_defend_BRG_territory_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			825 = {
+				add_dynamic_modifier = {
+					modifier = BRG_defend_BRG_territory_dynamic_modifiers
+					scope = FROM
+				}
+			}
+		}
+	}
+
+	#极北航线防卫区
+	OCF_defend_CID_territory = {
+		icon = eng_trade_unions_support
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			count_triggers = {
+				amount = 1
+				15 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				882 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+			has_navy_size = {
+				size > 79
+			}
+		}
+		target_trigger = {
+			FROM = {
+				tag = CID
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 10
+		}
+		custom_cost_text = OCF_cost_cp_10
+		visible = {
+
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -10
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_state_targets = {
+				state = 15
+				state = 882
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 10
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			add_mines = {
+				region = 122
+				amount = 200
+			}
+			FROM = {
+				enable_ocf_improved_logistics = yes
+				division_template = {
+					name = "极北航线防卫区-联防军"
+					priority = 0
+					is_locked = yes
+					force_allow_recruiting = yes
+					regiments = {
+						anti_tank_brigade = {x = 0 y = 0}
+						artillery_brigade = {x = 0 y = 1}
+						artillery_brigade = {x = 0 y = 2}
+						infantry = {x = 1 y = 0}
+						infantry = {x = 1 y = 1}
+						infantry = {x = 1 y = 2}
+						infantry = {x = 2 y = 0}
+						infantry = {x = 2 y = 1}
+						infantry = {x = 2 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+						anti_air = {x = 0 y = 1}
+						logistics_company = {x = 0 y = 2}
+						recon = {x = 0 y = 3}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"极北航线防卫区-联防军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+						owner = FROM
+						count = 3
+					}
+				}
+			}
+			15 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 2
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_defend_CID_territory_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			882 = {
+				if = {
+					limit = {
+						is_controlled_by_ROOT_or_ally = yes
+					}
+					add_building_construction = {
+						type = coastal_bunker
+						level = 3
+						instant_build = yes
+						province = {
+							all_provinces = yes
+							limit_to_coastal = yes #沿海
+						}
+					}
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_defend_CID_territory_dynamic_modifiers
+					scope = ROOT
+				}
+			}
+		}
+	}
+
+	#其他防卫区
+	OCF_defend_FROM_territory = {
+		icon = eng_trade_unions_support
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			# count_triggers = {
+			# 	amount = 1
+			# 	15 = {
+			# 		is_controlled_by_ROOT_or_ally = yes
+			# 	}
+			# 	882 = {
+			# 		is_controlled_by_ROOT_or_ally = yes
+			# 	}
+			# }
+			FROM = {
+				surrender_progress < 0.5
+			}
+			has_navy_size = {
+				size > 79
+			}
+		}
+		target_trigger = {
+			FROM = {
+				is_ally_with = ROOT
+				NOT = {
+					tag = CID
+					tag = BRG
+					tag = DOC
+					tag = ELN
+				}
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 30
+		}
+		custom_cost_text = OCF_cost_cp_30
+		visible = {
+
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -30
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_states_trigger = {
+				is_core_of = FROM
+			}
+			highlight_color_while_active = 1
+			highlight_color_before_active = 3
+		}
+		days_remove = 30
+		ai_will_do = {
+			base = 50
+		}
+		remove_effect = {
+			FROM = {
+				enable_ocf_expanded_engineer_corps = yes
+				division_template = {
+					name = "联防军"
+					priority = 0
+					is_locked = yes
+					force_allow_recruiting = yes
+					regiments = {
+						anti_tank_brigade = {x = 0 y = 0}
+						artillery_brigade = {x = 0 y = 1}
+						artillery_brigade = {x = 0 y = 2}
+						infantry = {x = 1 y = 0}
+						infantry = {x = 1 y = 1}
+						infantry = {x = 1 y = 2}
+						infantry = {x = 2 y = 0}
+						infantry = {x = 2 y = 1}
+						infantry = {x = 2 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+						anti_air = {x = 0 y = 1}
+						logistics_company = {x = 0 y = 2}
+						recon = {x = 0 y = 3}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"联防军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+						owner = FROM
+						count = 10
+					}
+				}
+				every_state = {
+					limit = {
+						is_core_of = FROM
+					}
+					add_dynamic_modifier = {
+						modifier = OCF_defend_FROM_territory_dynamic_modifiers
+						scope = FROM
+					}
+				}
+			}
+		}
+	}
+
+	#支援诗旎边境补给
+	OCF_support_supply_poetry_beauty_border = {
+		icon = GFX_decision_generic_trucks
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			count_triggers = {
+				amount = 4
+				97 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				105 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				140 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				75 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				70 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				68 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+				141 = {
+					is_controlled_by_ROOT_or_ally = yes
+				}
+			}
+			has_navy_size = {
+				size > 89
+			}
+		}
+		target_trigger = {
+			FROM = {
+				tag = DOC
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 50
+		}
+		custom_cost_text = OCF_cost_cp_50
+		visible = {
+
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -50
+			}
+		}
+		fire_only_once = yes
+		highlight_states = {
+			highlight_state_targets = {
+				state = 75
+				state = 58
+				state = 70
+				state = 97
+				state = 105
+				state = 140
+				state = 141
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 30
+		ai_will_do = {
+			base = 500
+		}
+		remove_effect = {
+			FROM = {
+				enable_ocf_improved_logistics = yes
+				division_template = {
+					name = "特兰西瓦尼亚防卫区-联防军"
+					priority = 0
+					is_locked = yes
+					force_allow_recruiting = yes
+					regiments = {
+						anti_tank_brigade = {x = 0 y = 0}
+						artillery_brigade = {x = 0 y = 1}
+						artillery_brigade = {x = 0 y = 2}
+						infantry = {x = 1 y = 0}
+						infantry = {x = 1 y = 1}
+						infantry = {x = 1 y = 2}
+						infantry = {x = 2 y = 0}
+						infantry = {x = 2 y = 1}
+						infantry = {x = 2 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+						anti_air = {x = 0 y = 1}
+						logistics_company = {x = 0 y = 2}
+						recon = {x = 0 y = 3}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"特兰西瓦尼亚防卫区-联防军\" start_experience_factor = 1 start_equipment_factor = 1.0"
+						owner = FROM
+						count = 15
+					}
+				}
+			}
+			97 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			105 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			140 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			75 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			70 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			68 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+			141 = {
+				add_dynamic_modifier = {
+					modifier = OCF_support_supply_poetry_beauty_border_dynamic_modifiers
+					scope = FROM
+				}
+			}
+		}
+	}
+
+	#安齐奥登陆战
+	OCF_ANZ_landing_battle = {
+		icon = eng_trade_unions_support
+		fire_only_once = yes
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			has_war_with = FROM
+			count_triggers = {
+				amount = 3
+				251 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				# 239 = {
+				# 	is_not_controlled_by_ROOT_or_ally = yes
+				# }
+				227 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				207 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				223 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				237 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				# 220 = {
+				# 	is_not_controlled_by_ROOT_or_ally = yes
+				# }
+				# 210 = {
+				# 	is_not_controlled_by_ROOT_or_ally = yes
+				# }
+			}
+			has_navy_size = {
+				size > 89
+			}
+		}
+		target_trigger = {
+			FROM = {
+				OR = {
+					tag = ANZ
+					tag = USR
+				}
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 30
+		}
+		custom_cost_text = OCF_cost_cp_30
+		visible = {
+			FROM = {
+				controls_state = 223
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -30
+			}
+			set_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			set_country_flag = OCF_ANZ_landing_battle_flag
+			251 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			227 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			207 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			223 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			237 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			239 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			220 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			210 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			205 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			193 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			203 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			180 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			176 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			677 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			676 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			171 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			170 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+		}
+		highlight_states = {
+			highlight_state_targets = {
+				state = 251
+				state = 227
+				state = 207
+				state = 223
+				state = 237
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 120
+		ai_will_do = {
+			base = 10
+			modifier = {
+				check_variable = { num_divisions < 24 }
+				add = -10
+			}
+			modifier = {
+				check_variable = { num_divisions < 48 }
+				add = -5
+			}
+			modifier = {
+				check_variable = { num_divisions > 70 }
+				add = 10
+			}
+			modifier = {
+				check_variable = { num_divisions > 90 }
+				add = 10
+			}
+			modifier = {
+				has_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+				add = -99
+			}
+		}
+		modifier = {
+			invasion_preparation = -0.3
+			amphibious_invasion = 0.2
+			navy_fuel_consumption_factor = 0.2
+		}
+		remove_effect = {
+			clr_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			clr_country_flag = OCF_ANZ_landing_battle_flag
+		}
+	}
+
+	#康塔西亚登陆战
+	OCF_CTC_landing_battle = {
+		icon = eng_trade_unions_support
+		fire_only_once = yes
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			has_war_with = FROM
+			count_triggers = {
+				amount = 2
+				143 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				769 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				770 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				141 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				140 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				105 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+			}
+			has_navy_size = {
+				size > 89
+			}
+		}
+		target_trigger = {
+			FROM = {
+				OR = {
+					tag = CTC
+					tag = URU
+				}
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 30
+		}
+		custom_cost_text = OCF_cost_cp_30
+		visible = {
+			FROM = {
+				OR = {
+					controls_state = 223
+					controls_state = 143
+				}
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -30
+			}
+			set_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			set_country_flag = OCF_CTC_landing_battle_flag
+			105 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			140 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			141 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			770 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			769 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			143 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			132 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+			97 = {
+				add_dynamic_modifier = {
+					modifier = OCF_areas_that_are_not_valued_dynamic_modifiers
+					scope = ROOT
+					days = 120
+				}
+			}
+		}
+		highlight_states = {
+			highlight_state_targets = {
+				state = 143
+				state = 769
+				state = 770
+				state = 141
+				state = 140
+				state = 105
+			}
+			highlight_color_while_active = 3
+			highlight_color_before_active = 2
+		}
+		days_remove = 120
+		ai_will_do = {
+			base = 10
+			modifier = {
+				check_variable = { num_divisions < 24 }
+				add = -10
+			}
+			modifier = {
+				check_variable = { num_divisions < 48 }
+				add = -5
+			}
+			modifier = {
+				check_variable = { num_divisions > 70 }
+				add = 10
+			}
+			modifier = {
+				check_variable = { num_divisions > 90 }
+				add = 10
+			}
+			modifier = {
+				has_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+				add = -99
+			}
+		}
+		modifier = {
+			invasion_preparation = -0.3
+			amphibious_invasion = 0.2
+			navy_fuel_consumption_factor = 0.2
+		}
+		remove_effect = {
+			clr_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			clr_country_flag = OCF_CTC_landing_battle_flag
+		}
+	}
+
+
+	#东欧罗巴登陆战
+	OCF_DOC_landing_battle = {
+		icon = eng_trade_unions_support
+		fire_only_once = yes
+		available = {
+			OCF_in_a_major_battle = yes
+			has_war_support > 0.5
+			FROM = {
+				is_ally_with = ROOT
+				has_war = yes
+			}
+			count_triggers = {
+				amount = 4
+				83 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				89 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				85 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				69 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				75 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+				114 = {
+					is_not_controlled_by_ROOT_or_ally = yes
+				}
+			}
+			has_navy_size = {
+				size > 89
+			}
+		}
+		target_trigger = {
+			FROM = {
+				tag = DOC
+			}
+		}
+		custom_cost_trigger = {
+			command_power > 20
+		}
+		custom_cost_text = OCF_cost_cp_20
+		visible = {
+			FROM = {
+				is_ally_with = ROOT
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				add_command_power = -20
+			}
+			# set_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			# set_country_flag = OCF_CTC_landing_battle_flag
+		}
+		highlight_states = {
+			highlight_state_targets = {
+				state = 114
+				state = 789
+				state = 85
+				state = 69
+			}
+		}
+		days_remove = 30
+		ai_will_do = {
+			base = 100
+			# modifier = {
+			# 	check_variable = { num_divisions < 24 }
+			# 	add = -10
+			# }
+			# modifier = {
+			# 	check_variable = { num_divisions < 48 }
+			# 	add = -5
+			# }
+			# modifier = {
+			# 	check_variable = { num_divisions > 70 }
+			# 	add = 10
+			# }
+			# modifier = {
+			# 	check_variable = { num_divisions > 90 }
+			# 	add = 10
+			# }
+			# modifier = {
+			# 	has_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			# 	add = -99
+			# }
+		}
+		modifier = {
+			# invasion_preparation = -0.3
+			# amphibious_invasion = 0.2
+			# navy_fuel_consumption_factor = 0.2
+		}
+		remove_effect = {
+			# clr_country_flag = OCF_INITIATE_LOGIN_BATTLE_FLAG
+			# clr_country_flag = OCF_CTC_landing_battle_flag
+			division_template = {
+				name = "特兰西瓦尼亚-登陆部队"
+				priority = 0
+				is_locked = yes
+				force_allow_recruiting = yes
+				regiments = {
+					marine = {x = 0 y = 0}
+					marine = {x = 0 y = 1}
+					marine = {x = 0 y = 2}
+					marine = {x = 1 y = 0}
+					marine = {x = 1 y = 1}
+					marine = {x = 1 y = 2}
+					marine = {x = 2 y = 0}
+					marine = {x = 2 y = 1}
+					marine = {x = 2 y = 2}
+				}
+				support = {
+					engineer = {x = 0 y = 0}
+					anti_air = {x = 0 y = 1}
+					logistics_company = {x = 0 y = 2}
+					recon = {x = 0 y = 3}
+					artillery = {x = 0 y = 4}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "division_template = \"特兰西瓦尼亚-登陆部队\" start_experience_factor = 1 start_equipment_factor = 1.0"
+					owner = ROOT
+					count = 7
+				}
+			}
+			FROM = {
+				division_template = {
+					name = "特兰西瓦尼亚-登陆部队"
+					priority = 0
+					is_locked = yes
+					force_allow_recruiting = yes
+					regiments = {
+						marine = {x = 0 y = 0}
+						marine = {x = 0 y = 1}
+						marine = {x = 0 y = 2}
+						marine = {x = 1 y = 0}
+						marine = {x = 1 y = 1}
+						marine = {x = 1 y = 2}
+						marine = {x = 2 y = 0}
+						marine = {x = 2 y = 1}
+						marine = {x = 2 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+						anti_air = {x = 0 y = 1}
+						logistics_company = {x = 0 y = 2}
+						recon = {x = 0 y = 3}
+						artillery = {x = 0 y = 4}
+					}
+				}
+				capital_scope = {
+					create_unit = {
+						division = "division_template = \"特兰西瓦尼亚-登陆部队\" start_experience_factor = 1 start_equipment_factor = 1.0"
+						owner = ROOT
+						count = 7
+					}
+				}
+			}
+			114 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = FROM
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+				}
+			}
+			89 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = FROM
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+				}
+			}
+			85 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = FROM
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+				}
+			}
+			69 = {
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = FROM
+				}
+				add_dynamic_modifier = {
+					modifier = OCF_landing_operations_dynamic_modifiers
+					scope = ROOT
+				}
+			}
 		}
 	}
 }
