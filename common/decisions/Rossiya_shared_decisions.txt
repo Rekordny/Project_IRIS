@@ -181,12 +181,16 @@ Big_Game = {
         }
         timeout_effect = {
             hidden_effect = {
-                BGN = {
-                    white_peace = {
-                        tag = BGA
-                        message = BGN_defeated_BGA
-                    }
-                }
+                set_global_flag = show_peace_popup_alert
+				set_global_flag = war_won
+				BGN = {
+					save_global_event_target_as = winning_country
+				}
+				BGA = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
                 BGA = {
                     every_character =  {
 						set_nationality = BLA
@@ -255,10 +259,10 @@ Big_Game = {
             BGA = {
                 add_manpower = 1000
                 hidden_effect = {
-                    add_to_variable = {BGA_army_attack_factor = 0.04}
-                    add_to_variable = {BGA_army_defence_factor = 0.04}
-                    add_to_variable = {BGA_army_org_factor = 0.04}
-                    add_to_variable = {BGA_army_morale_factor = 0.04}
+                    add_to_variable = {BGA_army_attack_factor = 0.1}
+                    add_to_variable = {BGA_army_defence_factor = 0.1}
+                    add_to_variable = {BGA_army_org_factor = 0.1}
+                    add_to_variable = {BGA_army_morale_factor = 0.1}
                 }
             }
         }
@@ -297,10 +301,10 @@ Big_Game = {
             custom_effect_tooltip = BLA_strengthen_BGA
             hidden_effect = {
                 BGA = {
-                    add_to_variable = {BGA_army_attack_factor = 0.04}
-                    add_to_variable = {BGA_army_defence_factor = 0.04}
-                    add_to_variable = {BGA_army_org_factor = 0.04}
-                    add_to_variable = {BGA_army_morale_factor = 0.04}
+                    add_to_variable = {BGA_army_attack_factor = 0.1}
+                    add_to_variable = {BGA_army_defence_factor = 0.1}
+                    add_to_variable = {BGA_army_org_factor = 0.1}
+                    add_to_variable = {BGA_army_morale_factor = 0.1}
                 }
             }
         }
@@ -1301,6 +1305,66 @@ Second_Rossiya_Revolution_decisions = {
         }
         ai_will_do = {
             base = 1000
+        }
+    }
+    BLA_the_empire_strikes_back = {
+        available = {
+            has_war_with = NAC
+            date > 3092.9.1
+            surrender_progress < 0.70
+        }
+        visible = {
+            tag = BLA
+            has_completed_focus = BLA_Anna_rev_6
+            check_variable = {BLA_strikes_back_var < 3 }
+        }
+        days_remove = 60
+        days_re_enable = 150
+        modifier = {
+            army_org_factor = 0.10
+            army_attack_factor = 0.2
+            army_defence_factor = 0.2
+            breakthrough_factor = 0.2
+            army_morale_factor = 0.15
+            army_org = 5
+        }
+        complete_effect = {
+            add_war_support = 0.05
+            add_manpower = -5000
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                    owner = BLA
+                }
+                create_unit = {
+                    division = "name = \"帝国步兵师\" division_template = \"帝国步兵师\" start_experience_factor = 0.30"
+                    owner = BLA
+                }
+            }
+            hidden_effect = {
+                if = {
+                    limit = {check_variable = {BLA_strikes_back_var < 1}}
+                    news_event = {id = BLA_news.25}
+                }
+                add_to_variable = {BLA_strikes_back_var = 1}
+            }
+        }
+        ai_will_do = {
+            factor = 100
+            modifier = {
+                factor = 0
+                any_state = {
+                    has_dynamic_modifier = {modifier = Rossiya_harsh_winter}
+                }
+            }
         }
     }
     #动员群众
@@ -2412,6 +2476,183 @@ Rossiya_key_industrial_project = {
         }
         ai_will_do = {
             base = 100
+        }
+    }
+}
+Rossiya_frozen_war_decisions = {
+    Rossiya_frozen_war_end = {
+        available = {
+            NOT = {
+                country_exists = KNI
+                country_exists = NAD
+                country_exists = BLF
+                country_exists = BLW
+            }
+        }
+        visible = {
+            OR = {
+                tag = BLA
+                tag = NAC
+                tag = OPA
+            }
+        }
+        fire_only_once = yes
+        complete_effect = {
+            add_stability = 0.05
+            every_owned_state = {
+                frozen_war_remove_core = yes
+            }
+            clr_global_flag = Rossiya_frozen_war_flag
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    Rossiya_frozen_war_break_the_faction = {
+        available = {
+            tag = BLW
+            is_in_faction_with = KNI
+            NOT = {
+                country_exists = NAD
+                country_exists = BLF
+            }
+        }
+        visible = {
+            tag = BLW
+            is_in_faction_with = KNI
+        }
+        fire_only_once = yes
+        complete_effect = {
+            dismantle_faction = yes
+            if = {
+                limit = {
+                    country_exists = KNI
+                }
+                declare_war_on = {
+                    target = KNI
+                    type = annex_everything
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    Rossiya_deal_with_frozen_war = {
+        available = {
+            if = {
+                limit = {
+                    tag = NAC
+                }
+                NOT = {country_exists = BLA}
+            }
+            if = {
+                limit = {
+                    tag = BLA
+                }
+                NOT = {country_exists = NAC}
+            }
+            OR = {
+                country_exists = KNI
+                country_exists = NAD
+                country_exists = BLF
+                country_exists = BLW
+            }
+        }
+        visible = {
+            OR = {
+                tag = BLA
+                tag = NAC
+                tag = OPA
+            }
+            OR = {
+                country_exists = KNI
+                country_exists = NAD
+                country_exists = BLF
+                country_exists = BLW
+            }
+            if = {
+                limit = {
+                    tag = OPA
+                }
+                OR = {
+                    has_government = communism
+                    has_country_flag = OPA_phase3_enabled
+                }
+            }
+        }
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            if = {
+                limit = {
+                    has_government = communism
+                }
+                annex_country = {
+                    target = NAD
+                    transfer_troops = yes
+                }
+                declare_war_on = {
+                    target = KNI
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = BLF
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = BLW
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    has_government = reactionism
+                }
+                annex_country = {
+                    target = KNI
+                    transfer_troops = yes
+                }
+                declare_war_on = {
+                    target = NAD
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = BLF
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = BLW
+                    type = annex_everything
+                }
+            }
+            if = {
+                limit = {
+                    OR = {
+                        has_government = neutrality
+                        has_government = democratic
+                    }
+                }
+                annex_country = {
+                    target = BLW
+                    transfer_troops = yes
+                }
+                declare_war_on = {
+                    target = KNI
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = BLF
+                    type = annex_everything
+                }
+                declare_war_on = {
+                    target = NAD
+                    type = annex_everything
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
         }
     }
 }
