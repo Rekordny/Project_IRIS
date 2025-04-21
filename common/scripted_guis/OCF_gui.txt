@@ -1120,7 +1120,83 @@ scripted_gui = {
 				value = v
 			}
 		}
+		triggers = {
+			OCF_fund_exchange_buttonType_enabled = {
+				root = {
+					custom_override_tooltip = {
+						tooltip = {
+							localization_key = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG_TT
+							DAY = "OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG:days"
+						}
+						OR = {
+							has_country_flag = {
+								flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+								days > 30
+							}
+							NOT = {
+								has_country_flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+							}
+						}
+					}
+					set_temp_variable = { temp_pp = OCF_fund_exchange_buttonType_var }
+					multiply_temp_variable = { temp_pp = 2.5 }
+					NOT = {
+						has_political_power < temp_var:temp_pp
+					}
+				}
+			}
+		}
 		effects = {
+			president_button_click = {
+				if = {
+					limit = {
+						check_variable = {
+							OCF_select_president_interface_gui = 1
+						}
+					}
+					set_variable = {
+						OCF_select_president_interface_gui = 0
+					}
+				}
+				else = {
+					set_variable = {
+						OCF_select_president_interface_gui = 1
+					}
+				}
+			}
+			OCF_fund_exchange_buttonType_click = {
+				set_temp_variable = { temp_bill = OCF_fund_exchange_buttonType_var }
+				OCF_spending_funds_other = yes
+				set_temp_variable = { temp_pp = temp_bill }
+				multiply_temp_variable = { temp_pp = -2.5 }
+				add_political_power = temp_pp
+				set_variable = { OCF_fund_exchange_buttonType_var = 0 }
+				set_country_flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+			}
+			fund_exchange_button_add_click = {
+				set_temp_variable = { temp_fund_exchange_button = 1 }
+				OCF_spending_funds_temp = yes
+			}
+			fund_exchange_button_add_control_click = {
+				set_temp_variable = { temp_fund_exchange_button = 10 }
+				OCF_spending_funds_temp = yes
+			}
+			fund_exchange_button_add_shift_click = {
+				set_temp_variable = { temp_fund_exchange_button = 50 }
+				OCF_spending_funds_temp = yes
+			}
+			fund_exchange_button_del_click = {
+				set_temp_variable = { temp_fund_exchange_button = -1 }
+				OCF_spending_funds_temp = yes
+			}
+			fund_exchange_button_del_control_click = {
+				set_temp_variable = { temp_fund_exchange_button = -10 }
+				OCF_spending_funds_temp = yes
+			}
+			fund_exchange_button_del_shift_click = {
+				set_temp_variable = { temp_fund_exchange_button = -50 }
+				OCF_spending_funds_temp = yes
+			}
 			refresh_button_click = {
 				set_variable = {
 					current_int = 0
@@ -1284,6 +1360,83 @@ scripted_gui = {
 			}
 			slider_dot_4 = {
 				x = slider_dot_x_4
+			}
+			president_button = {
+				image = "GFX_[?president_variable.GetTokenKey]_small"
+			}
+		}
+	}
+	OCF_select_president_interface_gui = {
+		window_name = OCF_select_president_interface_gui
+		context_type = player_context
+		visible = {
+			check_variable = {
+				OCF_select_president_interface_gui = 1
+			}
+		}
+		dynamic_lists = {
+			OCF_select_president_interface_gui_lists = {
+				array = OCF_select_president_interface_gui_lists_array
+				entry_container = OCF_select_president_interface_gui_lists_container
+				index = OCF_Party_SubGUI_2_lists_i
+				value = OCF_Party_SubGUI_2_lists_v
+				change_scope = yes
+			}
+		}
+		effects = {
+			esc_click = {
+				set_variable = {
+					OCF_select_president_interface_gui = 0
+				}
+				# clear_array = OCF_select_president_interface_gui_lists_array
+				# add_to_array = {
+				# 	OCF_select_president_interface_gui_lists_array = token:OCF_Eleanor_Clarkson
+				# }
+				# add_to_array = {
+				# 	OCF_select_president_interface_gui_lists_array = token:OCF_Siobhan_O_Sullivan
+				# }
+				# add_to_array = {
+				# 	OCF_select_president_interface_gui_lists_array = token:OCF_Niamh_McGuire
+				# }
+				# add_to_array = {
+				# 	OCF_select_president_interface_gui_lists_array = token:OCF_Caitriona_Byrne
+				# }
+			}
+			OCF_select_president_interface_gui_lists_container_buttonType_click = {
+				meta_effect = {
+					text = {
+						root = {
+							remove_ideas = OCF_Eleanor_Clarkson_idea
+							remove_ideas = OCF_Siobhan_O_Sullivan_idea
+							remove_ideas = OCF_Niamh_McGuire_idea
+							remove_ideas = OCF_Caitriona_Byrne_idea
+							remove_ideas = OCF_Sigrid_Vinterdottir_idea
+							remove_ideas = OCF_Friedrich_August_von_Hayek_idea
+							add_ideas = [temp_v]_idea
+							set_variable = {
+								president_variable = OCF_Party_SubGUI_2_lists_v
+							}
+						}
+					}
+					temp_v = "[?OCF_Party_SubGUI_2_lists_v.GetTokenKey]"
+				}
+			}
+		}
+		triggers = {
+			OCF_select_president_interface_gui_lists_container_buttonType_visible = {
+				meta_trigger = {
+					text = {
+						NOT = {
+							has_idea = [temp_v]_idea
+						}
+					}
+					temp_v = "[?OCF_Party_SubGUI_2_lists_v.GetTokenKey]"
+				}
+			}
+		}
+		properties = {
+			OCF_select_president_interface_gui_lists_container_iconType = {
+				image = "[OCF_GetPortrait]"
 			}
 		}
 	}
