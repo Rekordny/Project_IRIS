@@ -1,0 +1,370 @@
+scripted_gui = {
+    FIA_RPG_window = {
+		context_type = player_context
+		parent_window_token = top_bar
+		window_name = "FIA_RPG_window"
+		ai_enabled = {
+			#always = no
+		}
+		visible = {
+			tag = FIA
+            check_variable = {FIA_RPG_window = 1}
+		}
+		
+        properties = {
+            FIA_RPG_character_1_button = {
+                image = "[FIA_RPG_character_1_image]"
+            }
+            FIA_RPG_character_2_button = {
+                image = "[FIA_RPG_character_2_image]"
+            }
+            FIA_RPG_enemy_1_iconType = {
+                image = "[FIA_RPG_enemy_1_image]"
+            }
+            FIA_RPG_enemy_2_iconType = {
+                image = "[FIA_RPG_enemy_2_image]"
+            }
+            FIA_RPG_confirm_button = {
+                image = "[FIA_RPG_confirm_button]"
+            }
+            FIA_RPG_skill_button = {
+                image = "[FIA_RPG_skill_button]"
+            }
+            FIA_RPG_retreat_button = {
+                image = "[FIA_RPG_retreat_button]"
+            }
+        }
+        dynamic_lists = {
+			FIA_RPG_GAME_record = {
+				array = FIA_RPG_GAME_record_Array
+				index = i
+				value = v
+				entry_container = FIA_RPG_GAME_record_entry
+			}
+		}
+		effects = {
+			FIA_RPG_character_1_button_click = {
+                FIA = {
+                    if = {
+                        limit = {
+                            NOT = {has_country_flag = FIA_RPG_selection_confirmed}
+                        }
+                        set_variable = {FIA_character_selection_1 = 0}
+                        FIA_character_1_Array_setup = yes#刷新数组，去除已经选择角色
+                        FIA_character_2_Array_setup = yes
+                        set_variable = {FIA_character_selection_window = 1}
+                        set_variable = {FIA_skill_window = 0}
+                        clear_array = FIA_RPG_GAME_record_Array
+                        clear_array = FIA_RPG_GAME_record_Array_2 #数据记录用数组
+                    }
+                }
+            }
+            FIA_RPG_character_2_button_click = {
+                FIA = {
+                    if = {
+                        limit = {
+                            NOT = {has_country_flag = FIA_RPG_selection_confirmed}
+                        }
+                        set_variable = {FIA_character_selection_2 = 0}
+                        FIA_character_1_Array_setup = yes
+                        FIA_character_2_Array_setup = yes
+                        set_variable = {FIA_character_selection_window = 2}
+                        set_variable = {FIA_skill_window = 0}
+                        clear_array = FIA_RPG_GAME_record_Array
+                        clear_array = FIA_RPG_GAME_record_Array_2 #数据记录用数组
+                    }
+                }
+            }
+            FIA_RPG_confirm_button_click = {
+                FIA = {
+                    set_country_flag  = FIA_RPG_selection_confirmed
+                    set_variable = {FIA_character_selection_window = 0}
+                    set_variable = {FIA_skill_window = 0}
+                    FIA_battle_setup = yes #开始战斗设定
+                }
+            }
+            FIA_RPG_skill_button_click = {
+                FIA = {
+                    has_country_flag = FIA_RPG_selection_confirmed
+                    set_variable = {FIA_skill_window = 1}
+                    FIA_skill_Array_setup = yes
+                }
+            }
+            FIA_RPG_retreat_button_click = {
+                FIA = {
+                    clr_country_flag = FIA_RPG_selection_confirmed
+                    set_variable = {FIA_skill_window = 0}
+                }
+            }
+            FIA_RPG_window_close_button_click = {
+                FIA = {
+                    set_variable = {FIA_RPG_window = 0}
+                }
+            }
+		}
+        triggers = {
+            FIA_RPG_confirm_button_click_enabled = {
+                FIA = {
+                    custom_trigger_tooltip = {
+                        tooltip = FIA_character_1_selected_t
+                        NOT = {check_variable = {FIA_character_selection_1 = 0}}
+                    }
+                    has_country_flag = FIA_is_in_battle
+                }
+            }
+            FIA_RPG_skill_button_click_enabled = {
+                FIA = {
+                    has_country_flag = FIA_RPG_selection_confirmed
+                    has_country_flag = FIA_is_in_battle
+                }
+            }
+            FIA_RPG_retreat_button_click_enabled = {
+                FIA = {
+                    has_country_flag = FIA_RPG_selection_confirmed
+                    has_country_flag = FIA_is_in_battle
+                }
+            }
+        }
+	}
+    FIA_character_1_selection_window = {
+        context_type = player_context
+		parent_window_name = FIA_RPG_window
+		window_name = "FIA_character_1_selection_window"
+        ai_enabled = {
+			#always = no
+		}
+		visible = {
+			tag = FIA
+            FIA = {check_variable = {FIA_character_selection_window = 1}}
+		}
+        dynamic_lists = {
+			FIA_character_1_list = {
+				array = FIA_character_1_Array
+				index = i
+				value = v
+				entry_container = FIA_character_1_list_entry
+			}
+		}
+        properties = {
+            FIA_character_1_pic = {
+                image = "[FIA_character_1_pic_image]"
+            }
+        }
+        effects = {
+            FIA_character_1_selection_window_close_button_click = {
+                FIA = {set_variable = {FIA_character_selection_window = 0}}
+            }
+            FIA_character_1_pic_click = {
+                set_variable = {FIA_character_selection_1 = v}
+                FIA_character_1_Array_setup = yes
+                FIA_character_2_Array_setup = yes
+                remove_from_array = {FIA_character_1_Array = v}
+                remove_from_array = {FIA_character_2_Array = v}
+
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_HP = [CHARACTER_1]_MAX_HP}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_MAX_HP = [CHARACTER_1]_MAX_HP}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_ATK_1 = [CHARACTER_1]_ATK_1}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_ATK_2 = [CHARACTER_1]_ATK_2}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_DEF_1 = [CHARACTER_1]_DEF_1}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_DEF_2 = [CHARACTER_1]_DEF_2}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_SPEED = [CHARACTER_1]_SPEED}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_LV = [CHARACTER_1]_LV}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_XP = [CHARACTER_1]_XP}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_1_XP_required = [CHARACTER_1]_XP_required}
+                    }
+                    CHARACTER_1 = "[?FIA_character_selection_1.GetTokenKey]"
+                }
+            }
+        }
+    }
+    FIA_character_2_selection_window = {
+        context_type = player_context
+		parent_window_name = FIA_RPG_window
+		window_name = "FIA_character_2_selection_window"
+        ai_enabled = {
+			#always = no
+		}
+		visible = {
+			tag = FIA
+            FIA = {check_variable = {FIA_character_selection_window = 2}}
+		}
+        dynamic_lists = {
+			FIA_character_2_list = {
+				array = FIA_character_2_Array
+				index = i
+				value = v
+				entry_container = FIA_character_2_list_entry
+			}
+		}
+        properties = {
+            FIA_character_2_pic = {
+                image = "[FIA_character_2_pic_image]"
+            }
+        }
+        effects = {
+            FIA_character_2_selection_window_close_button_click = {
+                FIA = {set_variable = {FIA_character_selection_window = 0}}
+            }
+            FIA_character_2_pic_click = {
+                set_variable = {FIA_character_selection_2 = v}
+                FIA_character_1_Array_setup = yes
+                FIA_character_2_Array_setup = yes
+                remove_from_array = {FIA_character_1_Array = v}
+                remove_from_array = {FIA_character_2_Array = v}
+
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_HP = [CHARACTER_2]_MAX_HP}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_MAX_HP = [CHARACTER_2]_MAX_HP}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_ATK_1 = [CHARACTER_2]_ATK_1}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_ATK_2 = [CHARACTER_2]_ATK_2}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_DEF_1 = [CHARACTER_2]_DEF_1}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_DEF_2 = [CHARACTER_2]_DEF_2}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_SPEED = [CHARACTER_2]_SPEED}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_LV = [CHARACTER_2]_LV}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_XP = [CHARACTER_2]_XP}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+                meta_effect = {
+                    text = {
+                        set_variable = {FIA_RPG_character_2_XP_required = [CHARACTER_2]_XP_required}
+                    }
+                    CHARACTER_2 = "[?FIA_character_selection_2.GetTokenKey]"
+                }
+            }
+        }
+    }
+    FIA_skill_window = {
+        context_type = player_context
+		parent_window_name = FIA_RPG_window
+		window_name = "FIA_skill_window"
+        ai_enabled = {
+			#always = no
+		}
+		visible = {
+			tag = FIA
+            FIA = {check_variable = {FIA_skill_window = 1}}
+		}
+        dynamic_lists = {
+			FIA_skill_list = {
+				array = FIA_skill_Array
+				index = i
+				value = v
+				entry_container = FIA_skill_list_entry
+			}
+		}
+        effects = {
+            FIA_skill_button_click = {
+                FIA_character_move_effect = yes
+            }
+            FIA_skill_list_close_button_click = {
+                FIA = {
+                    set_variable = {FIA_skill_window = 0}
+                }
+            }
+        }
+        triggers = {
+            FIA_skill_button_click_enabled = {
+                has_country_flag = FIA_is_in_battle
+                has_country_flag = FIA_RPG_our_turn
+                if = {
+                    limit = {
+                        check_variable = {v = token:FIA_Attack_special}
+                    }
+                    custom_trigger_tooltip = {
+                        tooltip = FIA_Attack_special_cooldown_t
+                        check_variable = {FIA_Attack_special_cooldown < 1}
+                    }
+                }
+            }
+        }
+    }
+}
