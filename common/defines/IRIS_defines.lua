@@ -450,7 +450,7 @@ NDefines.NNavy.NAVAL_RANGE_TO_INGAME_DISTANCE = 0.18 -- Scale the ship stats "na
 
 NDefines.NCountry.MAJOR_MIN_FACTORIES = 50
 NDefines.NDiplomacy.BASE_SURRENDER_LEVEL = 0.85
--- NDefines.NDiplomacy.VOLUNTEERS_PER_TARGET_PROVINCE = 0.0
+NDefines.NDiplomacy.VOLUNTEERS_PER_TARGET_PROVINCE = 0.0
 -- NDefines.NDiplomacy.VOLUNTEERS_PER_COUNTRY_ARMY = 0.01
 NDefines.NDiplomacy.VOLUNTEERS_RETURN_EQUIPMENT = 0.95
 NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
@@ -459,6 +459,21 @@ NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
 -- Military
 --------------------------------------------------------------------------------------------------------------
 
-NDefines.NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0002 -- 0.0001
-NDefines.NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
-NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.60 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
+NDefines.NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0003 -- 0.0001
+--NDefines.NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
+NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.50 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
+EXPERIENCE_COMBAT_FACTOR = 0.35 -- 0.25
+
+-- 穿甲机制
+NDefines.NMilitary.PIERCING_THRESHOLDS = {					-- Our piercing / their armor must be this value to deal damage fraction equal to the index in the array below [higher number = higher penetration]. If armor is 0, 1.00 will be returned.
+1.00,
+0.75,
+0.50,
+0.00, --there isn't much point setting this higher than 0
+}
+NDefines.NMilitary.PIERCING_THRESHOLD_DAMAGE_VALUES = {	-- 0 armor will always receive maximum damage (so add overmatching at your own peril). the system expects at least 2 values, with no upper limit.
+1.00,
+0.75, -- 0.80
+0.50, -- 0.65
+0.25, -- 0.50
+}
