@@ -398,6 +398,19 @@ on_actions = {
 							target = WAR
 							transfer_troops = yes
 						}
+						annex_country = {
+							target = PSK
+							transfer_troops = yes
+						}
+						if = {
+							limit = {
+								country_exists = ORE
+							}
+							declare_war_on = {
+								target = ORE
+								type = annex_everything
+							}
+						}
 						news_event = {id = BLA_news.6 days = 3}
 						country_event = {id = BLA_rev.1992 days = 300}
 						if = {
@@ -541,18 +554,17 @@ on_actions = {
 				limit = {
 					ROOT = {
 						tag = ORE
-						has_war_with = BLA
 					}
 				}
 				if = {
 					limit = {
 						FROM = {
-							tag = BLA
+							tag = PSK
 						}
 					}
 					set_global_flag = show_peace_popup_alert
 					set_global_flag = war_continuing
-					BLA = {
+					PSK = {
 						save_global_event_target_as = winning_country
 					}
 					ORE = {
@@ -567,17 +579,32 @@ on_actions = {
 						}
 					}
 				}
-				every_state = {
-					limit = {
-						is_core_of = ORE
-					}
-					remove_core_of = ORE
+				106 = {
+					transfer_state_to = PSK
+					add_core_of = PSK
+				}
+				111 = {
+					transfer_state_to = PSK
+					add_core_of = PSK
 				}
 				BLA = {
 					set_autonomy = {
 						target = SVI
 						autonomous_state = autonomy_imperial_march
 					}
+					add_to_faction = PSK
+				}
+				every_state = {
+					limit = {
+						is_core_of = ORE
+					}
+					remove_core_of = ORE
+				}
+				every_state = {
+					limit = {
+						is_core_of = PSK
+					}
+					remove_core_of = PSK
 				}
 				NAC = {
 					country_event = {id = NAC.50}
@@ -764,10 +791,6 @@ on_actions = {
 							target = ROOT
 							transfer_troops = no
 						}
-						white_peace  = {
-							tag = FROM
-							message = OPA_defeated_NAC_rasputin
-						}
 					}
 				}
 				if = {
@@ -901,6 +924,100 @@ on_actions = {
                 }
 				NAC = {
 					country_event = {id = NAC.51}
+				}
+			}
+		}
+	}
+	on_capitulation = { 
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						tag = PSK
+					}
+					FROM = {
+						tag = ORE
+					}
+				}
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_continuing
+				ORE = {
+					save_global_event_target_as = winning_country
+				}
+				PSK = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
+				FROM = {
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+				106 = {
+					transfer_state_to = ORE
+					add_core_of = ORE
+					Rossiya_Revolution_ORE_army_effect = yes
+				}
+				111 = {
+					transfer_state_to = ORE
+					add_core_of = ORE
+				}
+				every_state = {
+					limit = {
+						is_core_of = PSK
+					}
+					remove_core_of = PSK
+				}
+				BLA = {
+					declare_war_on = {
+						target = ORE
+						type = annex_everything
+					}
+				}
+			}
+		}
+	}
+	on_capitulation = { 
+		effect = {
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							tag = KNI
+							tag = BLW
+							tag = BLF
+							tag = NAD
+						}
+					}
+					FROM = {
+						OR = {
+							tag = BLA
+							tag = NAC
+							tag = OPA
+							tag = KNI
+							tag = BLW
+							tag = BLF
+							tag = NAD
+						}
+					}
+				}
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_continuing
+				FROM = {
+					save_global_event_target_as = winning_country
+				}
+				ROOT = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
+				FROM = {
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
 				}
 			}
 		}
