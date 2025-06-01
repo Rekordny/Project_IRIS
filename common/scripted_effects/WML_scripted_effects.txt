@@ -335,6 +335,14 @@ WML_refresh_support_rate = {
 colony_adjust_degree_corruption = {
 	custom_effect_tooltip = colony_adjust_degree_corruption_tt
 	add_to_variable = { this.corrupt = temp_corrupt }
+	if = {
+		limit = { check_variable = { this.corrupt > 1 } }
+		set_variable = { this.corrupt = 1 }
+	}
+	if = {
+		limit = { check_variable = { this.corrupt < 0 } }
+		set_variable = { this.corrupt = 0 }
+	}
 }
 
 #调整黑帮影响
@@ -345,6 +353,28 @@ colony_adjust_influence_mafia = {
 	add_to_variable = { this.gang_influence_var = temp_gang_influence_var_100 }
 	colony_adjustment_gang_level_scale = yes #黑帮等级规模调整检测
 	count_colony_regional_gang_influence_modifier = yes #计算地区黑帮势力
+}
+
+#调整金库储量
+colony_adjust_treasury_reserves = {
+	set_temp_variable = { temp_currency_reserve_current = this.currency_reserve }
+	add_to_temp_variable = { temp_currency_reserve_current = temp_currency_reserve }
+	if = {
+		limit = { check_variable = { temp_currency_reserve_current > 1 } }
+		add_to_temp_variable = { temp_currency_reserve_current = -1 }
+		custom_effect_tooltip = colony_adjust_treasury_reserves_tt
+		WML_treasury_funds_add = yes
+	}
+	if = {
+		limit = { check_variable = { temp_currency_reserve_current < 0 } }
+		add_to_temp_variable = { temp_currency_reserve_current = 1 }
+		custom_effect_tooltip = colony_adjust_treasury_reserves_tt
+		WML_treasury_funds_del = yes
+	}
+	else = {
+		custom_effect_tooltip = colony_adjust_treasury_reserves_tt
+	}
+	set_variable = { this.currency_reserve = temp_currency_reserve_current }
 }
 
 #计算地区黑帮势力
@@ -411,6 +441,85 @@ colony_adjustment_gang_level_scale = {
 	}
 }
 
+#每月修正计算
+colony_monthly_correction_calculation = {
+	#每月资金
+	set_temp_variable = { temp_colony_monthly_funding_factor = modifier@colony_monthly_funding_factor }
+	add_to_temp_variable = { temp_colony_monthly_funding_factor = 1 }
+	set_temp_variable = { temp_colony_monthly_funding = modifier@colony_monthly_funding }
+	if = {
+		limit = {
+			check_variable = { temp_colony_monthly_funding > 0 } #大于0才会修正
+		}
+		multiply_temp_variable = { temp_colony_monthly_funding = temp_colony_monthly_funding_factor }
+	}
+	# add_to_variable = { root.currency_reserve = temp_colony_monthly_funding }
+	set_temp_variable = { temp_currency_reserve = temp_colony_monthly_funding }
+	colony_adjust_treasury_reserves = yes
+	#检测是否调整金库储量
+	#抬高储量
+	if = {
+		limit = { check_variable = { root.currency_reserve > 1 } }
+		add_to_variable = { root.currency_reserve = -1 }
+		# custom_effect_tooltip = colony_adjust_treasury_reserves_tt
+		WML_treasury_funds_add = yes
+	}
+	#降低储量
+	if = {
+		limit = { check_variable = { temp_currency_reserve_current < 0 } }
+		add_to_variable = { temp_currency_reserve_current = 1 }
+		# custom_effect_tooltip = colony_adjust_treasury_reserves_tt
+		WML_treasury_funds_del = yes
+	}
+
+	#地区
+	if = {
+		limit = {
+			or = {
+				not = { check_variable = { modifier@colony_gangster_influence_region = 0 } }
+				not = { check_variable = { modifier@colony_corruption_region = 0 } }
+			}
+		}
+		random_owned_state = {
+			limit = { colony_executable_region = yes }
+			#每月黑帮影响力
+			set_temp_variable = { temp_colony_gangster_influence_region = root.modifier@colony_gangster_influence_region }
+			# multiply_temp_variable = { temp_colony_gangster_influence_region = 100 }
+			# add_to_variable = { this.gang_influence_var = temp_colony_gangster_influence_region }
+			set_temp_variable = { temp_gang_influence_var = temp_colony_gangster_influence_region }
+			colony_adjust_influence_mafia = yes
+
+			#每月腐败度
+			# set_temp_variable = { temp_colony_corruption_region = modifier@colony_corruption_region }
+			# add_to_variable = { this.gang_influence_var = modifier@colony_corruption_region }
+			set_temp_variable = { temp_corrupt = root.modifier@colony_corruption_region }
+			colony_adjust_degree_corruption = yes
+		}
+	}
+	#全国
+	if = {
+		limit = {
+			or = {
+				not = { check_variable = { modifier@colony_gangster_influence_nationwide = 0 } }
+				not = { check_variable = { modifier@colony_corruption_nationwide = 0 } }
+			}
+		}
+		every_owned_state = {
+			limit = { colony_executable_region = yes }
+			#每月黑帮影响力
+			set_temp_variable = { temp_colony_gangster_influence_nationwide = root.modifier@colony_gangster_influence_nationwide }
+			# multiply_temp_variable = { temp_colony_gangster_influence_nationwide = 100 }
+			# add_to_variable = { this.gang_influence_var = temp_colony_gangster_influence_nationwide }
+			set_temp_variable = { temp_gang_influence_var = temp_colony_gangster_influence_nationwide }
+			colony_adjust_influence_mafia = yes
+
+			#每月腐败度
+			set_temp_variable = { temp_corrupt = root.modifier@colony_corruption_nationwide }
+			colony_adjust_degree_corruption = yes
+		}
+	}
+}
+
 
 
 #所有政策的所需时间
@@ -427,6 +536,187 @@ WML_policy_btn_click_0 = {
 WML_policy_btn_click_1 = {
 	set_temp_variable = { temp_gang_influence_var = -0.05 }
 	colony_adjust_influence_mafia = yes
+}
+
+#加入WML利益圈子
+WML_become_stakeholder_countries = {
+	diplomatic_relation = {
+		country = WML
+		relation = non_aggression_pact
+	}
+	give_guarantee = WML
+	WML = {
+		give_military_access = PREV
+	}
+	custom_effect_tooltip = WML_become_stakeholder_countries_tt
+	add_to_array = { global.WML_stakeholder_countries_array = this }
+
+	#计算是否移除修正
+	set_temp_variable = { temp_colony_reduce_influence_by_half = EML } #要反过来
+	colony_increased_influence = yes
+}
+#加入EML利益圈子
+EML_become_stakeholder_countries = {
+	diplomatic_relation = {
+		country = EML
+		relation = non_aggression_pact
+	}
+	give_guarantee = EML
+	EML = {
+		give_military_access = PREV
+	}
+	custom_effect_tooltip = EML_become_stakeholder_countries_tt
+	add_to_array = { global.EML_stakeholder_countries_array = this }
+
+	#计算是否移除修正
+	set_temp_variable = { temp_colony_reduce_influence_by_half = WML } #要反过来
+	colony_increased_influence = yes
+}
+#移除WML利益圈子
+WML_remove_stakeholder_countries = {
+	diplomatic_relation = {
+		country = WML
+		relation = non_aggression_pact
+		active = no
+	}
+	diplomatic_relation = {
+		country = WML
+		relation = guarantee
+		active = no
+	}
+	this = {
+		diplomatic_relation = {
+			country = WML
+			relation = military_access
+			active = no
+		}
+	}
+	custom_effect_tooltip = WML_remove_stakeholder_countries_tt
+	remove_from_array = { global.WML_stakeholder_countries_array = this }
+
+	#计算是否移除修正
+	set_temp_variable = { temp_colony_reduce_influence_by_half = EML } #要反过来
+	colony_reduce_influence_by_half = yes
+}
+#移除EML利益圈子
+EML_remove_stakeholder_countries = {
+	diplomatic_relation = {
+		country = EML
+		relation = non_aggression_pact
+		active = no
+	}
+	diplomatic_relation = {
+		country = EML
+		relation = guarantee
+		active = no
+	}
+	this = {
+		diplomatic_relation = {
+			country = EML
+			relation = military_access
+			active = no
+		}
+	}
+	custom_effect_tooltip = EML_remove_stakeholder_countries_tt
+	remove_from_array = { global.EML_stakeholder_countries_array = this }
+
+	#计算是否移除修正
+	set_temp_variable = { temp_colony_reduce_influence_by_half = WML } #要反过来
+	colony_reduce_influence_by_half = yes
+}
+
+#影响力砍半
+colony_reduce_influence_by_half = {
+	meta_effect = {
+		text = {
+			if = {
+				limit = {
+					is_in_array = {
+						array = global.[V]_stakeholder_countries_array
+						value = this
+					}
+				}
+				this = {
+					set_temp_variable = { temp_WML_remove_stakeholder_countries = Meleti_Legation_modifier_consumer_goods_factor }
+					multiply_temp_variable = { temp_WML_remove_stakeholder_countries = -0.5 }
+					set_temp_variable = { temp_WML_remove_stakeholder_countries_2 = Meleti_Legation_modifier_trade_opinion_factor }
+					multiply_temp_variable = { temp_WML_remove_stakeholder_countries_2 = -0.5 }
+					custom_effect_tooltip = {
+						localization_key = IRIS_added_effect
+						MODIFIERS = Meleti_Legation_modifier
+					}
+					add_to_variable = {
+						Meleti_Legation_modifier_consumer_goods_factor = temp_WML_remove_stakeholder_countries
+						tooltip = consumer_goods_factor_tt
+					}
+					add_to_variable = {
+						Meleti_Legation_modifier_trade_opinion_factor = temp_WML_remove_stakeholder_countries_2
+						tooltip = trade_opinion_factor_tt
+					}
+				}
+			}
+			else = {
+				this = {
+					remove_dynamic_modifier = {
+						modifier = Meleti_Legation_modifier
+					}
+				}
+			}
+		}
+		V = "[?temp_colony_reduce_influence_by_half.GetTag]"
+	}
+}
+
+#影响力翻倍
+colony_increased_influence = {
+	meta_effect = {
+		text = {
+			if = {
+				limit = {
+					is_in_array = {
+						array = global.[V]_stakeholder_countries_array
+						value = this
+					}
+				}
+				this = {
+					set_temp_variable = { temp_WML_remove_stakeholder_countries = Meleti_Legation_modifier_consumer_goods_factor }
+					set_temp_variable = { temp_WML_remove_stakeholder_countries_2 = Meleti_Legation_modifier_trade_opinion_factor }
+					custom_effect_tooltip = {
+						localization_key = IRIS_added_effect
+						MODIFIERS = Meleti_Legation_modifier
+					}
+					add_to_variable = {
+						Meleti_Legation_modifier_consumer_goods_factor = temp_WML_remove_stakeholder_countries
+						tooltip = consumer_goods_factor_tt
+					}
+					add_to_variable = {
+						Meleti_Legation_modifier_trade_opinion_factor = temp_WML_remove_stakeholder_countries_2
+						tooltip = trade_opinion_factor_tt
+					}
+				}
+			}
+			else = {
+				this = {
+					add_dynamic_modifier = {
+						modifier = Meleti_Legation_modifier
+					}
+					custom_effect_tooltip = {
+						localization_key = IRIS_added_effect
+						MODIFIERS = Meleti_Legation_modifier
+					}
+					add_to_variable = {
+						Meleti_Legation_modifier_consumer_goods_factor = -0.05
+						tooltip = consumer_goods_factor_tt
+					}
+					add_to_variable = {
+						Meleti_Legation_modifier_trade_opinion_factor = 0.25
+						tooltip = trade_opinion_factor_tt
+					}
+				}
+			}
+		}
+		V = "[?temp_colony_increased_influence.GetTag]"
+	}
 }
 
 #每日刷新
