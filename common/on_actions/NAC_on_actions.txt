@@ -2,6 +2,13 @@ on_actions = {
     on_startup = {
         effect ={
             NAC = {
+                if = {
+                    limit = {
+                        is_ai = yes
+                        is_historical_focus_on = yes
+                    }
+                    add_ideas = NAC_ai_historic_bonus
+                }
                 add_to_variable = {NAC_red_army_army_org_factor = 0.05}
                 add_to_variable = {NAC_red_army_land_reinforce_rate = 0.02}
                 country_event = {id = NAC.1 days = 10}
@@ -84,6 +91,7 @@ on_actions = {
                     NAC = {
                         NOT = {has_completed_focus = NAC_dip_3}
                     }
+            
                 }
                 every_country = {
                     limit = {
@@ -149,6 +157,20 @@ on_actions = {
             }
         }
     }
+    on_weekly_NAC = {
+        effect = {
+            if = {
+                limit = {
+                    has_war_with = BLA
+                    has_idea = NAC_ai_historic_bonus
+                }
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 500
+                }
+            }
+        }
+    }
     on_monthly_NAC = {
         effect = {
             if = {
@@ -161,7 +183,7 @@ on_actions = {
             }
         }
     }
-    on_capitulation_immediate = {
+    on_capitulation = {
         effect = {
             if = {
                 limit = {
@@ -303,6 +325,66 @@ on_actions = {
                             is_core_of = ROOT
                         }
                         add_core_of = IKR
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    ROOT = {
+                        tag = USF
+                    }
+                    FROM = {
+                        OR = {
+                            tag = NAC
+                            is_in_faction_with = NAC
+                        }
+                    }
+                }
+                set_global_flag = show_peace_popup_alert
+                set_global_flag = war_won
+                FROM = {
+                    save_global_event_target_as = winning_country
+                }
+                ROOT = {
+                    save_global_event_target_as = losing_country
+                }
+                IRIS_peace_popup_determine_allies = yes
+                add_to_variable = { global.peace_popup_dirty = 1 }
+                NAC_defeat_USF_effect = yes
+            }
+        }
+    }
+    on_capitulation = {
+        effect = {
+            if = {
+                limit = {
+                    ROOT = {
+                        is_IRIS_SAS_country = yes
+                        NOT = {
+                            tag = USF
+                        }
+                        NOT = {
+                            tag = USN
+                        }
+                        NOT = {
+                            tag = LUA
+                        }
+                        NOT = {
+                            tag = RUM
+                        }
+                    }
+                    FROM = {
+                        OR = {
+                            tag = NAC
+                            is_in_faction_with = NAC
+                        }
+                    }
+                }
+                FROM = {
+                    white_peace = ROOT
+                    set_autonomy = {
+                        target = ROOT
+                        autonomy_state = autonomy_puppet
                     }
                 }
             }
