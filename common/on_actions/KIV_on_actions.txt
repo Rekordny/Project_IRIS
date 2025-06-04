@@ -4,6 +4,11 @@ on_actions = {
 			KIV = {
 				KIV_test = yes
 				load_oob = "KIV_naval"
+				add_equipment_to_stockpile = {
+					type = motorized_equipment_0
+					amount = 436
+					producer = KIV
+				}
 				scoped_play_song = "1.Constant Moderato"
 				if = {
 					limit = {
@@ -19,14 +24,7 @@ on_actions = {
 						set_character_flag = KIV_is_a_corps_commander_flag
 					}
 				}
-				country_event = {
-					id = kivnews.1
-					days = 15
-				}
-				country_event = {
-					id = kivnews.2
-					days = 20
-				}
+
 				country_event = {
 					id = KIV.1
 					days = 15
@@ -353,6 +351,160 @@ on_actions = {
 				}
 				KIV_shiranui_kaya_struggle_failed_2 = yes
 			}
+
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							original_tag = SCS
+							has_country_flag = AHS_intervention_in_war_ACA_SCS_FLAG #介入战争
+						}
+					}
+					ROOT = { original_tag = ACA }
+				}
+				SCS = {
+					annex_country = {
+						target = ACA
+						transfer_troops = no
+					}
+				}
+				ACA = {
+					send_equipment_fraction = {
+						value = 1
+						target = SCS
+					}
+				}
+				KIV = {
+					set_autonomy = {
+						target = SCS
+						autonomous_state = kiv_campus_area
+					}
+					if = {
+						limit = { AHS = { has_country_flag = AHS_intervention_in_war_ACA_SCS_FLAG } }
+						set_autonomy = {
+							target = AHS
+							autonomous_state = kiv_campus_area
+						}
+					}
+				}
+				SCS = {
+					set_politics = {
+						ruling_party = neutrality
+						elections_allowed = no
+					}
+					set_popularities = {
+						democratic = 25
+						neutrality = 60
+						fascism = 0
+						communism = 0
+						reactionism = 15
+					}
+				}
+				if = {
+					limit = { AHS = { has_country_flag = AHS_intervention_in_war_ACA_SCS_FLAG } }
+					AHS = {
+						clr_country_flag = AHS_intervention_in_war_ACA_SCS_FLAG
+
+						set_politics = {
+							ruling_party = democratic
+							elections_allowed = no
+						}
+						set_popularities = {
+							democratic = 45
+							neutrality = 20
+							fascism = 0
+							communism = 0
+							reactionism = 35
+						}
+					}
+					921 = { set_demilitarized_zone = yes }
+				}
+			}
+
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							original_tag = AHS
+							has_country_flag = AHS_intervention_in_war_AHS_KAI_FLAG #战争
+						}
+					}
+					ROOT = { original_tag = KAI }
+				}
+				AHS = {
+					annex_country = {
+						target = KAI
+						transfer_troops = no
+					}
+					delete_unit_template_and_units = {
+						division_template = "圣三一炮兵联队"
+						disband = no
+					}
+					delete_unit_template_and_units = {
+						division_template = "68便利屋援军"
+						disband = no
+					}
+				}
+				KIV = {
+					set_autonomy = {
+						target = AHS
+						autonomous_state = kiv_campus_area
+					}
+				}
+				KAI = {
+					send_equipment_fraction = {
+						value = 1
+						target = AHS
+					}
+					retire_ideology_leader = reactionism
+				}
+				ZTZ = {
+					set_nationality = {
+						target_country = AHS
+						character = KIV_xingye #小鸟游 星野
+					}
+				}
+				AHS = {
+					clr_country_flag = AHS_intervention_in_war_AHS_KAI_FLAG
+
+					set_politics = {
+						ruling_party = democratic
+						elections_allowed = no
+					}
+					set_popularities = {
+						democratic = 45
+						neutrality = 20
+						fascism = 0
+						communism = 0
+						reactionism = 35
+					}
+					if = {
+						limit = {
+							has_character = KIV_xingye
+						}
+						if = {
+							limit = {
+								KIV_xingye = {
+									has_ideology_group = democratic
+								}
+							}
+							promote_character = KIV_xingye
+						}
+						else = {
+							add_country_leader_role = {
+								character = KIV_xingye
+								promote_leader = yes
+								country_leader = {
+									ideology = sub_Academia
+									desc = "KIV_xingye_desc"
+									traits = { KIV_vice_student_president_abidos KIV_uncle }
+								}
+							}
+						}
+					}
+				}
+				921 = { set_demilitarized_zone = yes }
+			}
 		}
 	}
 	on_offer_join_faction = {
@@ -383,4 +535,13 @@ on_actions = {
 			}
 		}
 	}
+
+	# on_daily_AHS = {
+	# 	if = {
+	# 		limit = {
+	# 			has_country_flag = AHS_intervention_in_war_ACA_SCS_FLAG #介入战争
+	# 		}
+	# 		921 = { set_demilitarized_zone = yes }
+	# 	}
+	# }
 }
