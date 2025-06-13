@@ -1,0 +1,261 @@
+scripted_gui = {
+	WML_gangster_region_details_window = {
+		context_type = selected_state_context
+		parent_window_token = selected_state_view
+		window_name = "WML_gangster_region_details_window"
+		visible = {
+			THIS = {
+				owner = {
+					OR = {
+						tag = WML
+						tag = EML
+					}
+				}
+			}
+			ROOT = {
+				OR = {
+					tag = EML
+					tag = WML
+				}
+			}
+		}
+		dynamic_lists = {
+			#政策
+			policy_grid = {
+				array = ROOT.policy_array
+				index = policy_array_i
+				value = policy_array_v
+				entry_container = WML_policy_window
+				change_scope = no
+			}
+		}
+		properties = {
+			largest_trading_country = {
+				image = "[?This.largest_trading_country_var.GetFlag]"
+			}
+			left_icon = {
+				image = "[GetLeftIcon]"
+			}
+			right_icon = {
+				image = "[GetRightIcon]"
+			}
+			gangster_region_details_progress = {
+				frame = THIS.gang_influence_var
+			}
+			gear_position_progress_bar = {
+				frame = THIS.gang_var
+			}
+			policy_btn = {
+				image = "GFX_policy_[?policy_array_v]"
+				frame = this.policy_frame_array^policy_array_i
+			}
+			policy_progress_bar = {
+				frame = this.policy_days_remaining_percentage
+			}
+		}
+		effects = {
+			policy_btn_click = {
+				if = {
+					limit = {
+						ROOT = {
+							controls_state = PREV
+							NOT = {
+								has_political_power < 15
+							}
+						}
+						THIS = {
+							NOT = {
+								has_state_flag = state_perform_policy_flag
+							}
+						}
+					}
+					meta_effect = {
+						text = {
+							custom_effect_tooltip = policy_btn_[V]_translate
+							THIS = {
+								set_variable = { this.policy_days = root.colony_policy_days_[V] }#倒计时天数
+								effect_tooltip = {
+									WML_policy_btn_click_[V] = yes
+								}
+								set_state_flag = state_perform_policy_flag
+								set_variable = { this.implement_policies = [V] }
+								set_variable = { this.policy_days_remaining = 0 } #倒计时
+								clear_array = this.policy_frame_array #清除判定第几帧数组
+								for_loop_effect = {
+									end = ROOT.policy_array^num
+									add_to_array = { this.policy_frame_array = 2 }
+								}
+								set_variable = { this.policy_frame_array^policy_array_i = 1 }
+							}
+						}
+						V = "[?policy_array_v]"
+					}
+					hidden_effect = {
+						ROOT = {
+							# WML_daily_refres = yes
+							add_political_power = -15
+						}
+						THIS = {
+							WML_regional_policy_refresh = yes
+						}
+					}
+				}
+				else = {
+					effect_tooltip = {
+						meta_effect = {
+							text = {
+								custom_effect_tooltip = policy_btn_[V]_translate
+								THIS = {
+									WML_policy_btn_click_[V] = yes
+									set_state_flag = state_perform_policy_flag
+									set_variable = { this.implement_policies = [V] }
+									set_variable = { this.policy_days_remaining = 0 } #倒计时
+									clear_array = this.policy_frame_array #清除判定第几帧数组
+									for_loop_effect = {
+										end = ROOT.policy_array^num
+										add_to_array = { this.policy_frame_array = 2 }
+									}
+									set_variable = { this.policy_frame_array^policy_array_i = 1 }
+								}
+							}
+							V = "[?policy_array_v]"
+						}
+					}
+				}
+			}
+
+			##############以下按钮没有点击效果 仅为展示
+			# policy_btn_0_click = {
+			# 	custom_effect_tooltip = colony_adjust_degree_corruption_tt
+			# 	set_temp_variable = { temp_corrupt = 0.05 }
+			# 	colony_adjust_degree_corruption = yes
+			# }
+		}
+		triggers = {
+			policy_btn_enabled = {
+				ROOT = {
+					controls_state = PREV
+					NOT = {
+						has_political_power < 15
+					}
+				}
+				THIS = {
+					NOT = {
+						has_state_flag = state_perform_policy_flag
+					}
+				}
+			}
+			null_policy_visible = {
+				check_variable = { ROOT.policy_array^num = 0 }
+			}
+		}
+	}
+
+	WML_governor_election_window = {
+ 		context_type = decision_category
+ 		window_name = "WML_governor_election_window"
+ 		properties = {
+ 		}
+ 		visible = {
+ 			tag = WML
+ 		}
+		properties = {
+			progress_bar_profile_picture_1 = {
+				frame = WML_progress_bar_profile_picture_1_var
+			}
+			progress_bar_profile_picture_2 = {
+				frame = WML_progress_bar_profile_picture_2_var_frame
+			}
+			progress_bar_profile_picture_3 = {
+				frame = WML_progress_bar_profile_picture_3_var_frame
+			}
+			WML_the_winner_1 = {
+				image = "[GetWmlExpectedWinner]"
+			}
+		}
+	}
+
+	colony_warehouse_window = {
+		window_name = colony_warehouse_window
+		context_type = player_context
+		visible = {
+			check_variable = { colony_warehouse_window_on = 1 }
+		}
+
+		dynamic_lists = {
+			colony_warehouse_storage_list_gridBoxType = {
+				array = root.colony_warehouse_array
+				value = colony_warehouse_array_v
+				index = colony_warehouse_array_i
+				change_scope = no
+				entry_container = "colony_warehouse_grid_instance"
+			}
+		}
+		effects = {
+			close_button_click = {
+				if = {
+					limit = { check_variable = {colony_warehouse_window_on = 1 } }
+					set_variable = { colony_warehouse_window_on = 0 }
+				}
+				else = { set_variable = { colony_warehouse_window_on = 1 } }
+			}
+		}
+		properties = {
+			colony_warehouse_grid_instance_iconType = {
+				image = "[GetColonyWarehouseGridInstanceIconTypeImage]"
+			}
+		}
+	}
+
+	colony_riot_pointer_window_scripted_gui = {
+		window_name = "colony_riot_pointer_window"
+		context_type = player_context
+
+		visible = {
+			# has_country_flag = open_dial_gui
+			tag = WML
+			always = no
+		}
+
+		effects = {
+			close_button_click = {
+				# clr_country_flag = open_dial_gui
+			}
+			refresh_button_click = {
+				set_variable = { SAMPLE_dial_value = random }
+				multiply_variable = { SAMPLE_dial_value = 100 }
+				set_variable = { SAMPLE_dial_value2 = random }
+				multiply_variable = { SAMPLE_dial_value2 = 100 }
+				set_variable = { SAMPLE_dial_value3 = random }
+				multiply_variable = { SAMPLE_dial_value3 = 100 }
+			}
+			left_button_click = {
+				subtract_from_variable = {
+					SAMPLE_half_dial_value = 5
+				}
+				clamp_variable = { var = SAMPLE_half_dial_value min = 0 max = 100 }
+			}
+			right_button_click = {
+				add_to_variable = {
+					SAMPLE_half_dial_value = 5
+				}
+				clamp_variable = { var = SAMPLE_half_dial_value min = 0 max = 100 }
+			}
+		}
+
+		properties = {
+			dial_hand = {
+				frame = SAMPLE_dial_value
+			}
+			dial_hand2 = {
+				frame = SAMPLE_dial_value2
+			}
+			dial_hand3 = {
+				frame = SAMPLE_dial_value3
+			}
+			half_dial_hand = {
+				frame = SAMPLE_half_dial_value
+			}
+		}
+	}
+}
