@@ -1,260 +1,570 @@
 on_actions = {
 	on_startup = {
 		effect = {
-            PLD = { country_event = { id = PLD.1 days = 7 } }
-             every_country = {
-                #动态战争修正
-                #p社沙比，运算只可以一个一个算，还计算报错
-                set_variable = { DOC_morale = -25 } 
-            }
-            every_state = {
+			PLD = {
+				country_event = {
+					id = PLD.1
+					days = 7
+				}
+			}
+			every_country = {
+				#动态战争修正
+				#p社沙比，运算只可以一个一个算，还计算报错
+				set_variable = {
+					DOC_morale = -25
+				}
+			}
+			every_state = {
 				limit = {
 					is_core_of = DOC
 				}
 				add_core_of = CNI
 			}
-            DOC = {
-                #关闭了抽奖，先放着
-                # add_Norgrich = yes
-
-                add_dynamic_modifier = { modifier = DOC_Relic_Treasure_Collection }
-                add_opinion_modifier = {
+			DOC = {
+				#关闭了抽奖，先放着
+				# add_Norgrich = yes
+				add_dynamic_modifier = {
+					modifier = DOC_Relic_Treasure_Collection
+				}
+				add_opinion_modifier = {
 					target = OCE
 					modifier = Strategic_hostility
 				}
-                #set_autonomy = { #移动到history-PLD
-	            #    target = PLD
-	            #    autonomous_state = separatist_forces
-                #    end_wars = yes
-                #}
-                #add_opinion_modifier = {
+				#set_autonomy = { #移动到history-PLD
+				#    target = PLD
+				#    autonomous_state = separatist_forces
+				#    end_wars = yes
+				#}
+				#add_opinion_modifier = {
 				#	target = PLD
 				#	modifier = separatist_forces
 				#}
-                add_dynamic_modifier = { modifier = DOC_local_aristocratic_dissatisfaction }
-                DOC_random_opposition_name = YES
-                set_country_flag = DOC_eldest_son_faction_exists_flag
-            }
-            #PLD = { #移动到history-PLD
-            #    set_politics = {
-	        #        ruling_party = neutrality
-	        #        last_election = "3090.1.1"
-	        #        election_frequency = 144
-	        #        elections_allowed = no
-            #    }
-            #
-            #    set_popularities = {
-	        #        neutrality = 30
-	        #        democratic = 5
-	        #        communism = 2
-	        #        fascism = 0
-	        #        reactionism = 63
-            #    }
-            #    white_peace = OCE
-            #}
-            set_variable = { DOC_noble_dissatisfaction = 0.18 }#贵族不满
-            set_variable = { DOC_progress_riots = 0 }#暴乱进度
-            set_variable = { global.CNI_summoned_times = 1 }#可召唤次数
-            
-
-            set_variable = { DOC_local_aristocratic_dissatisfaction_stability_factor = 0 }#稳定度
-            set_variable = { DOC_local_aristocratic_dissatisfaction_production_factory_max_efficiency_factor = 0 }#生产效率上限
-        }
-    }
-    on_daily_DOC = {
-        effect = {
-            if = {
-                limit = { has_country_flag = DOC_process_of_democratization_flag }
-                DOC_calculate_existing_parcel_logic = yes
-            }
-            DOC_local_aristocratic_dissatisfaction_calculate = yes
-            if = {
-                limit = { DOC = { NOT = { has_government = ELN } is_in_faction_with = ELN } ELN = { is_faction_leader = yes } }
-                DOC = { leave_faction = yes }
-            }
-            if = {
-                limit = { NOT = { check_variable = { DOC_progress_riots < 1 } } }
-                DOC_local_aristocratic_dissatisfaction_calculate_work_out = yes
-                CNI = { declare_war_on = { target = DOC type = annex_everything } }
-                set_variable = { DOC_progress_riots = 0 }
-                clear_array = global.DOC_opposition_bg_window_list_change_record_array
+				add_dynamic_modifier = {
+					modifier = DOC_local_aristocratic_dissatisfaction
+				}
+				DOC_random_opposition_name = YES
+				set_country_flag = DOC_eldest_son_faction_exists_flag
+			}
+			#PLD = { #移动到history-PLD
+			#    set_politics = {
+			#        ruling_party = neutrality
+			#        last_election = "3090.1.1"
+			#        election_frequency = 144
+			#        elections_allowed = no
+			#    }
+			#
+			#    set_popularities = {
+			#        neutrality = 30
+			#        democratic = 5
+			#        communism = 2
+			#        fascism = 0
+			#        reactionism = 63
+			#    }
+			#    white_peace = OCE
+			#}
+			set_variable = {
+				DOC_noble_dissatisfaction = 0.18
+			}
+			#贵族不满
+			set_variable = {
+				DOC_progress_riots = 0
+			}
+			#暴乱进度
+			set_variable = {
+				global.CNI_summoned_times = 1
+			}
+			#可召唤次数
+			set_variable = {
+				DOC_local_aristocratic_dissatisfaction_stability_factor = 0
+			}
+			#稳定度
+			set_variable = {
+				DOC_local_aristocratic_dissatisfaction_production_factory_max_efficiency_factor = 0
+			}
+			#生产效率上限
+		}
+	}
+	on_daily_DOC = {
+		effect = {
+			#负责显示进度条
+			set_variable = {
+				DOC_progress_riots_progressbartype = DOC_progress_riots
+			}
+			multiply_variable = {
+				DOC_progress_riots_progressbartype = 100
+			}
+			if = {
+				limit = {
+					has_country_flag = DOC_process_of_democratization_flag
+				}
+				DOC_calculate_existing_parcel_logic = yes
+			}
+			DOC_local_aristocratic_dissatisfaction_calculate = yes
+			if = {
+				limit = {
+					DOC = {
+						NOT = {
+							has_government = ELN
+						}
+						is_in_faction_with = ELN
+					}
+					ELN = {
+						is_faction_leader = yes
+					}
+				}
+				DOC = {
+					leave_faction = yes
+				}
+			}
+			if = {
+				limit = {
+					NOT = {
+						check_variable = {
+							DOC_progress_riots < 1
+						}
+					}
+				}
+				DOC_local_aristocratic_dissatisfaction_calculate_work_out = yes
+				CNI = {
+					declare_war_on = {
+						target = DOC
+						type = annex_everything
+					}
+				}
+				set_variable = {
+					DOC_progress_riots = 0
+				}
+				clear_array = global.DOC_opposition_bg_window_list_change_record_array
 				clear_array = global.DOC_opposition_bg_window_list_change_2_record_array
 				clear_array = global.DOC_emblem_icon_window_list_change_1_array
 				clear_array = global.DOC_emblem_icon_window_list_change_2_array
 				clear_array = global.DOC_emblem_icon_window_list_change_3_array
 				clear_array = global.DOC_emblem_icon_window_list_change_4_array
-            }
-            
-        }
-    }
-    on_weekly_DOC = {
-        effect = {
-            if = {
-                limit = {
-                    power_balance_value = {
-                        id = DOC_Scripture_Organization_Penetration
-                        value > 0.09
-                    }
-                }
-                country_event = { id = DOC.16 }
-            }
-            if = {
-                limit = {
-                    power_balance_value = {
-                        id = DOC_Scripture_Organization_Penetration
-                        value > 0.29
-                    }
-                }
-                country_event = { id = DOC.16001 }
-            }
-            if = {
-                limit = {
-                    power_balance_value = {
-                        id = DOC_Scripture_Organization_Penetration
-                        value > 0.49
-                    }
-                }
-                country_event = { id = DOC.16002 }
-            }
-            if = {
-                limit = {
-                    power_balance_value = {
-                        id = DOC_Scripture_Organization_Penetration
-                        value > 0.69
-                    }
-                }
-                country_event = { id = DOC.16003 }
-            }
-            if = {
-                limit = {
-                    power_balance_value = {
-                        id = DOC_Scripture_Organization_Penetration
-                        value > 0.89
-                    }
-                }
-                country_event = { id = DOC.17 }
-            }
-        }
-    }
-    on_monthly_DOC = {
-        effect = {
-            if = {
-                limit = { has_country_flag = DOC_process_of_democratization_flag }
-                if = {
-                    limit = { NOT = { check_variable = { DOC_noble_dissatisfaction < 0.5 } } }
-                    add_to_variable = { DOC_progress_riots = 0.25 } 
-                    if = {
-                        limit = { check_variable = { global.DOC_opposition_bg_window_list_change_record_array^num < 5 } }
-                        DOC_random_opposition_name = yes
-                        add_to_variable = { global.CNI_summoned_times = 1 } 
-                    }
-                }else = {
-                    add_to_variable = { DOC_progress_riots = -0.1 } 
-                }
-                add_to_variable = { DOC_noble_dissatisfaction = -0.015 } 
-            }
-            if = {
-                limit = {
-                    has_country_flag = DOC_14004_flag
-                    has_country_flag = DOC_401_flag
-                    has_country_flag = DOC_13003_flag
-                    has_country_flag = DOC_Flag_From_the_Sea
-                    owns_state = 105
-			        owns_state = 97
-			        owns_state = 39
-			        owns_state = 51
-			        owns_state = 75
-			        owns_state = 70
-			        owns_state = 61
-			        owns_state = 58
-                }
-                set_variable = { DOC_Relic_Treasure_Collection_pages_3 = 1 }
-                set_variable = { DOC_Relic_Treasure_Collection_planning_speed = 0.01 }
-                set_variable = { DOC_Relic_Treasure_Collection_planning_speed = 0.01 }
-            }
-            if = {
-                limit = { is_ai = yes check_variable = { DOC_noble_dissatisfaction > 0 } }
-                add_to_variable = { DOC_noble_dissatisfaction = -0.18 } 
-            }
-        }
-    }
-    
-    on_capitulation_immediate = {
-        effect = {
-            #诗旎公国宣布投降废弃
-            if = {
-                limit = {
-                    ROOT = {
-			    		original_tag = DOC
-			    	}
-                }
-                if = {
-				    limit = {
-				    	FROM = {
-				    		original_tag = OCE
-				    	}
-				    }
-				    country_event = { id = OCE.6 }
-			    }
-                if = {
-                    limit = {
-                        NOT = {
-                            FROM = {
-				    		    original_tag = OCE
-				    	    }
-                        }
-                    }
-                    every_state = {
-                        limit = {
-                            is_core_of = CNI
-                        }
-                        remove_core_of = CNI
-                    }
-                }
-            }
-            #法典
-            if = {
-                limit = {
-                    ROOT = {
-			    		original_tag = OOS
-			    	}
-                }
-                if = {
-				    limit = {
-				    	FROM = {
-				    		original_tag = DOC
-				    	}
-				    }
-				    FROM = {
-                        annex_country = {
-                            target = ROOT transfer_troops = no
-                        }
-                    }
-			    }
-            }
-            #瓦拉几亚
-            if = {
-                limit = {
-                    ROOT = {
-                        OR = {
-                            original_tag = PLD
-                            original_tag = PLE
-                        }
-			    	}
-                }
-                if = {
-				    limit = {
-				    	FROM = {
-				    		original_tag = DOC
-				    	}
-				    }
-				    FROM = {
-                        annex_country = {
-                            target = ROOT transfer_troops = no
-                        }
-                    }
-			    }
-            }
-        }
-    }
+			}
+		}
+	}
+	on_weekly_DOC = {
+		effect = {
+			if = {
+				limit = {
+					power_balance_value = {
+						id = DOC_Scripture_Organization_Penetration
+						value > 0.09
+					}
+				}
+				country_event = {
+					id = DOC.16
+				}
+			}
+			if = {
+				limit = {
+					power_balance_value = {
+						id = DOC_Scripture_Organization_Penetration
+						value > 0.29
+					}
+				}
+				country_event = {
+					id = DOC.16001
+				}
+			}
+			if = {
+				limit = {
+					power_balance_value = {
+						id = DOC_Scripture_Organization_Penetration
+						value > 0.49
+					}
+				}
+				country_event = {
+					id = DOC.16002
+				}
+			}
+			if = {
+				limit = {
+					power_balance_value = {
+						id = DOC_Scripture_Organization_Penetration
+						value > 0.69
+					}
+				}
+				country_event = {
+					id = DOC.16003
+				}
+			}
+			if = {
+				limit = {
+					power_balance_value = {
+						id = DOC_Scripture_Organization_Penetration
+						value > 0.89
+					}
+				}
+				country_event = {
+					id = DOC.17
+				}
+			}
+			if = {
+				limit = {
+					DOC = {
+						has_war = no
+						has_navy_size = {
+							size > 59
+						}
+						has_country_flag = DOC_UNG_Assist_in_building_large_ships_FLAG						#帮我们造了大船
+						has_country_flag = DOC_Flag_From_the_Sea
+						NOT = {
+							has_global_flag = has_new_docnews_13_flag
+						}
+					}
+					UNG = {
+						has_war = no
+						is_puppet = no
+						has_full_control_of_state = 218
+						has_full_control_of_state = 257
+						has_full_control_of_state = 166
+						has_full_control_of_state = 214
+					}
+					# country_exists = UNG
+				}
+				set_global_flag = has_new_docnews_13_flag
+				country_event = {
+					id = docnews.13
+				}
+				country_event = {
+					id = docnews.14
+					days = 7
+				}
+			}
+			if = {
+				limit = {
+					has_country_flag = DOC_14004_flag
+					has_country_flag = DOC_401_flag
+					has_country_flag = DOC_13003_flag
+					has_country_flag = DOC_Flag_From_the_Sea
+					owns_state = 105
+					owns_state = 97
+					owns_state = 39
+					owns_state = 51
+					owns_state = 75
+					owns_state = 70
+					owns_state = 61
+					owns_state = 58
+					NOT = {
+						check_variable = {
+							DOC_Relic_Treasure_Collection_pages_3 = 1
+						}
+					}
+				}
+				set_variable = {
+					DOC_Relic_Treasure_Collection_pages_3 = 1
+				}
+				add_to_variable = {
+					DOC_Relic_Treasure_Collection_var = 1
+				}
+				set_variable = {
+					DOC_Relic_Treasure_Collection_planning_speed = 0.01
+				}
+				set_variable = {
+					DOC_Relic_Treasure_Collection_planning_speed = 0.01
+				}
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = {
+						state = 86
+					}
+					FROM = {
+						original_tag = DOC
+					}
+					ROOT = {
+						OR = {
+							original_tag = OCE
+							is_puppet_of = OCE
+						}
+					}
+				}
+				country_event = {
+					id = ocenews.2
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = enable_DOC_eastern_european_crisis_flag
+				}
+				if = {
+					limit = {
+						FROM = {
+							has_country_flag = in_DOC_eastern_european_crisis_flag
+							has_war_with = DOC
+							surrender_progress > 0.15
+						}
+					}
+					log = "[GetDateText]: FROM: [From.GetName] DOC: [DOC.GetName] on_state_control_changed"
+
+					set_global_flag = show_peace_popup_alert
+					set_global_flag = war_won
+					DOC = {
+						save_global_event_target_as = winning_country
+					}
+					FROM = {
+						save_global_event_target_as = losing_country
+					}
+					IRIS_peace_popup_determine_allies = yes
+					FROM = {
+						set_country_flag = in_DOC_eastern_european_crisis_flag_2
+						clr_country_flag = in_DOC_eastern_european_crisis_flag
+						every_country = {
+							limit = {
+								OR = {
+									is_in_faction_with = DOC
+									original_tag = DOC
+								}
+							}
+							THIS = {
+								white_peace = FROM
+							}
+						}
+						leave_faction = yes
+						every_state = {
+							limit = {
+								is_core_of = DOC
+								is_owned_by = FROM
+							}
+							DOC = {
+								transfer_state = PREV
+							}
+							clear_variable = THIS.DOC_patient_countdown
+							clr_state_flag = state_DOC_eastern_european_crisis_flag
+						}
+					}
+				}
+			}
+		}
+	}
+	on_monthly_DOC = {
+		effect = {
+			if = {
+				limit = {
+					has_country_flag = DOC_process_of_democratization_flag
+				}
+				if = {
+					limit = {
+						NOT = {
+							check_variable = {
+								DOC_noble_dissatisfaction < 0.5
+							}
+						}
+					}
+					add_to_variable = {
+						DOC_progress_riots = 0.25
+					}
+					if = {
+						limit = {
+							check_variable = {
+								global.DOC_opposition_bg_window_list_change_record_array^num < 5
+							}
+						}
+						DOC_random_opposition_name = yes
+						add_to_variable = {
+							global.CNI_summoned_times = 1
+						}
+					}
+				}
+				else = {
+					add_to_variable = {
+						DOC_progress_riots = -0.1
+					}
+				}
+				add_to_variable = {
+					DOC_noble_dissatisfaction = -0.015
+				}
+			}
+			if = {
+				limit = {
+					is_ai = yes
+					check_variable = {
+						DOC_noble_dissatisfaction > 0
+					}
+				}
+				add_to_variable = {
+					DOC_noble_dissatisfaction = -0.18
+				}
+			}
+		}
+	}
+	on_capitulation = {
+		effect = {
+			#诗旎公国宣布投降废弃
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = DOC
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_global_flag = OCE_DOC_WAR_OVER
+						}
+						FROM = {
+							original_tag = OCE
+							is_ally_with = OCE
+						}
+					}
+					country_event = {
+						id = OCE.6
+					}
+					country_event = {
+						id = ocenews.3
+					}
+				}
+				if = {
+					limit = {
+						NOT = {
+							FROM = {
+								original_tag = OCE
+							}
+						}
+						NOT = {
+							FROM = {
+								is_ally_with = OCE
+							}
+						}
+					}
+					every_state = {
+						limit = {
+							is_core_of = CNI
+						}
+						remove_core_of = CNI
+					}
+				}
+			}
+			#法典
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = OOS
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							original_tag = DOC
+							is_ally_with = DOC
+						}
+					}
+					DOC = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+			}
+			#瓦拉几亚
+			if = {
+				limit = {
+					ROOT = {
+						OR = {
+							original_tag = PLD
+							original_tag = PLE
+						}
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							original_tag = DOC
+							is_ally_with = DOC
+						}
+					}
+					DOC = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+			}
+			#暴乱
+			if = {
+				limit = {
+					ROOT = {
+						original_tag = CNI
+					}
+				}
+				if = {
+					limit = {
+						FROM = {
+							original_tag = DOC
+							is_ally_with = DOC
+						}
+					}
+					DOC = {
+						annex_country = {
+							target = ROOT
+							transfer_troops = no
+						}
+					}
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = enable_DOC_eastern_european_crisis_flag
+				}
+				if = {
+					limit = {
+						ROOT = {
+							has_country_flag = in_DOC_eastern_european_crisis_flag
+							NOT = {
+								original_tag = DOC
+							}
+						}
+					}
+					log = "[GetDateText]: DOC: [From.GetName] ROOT: [Root.GetName] on_capitulation"
+
+					set_global_flag = show_peace_popup_alert
+					set_global_flag = war_won
+					DOC = {
+						save_global_event_target_as = winning_country
+					}
+					ROOT = {
+						save_global_event_target_as = losing_country
+					}
+					IRIS_peace_popup_determine_allies = yes
+					ROOT = {
+						set_country_flag = in_DOC_eastern_european_crisis_flag_2
+						clr_country_flag = in_DOC_eastern_european_crisis_flag
+						every_country = {
+							limit = {
+								OR = {
+									is_in_faction_with = DOC
+									original_tag = DOC
+								}
+							}
+							THIS = {
+								white_peace = ROOT
+							}
+						}
+						leave_faction = yes
+						country_event = {
+							id = docnews.11
+						}
+						every_state = {
+							limit = {
+								is_core_of = DOC
+								is_owned_by = ROOT
+							}
+							DOC = {
+								transfer_state = PREV
+							}
+							clear_variable = THIS.DOC_patient_countdown
+							clr_state_flag = state_DOC_eastern_european_crisis_flag
+						}
+					}
+				}
+			}
+		}
+	}
 }

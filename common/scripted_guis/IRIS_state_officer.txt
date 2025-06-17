@@ -4,7 +4,12 @@ scripted_gui = {
         parent_window_token = selected_state_view
         window_name = "IRIS_state_officer"
         visible = {
-
+            OR = {
+                has_global_flag = has_enable_regional_characters_flag
+                # owner = {
+                #     KIV_it_is_a_joint_area_of_schools = yes
+                # }
+            }
         }
         properties = {
             #当地官员
@@ -17,14 +22,34 @@ scripted_gui = {
         effects = {
             IRIS_state_officer_button_1_click = {
                 if = {
-                    limit = { always = no this = { is_controlled_by = root is_owned_by = root not = { check_variable = { role = token:IRIS_token_NULL } } } }
-                    this = { create_character_promote = yes }
-                    every_country = {
-                        limit = { tag = root }
+                    limit = {
+                        always = no
+                        root = {
+                            check_variable = { currently_promoted_regional_role < 11 }
+                        }
                         this = {
-                            every_controlled_state = {
-                                limit = { state = this }
-                                this = { create_character = yes }
+                            is_controlled_by = root
+                            is_owned_by = root
+                            not = {
+                                check_variable = { role = token:IRIS_token_NULL }
+                            }
+                        }
+                    }
+                    if = {
+                        limit = {
+                            is_in_array = {
+                                array = global.new_character_array
+                                value = role
+                            }
+                        }
+                        this = { create_character_promote = yes }
+                        every_country = {
+                            limit = { tag = root }
+                            this = {
+                                every_controlled_state = {
+                                    limit = { state = from }
+                                    this = { create_character = yes }
+                                }
                             }
                         }
                     }

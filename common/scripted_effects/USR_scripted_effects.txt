@@ -257,6 +257,10 @@ USR_retire_vice_country_leader = {
 		limit = { has_idea = USR_another_leader_Edytha }
 		remove_ideas = USR_another_leader_Edytha
 	}
+	if = {
+		limit = { has_idea = USR_another_leader_Hera }
+		remove_ideas = USR_another_leader_Hera
+	}
 }
 
 #添加邮票
@@ -266,7 +270,7 @@ USR_add_stamp_utility = {
 			usr_stamp_factor = Stamp_ID_list^num
 		}
 		divide_variable = {
-			usr_stamp_factor = 100
+			usr_stamp_factor = -100
 		}
 		# remove_dynamic_modifier = {
 		# 	modifier = USR_post_stamp_dynamic_modifier
@@ -275,6 +279,12 @@ USR_add_stamp_utility = {
 		# 	modifier = USR_post_stamp_dynamic_modifier
 		# }
 		set_country_flag = USR_NEW_POST_STAMP
+		if = {
+			limit = { has_country_flag = USR_STAMP_ALBUM_VISIBLE }
+			set_temp_variable = { alert_id = token:alert_USR_new_stamp }
+			add_IRIS_alert_unless_exists = yes
+		}
+		
 	}
 }
 
@@ -467,5 +477,330 @@ USR_create_corps_for_everyone = {
 			count = 3
 		}
 	}
-	
+	723 = {
+		create_unit = {
+			division = "name = \"Uslar Panzer Division\" division_template = \"Uslar Panzer Division\" start_experience_factor = 0.3"
+			owner = RZT
+			count = 3
+			prioritize_location = 2484
+		}
+	}
+	160 = {
+		create_unit = {
+			division = "name = \"Uslar Panzer Division\" division_template = \"Uslar Panzer Division\" start_experience_factor = 0.3"
+			owner = RZT
+			count = 3
+			prioritize_location = 10431
+		}
+	}
+}
+
+# Initialize the ipb and add it to current Country Scope
+USR_initialize_ipb = {
+	# basic vars
+	set_variable = { usr_ipb_consumer_factor = 0.25 }
+	set_variable = { usr_ipb_build_army_factory_factor = 0.3 }
+	set_variable = { usr_ipb_build_dockyard_factor = 0.3 }
+	set_variable = { usr_ipb_payment_bonus_factor = 1 }
+
+	# vars for decision manipulation
+	set_variable = { usr_ipb_force_enlong_pp_cost = 50 }
+	set_variable = { usr_ipb_force_enlong_days_to_add = 180 }
+
+	add_dynamic_modifier = {
+		modifier = USR_imperial_promissory_bill
+	}
+	USR_update_ipb_amount_to_pay = yes
+}
+
+
+# Update the ipb cashout amount to pay
+USR_update_ipb_amount_to_pay = {
+	#clamp consumer before update
+	USR_clamp_ipb_modifier_value = yes
+	set_variable = {
+		usr_ipb_amount_to_pay = usr_ipb_consumer_factor
+	}
+	multiply_variable = {
+		usr_ipb_amount_to_pay = 100
+	}
+	set_temp_variable = {
+		usr_ipb_pay_bonus_modifier_temp = modifier@usr_ipb_payment_bonus_modifier
+	}
+	log = "Current pay modifier for ipb is [?usr_ipb_pay_bonus_modifier_temp]"
+	add_to_temp_variable = {
+		usr_ipb_pay_bonus_modifier_temp = 1
+	}
+	multiply_variable = {
+		usr_ipb_amount_to_pay = usr_ipb_pay_bonus_modifier_temp
+	}
+	log = "Current amount of factory to pay for ipb is [?usr_ipb_amount_to_pay]"
+}
+
+USR_ipb_tt_effect_expand_financing = {
+	set_temp_variable = {
+		temp_ipb_financing_factor = enemies_strength_ratio
+	}
+	multiply_temp_variable = {
+		temp_ipb_financing_factor = 10
+	}
+	add_to_temp_variable = {
+		temp_ipb_financing_factor = has_added_tension_amount
+	}
+	#
+	set_temp_variable = {
+		temp_ipb_financing_consumer_factor = temp_ipb_financing_factor
+	}
+	set_temp_variable = {
+		temp_ipb_financing_factory_factor = temp_ipb_financing_factor
+	}
+	divide_temp_variable = {
+		temp_ipb_financing_consumer_factor = 8
+	}
+	divide_temp_variable = {
+		temp_ipb_financing_factory_factor = 5
+	}
+}
+
+# Expand ipb financing effect
+USR_expand_ipb_financing_effect = {
+	#
+	set_temp_variable = {
+		temp_ipb_financing_factor = enemies_strength_ratio
+	}
+	multiply_temp_variable = {
+		temp_ipb_financing_factor = 5
+	}
+	add_to_temp_variable = {
+		temp_ipb_financing_factor = has_added_tension_amount
+	}
+	#
+	set_temp_variable = {
+		temp_ipb_financing_consumer_factor = temp_ipb_financing_factor
+	}
+	set_temp_variable = {
+		temp_ipb_financing_factory_factor = temp_ipb_financing_factor
+	}
+	divide_temp_variable = {
+		temp_ipb_financing_consumer_factor = 1600
+	}
+	divide_temp_variable = {
+		temp_ipb_financing_factory_factor = 1000
+	}
+
+	add_to_variable = {
+		usr_ipb_consumer_factor = temp_ipb_financing_consumer_factor
+	}
+	add_to_variable = {
+		usr_ipb_build_army_factory_factor = temp_ipb_financing_factory_factor
+	}
+	add_to_variable = {
+		usr_ipb_build_dockyard_factor = temp_ipb_financing_factory_factor
+	}
+
+	log = "Add financing consumer to ipb:[?temp_ipb_financing_consumer_factor]"
+	log = "Add factory ps to ipb:[?temp_ipb_financing_factory_factor]"
+	USR_update_ipb_amount_to_pay = yes
+}
+
+USR_clamp_ipb_modifier_value = {
+	#clamp modifier var
+	if = {
+		limit = {
+			check_variable = { usr_ipb_consumer_factor > 0.6 }
+		}
+		#Since we can't afford more consumer goods, the penalty will go bonus modifier
+		set_temp_variable = {
+			usr_temp_bonus_to_add = usr_ipb_consumer_factor
+		}
+		add_to_temp_variable = {
+			usr_temp_bonus_to_add = -0.6
+		}
+		add_to_variable = {
+			usr_ipb_payment_bonus_factor = usr_temp_bonus_to_add
+		}
+
+		set_variable = {
+			usr_ipb_consumer_factor = 0.6
+		}
+	}
+}
+
+USR_ipb_cashout_all_ally_debt = {
+	every_country = {
+		limit = {
+			OR = {
+				has_idea = USR_ally_ipb_purchased_1
+				has_idea = USR_ally_ipb_purchased_2
+				has_idea = USR_ally_ipb_purchased_3
+			}
+		}
+		country_event = { id = usr.89 days = 1 }
+	}
+}
+
+USR_ipb_bankrupt_all_ally_debt = {
+	every_country = {
+		limit = {
+			OR = {
+				has_idea = USR_ally_ipb_purchased_1
+				has_idea = USR_ally_ipb_purchased_2
+				has_idea = USR_ally_ipb_purchased_3
+			}
+		}
+		country_event = { id = usr.90 days = 2 }
+	}
+}
+
+USR_ipb_bankrupt_all_puppet_debt = {
+	every_country = {
+		limit = {
+			OR = {
+				has_idea = USR_puppet_establish_ipb
+			}
+		}
+		remove_ideas = USR_puppet_establish_ipb
+	}
+}
+
+USR_ipb_bankrupt_effect = {
+	remove_dynamic_modifier ={
+		modifier = USR_imperial_promissory_bill
+	}
+	add_stability = -1
+	add_war_support = -1
+	add_political_power = -1000
+	add_popularity = {
+		ideology = USR
+		popularity = -0.35
+	}
+	custom_effect_tooltip = USR_tooltip62
+	hidden_effect = {
+		retire_character = USR_Carla
+		news_event = { id = usr_news.12 days = 1 } 
+		USR_ipb_bankrupt_all_ally_debt = yes
+		USR_ipb_bankrupt_all_puppet_debt = yes
+	}
+}
+
+USR_release_STG_reichskommissariat = {
+	STG = {
+		every_core_state = {
+			remove_core_of = PREV
+		}
+		UNG = {
+			every_core_state = {
+				add_core_of = PREV.PREV
+			}
+		}
+		remove_state_core = 682
+		remove_state_core = 206
+		remove_state_core = 213
+		remove_state_core = 231
+		remove_state_core = 718
+		remove_state_core = 230
+		remove_state_core = 717
+		remove_state_core = 222
+	}
+	release_autonomy = {
+		target = STG
+		autonomy_state = autonomy_reichskommissariat
+		freedom_level = 0.2
+	}
+	STG = {
+		set_cosmetic_tag = STG_reichskommissariat
+		set_country_leader_name = {
+			name = STG_darjeeling
+		}
+		set_country_leader_portrait = {
+			portrait = GFX_Darjeeling_alt
+		}
+	}
+}
+
+USR_release_ELN_alliance = {
+	release_autonomy = {
+		target = ELN
+		autonomy_state = autonomy_supervised_state
+	}
+	ELN = {
+		set_cosmetic_tag = ELN_supervised
+		set_country_leader_name = {
+			name = ELN_marie
+		}
+		set_country_leader_portrait = {
+			portrait = GFX_Marie_alt
+		}
+	}
+}
+
+USR_release_DOC_reichskommissariat = {
+	release_autonomy = {
+		target = DOC
+		autonomy_state = autonomy_reichskommissariat
+		freedom_level = 0.2
+	}
+	DOC = {
+		set_cosmetic_tag = DOC_reichskommissariat
+		set_country_leader_name = {
+			name = USR_Stella
+		}
+		set_country_leader_portrait = {
+			portrait = GFX_Stella
+		}
+	}
+}
+
+USR_release_ANZ_reichskommissariat = {
+	release_autonomy = {
+		target = ANZ
+		autonomy_state = autonomy_reichskommissariat
+		freedom_level = 0.2
+	}
+	ANZ = {
+		set_cosmetic_tag = ANZ_reichskommissariat
+		set_country_leader_name = {
+			name = USR_Anchovy_alt
+		}
+		set_country_leader_portrait = {
+			portrait = GFX_Anchovy_alt
+		}
+	}
+}
+
+USR_expand_market = {
+	if = {
+		limit = {
+			NOT = {
+				OR = {
+					has_idea = USR_expanded_market
+					has_idea = USR_expanded_market_1
+					has_idea = USR_expanded_market_2
+					has_idea = USR_expanded_market_3
+				}
+			}
+		}
+		add_ideas = USR_expanded_market
+	}
+	else_if = {
+		limit = { has_idea = USR_expanded_market }
+		swap_ideas = {
+			remove_idea = USR_expanded_market
+			add_idea = USR_expanded_market_1
+		}
+	}
+	else_if = {
+		limit = { has_idea = USR_expanded_market_1 }
+		swap_ideas = {
+			remove_idea = USR_expanded_market_1
+			add_idea = USR_expanded_market_2
+		}
+	}
+	else_if = {
+		limit = { has_idea = USR_expanded_market_2 }
+		swap_ideas = {
+			remove_idea = USR_expanded_market_2
+			add_idea = USR_expanded_market_3
+		}
+	}
 }

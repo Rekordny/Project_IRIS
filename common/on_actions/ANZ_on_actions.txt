@@ -10,6 +10,58 @@ on_actions = {
 				set_variable = {
 					anz_completed_focus_pre_civil = 1
 				}
+
+				#洛蒂安玛娜大主教迪-拉戈遭遇保皇党刺杀去世
+				country_event = {
+					id = anz.13
+					days = 6
+				}
+
+				#计算投资军工决议时长
+				set_temp_variable = {
+					ANZ_invest_mil_building_speed = modifier@production_speed_buildings_factor
+				}
+				set_temp_variable = {
+					ANZ_invest_mil_mil_speed = modifier@production_speed_arms_factory_factor
+				}
+				set_temp_variable = {
+					ANZ_invest_mil_base = 1
+				}
+				add_to_temp_variable = {
+					ANZ_invest_mil_building_speed = ANZ_invest_mil_mil_speed
+				}
+				subtract_from_temp_variable = {
+					ANZ_invest_mil_base = ANZ_invest_mil_building_speed
+				}
+				multiply_temp_variable = {
+					ANZ_invest_mil_base = 90
+				}
+				set_variable = {
+					ANZ_invest_mil_decision_time = ANZ_invest_mil_base
+				}
+
+				#计算投资船坞决议时长
+				set_temp_variable = {
+					ANZ_invest_nav_building_speed = modifier@production_speed_buildings_factor
+				}
+				set_temp_variable = {
+					ANZ_invest_nav_nav_speed = modifier@production_speed_dockyard_factor
+				}
+				set_temp_variable = {
+					ANZ_invest_nav_base = 1
+				}
+				add_to_temp_variable = {
+					ANZ_invest_nav_building_speed = ANZ_invest_nav_nav_speed
+				}
+				subtract_from_temp_variable = {
+					ANZ_invest_nav_base = ANZ_invest_nav_building_speed
+				}
+				multiply_temp_variable = {
+					ANZ_invest_nav_base = 80
+				}
+				set_variable = {
+					ANZ_invest_nav_decision_time = ANZ_invest_nav_base
+				}
 			}
 		}
 	}
@@ -40,7 +92,162 @@ on_actions = {
 					tag = ANZ
 				}
 				#内战结束了
-				ANZ = { country_event = { id = anz.10 days = 2 } }
+				ANZ = { 
+					if = {
+						limit = {
+							has_country_flag = ANZ_ANZIO
+						}
+						country_event = { id = anz.10 days = 2 } 
+					}
+					else_if = {
+						limit = {
+							has_country_flag = ANZ_LOTHIAN
+						}
+						every_country = {
+							limit = {
+								original_tag = ANZ
+								has_country_flag = ANZ_pact_with_mana_secular_state_agreed
+							}
+						}
+						country_event = { id = anz.26 days = 2 } 
+					}
+				}
+			}
+		}
+	}
+
+	on_government_change = {
+		effect = {
+			if = {
+				limit = {
+					original_tag = ANZ
+					has_government = neutrality
+					has_country_flag = ANZ_load_focus_tree_anzio
+					NOT = {
+						has_country_flag = ANZ_Siracusa
+					}
+				}
+				complete_national_focus = ANZ_dealing_with_nobles
+			}
+		}
+	}
+
+	on_unit_leader_created = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						has_idea = ANZ_trial_of_grey_hall
+					}
+				}
+				root = {
+					add_unit_leader_trait = ANZ_ml_trial_of_grey_hall
+				}
+			}
+		}
+	}
+
+	on_unit_leader_level_up = {
+		effect = {
+			if = {
+				limit = {
+					FROM = {
+						has_idea = ANZ_trial_of_grey_hall
+					}
+				}
+				character = { 
+					IF = { 
+						limit = { is_army_leader = yes }
+					
+						random_list = { 
+							50 = { add_attack = 1 } 
+							50 = {} 
+						} 
+						random_list = { 
+							50 = { add_defense = 1 } 
+							50 = {} 
+						} 
+						random_list = { 
+							50 = { add_planning = 1 } 
+							50 = {} 
+						} 
+						random_list = { 
+							50 = { add_logistics = 1 } 
+							50 = {} 
+						} 
+					}
+				}
+			}
+		}
+	}
+
+	#
+	on_weekly_ANZ = {
+		effect = {
+			if = {
+				limit = {
+					has_dynamic_modifier = {
+						modifier = ANZ_idea_colonial_supply_chain
+					}
+					TAU = {
+						is_puppet_of = ANZ
+					}
+				}
+				set_temp_variable = {
+					ANZ_consumer_goods_expected_value_tmp = TAU.num_controlled_states
+				}
+				multiply_temp_variable = {
+					ANZ_consumer_goods_expected_value_tmp = -0.001
+				}
+				set_variable = {
+					ANZ_consumer_goods_expected_value = ANZ_consumer_goods_expected_value_tmp
+				}
+			}
+
+			#计算投资军工决议时长
+			set_temp_variable = {
+				ANZ_invest_mil_building_speed = modifier@production_speed_buildings_factor
+			}
+			set_temp_variable = {
+				ANZ_invest_mil_mil_speed = modifier@production_speed_arms_factory_factor
+			}
+			set_temp_variable = {
+				ANZ_invest_mil_base = 1
+			}
+			add_to_temp_variable = {
+				ANZ_invest_mil_building_speed = ANZ_invest_mil_mil_speed
+			}
+			subtract_from_temp_variable = {
+				ANZ_invest_mil_base = ANZ_invest_mil_building_speed
+			}
+			multiply_temp_variable = {
+				ANZ_invest_mil_base = 90
+			}
+			set_variable = {
+				ANZ_invest_mil_decision_time = ANZ_invest_mil_base
+			}
+
+			#计算投资船坞决议时长
+			set_temp_variable = {
+				ANZ_invest_nav_building_speed = modifier@production_speed_buildings_factor
+			}
+			set_temp_variable = {
+				ANZ_invest_nav_nav_speed = modifier@production_speed_dockyard_factor
+			}
+			set_temp_variable = {
+				ANZ_invest_nav_base = 1
+			}
+			add_to_temp_variable = {
+				ANZ_invest_nav_building_speed = ANZ_invest_nav_nav_speed
+			}
+			subtract_from_temp_variable = {
+				ANZ_invest_nav_base = ANZ_invest_nav_building_speed
+			}
+			multiply_temp_variable = {
+				ANZ_invest_nav_base = 80
+			}
+			set_variable = {
+				ANZ_invest_nav_decision_time = ANZ_invest_nav_base
 			}
 		}
 	}

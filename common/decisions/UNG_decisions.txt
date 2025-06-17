@@ -161,6 +161,7 @@ UNG_debug = {
 					declare_war_on = { target = MSA type = civil_war }
 					declare_war_on = { target = FNG type = civil_war }
 					end_puppet = CLD
+					end_puppet = MMY
 					set_party_name = {
 						ideology = democratic
 						long_name = UNG_democratic_party_al_long
@@ -961,6 +962,29 @@ UNG_Round_Table_Game = {
 			}
 			add_to_variable = { global.UNG_DP = -1 }
 		}
+		
+		ai_will_do = {
+			factor = 1
+
+			modifier = {
+				factor = 100
+				FROM = {
+					check_variable = { THIS.UNG_DP = 1 }
+				}
+			}
+
+			modifier = {
+				factor = 1000
+				FROM = {
+					check_variable = { THIS.UNG_DP = 2 }
+				}
+			}
+
+			modifier = {
+				factor = 0
+				check_variable = { global.UNG_DP < 1 }
+			}
+		}
 	}
 	#*分配博弈点
 	MSA_USE_dominant_point = {
@@ -1457,6 +1481,10 @@ UNG_Round_Table_Game = {
 				set_state_flag = RTG_3HT
 			}
 		}
+
+		ai_will_do = {
+			factor = 1000
+		}
 	}
 	#*莫德雷德锁定
 	MSA_USE_dominant_point_RTG_3 = {
@@ -1768,6 +1796,7 @@ UNG_Round_Table_Game = {
 						declare_war_on = { target = MSA type = civil_war }
 						declare_war_on = { target = FNG type = civil_war }
 						end_puppet = CLD
+						end_puppet = MMY
 						set_party_name = {
 							ideology = democratic
 							long_name = UNG_democratic_party_al_long
@@ -2082,6 +2111,25 @@ UNG_Round_Table_Game = {
 							division_template = "Unglia_militia"
 							is_locked = yes
 						}
+						if = {
+							limit = {
+								has_global_flag = FNG_has_extra_division_flag
+							}
+							capital_scope = {
+								create_unit = {
+									division = "name = \"民兵师\" division_template = \"Unglia_militia\" start_experience_factor = 0.3 start_equipment_factor = 0.9 "
+									owner = FNG
+								}
+								create_unit = {
+									division = "name = \"民兵师\" division_template = \"Unglia_militia\" start_experience_factor = 0.3 start_equipment_factor = 0.9 "
+									owner = FNG
+								}
+								create_unit = {
+									division = "name = \"民兵师\" division_template = \"Unglia_militia\" start_experience_factor = 0.3 start_equipment_factor = 0.9 "
+									owner = FNG
+								}
+							}
+						}
 					}			
 				}
 				set_global_flag = UNG_CivilWar_begun
@@ -2196,7 +2244,7 @@ UNG_Round_Table_Game = {
 		}
 		fire_only_once = yes
 		ai_will_do = {
-			factor = 10
+			factor = 1000
 		}
 		available = {
 			TAG = UNG
@@ -2204,7 +2252,7 @@ UNG_Round_Table_Game = {
 		cost = 30
 		days_remove = 70
 		modifier = {
-		 	stability_weekly_factor = 0.01
+		 	stability_weekly = 0.01
 		}
 		complete_effect = {
 			
@@ -2222,7 +2270,7 @@ UNG_Round_Table_Game = {
 		}
 		fire_only_once = yes
 		ai_will_do = {
-			factor = 10
+			factor = 1000
 		}
 		available = {
 			TAG = UNG
@@ -2230,7 +2278,7 @@ UNG_Round_Table_Game = {
 		cost = 50
 		days_remove = 70
 		modifier = {
-		 	stability_weekly_factor = 0.01
+		 	stability_weekly = 0.01
 		}
 		complete_effect = {
 			
@@ -2251,7 +2299,7 @@ UNG_Round_Table_Game = {
 		}
 		fire_only_once = yes
 		ai_will_do = {
-			factor = 10
+			factor = 1000
 		}
 		available = {
 			TAG = UNG
@@ -2259,7 +2307,7 @@ UNG_Round_Table_Game = {
 		cost = 50
 		days_remove = 35
 		modifier = {
-		 	stability_weekly_factor = -0.02
+		 	stability_weekly = -0.02
 		}
 		complete_effect = {
 			add_days_mission_timeout = {
@@ -2284,7 +2332,7 @@ UNG_Round_Table_Game = {
 		}
 		fire_only_once = yes
 		ai_will_do = {
-			factor = 10
+			factor = 1000
 		}
 		available = {
 			TAG = UNG
@@ -2292,7 +2340,7 @@ UNG_Round_Table_Game = {
 		cost = 30
 		days_remove = 60
 		modifier = {
-		 	stability_weekly_factor = 0.01
+		 	stability_weekly = 0.01
 		}
 		complete_effect = {
 			country_event = {
@@ -2319,7 +2367,7 @@ UNG_Round_Table_Game = {
 			TAG = UNG
 		}
 		custom_cost_trigger = {
-            has_command_power > 29
+            command_power > 29
         }
         custom_cost_text = decision_cost_CP_30
 		days_remove = 120
@@ -2429,7 +2477,7 @@ UNG_Tandongxingdong = {
 	UNG_Jixvtansuo = {
 		target_root_trigger = {
 			TAG = UNG
-			is_puppet = CLD
+			CLD = {is_puppet_of = UNG}
 			has_completed_focus = UNG_Tandongxingdong
 		}
 		state_target = yes
@@ -2442,7 +2490,7 @@ UNG_Tandongxingdong = {
 				}
 				is_owned_by = WRQ
 				is_IRIS_antarctic_state = yes
-				is_demilitarized_zone = NO
+				is_demilitarized_zone = no
 			}
 		}
 		icon = GFX_decision_hol_engelandvaarders
@@ -2457,7 +2505,7 @@ UNG_Tandongxingdong = {
 	UNG_Quzhutamen = {
 		target_root_trigger = {
 			TAG = UNG
-			is_puppet = CLD
+			CLD = {is_puppet_of = UNG}
 			has_completed_focus = UNG_Tandongxingdong
 		}
 		state_target = yes
@@ -2473,7 +2521,7 @@ UNG_Tandongxingdong = {
 					is_owned_by = CLD
 				}
 				is_IRIS_antarctic_state = yes
-				is_demilitarized_zone = NO
+				is_demilitarized_zone = no
 			}
 			CLD = {
 				has_army_manpower = {
@@ -2528,7 +2576,7 @@ UNG_Tandongxingdong = {
 	UNG_Xiujianjichusheshi = {
 		target_root_trigger = {
 			TAG = UNG
-			is_puppet = CLD
+			CLD = {is_puppet_of = UNG}
 			has_completed_focus = UNG_Tandongxingdong
 		}
 		state_target = yes
@@ -2538,7 +2586,7 @@ UNG_Tandongxingdong = {
 				is_core_of = WRQ
 				is_owned_and_controlled_by = CLD
 				is_IRIS_antarctic_state = yes
-				is_demilitarized_zone = NO
+				is_demilitarized_zone = no
 				infrastructure = 0
 			}
 		}

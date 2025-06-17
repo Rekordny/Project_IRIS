@@ -51,30 +51,30 @@ OCF_war_OCE_prophase = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-		#认为软弱
-		type = consider_weak
-		id = OCE
-		value = 20
-	}
+        #认为软弱
+        type = consider_weak
+        id = OCE
+        value = 20
+    }
     ai_strategy = {
-		#更倾向占领南部和首都
-		type = force_concentration_target_weight
-		state = 115
-		state = 841
-		state = 842
-		state = 843
-		state = 844
-		state = 108
+        #更倾向占领南部和首都
+        type = force_concentration_target_weight
+        state = 115
+        state = 841
+        state = 842
+        state = 843
+        state = 844
+        state = 108
 
-		value = 20
-	}
+        value = 20
+    }
 }
 
 #塔拉已经汗流浃背了
 OCF_war_INP_prophase = {
     allowed = {
         original_tag = OCF
-        
+
     }
     enable = {
         country_exists = INP
@@ -235,7 +235,7 @@ OCF_Weapon_guaranteed_output = {
     }
 }
 
-#不要守家，多发动登陆
+#不要守家
 OCF_Dont_guard_your_home = {
     allowed = {
         original_tag = OCF
@@ -246,44 +246,144 @@ OCF_Dont_guard_your_home = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
+        type = garrison
+        value = -200 #卫戍部队
+    }
+}
+
+#帮助盟友
+OCF_Assist_allies = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        has_war = yes
+        OR = {
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        enemies_naval_strength_ratio < 0.75
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = spare_unit_factor
+        value = 200
+    }
+    ai_strategy = {
+        type = front_unit_request
+        country_trigger = {
+            OR = {
+                original_tag = USR
+                is_ally_with = USR
+            }
+            has_war_with = OCF
+        }
+        value = 200
+    }
+}
+
+#不要登陆的地区
+OCF_areas_not_to_be_logged_in = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        OR = {
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        USR = {
+            surrender_progress < 0.3
+        }
+        ANZ = {
+            surrender_progress < 0.3
+        }
+        enemies_naval_strength_ratio < 0.9
+        check_variable = { num_divisions < 49 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 770
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 192
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 188
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 170
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 157
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 709
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 140
+        value = -25
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 769
+        value = -25
+    }
+}
+
+#多发动登陆
+OCF_launch_multiple_login_attempts = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        OR = {
+            has_war_with = CTC
+            has_war_with = ANZ
+            has_war_with = USR
+        }
+        enemies_naval_strength_ratio < 0.9
+        check_variable = { num_divisions > 96 }
+        date > 3095.6.1
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
         type = invasion_unit_request
         state = 207
-        value = 300
+        value = 5
     }
     ai_strategy = {
         type = invasion_unit_request
         state = 227
-        value = 300
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state = 171
-        value = -3000
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state = 193
-        value = -3000
-    }
-    ai_strategy = {
-        type = invasion_unit_request
-        state = 143
-        value = -3000
+        value = 5
     }
     ai_strategy = {
         type = invasion_unit_request
         state = 223
-        value = 300
+        value = 5
     }
     ai_strategy = {
         type = invasion_unit_request
         state = 226
-        value = 300
+        value = 5
     }
     ai_strategy = {
         type = invade
         id = ANZ
-        value = 100
+        value =15
     }
     ai_strategy = {
         type = front_control
@@ -297,13 +397,140 @@ OCF_Dont_guard_your_home = {
         execution_type = rush_weak
         execute_order = yes
     }
+}
+
+#康塔西亚登陆战
+OCF_CTC_landing_battle_in_progress = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        has_war_with = CTC
+        has_country_flag = OCF_CTC_landing_battle_flag
+        check_variable = { num_divisions > 24 }
+    }
+    abort_when_not_enabled = yes
     ai_strategy = {
-        type = garrison
-        value = -200 #卫戍部队
+        type = invade
+        id = CTC
+        value =30
     }
     ai_strategy = {
-        type = spare_unit_factor
-        value = 50
+        type = invasion_unit_request
+        state = 140
+        value = 15
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 770
+        value = 5
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 769
+        value = 5
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 143
+        value = 10
+    }
+}
+
+#安齐奥登陆战
+OCF_ANZ_landing_battle_in_progress = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        OR = {
+            has_war_with = URU
+            has_war_with = ANZ
+        }
+        has_country_flag = OCF_ANZ_landing_battle_flag
+        check_variable = { num_divisions > 24 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = invade
+        id = ANZ
+        value =30
+    }
+    ai_strategy = {
+        type = invade
+        id = USR
+        value =30
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 227
+        value = 20
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 251
+        value = 5
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 207
+        value = 20
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 223
+        value = 20
+    }
+}
+
+#东欧罗巴登陆战
+OCF_DOC_landing_battle_in_progress = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        # OR = {
+        #     has_war_with = URU
+        #     has_war_with = ANZ
+        # }
+        has_country_flag = OCF_DOC_landing_battle_flag
+        check_variable = { num_divisions > 50 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 85
+        value = 15
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 114
+        value = 15
+    }
+    ai_strategy = {
+        type = invasion_unit_request
+        state = 69
+        value = 15
+    }
+}
+
+#守家
+OCF_guard_your_home = {
+    allowed = {
+        original_tag = OCF
+    }
+    enable = {
+        has_war = yes
+        check_variable = { num_divisions < 24 }
+    }
+    abort_when_not_enabled = yes
+    ai_strategy = {
+        type = naval_invasion_focus
+        value = -300
+    }
+    ai_strategy = {
+        type = garrison
+        value = 30
     }
 }
 
@@ -316,15 +543,15 @@ OCF_AI_armor = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-		type = build_army
-		id = armor
-		value = 100
-	}
+        type = build_army
+        id = armor
+        value = 100
+    }
     ai_strategy = {
-		type = build_army
-		id = infantry
-		value = -100
-	}
+        type = build_army
+        id = infantry
+        value = -100
+    }
     ai_strategy = {
         type = equipment_production_min_factories
         id = medium_armor
@@ -344,8 +571,8 @@ OCF_AI_MANA = {
     }
     abort_when_not_enabled = yes
     ai_strategy = {
-		type = build_army
-		id = infantry
-		value = 45
-	}
+        type = build_army
+        id = infantry
+        value = 45
+    }
 }

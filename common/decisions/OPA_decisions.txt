@@ -138,11 +138,6 @@ OPA_oriental_legion_decisions = {
                     division_template = "圣德米特里骑士"
                     disband = yes
                 }
-                load_focus_tree = {
-                    tree = OPA
-                    keep_completed = yes
-                }
-                mark_focus_tree_layout_dirty = yes
                 BLA = {
                     end_puppet = OPA
                     set_autonomy = {
@@ -151,6 +146,7 @@ OPA_oriental_legion_decisions = {
                     }
                 }
             }
+            IRIS_unlock_a_new_branch = yes
         }
     }
 }
@@ -178,70 +174,35 @@ OPA_knights_of_st_dimitry_decisions =  {
             }
         }
         remove_effect = {
-            capital_scope = {
-                create_unit = {
-                    division = "name = \"圣德米特里骑士团\" division_template = \"圣德米特里骑士\" start_experience_factor = 1.0"
-                    owner = OPA
+            if = {
+                limit = {
+                    has_completed_focus = OPA_institutionalized_military_orders
+                }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"圣德米特里骑士团\" division_template = \"圣德米特里骑士\" start_experience_factor = 1.0"
+                        owner = OPA
+                    }
+                    create_unit = {
+                        division = "name = \"圣德米特里骑士团\" division_template = \"圣德米特里骑士\" start_experience_factor = 1.0"
+                        owner = OPA
+                    }
                 }
             }
-        }
-        ai_will_do = {
-            base = 10
-        }
-    }
-    #扩编一个奥术战斗营
-    OPA_add_a_Arcane_Battle_Camp = {
-        available = {
-            custom_trigger_tooltip = {
-                tooltip = OPA_has_10_authority
-                OPA = {
-                    check_variable = {
-                        OPA_authority > 9
+            else = {
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"圣德米特里骑士团\" division_template = \"圣德米特里骑士\" start_experience_factor = 1.0"
+                        owner = OPA
                     }
                 }
             }
         }
-        visible = {
-            hidden_trigger = {
-                OPA = {
-                    check_variable = {OPA_Arcane_Battle_Camp < 2}
+        cancel_trigger = {
+            NOT = {
+                has_country_leader = {
+                    character = OPA_Rasputin
                 }
-            }
-        }
-        days_remove = 40
-        complete_effect = {
-            hidden_effect = {
-                OPA = {
-                    add_to_variable = {OPA_authority = -10}
-                    OPA_update_dynamic_modifier = yes
-                }
-            }
-        }
-        remove_effect = {
-            custom_effect_tooltip = OPA_add_a_Arcane_Battle_Camp_to_order
-            hidden_effect = {
-                if = {
-                    limit = {
-                        OPA = {
-                            check_variable = {OPA_Arcane_Battle_Camp = 0}
-                        }
-                    }
-                    add_units_to_division_template = {
-                        template_name = "圣德米特里骑士"
-                        regiments = {
-                            Arcane_Battle_Camp = 0
-                        }
-                    }
-                }
-                else = {
-                    add_units_to_division_template = {
-                        template_name = "圣德米特里骑士"
-                        regiments = {
-                            Arcane_Battle_Camp = 1
-                        }
-                    }
-                }
-                add_to_variable = {OPA_Arcane_Battle_Camp = 1}
             }
         }
         ai_will_do = {
@@ -282,7 +243,7 @@ OPA_knights_of_st_dimitry_decisions =  {
                 add_units_to_division_template = {
                     template_name = "圣德米特里骑士"
                     regiments = {
-                        Magic_Breakthrough_Camp = 2
+                        Magic_Breakthrough_Camp = 3
                     }
                 }
                 add_to_variable = {OPA_Magic_Breakthrough_Camp = 1}
@@ -292,8 +253,8 @@ OPA_knights_of_st_dimitry_decisions =  {
             base = 10
         }
     }
-    #扩编一个重型魔导战斗营
-    OPA_add_a_Heavy_Magic_Guide_Battle_Battalion = {
+    #扩编一个骑士营
+    OPA_add_a_Arcane_Knights_Camp = {
         available = {
             custom_trigger_tooltip = {
                 tooltip = OPA_has_15_authority
@@ -307,7 +268,7 @@ OPA_knights_of_st_dimitry_decisions =  {
         visible = {
             hidden_trigger = {
                 OPA = {
-                    check_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion < 3}
+                    check_variable = {OPA_Arcane_Knights_Camp < 2}
                 }
             }
         }
@@ -321,15 +282,44 @@ OPA_knights_of_st_dimitry_decisions =  {
             }
         }
         remove_effect = {
-            custom_effect_tooltip = OPA_add_a_Heavy_Magic_Guide_Battle_Battalion_to_order
+            custom_effect_tooltip = OPA_add_a_Arcane_Knights_Camp_to_order
             hidden_effect = {
-                add_units_to_division_template = {
-                    template_name = "圣德米特里骑士"
-                    regiments = {
-                        Heavy_Magic_Guide_Battle_Battalion = 3
+                if = {
+                    limit = {
+                        check_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 0}
                     }
+                    add_units_to_division_template = {
+                        template_name = "圣德米特里骑士"
+                        regiments = {
+                            Arcane_Knights_Camp = 0
+                        }
+                    }
+                    add_to_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 1}
                 }
-                add_to_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 1}
+                else_if = {
+                    limit = {
+                        check_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 1}
+                    }
+                    add_units_to_division_template = {
+                        template_name = "圣德米特里骑士"
+                        regiments = {
+                            Arcane_Knights_Camp = 1
+                        }
+                    }
+                    add_to_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 1}
+                }
+                else_if = {
+                    limit = {
+                        check_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 2}
+                    }
+                    add_units_to_division_template = {
+                        template_name = "圣德米特里骑士"
+                        regiments = {
+                            Arcane_Knights_Camp = 2
+                        }
+                    }
+                    add_to_variable = {OPA_Heavy_Magic_Guide_Battle_Battalion = 1}
+                }
             }
         }
         ai_will_do = {
@@ -588,6 +578,14 @@ OPA_diplomacy = {
         }
         ai_will_do = {
             base = 1000
+        }
+    }
+}
+OPA_debug = {
+    OPA_debug_display_all_focus = {
+        complete_effect = {
+            set_country_flag = OPA_debug_display_all_focus
+            IRIS_unlock_a_new_branch = yes
         }
     }
 }

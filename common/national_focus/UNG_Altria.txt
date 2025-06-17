@@ -400,6 +400,11 @@ focus = {
 	available_if_capitulated = no
 	cancel_if_invalid = yes
 	completion_reward = {
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 5000
+			producer = UNG
+		}
 		every_country = {
 			limit = {
 				is_major = yes
@@ -891,6 +896,31 @@ focus = {
 				owner = UNG
 		    }
 		}
+		#防止AI莫名奇妙死战不退
+		if = {
+			limit = {
+				FNG = {is_ai = yes}
+			}
+			FNG = {
+				add_war_support = -0.25
+			}
+			add_collaboration = {
+				target = FNG
+				value = 0.3
+			}
+		}
+		if = {
+			limit = {
+				MSA = {is_ai = yes}
+			}
+			MSA = {
+				add_war_support = -0.25
+			}
+			add_collaboration = {
+				target = MSA
+				value = 0.3
+			}
+		}
 	}
 }
 #*清理残党
@@ -1019,6 +1049,7 @@ focus = {
 		}
 		delete_unit_template_and_units = {
 			division_template = Unglia_militia
+			disband = yes #退还装备
 		}
 	}
 }
@@ -1216,6 +1247,11 @@ focus = {
 			}
 			factor = 500
 		}
+
+		modifier = {
+			factor = 0
+			is_historical_focus_on = yes
+		}
 	}
 	available = {
 		has_war = no
@@ -1382,47 +1418,14 @@ focus = {
 
 	}
 }
-#*发起冲锋
-focus = {
-	id = UNG_Faqichongfeng
-	icon = GFX_focus_UNG_king_duishengeluoliannadezuihoutongdie
-	prerequisite = {
-		focus = UNG_Chongfandalu
-	}
-	relative_position_id = UNG_Chongfandalu
-	x = 0
-	y = 1
-	cost = 4
-	ai_will_do = {
-		factor = 1
-		modifier = {
-			is_historical_focus_on = yes
-			has_army_manpower = { size > 500000 }
-			factor = 500
-		}
-	}
-	available = {
-		always = yes
-	}
-	bypass = {
-	}
-	available_if_capitulated = no
-	cancel_if_invalid = yes
-	will_lead_to_war_with = STG
-	completion_reward = {
-		news_event = { ID = ungnews.109 }
-		remove_ideas = UNG_idea_tuolidalu
-		declare_war_on = { target = STG type = annex_everything }
-	}
-}
 #*向圣铃兰靠拢
 focus = {
 	id = UNG_Xiangshenglinglangkaolong
 	icon = GFX_focus_UNG_king_jiechushenglinlan
 	prerequisite = {
-		focus = UNG_Faqichongfeng
+		focus = UNG_Chongfandalu
 	}
-	relative_position_id = UNG_Faqichongfeng
+	relative_position_id = UNG_Chongfandalu
 	mutually_exclusive = {
 		focus = UNG_Xiangailinuokaolong
 	}
@@ -1431,13 +1434,18 @@ focus = {
 	cost = 4
 	ai_will_do = {
 		factor = 1
+
+		modifier = {
+			factor = 0
+			is_historical_focus_on = yes
+		}
 	}
 	available = {
 		NOT = { is_in_faction_with = SLL }
 		is_in_faction = no
 		SLL = {
 			is_faction_leader = yes
-			has_civil_war = NO
+			has_civil_war = no
 			OR ={
 				has_government = democratic
 				has_government = neutrality
@@ -1459,9 +1467,9 @@ focus = {
 	id = UNG_Xiangailinuokaolong
 	icon = GFX_focus_UNG_king_lianheailinuo
 	prerequisite = {
-		focus = UNG_Faqichongfeng
+		focus = UNG_Chongfandalu
 	}
-	relative_position_id = UNG_Faqichongfeng
+	relative_position_id = UNG_Chongfandalu
 	mutually_exclusive = {
 		focus = UNG_Xiangshenglinglangkaolong
 	}
@@ -1480,7 +1488,7 @@ focus = {
 		NOT = { is_in_faction_with = ELN } 
 		ELN = {
 			is_faction_leader = yes
-			has_civil_war = NO
+			has_civil_war = no
 			OR ={
 				has_government = democratic
 				has_government = neutrality
@@ -1497,18 +1505,59 @@ focus = {
 		}
 	}
 }
+#*发起冲锋
+focus = {
+	id = UNG_Faqichongfeng
+	icon = GFX_focus_UNG_king_duishengeluoliannadezuihoutongdie
+	prerequisite = {
+		focus = UNG_Xiangshenglinglangkaolong
+		focus = UNG_Xiangailinuokaolong
+	}
+	relative_position_id = UNG_Xiangailinuokaolong
+	x = -1
+	y = 1
+	cost = 4
+	ai_will_do = {
+		factor = 1
+		#modifier = {
+		#	is_historical_focus_on = yes
+		#	has_army_manpower = { size > 500000 }
+		#	factor = 500
+		#}
+
+		modifier = {
+			factor = 0
+			is_historical_focus_on = yes
+		}
+	}
+	available = {
+		always = yes
+	}
+	bypass = {
+		has_war_with = STG
+	}
+	available_if_capitulated = no
+	cancel_if_invalid = yes
+	will_lead_to_war_with = STG
+	completion_reward = {
+		news_event = { ID = ungnews.109 }
+		remove_ideas = UNG_idea_tuolidalu
+		declare_war_on = { target = STG type = annex_everything }
+	}
+}
 #*把胜利的旗帜插到海峡对岸！
 focus = {
 	id = UNG_Bashenglideqizhichadaohaixiaduian
 	icon = GFX_focus_UNG_king_yiyeguzhou
 	prerequisite = {
-		focus = UNG_Faqichongfeng
+		focus = UNG_Xiangshenglinglangkaolong
+		focus = UNG_Xiangailinuokaolong
 	}
 	mutually_exclusive = {
 		foucs = UNG_Rongguangxiadezhixv
 	}
-	relative_position_id = UNG_Faqichongfeng
-	x = 4
+	relative_position_id = UNG_Xiangailinuokaolong
+	x = 3
 	y = 1
 	cost = 4
 	ai_will_do = {
@@ -1556,13 +1605,14 @@ focus = {
 	id = UNG_Rongguangxiadezhixv
 	icon = GFX_focus_UNG_king_31
 	prerequisite = {
-		focus = UNG_Faqichongfeng
+		focus = UNG_Xiangshenglinglangkaolong
+		focus = UNG_Xiangailinuokaolong
 	}
 	mutually_exclusive = {
 		foucs = UNG_Bashenglideqizhichadaohaixiaduian
 	}
-	relative_position_id = UNG_Faqichongfeng
-	x = 6
+	relative_position_id = UNG_Xiangailinuokaolong
+	x = 5
 	y = 1
 	cost = 4
 	ai_will_do = {
@@ -1822,11 +1872,14 @@ focus = {
 	prerequisite = {
 		focus = UNG_Xiangshenglinglangkaolong
 	}
-	relative_position_id = UNG_Xiangshenglinglangkaolong
+	prerequisite = {
+		focus = UNG_Faqichongfeng
+	}
+	relative_position_id = UNG_Faqichongfeng
 	mutually_exclusive = {
 		focus = UNG_Daluzhanlue
 	}
-	x = 0
+	x = -1
 	y = 1
 	cost = 4
 	ai_will_do = {
@@ -1853,11 +1906,14 @@ focus = {
 	prerequisite = {
 		focus = UNG_Xiangailinuokaolong
 	}
-	relative_position_id = UNG_Xiangailinuokaolong
+	prerequisite = {
+		focus = UNG_Faqichongfeng
+	}
+	relative_position_id = UNG_Faqichongfeng
 	mutually_exclusive = {
 		focus = UNG_Dayangzhanlue
 	}
-	x = 0
+	x = 1
 	y = 1
 	cost = 4
 	ai_will_do = {
@@ -2040,7 +2096,7 @@ focus = {
 	}
 	available = {
 		has_stability > 0.5
-		has_war = NO
+		has_war = no
 		OR = {
 			643 = {
 				is_owned_and_controlled_by = ROOT
@@ -2083,6 +2139,11 @@ focus = {
 		modifier = {
 			is_historical_focus_on = yes
 			factor = 500
+		}
+
+		modifier = {
+			factor = 0
+			is_in_faction = no
 		}
 	}
 	available = {
@@ -2239,7 +2300,7 @@ focus = {
 	}
 	available = {
 		has_stability > 0.4
-		has_war = NO
+		has_war = no
 	}
 	
 	available_if_capitulated = no
@@ -2423,7 +2484,7 @@ focus = {
 			NOT = {
 				country_exists = BLA
 			}
-			has_civil_war = NO
+			has_civil_war = no
 			has_government = communism
 			has_opinion = {
 				target = UNG
@@ -2470,7 +2531,7 @@ focus = {
 			has_war_with = SLL
 		}
 		SLL ={
-			has_civil_war = NO
+			has_civil_war = no
 			has_opinion = {
 				target = UNG
 				value > 39
