@@ -1,3 +1,246 @@
+CLEAN_mission = {
+    
+    Clean_mission = {
+		activation = {
+			always = no
+		}
+		available = {
+			always = no
+		}
+        cancel_trigger = {
+            OR = {
+                has_war = yes
+				has_completed_focus = TDL_AF1
+            }
+        }
+        days_mission_timeout = 270
+        cancel_effect = {
+            remove_country_flag = start_clean
+            add_ideas = TDLK_Thought_Union 
+        }
+    }
+
+    Left_dissatisfaction = {
+		activation = {
+			always = no
+		}
+		available = {
+			always = no
+		}
+        days_mission_timeout = 120
+        cancel_trigger = {
+           	OR = {
+				has_completed_focus = TDL_ZC2
+				not = { has_country_flag = left_dissatisfaction }
+				not = { has_country_flag = start_clean }
+			}
+        }
+        timeout_effect = { 
+            add_timed_ideas = { idea = TDL_worker_anger days = 90 }
+            add_popularity = {
+                ideology = communism
+                popularity = 0.2
+            }
+        }
+        cancel_effect = { 
+            add_political_power = 100
+            add_stability = 0.05
+        }
+    }
+    
+    Dem_dissatisfaction = {
+		activation = {
+			always = no
+		}
+		available = {
+			always = no
+		}
+        days_mission_timeout = 120
+        cancel_trigger = {
+            OR = {
+				not = { has_country_flag = start_clean }
+            	not = { has_country_flag = dem_dissatisfaction }
+				has_completed_focus = TDL_ZD3
+			}
+        }
+        timeout_effect = { 
+            add_timed_ideas = { idea = TDL_people_quest days = 90 }
+			add_popularity = {
+                ideology = democratic
+                popularity = 0.2
+            }
+        }
+        cancel_effect = { 
+            add_political_power = 100
+            add_stability = 0.05
+        }
+    }
+
+    Right_action = {
+		activation = {
+			always = no
+		}
+		available = {
+			always = no
+		}
+        days_mission_timeout = 120
+        cancel_trigger = {
+            OR = {
+				not = { has_country_flag = start_clean }
+            	not = { has_country_flag = Right_action }
+				has_completed_focus = TDL_ZF1
+			}
+        }
+        timeout_effect = { 
+            set_politics = {
+                ruling_party = fascism
+                elections_allowed = no
+            }
+            add_popularity = {
+                ideology = fascism
+                popularity = 0.3
+            }
+        }
+        cancel_effect = { 
+            add_political_power = 100
+            add_war_support = 0.1
+        }
+    }
+    #收拢权力
+    Political_power = {
+        visible = {
+            has_country_flag = start_clean
+        }
+		available = {
+			has_country_flag = start_clean
+		}
+        fire_only_once = yes
+        ai_will_do = {
+            base = 114514
+        }
+        days_remove = 120
+        modifier = {
+            political_power_gain = 1.5
+            political_power_factor = 0.3
+        }
+    }
+    
+	#对工人让步
+    decision_left_step_back = {
+		cost = 10
+		visible = {
+			has_country_flag = left_dissatisfaction
+		}
+		available = {
+			political_power_daily > 0.6
+		}
+		fire_only_once = no
+		days_re_enable = 60
+		days_remove = 15
+		modifier = {
+			political_power_gain = -0.5
+		}
+		ai_will_do = {
+			base = 50
+		}
+		complete_effect = {
+			add_days_mission_timeout = {
+    			mission = Left_dissatisfaction
+				days = 35
+			}
+		}
+    }
+
+    #逮捕工人运动领袖
+    decision_arrest_leader = {
+        visible = {
+            has_country_flag = left_dissatisfaction
+        }
+		available = {
+            political_power_daily > 0.6
+        }
+        fire_only_once = no
+        days_re_enable = 90
+        days_remove = 7
+        cost = 30
+        ai_will_do = 0
+        tooltip = TDLK.C.tt.1 #这会导致其它派系加速自己的行动！
+        complete_effect = {
+            add_days_mission_timeout = {
+    			mission = Left_dissatisfaction
+				days = 50
+			}
+            add_days_mission_timeout = {
+    			mission = Dem_dissatisfaction
+				days = -25
+			}
+            add_days_mission_timeout = {
+    			mission = Right_action
+				days = -25
+			}
+        }
+    }
+
+    #开放进言通道
+    decision_extend_advise_way = {
+		visible = {
+            has_country_flag = dem_dissatisfaction
+        }
+
+        available = {
+            political_power_daily > 0.6
+        }
+        fire_only_once = no
+        days_re_enable = 60
+        days_remove = 15
+		cost = 10
+		modifier = {
+			political_power_gain = -0.5
+		}
+        ai_will_do = {
+            factor = 50
+        }
+        complete_effect = {
+            add_days_mission_timeout = {
+    			mission = Dem_dissatisfaction
+				days = 35
+			}
+        }
+    }
+	
+    #逮捕指责中央之人
+    decision_arrest_critics = {
+        
+		visible = {
+            has_country_flag = dem_dissatisfaction
+        }
+		available = {
+            political_power_daily > 0.6
+        }
+        fire_only_once = no
+        days_re_enable = 90
+        days_remove = 7
+        cost = 30
+        ai_will_do = 0
+        tooltip = TDLK.C.tt.1 #这会导致其它派系加速自己的行动！
+        complete_effect = {
+            add_days_mission_timeout = {
+    			mission = Dem_dissatisfaction
+				days = 50
+			}
+            add_days_mission_timeout = {
+    			mission = Left_dissatisfaction
+				days = -25
+			}
+            add_days_mission_timeout = {
+    			mission = Right_action
+				days = -25
+			}
+        }
+    }
+}
+
+
 #西南诸国的最终裁决
 TDL_pacify_the_southwestern_states = {
 
