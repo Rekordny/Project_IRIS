@@ -24,6 +24,26 @@ focus_tree = {
 		y = 2200
 	}
 	default = no
+	
+	focus = {   #军事统计
+		id = TDL_M0
+		icon = GFX_goal_generic_political_pressure
+		cost = 5.00
+		ai_will_do = { factor = 100 }
+		available = {
+		
+		}
+		relative_position_id = TDL_A6
+		x = 0
+		y = -2
+		completion_reward = {
+			add_dynamic_modifier = {
+				modifier = TDL_Army_condition
+			}
+			country_event = { id = TDLK.0 }
+		}
+	}
+	
 	focus = {	#巩固中央
 		id = TDL_Z1
 		icon = GFX_goal_generic_political_pressure
@@ -33,7 +53,6 @@ focus_tree = {
 			has_war = no
 			has_country_leader = {
                 character = TDL_Constantine
-                ruling_only = yes
             }
 		}
 		mutually_exclusive = {
@@ -42,6 +61,7 @@ focus_tree = {
 		x = 8
 		y = 0
 		completion_reward = {
+			country_event = { id = TDLK.4 }
 			add_stability = 0.1
 			add_popularity = {
 				ideology = neutrality
@@ -51,11 +71,9 @@ focus_tree = {
 				ideology = democratic
 				popularity = 0.05
 			}
-		}
-		search_filters = { FOCUS_FILTER_POLITICAL }
-		search_filters = { FOCUS_FILTER_STABILITY }
-
+		}	
 	}
+
 	focus = {	#浪潮汹涌
 		id = TDL_Z2
 		icon = GFX_goal_anti_comintern_pact
@@ -95,7 +113,6 @@ focus_tree = {
 				popularity = 0.05
 			}
 		}
-		search_filters = { FOCUS_FILTER_POLITICAL }
 	}
 	focus = {	#振兴经济
 		id = TDL_J1
@@ -126,8 +143,6 @@ focus_tree = {
 				category = excavation_tech
 			}
 		}
-		search_filters = { FOCUS_FILTER_INDUSTRY }
-		search_filters = { FOCUS_FILTER_RESEARCH }
 	}
 	focus = {	#接触列强
 		id = TDL_W1
@@ -145,6 +160,9 @@ focus_tree = {
 		icon = GFX_goal_generic_air_doctrine
 		cost = 1.00
 		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = TDL_M0
+		}
 		available = {
 			NOT = { has_idea = TDL_Black_Foaming_Night }
 		}
@@ -162,8 +180,11 @@ focus_tree = {
 		id = TDL_H1
 		icon = GFX_goal_generic_navy_battleship
 		cost = 5.00
+		prerequisite = {
+			focus = TDL_M0
+		}
 		available = {
-			has_completed_focus = TDL_A1
+			NOT = { has_idea = TDL_Black_Foaming_Night }
 		}
 		x = 49
 		y = 0
@@ -216,9 +237,15 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = TDL_Z4
 		}
+		available = {
+			always = no
+			}
+		bypass = {
+			has_country_flag = rebuild_republic 
+			}
 		x = 3
 		y = 1
-		completion_reward = {
+		bypass_effect = {
 			add_stability = 0.5
 			add_political_power = 100
 			add_popularity = {
@@ -374,7 +401,7 @@ focus_tree = {
 	focus = {	#平衡天秤
 		id = TDL_Z4
 		icon = GFX_goal_generic_neutrality_focus
-		cost = 17.14
+		cost = 1
 		ai_will_do = { factor = 100 }
 		prerequisite = {
 			focus = TDL_Z1
@@ -382,31 +409,287 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = TDL_Z3
 		}
+		available = {
+			always = no
+		}
+		
 		x = 8
 		y = 1
 		completion_reward = {
-			add_stability = -0.2
-			add_political_power = 250		
+			add_stability = -0.5
+			add_war_support = -0.3
+			add_political_power = 250
+			TDL = {
+				country_event = { id = TDLK.5 }	
+			}	
 		}
-
 	}
+	focus = {   #工人权利
+		id = TDL_ZC1
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 3
+		ai_will_do = { factor = 300 }
+		prerequisite = {
+			focus = TDL_Z4
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_Z4
+		x = -2
+		y = 1
+		completion_reward = {
+			add_ideas = TDL_worker_1
+		}
+	}
+	focus = {   #统一领导下的工会
+		id = TDL_ZC2
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 3
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = TDL_ZC1
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_ZC1
+		x = 0
+		y = 1
+		completion_reward = {
+			country_event = { hours = 12 id = TDLK.6 }
+			swap_ideas = {
+				remove_idea = TDL_worker_1
+				add_idea = TDL_worker_2
+			}
+		}
+	}
+	focus = {   #工会改革
+		id = TDL_ZC3
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 3
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = TDL_ZC2
+		}
+		available = {
+			has_country_flag = start_clean
+			not = {
+				has_country_flag = revange_fire_2
+			}
+		}
+		relative_position_id = TDL_ZC2
+		x = 0
+		y = 1
+		completion_reward = {
+			swap_ideas = {
+				remove_idea = TDL_worker_2
+				add_idea = TDL_worker_3
+			}
+			clr_country_flag = left_dissatisfaction
+		}
+	}
+	focus = {   #“人民”之声
+		id = TDL_ZD1
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 4
+		ai_will_do = { 
+			base = 250 
+			modifier = {
+				limit = {
+					mission = dem_dissatisfaction
+					days_mission_timeout < 60
+				}
+				base = 1000
+			}
+		}
+		prerequisite = {
+			focus = TDL_Z4
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_Z4
+		x = 0
+		y = 1
+		completion_reward = {
+			add_stability = 0.05
+			add_political_power = -60
+			add_days_mission_timeout = {
+    			mission = Dem_dissatisfaction
+				days = 60
+			}
+		}
+	}
+	focus = {   #先有君主，再有民主
+		id = TDL_ZD2
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 1
+		ai_will_do = { factor = 30 }
+		prerequisite = {
+			focus = TDL_ZD1
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_ZD1
+		x = 0
+		y = 1
+		completion_reward = {
+			add_stability = 0.15
+			add_war_support = 0.05
+			add_popularity = {
+				ideology = neutrality
+				popularity = 0.1
+			}
+		}
+	}
+	focus = {	 #妥协
+		id = TDL_ZD3
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 2
+		ai_will_do = { factor = 50 }
+		prerequisite = {
+			focus = TDL_ZD2
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_ZD2
+		x = 0
+		y = 1
+		completion_reward = {
+			add_stability = 0.15
+			add_war_support = 0.2
+			country_event = { hours = 12 id = TDLK.7 }
+			clr_country_flag = dem_dissatisfaction
+		}
+	}
+	focus = {  #必要之恶
+		id = TDL_ZF1
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 2
+		ai_will_do = {
+			factor = 500
+		}
+		prerequisite = {
+			focus = TDL_Z4
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_Z4
+		x = 2
+		y = 1
+		completion_reward = {
+			country_event = { id = TDLK.8 }
+			add_manpower = -100
+		}
+	}
+	focus = {  #“忠君”与“爱国”
+		id = TDL_ZF2
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 3
+		ai_will_do = {
+			factor = 50
+		}
+		prerequisite = {
+			focus = TDL_ZF1
+		}
+		available = {
+			has_country_flag = start_clean
+			not = { has_country_flag = revange_fire_4 }
+		}
+		relative_position_id = TDL_ZF1
+		x = 0
+		y = 1
+		completion_reward = {
+			add_timed_idea = { idea = TDL_New_Patriotism_edu days = 730 }
+		}
+	}
+	focus = {   #塔德里克青年团
+		id = TDL_ZF3
+		icon = GFX_goal_generic_neutrality_focus
+		cost = 5 
+		ai_will_do = {
+			factor = 30
+		}
+		prerequisite = {
+			focus = TDL_ZF2
+		}
+		available = {
+			has_country_flag = start_clean
+		}
+		relative_position_id = TDL_ZF2
+		x = 0
+		y = 1
+		completion_reward = {
+			add_ideas = TDL_youth_team
+			clr_country_flag = right_action
+		}
+	}
+
+	focus = {    #喧嚣之后
+		id = TDL_AF1
+		icon = GFX_goal_unknown
+		cost = 0.16
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = TDL_ZC3
+			focus = TDL_ZD3
+			focus = TDL_ZF3
+		}
+		available = {
+			AND = {
+				has_completed_focus = TDL_ZC3 
+				has_completed_focus = TDL_ZD3
+				has_completed_focus = TDL_ZF3
+			}
+		}
+		relative_position_id = TDL_ZD3
+		x = 0
+		y = 1
+		completion_reward = {
+			add_stability = 0.15
+			add_war_support = 0.15
+		
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_flag = revange_fire_1
+						has_country_flag = revange_fire_2
+						has_country_flag = revange_fire_3
+						has_country_flag = revange_fire_4
+					}
+					country_event = { id = TDLK.10 days = 1 }
+				}
+				else = {
+					country_event = { id = TDLK.9 }
+				}
+			}
+		}
+	}
+
 	focus = {	#复兴之路
 		id = TDL_Z8
 		icon = GFX_goal_unknown
 		cost = 1.00
 		ai_will_do = { factor = 100 }
 		prerequisite = {
-			focus = TDL_Z4
+			focus = TDL_AF1
 		}
 		mutually_exclusive = {
 			focus = TDL_Z6
 		}
-		x = 7
+		available = {
+			always = no
+		}
+		relative_position_id = TDL_AF1
+		x = -1
 		y = 2
 		completion_reward = {
-			remove_ideas = TDL_Political_chaos
 			add_stability = 0.2
-			add_political_power = 150	
+			remove_idea = TDL_Political_chaos 	
 		}
 
 
@@ -417,11 +700,12 @@ focus_tree = {
 		cost = 5.00
 		ai_will_do = { factor = 100 }
 		prerequisite = {
-			focus = TDL_Z8
+			focus = TDL_JH1
+			focus = TDL_JH2
 		}
-		x = 6
-		y = 3
-
+		relative_position_id = TDL_JH1
+		x = 0
+		y = 1.5
 	}
 	focus = {	#君王之责
 		id = TDL_Z17
@@ -429,11 +713,40 @@ focus_tree = {
 		cost = 5.00
 		ai_will_do = { factor = 100 }
 		prerequisite = {
+			focus = TDL_JH1
+			focus = TDL_JH2
+		}
+		relative_position_id = TDL_JH2
+		x = 0
+		y = 1.5
+	}
+	focus = {
+		id = TDL_JH1
+		cost = 5.00
+		ai_will_do = { factor = 100 }
+		prerequisite = {
 			focus = TDL_Z8
 		}
-		x = 8
-		y = 3
-
+		mutually_exclusive = {
+			focus = TDL_JH2
+		}
+		relative_position_id = TDL_Z8
+		x = -1
+		y = 1.5
+	}
+	focus = {
+		id = TDL_JH2
+		cost = 5.00
+		ai_will_do = { factor = 100 }
+		prerequisite = {
+			focus = TDL_Z8
+		}
+		mutually_exclusive = {
+			focus = TDL_JH1
+		}
+		relative_position_id = TDL_Z8
+		x = 1
+		y = 1.5
 	}
 	focus = {	#千年启示
 		id = TDL_Z18
@@ -444,8 +757,8 @@ focus_tree = {
 			focus = TDL_Z16
 			focus = TDL_Z17
 		}
-		x = 7
-		y = 4
+		x = 70
+		y = 40
 
 	}
 	focus = {	#欲戴王冠，必承其重
@@ -456,8 +769,8 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z18
 		}
-		x = 7
-		y = 5
+		x = 70
+		y = 50
 
 	}
 	focus = {	#星芒的引导
@@ -468,8 +781,8 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z19
 		}
-		x = 7
-		y = 6
+		x = 70
+		y = 60
 
 	}
 	focus = {	#地平线曙光
@@ -479,8 +792,8 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z2
 		}
-		x = 14
-		y = 1
+		x = 140
+		y = 10
 		completion_reward = {
 			add_stability = 0.1
 			add_political_power = 100
@@ -512,24 +825,22 @@ focus_tree = {
 	focus = {	#复仇之火
 		id = TDL_Z6
 		icon = GFX_goal_support_fascism
-		cost = 6.00
+		cost = 1
 		prerequisite = {
-			focus = TDL_Z7
-			focus = TDL_Z4
+			focus = TDL_AF1
 		}
 		mutually_exclusive = {
 			focus = TDL_Z8
-			focus = TDL_Z25
 		}
-		x = 11
+		available = {
+			always = no
+		}
+		relative_position_id = TDL_AF1
+		x = 1
 		y = 2
 		completion_reward = {
 			add_stability = -0.1
 			add_political_power = 140
-			remove_ideas = TDL_Political_chaos
-			set_politics = { 
-				ruling_party = fascism
-			}
 			add_popularity = {
 				ideology = fascism
 				popularity = 0.10
@@ -553,7 +864,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z6
 		}
-		x = 11
+		x = 110
 		y = 3
 		completion_reward = {
 			add_stability = -0.15
@@ -578,7 +889,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z29
 		}
-		x = 11
+		x = 110
 		y = 4
 
 	}
@@ -589,7 +900,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z30
 		}
-		x = 11
+		x = 110
 		y = 5
 
 	}
@@ -600,7 +911,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z31
 		}
-		x = 11
+		x = 110
 		y = 6
 
 	}
@@ -612,7 +923,7 @@ focus_tree = {
 			focus = TDL_Z20
 			focus = TDL_Z32
 		}
-		x = 7
+		x = 70
 		y = 7
 
 	}
@@ -623,7 +934,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z21
 		}
-		x = 8
+		x = 80
 		y = 8
 
 	}
@@ -635,9 +946,9 @@ focus_tree = {
 			focus = TDL_Z7
 		}
 		mutually_exclusive = {
-			focus = TDL_Z6
+			
 		}
-		x = 16
+		x = 160
 		y = 2
 
 	}
@@ -648,7 +959,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z25
 		}
-		x = 14
+		x = 140
 		y = 3
 
 	}
@@ -659,7 +970,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z25
 		}
-		x = 16
+		x = 160
 		y = 3
 
 	}
@@ -670,7 +981,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z25
 		}
-		x = 18
+		x = 180
 		y = 3
 
 	}
@@ -683,7 +994,7 @@ focus_tree = {
 			focus = TDL_Z27
 			focus = TDL_Z28
 		}
-		x = 14
+		x = 140
 		y = 4
 		completion_reward = {
 			add_stability = -0.1
@@ -708,7 +1019,7 @@ focus_tree = {
 			focus = TDL_Z26
 			focus = TDL_Z28
 		}
-		x = 16
+		x = 160
 		y = 4
 
 	}
@@ -1521,7 +1832,10 @@ focus_tree = {
 		icon = GFX_goal_generic_air_fighter2
 		cost = 11.50
 		prerequisite = {
-			focus = TDL_A1
+			focus = TDL_M0
+		}
+		available = {
+			NOT = { has_idea = TDL_Black_Foaming_Night }
 		}
 		x = 43
 		y = 1
@@ -1698,7 +2012,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z21
 		}
-		x = 6
+		x = 60
 		y = 8
 
 	}
@@ -1710,7 +2024,7 @@ focus_tree = {
 			focus = TDL_Z23
 			focus = TDL_Z22
 		}
-		x = 7
+		x = 70
 		y = 9
 
 	}
@@ -1721,7 +2035,7 @@ focus_tree = {
 		prerequisite = {
 			focus = TDL_Z24
 		}
-		x = 7
+		x = 70
 		y = 10
 		completion_reward = {
 			add_ideas = TDL_Civilight_Eterna

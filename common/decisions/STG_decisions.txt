@@ -6006,6 +6006,7 @@ Unite_Anglia = {
             country_exists = FNG
             FNG = {
                 has_opinion_modifier = Anglia_Reconcilation
+                NOT = {has_idea = FNG_reconstruction}
             }
         }
         visible = {
@@ -6014,10 +6015,9 @@ Unite_Anglia = {
             FNG = {
                 is_ai = yes
             }
-            has_global_flag = Anglia_RECONCLIATION_FLAG
+            has_global_flag = ANGLIA_RECONCLIATION_FLAG
         }
         cost = 100
-        days_remove = 0
         fire_only_once = yes
         complete_effect = {
         }
@@ -6034,7 +6034,6 @@ Unite_Anglia = {
                 
             }
             hidden_effect = {
-                news_event = {id = STG_news.15 days = 3}
                 set_global_flag = ANGLIA_UNITED_FLAG
                 if = { 
                     limit = {
@@ -6052,12 +6051,121 @@ Unite_Anglia = {
                     remove_ideas = STG_heaven_of_industralist
                     mark_focus_tree_layout_dirty = yes
                 }
+                if = {
+                    limit = {
+                        242 = {is_owned_by = FNG}
+                    }
+                    242 = {
+                        transfer_state_to = STN
+                        add_core_of = STN
+                    }
+                }
+                else_if = {
+                    limit = {
+                        241 = {is_owned_by = FNG}
+                    }
+                    241 = {
+                        transfer_state_to = STN
+                        add_core_of = STN
+                    }
+                }
+                else_if = {
+                    limit = {
+                        257 = {is_owned_by = FNG}
+                    }
+                    257 = {
+                        transfer_state_to = STN
+                        add_core_of = STN
+                    }
+                }
+                else_if = {
+                    limit = {
+                        238 = {
+                            OR = {
+                                is_owned_by = FNG
+                                is_owned_by = STG
+                            }
+                        }
+                    }
+                    238 = {
+                        transfer_state_to = STN
+                        add_core_of = STN
+                    }
+                }
+                else = {
+                    FNG = {
+                        transfer_navy = {
+                            target = STG
+                        }
+                    }
+                }
                 FNG = {
                     transfer_navy = {
-                        target = STG
+                        target = STN
                     }
                 }
                 annex_country = {target = FNG transfer_troops = yes}
+                UNG = {
+                    UNG_Sheffield = {
+                        set_nationality = STN
+                    }
+                }
+                set_autonomy = {
+                    target = STN
+                    autonomous_state = STG_naval_command
+                }
+                STN = {
+                    inherit_technology = FNG
+                    add_offsite_building = {
+                        type = dockyard
+                        level = 2
+                    }
+                    if = {
+                        limit = {
+                            STG = {has_government = communism}
+                        }
+                        set_popularities = {
+                            neutrality = 10
+                            democratic = 10
+                            communism = 80
+                            fascism = 0
+                            reactionism = 0
+                        }
+                        set_politics = {
+                            ruling_party = communism
+                        }
+                        add_country_leader_role = {
+                            character = UNG_Sheffield
+                            promote_leader = yes
+                            country_leader = {
+                                ideology = sub_Military_socialism
+                                expire = "3200.1.1.1"
+                                traits = {}
+                            }
+                        }
+                    }
+                    else = {
+                        set_popularities = {
+                            neutrality = 90
+                            democratic = 10
+                            communism = 0
+                            fascism = 0
+                            reactionism = 0
+                        }
+                        set_politics = {
+                            ruling_party = neutrality
+                        }
+                        add_country_leader_role = {
+                            character = UNG_Sheffield
+                            promote_leader = yes
+                            country_leader = {
+                                ideology = sub_Junta
+                                expire = "3200.1.1.1"
+                                traits = {}
+                            }
+                        }
+                    }
+                }
                 every_state = {
                     limit = {
                         OR = {
@@ -6290,6 +6398,7 @@ Unite_Anglia = {
             NOT = {
                 has_war_with = STG
             }
+            NOT = {has_idea = FNG_reconstruction}
             country_exists = STG
             STG = {
                 has_opinion_modifier = Anglia_Reconcilation
@@ -6301,7 +6410,7 @@ Unite_Anglia = {
             STG = {
                 is_ai = yes
             }
-            has_global_flag = Anglia_RECONCLIATION_FLAG
+            has_global_flag = ANGLIA_RECONCLIATION_FLAG
         }
         cost = 100
         days_remove = 0
@@ -9701,6 +9810,440 @@ STG_rebuild_Anglia = {
         }
         ai_will_do = {
             base = 1000
+        }
+    }
+}
+STG_support_NAC = {
+    STG_load_infantry_equipment = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            has_equipment = {
+                infantry_equipment > 499
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 0}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 10
+        days_remove = 3
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = -500
+                producer = STG
+            }
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -1}
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 10
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 500
+                producer = STG
+            }
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_infantry_equipment_sent = 500}
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_load_support_equipment = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            has_equipment = {
+                support_equipment_1 > 99
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 0}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 10
+        days_remove = 3
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            add_equipment_to_stockpile = {
+                type = support_equipment_1
+                amount = -100
+                producer = STG
+            }
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -1}
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 10
+            add_equipment_to_stockpile = {
+                type = support_equipment_1
+                amount = 500
+                producer = STG
+            }
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_support_equipment_sent = 500}
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_load_artillery_equipment = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            has_equipment = {
+                artillery_equipment > 119
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 1}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 10
+        days_remove = 5
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = -120
+                producer = STG
+            }
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -2}
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 10
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 120
+                producer = STG
+            }
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_artillery_equipment_sent = 120}
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_load_tank = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 1}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 10
+        days_remove = 7
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -2}
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 10
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_tank_sent = 50}
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_take_volunteers = {
+        available = {
+            has_manpower > 1499
+            NAC = {
+                has_war_with = BLA
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 0}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_take_volunteers
+            }
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 10
+        days_remove = 7
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            add_manpower = -1500
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -1}
+                set_country_flag = STG_take_volunteers
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 10
+            add_manpower = 1500
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_volunteers_sent = 1500}
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_load_medicial_equipment = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 0}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_take_volunteers
+            }
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 20
+        days_remove = 7
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -1}
+                set_country_flag = STG_load_medicial_equipment
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 20
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_load_normal_goods = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            custom_trigger_tooltip = {
+                tooltip = STG_has_enough_capacity_t
+                check_variable = {STG_capacity > 0}
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = STG_load_normal_goods
+            }
+            NOT = {
+                has_country_flag = STG_fleet_departed
+            }
+        }
+        cost = 20
+        days_remove = 7
+        cancel_trigger = {
+            NAC = {
+                NOT = {
+                    has_war_with = BLA
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_capacity = -1}
+                set_country_flag = STG_load_normal_goods
+                add_to_variable = {STG_loading_var = 1}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 20
+            add_to_variable = {STG_loading_var = -1}
+        }
+        remove_effect = {
+            hidden_effect = {
+                add_to_variable = {STG_loading_var = -1}
+            }
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
+    STG_send_the_Nord_Star_fleet = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            check_variable = {STG_capacity < 5}
+            custom_trigger_tooltip = {
+                tooltip = STG_is_loading_t
+                check_variable = {STG_loading_var < 1}
+            }
+        }
+        fire_only_once = yes
+        cost = 30
+        days_remove = 50
+        remove_effect = {
+            country_event = {id = STG_rev.203}
+            set_country_flag = STG_fleet_departed
+        }
+        ai_will_do = {
+            base = 1000
+            modifier = {
+                factor = 0
+                check_variable = {STG_capacity > 3}
+            }
+        }
+    }
+    STG_send_the_fleet = {
+        available = {
+            NAC = {
+                has_war_with = BLA
+            }
+            check_variable = {STG_capacity < 5}
+            custom_trigger_tooltip = {
+                tooltip = STG_is_loading_t
+                check_variable = {STG_loading_var < 1}
+            }
+        }
+        visible = {
+            has_country_flag = STG_send_the_fleet
+        }
+        fire_only_once = yes
+        cost = 20
+        days_remove = 40
+        remove_effect = {
+            set_country_flag = STG_fleet_departed
+            random_list = {
+				50 = {
+					country_event = {id = STG_rev.208}
+					NAC = {country_event = {id = STG_rev.209}}
+				}
+				30 = {
+					country_event = {id = STG_rev.210}
+					NAC = {country_event = {id = STG_rev.211}}
+				}
+				15 = {
+					country_event = {id = STG_rev.212}
+					NAC = {country_event = {id = STG_rev.213}}
+				}
+				5 = {
+					country_event = {id = STG_rev.214}
+					NAC = {country_event = {id = STG_rev.215}}
+				}
+			}
+        }
+        ai_will_do = {
+            base = 1
+            modifier = {
+                factor = 0
+                check_variable = {STG_capacity > 3}
+            }
         }
     }
 }
