@@ -313,7 +313,10 @@ focus_tree = {
                 name = "联盟保卫局"
                 icon = GFX_intelligence_agency_logo_sov
             }
-            custom_effect_tooltip = NAC_unlock_propaganda
+            unlock_decision_tooltip = NAC_jokes
+            unlock_decision_tooltip = NAC_focus_on_army
+            unlock_decision_tooltip = NAC_focus_on_freeman
+            unlock_decision_tooltip = NAC_focus_on_serf
             custom_effect_tooltip = Rossiya_Propaganda_desc
             hidden_effect = {
                 country_event = {id = NAC.14 days = 7}
@@ -852,11 +855,6 @@ focus_tree = {
                     remove_ideas = NAC_famine_1
                     remove_ideas = NAC_famine_2
                     set_country_flag = NAC_disable_food_system
-                    load_focus_tree = {
-                        tree = NAC
-                        keep_completed = yes
-                    }
-                    mark_focus_tree_layout_dirty = yes
                     add_to_variable = {NAC_war_preparation = 5}
                     if = {
                         limit = {
@@ -905,6 +903,7 @@ focus_tree = {
                     }
                 }
             }
+            IRIS_unlock_a_new_branch = yes
 		}
     }
 ####################革命国策树#########################
@@ -970,7 +969,7 @@ focus_tree = {
         x = -1
         y = 1
         relative_position_id = NAC_rev_1
-        cost = 1
+        cost = 4
         available_if_capitulated = yes
         prerequisite = {
             focus = NAC_rev_1
@@ -1102,6 +1101,10 @@ focus_tree = {
                     division = "name = \"红军骑兵师\" division_template = \"红军骑兵师\" start_experience_factor = 0.10"
                     owner = NAC
                 }
+                create_unit = {
+                    division = "name = \"红军骑兵师\" division_template = \"红军骑兵师\" start_experience_factor = 0.10"
+                    owner = NAC
+                }
             }
             custom_effect_tooltip = NAC_morale_increase_by_5
             hidden_effect = {
@@ -1116,7 +1119,7 @@ focus_tree = {
         x = 3
         y = 2
         relative_position_id = NAC_rev_1
-        cost = 1
+        cost = 4
         available_if_capitulated = yes
         prerequisite = {
             focus = NAC_rev_1
@@ -1169,13 +1172,13 @@ focus_tree = {
         available = {
             has_war_with = BLA
             ORE = {
-                controls_state = 106
+                controls_state = 854
             }
         }
         bypass = {
             ORE = {
                 NOT = {
-                    controls_state = 106
+                    controls_state = 854
                 }
             }
         }
@@ -1227,7 +1230,7 @@ focus_tree = {
         x = -3
         y = 2
         relative_position_id = NAC_rev_1
-        cost = 1
+        cost = 4
         available_if_capitulated = yes
         prerequisite = {
             focus = NAC_rev_1
@@ -1355,7 +1358,7 @@ focus_tree = {
         x = 1
         y = 1
         relative_position_id = NAC_rev_1
-        cost = 1
+        cost = 4
         available_if_capitulated = yes
         prerequisite = {
             focus = NAC_rev_1
@@ -1399,6 +1402,7 @@ focus_tree = {
 		}
         completion_reward = {
             custom_effect_tooltip = NAC_morale_increase_by_5
+            add_war_support = 0.1
             hidden_effect = {
                 NAC = {add_to_variable = {NAC_morale = 5}}
             }
@@ -1868,6 +1872,9 @@ focus_tree = {
             set_province_name = {id = 5003 name = VICTORY_POINTS_5003_new}
             set_province_name = {id = 85 name = VICTORY_POINTS_85_new}
             set_province_name = {id = 10131 name = VICTORY_POINTS_10131_new}
+            199 = {
+                set_state_name = STATE_199_new
+            }
 		}
     }
     #现实的妥协
@@ -2231,12 +2238,8 @@ focus_tree = {
                     }
                     set_country_flag = NAC_katyusha_route
                 }
-                load_focus_tree = {
-                    tree = NAC
-                    keep_completed = yes
-                }
-                mark_focus_tree_layout_dirty = yes
             }
+            IRIS_unlock_a_new_branch = yes
 		}
     }
 ####################统一后阶段#########################
@@ -2882,6 +2885,7 @@ focus_tree = {
 				}
 				icon = "GFX_SOV_advanced_heavy_tank_medium"
             }
+            custom_effect_tooltip = IRIS_special_historical_equipment_upgrade_tt
             custom_effect_tooltip = NAC_combine_ideas_desc
             hidden_effect = {
                 remove_ideas = NAC_peoples_democracy_2
@@ -3423,6 +3427,9 @@ focus_tree = {
 		}
         completion_reward = {
             add_ideas = NAC_coownership
+            hidden_effect = {
+                country_event = {id = NAC.89 days = 7}
+            }
 		}
     }
     #阿西娅的工业巨人
@@ -3850,6 +3857,18 @@ focus_tree = {
                 }
                 create_faction = NAC_FACTION
             }
+            every_country = {
+                limit = {
+                    OR = {
+                        tag = MZL
+                        tag = IKR
+                        tag = KAM
+                    }
+                    has_government = communism
+                    NOT = {is_in_faction_with = ROOT}
+                }
+                country_event = {id = NAC.996}
+            }
 		}
     }
     #南下支援革命
@@ -4019,6 +4038,12 @@ focus_tree = {
                 }
                 add_to_faction = NSN
                 NSN = {
+                    if = {
+                        limit = {
+                            NOT = {has_country_flag = NAC_faction_member}
+                        }
+                        set_country_flag = NAC_faction_member
+                    }
                     division_template = {
                         name = "国际师"
                         regiments = {
@@ -4081,133 +4106,64 @@ focus_tree = {
         will_lead_to_war_with = IKR
         will_lead_to_war_with = MZL
         bypass = {
-            NOT = {
-                country_exists = KAM
+            OR = {
+                NOT = {
+                    country_exists = KAM
+                }
+                KAM = {is_in_faction_with = ROOT}
             }
-            NOT = {
-                country_exists = IKR
+            OR = {
+                NOT = {
+                    country_exists = IKR
+                }
+                IKR = {is_in_faction_with = ROOT}
             }
-            NOT = {
-                country_exists = MZL
+            OR = {
+                NOT = {
+                    country_exists = MZL
+                }
+                MZL = {is_in_faction_with = ROOT}
             }
         }
         completion_reward = {
             if = {
                 limit = {
-                    country_exists = KAM
-                    KAM = {
-                        NOT = {
-                            has_government = NAC
-                            is_puppet_of = NAC
-                        }
-                    }
+                    is_ai = no
                 }
-                create_wargoal = {
-                    target = KAM
-                    type = annex_everything
-                }
-            }
-            else_if = {
-                limit = {
-                    KAM = {
-                        has_government = NAC
-                        is_puppet = no
-                    }
-                }
-                KAM = {country_event = {id = NAC.996}}
-            }
-            if = {
-                limit = {
-                    country_exists = IKR
-                    IKR = {
-                        NOT = {
-                            has_government = NAC
-                            is_puppet_of = NAC
-                        }
-                    }
-                }
-                create_wargoal = {
-                    target = IKR
-                    type = annex_everything
-                }
-            }
-            else_if = {
-                limit = {
-                    IKR = {
-                        has_government = NAC
-                        is_puppet = no
-                    }
-                }
-                IKR = {country_event = {id = NAC.996}}
-            }
-            if = {
-                limit = {
-                    country_exists = MZL
-                    MZL = {
-                        NOT = {
-                            has_government = NAC
-                            is_puppet_of = NAC
-                        }
-                    }
-                }
-                create_wargoal = {
-                    target = MZL
-                    type = annex_everything
-                }
-            }
-            else_if = {
-                limit = {
-                    MZL = {
-                        has_government = NAC
-                        is_puppet = no
-                    }
-                }
-                MZL = {country_event = {id = NAC.996}}
-            }
-            hidden_effect = {
-                if = {
+                every_country = {
                     limit = {
-                        KAM = {
-                            NOT = {
-                                has_government = NAC
-                                is_puppet_of = NAC
-                            }
+                        OR = {
+                            tag = MZL
+                            tag = IKR
+                            tag = KAM
                         }
+                        NOT = {has_government = communism}
+                        NOT = {is_in_faction_with = ROOT}
                     }
-                    add_ai_strategy = {
-                        type = conquer
-                        id = KAM
-                        value = 1000
+                    ROOT = {
+                        create_wargoal = {
+                            target = PREV
+                            type = annex_everything
+                        }
                     }
                 }
-                if = {
+            }
+            else = {
+                every_country = {
                     limit = {
-                        IKR = {
-                            NOT = {
-                                has_government = NAC
-                                is_puppet_of = NAC
-                            }
+                        OR = {
+                            tag = MZL
+                            tag = IKR
+                            tag = KAM
                         }
+                        NOT = {has_government = communism}
+                        NOT = {is_in_faction_with = ROOT}
                     }
-                    add_ai_strategy = {
-                        type = conquer
-                        id = IKR
-                        value = 1000
-                    }
-                }
-                if = {
-                    limit = {
-                        MZL = {
-                            NOT = {
-                                has_government = NAC
-                                is_puppet_of = NAC
-                            }
+                    ROOT = {
+                        declare_war_on = {
+                            target = PREV
+                            type = annex_everything
                         }
-                    }
-                    add_ai_strategy = {
-                        type = conquer
-                        id = MZL
-                        value = 1000
                     }
                 }
             }
@@ -4841,7 +4797,15 @@ focus_tree = {
                                 tag = WST
                             }
                         }
-                        has_government = communism
+                        OR = {
+                            has_government = communism
+                            AND = {
+                                is_puppet = yes
+                                overlord = {
+                                    has_government = communism
+                                }
+                            }
+                        }
                     }    
                 }
             }
@@ -4872,7 +4836,7 @@ focus_tree = {
         cost = 5
         available_if_capitulated = yes
         ai_will_do = {
-            factor = 100
+            factor = 1000
 		}
         allow_branch = {
             OR = {
@@ -4985,14 +4949,14 @@ focus_tree = {
             focus = NAC_mil_4
         }
         available = {
-            controls_state = 106
+            controls_state = 854
         }
         ai_will_do = {
             factor = 100
 		}
         completion_reward = {
             activate_targeted_decision = { target = 854 decision = Rossiya_854_project}
-            106 = {
+            854 = {
                 add_extra_state_shared_building_slots = 2
 			    add_building_construction = {
 				    type = arms_factory
@@ -5121,6 +5085,9 @@ focus_tree = {
                 bonus = 1.0
                 uses = 2
                 category = naval_equipment
+            }
+            hidden_effect = {
+                country_event = {id = NAC.87 days = 7}
             }
             activate_targeted_decision = { target = 855 decision = Rossiya_855_project}
 		}
@@ -5319,6 +5286,9 @@ focus_tree = {
                 uses = 2
                 category = bb_tech
             }
+            hidden_effect = {
+                country_event = {id = NAC.88 days = 7}
+            }
 		}
     }
     #两洋海军计划
@@ -5407,7 +5377,7 @@ focus_tree = {
             focus = NAC_mil_1
         }
         ai_will_do = {
-            factor = 100
+            factor = 1000
 		}
         completion_reward = {
             NAC_bop_move_leftward = yes
@@ -5416,12 +5386,38 @@ focus_tree = {
                 uses = 2
                 category = air_equipment
             }
+            set_technology = {striker_units_tech = 1}
             BLA = {
                 BLA_Aleksandra = {
                     set_nationality = NAC
                 }
                 BLA_Lyudmila = {
                     set_nationality = NAC
+                }
+            }
+            division_template = {
+                name = "罗西亚战斗航空团"
+                priority = 2
+                regiments = {
+                    Witches_Camp = { x = 0 y = 0 }
+                    Witches_Camp = { x = 0 y = 1 }
+                    Witches_Camp = { x = 1 y = 0 }
+                    Witches_Camp = { x = 1 y = 1 }
+                    Witches_Camp = { x = 2 y = 0 }
+                    Witches_Camp = { x = 2 y = 1 }
+                }
+                support = {
+                    Witches = {x = 0 y = 0}
+                }
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"罗西亚战斗航空团\" division_template = \"罗西亚战斗航空团\" start_experience_factor = 0.3"
+                    owner = NAC
+                }
+                create_unit = {
+                    division = "name = \"罗西亚战斗航空团\" division_template = \"罗西亚战斗航空团\" start_experience_factor = 0.3"
+                    owner = NAC
                 }
             }
             hidden_effect = {

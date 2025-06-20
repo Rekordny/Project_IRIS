@@ -4,31 +4,10 @@ on_actions = {
 			#先临时这么干,临时性的加强 by白衣
 			USF = {
 				load_oob = "USF_naval"
-				add_research_slot = 2
-				add_political_power = 9999
-				army_experience = 9999
-				navy_experience = 9999
-				air_experience = 9999
-				add_stability = 1
-				add_war_support = 1
+				load_oob = "USF_air"
 			}
 		}
 	}
-	#by 白衣：这样写太烂了，最好换种写法，我先注释了。原来的格式也是错的，也给修了
-	#on_daily_USF = {
-	#	effect = {
-	#		if = {
-	#			limit = {
-	#				has_idea = USF_army_internal_unrest
-	#			}
-	#			country_lock_all_division_template = yes
-	#
-	#		}
-	#		else = {
-	#			country_lock_all_division_template = no
-	#		}
-	#	}
-	#}
 
 	#加的紧急防卫法案 by 白衣
 	on_declare_war = {
@@ -51,9 +30,6 @@ on_actions = {
 					}
 				}
 				USF = {
-					country_event = {
-						id = USF.36
-					}
 					if = {
 						limit = {
 							USR = {
@@ -73,15 +49,51 @@ on_actions = {
 	on_capitulation = {
 		effect = {
 			if = {
-				limit = { has_global_flag = BRG_2_a_flag }
-				if = {
-					limit = {
+				limit = {
+					has_global_flag = BRG_2_a_flag
+					OR = {
 						ROOT = {
 							original_tag = BRG
 							is_ally_with = USF
 						}
+						ROOT = {
+							original_tag = BRG
+							is_ally_with = OCF
+						}
 					}
-					clr_global_flag = BRG_2_a_flag
+				}
+				clr_global_flag = BRG_2_a_flag
+				log = "[GetDateText]: FROM: [From.GetName] ROOT: [Root.GetName] on_capitulation"
+
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_won
+				#合众国战败
+				if = {
+					limit = {
+						OR = {
+							ROOT = {
+								original_tag = BRG
+								is_ally_with = USF
+							}
+							USF = {
+								surrender_progress > 0.1
+							}
+							LUA = {
+								surrender_progress > 0.1
+							}
+							USN = {
+								surrender_progress > 0.1
+							}
+						}
+					}
+					OCF = {
+						country_event = { id = brgnews.3 days = 1 }
+						save_global_event_target_as = winning_country
+					}
+					USF = {
+						save_global_event_target_as = losing_country
+					}
+					IRIS_peace_popup_determine_allies = yes
 					if = {
 						limit = {
 							any_country = {
@@ -116,7 +128,7 @@ on_actions = {
 					every_country = {
 						limit = {
 							OR = {
-								is_in_faction_with = OCF
+								is_ally_with = OCF
 								original_tag = OCF
 							}
 							has_war_with = USF
@@ -126,14 +138,29 @@ on_actions = {
 						}
 					}
 				}
+				#大洋战败
 				if = {
 					limit = {
-						ROOT = {
-							original_tag = BRG
-							is_ally_with = OCF
+						OR = {
+							ROOT = {
+								original_tag = BRG
+								is_ally_with = OCF
+							}
+							OCF = {
+								surrender_progress > 0.1
+							}
 						}
 					}
-					clr_global_flag = BRG_2_a_flag
+					set_global_flag = show_peace_popup_alert
+					set_global_flag = war_won
+					USF = {
+						country_event = { id = brgnews.4 days = 1 }
+						save_global_event_target_as = winning_country
+					}
+					OCF = {
+						save_global_event_target_as = losing_country
+					}
+					IRIS_peace_popup_determine_allies = yes
 					if = {
 						limit = {
 							any_country = {
@@ -180,7 +207,7 @@ on_actions = {
 					every_country = {
 						limit = {
 							OR = {
-								is_in_faction_with = OCF
+								is_ally_with = OCF
 								original_tag = OCF
 							}
 							has_war_with = USF

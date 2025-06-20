@@ -27,7 +27,6 @@ country_event = {
 		name = OPA.2.a
         custom_effect_tooltip = OPA_in_chaos
         add_ideas = OPA_chaos
-        custom_effect_tooltip = STG_unlock_a_new_branch_desc
         hidden_effect = {
             set_politics = {
                 ruling_party = reactionism
@@ -37,12 +36,8 @@ country_event = {
                 ideology = sub_reactionism_manaism
             }
             set_country_flag = OPA_phase2_enabled
-            load_focus_tree = {
-                tree = OPA
-                keep_completed = yes
-            }
-            mark_focus_tree_layout_dirty = yes
         }
+		IRIS_unlock_a_new_branch = yes
 	}
 }
 #登门
@@ -351,6 +346,19 @@ country_event = {
 			relation = non_aggression_pact
 			active = yes
 		}
+		create_faction = OPA_com_faction
+		if = {
+			limit = {
+				country_exists = ORE
+			}
+			add_to_faction = ORE
+		}
+		if = {
+			limit = {
+				country_exists = NAD
+			}
+			add_to_faction = NAD
+		}
         hidden_effect = {
             set_politics = {
                 ruling_party = communism
@@ -384,7 +392,7 @@ country_event = {
 			}
 			for_loop_effect = {
 				start = 0
-				end = 10
+				end = 16
 				capital_scope = {
 					create_unit = {
 						division = "name = \"红军旅\" division_template = \"红军旅\" start_experience_factor = 0.15"
@@ -426,6 +434,19 @@ country_event = {
 			relation = non_aggression_pact
 			active = yes
 		}
+		create_faction = OPA_com_faction
+		if = {
+			limit = {
+				country_exists = ORE
+			}
+			add_to_faction = ORE
+		}
+		if = {
+			limit = {
+				country_exists = NAD
+			}
+			add_to_faction = NAD
+		}
 		hidden_effect = {
 			set_global_flag = Rasputin_is_dead
 			news_event = {id = BLA_news.8 days = 3}
@@ -462,6 +483,19 @@ country_event = {
 				}
 				white_peace = {
 					tag = NAC
+				}
+			}
+			if = {
+				limit = {
+					country_exists = NAC
+					NOT = {country_exists = BLA}
+				}
+				dismantle_faction = yes
+				NAC = {
+					set_autonomy = {
+						target = OPA
+						autonomous_state = autonomy_puppet
+					}
 				}
 			}
 			delete_unit = {}
@@ -522,7 +556,7 @@ country_event = {
 			}
 			for_loop_effect = {
 				start = 0
-				end = 10
+				end = 21
 				capital_scope = {
 					create_unit = {
 						division = "name = \"红军旅\" division_template = \"红军旅\" start_experience_factor = 0.15"
@@ -671,13 +705,19 @@ country_event = {
 	option = {
 		name = OPA.999.a
 		hidden_effect = {
-			white_peace  = {
-				tag = BLA
-				message = BLA_defeated_OPA
+			set_global_flag = show_peace_popup_alert
+			set_global_flag = war_won
+			BLA = {
+				save_global_event_target_as = winning_country
 			}
+			OPA = {
+				save_global_event_target_as = losing_country
+			}
+			IRIS_peace_popup_determine_allies = yes
+			add_to_variable = { global.peace_popup_dirty = 1 }
 			BLA = {
 				annex_country = {
-					target = ROOT
+					target = OPA
 					transfer_troops = no
 				}
 			}
