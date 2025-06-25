@@ -797,6 +797,34 @@ scripted_gui = {
 					limit = {
 						root = {
 							OCF_has_bill_20 = yes
+							meta_trigger = {
+								text = {
+									custom_override_tooltip = {
+										tooltip = {
+											localization_key = OCF_INTERACTION_INTERVAL_TT
+											INDENTATION = "   "
+											FACTIONS = OCF_parliamentary_parties_[V]
+											DAY = "OCF_Interaction_interval_[V]_flag:days"
+										}
+										OR = {
+											has_country_flag = {
+												flag = OCF_Interaction_interval_[V]_flag
+												days > 15
+											}
+											NOT = {
+												has_country_flag = OCF_Interaction_interval_[V]_flag
+											}
+										}
+									}
+								}
+								V = "[?v]"
+							}
+							custom_override_tooltip = {
+								tooltip = OCF_number_faction_interactions_tt
+								NOT = {
+									check_variable = { NOW_number_faction_interactions_var < 1 }
+								}
+							}
 						}
 					}
 					add_stability = 0.01
@@ -846,6 +874,28 @@ scripted_gui = {
 					limit = {
 						root = {
 							OCF_has_bill_10 = yes
+							meta_trigger = {
+								text = {
+									custom_override_tooltip = {
+										tooltip = {
+											localization_key = OCF_INTERACTION_INTERVAL_TT
+											INDENTATION = "   "
+											FACTIONS = OCF_parliamentary_parties_[V]
+											DAY = "OCF_Interaction_interval_[V]_flag:days"
+										}
+										OR = {
+											has_country_flag = {
+												flag = OCF_Interaction_interval_[V]_flag
+												days > 15
+											}
+											NOT = {
+												has_country_flag = OCF_Interaction_interval_[V]_flag
+											}
+										}
+									}
+								}
+								V = "[?v]"
+							}
 						}
 					}
 					add_stability = 0.01
@@ -1165,13 +1215,39 @@ scripted_gui = {
 				}
 			}
 			OCF_fund_exchange_buttonType_click = {
-				set_temp_variable = { temp_bill = OCF_fund_exchange_buttonType_var }
-				OCF_spending_funds_other = yes
-				set_temp_variable = { temp_pp = temp_bill }
-				multiply_temp_variable = { temp_pp = -2.5 }
-				add_political_power = temp_pp
-				set_variable = { OCF_fund_exchange_buttonType_var = 0 }
-				set_country_flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+				if = {
+					limit = {
+						root = {
+							custom_override_tooltip = {
+								tooltip = {
+									localization_key = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG_TT
+									DAY = "OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG:days"
+								}
+								OR = {
+									has_country_flag = {
+										flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+										days > 30
+									}
+									NOT = {
+										has_country_flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+									}
+								}
+							}
+							set_temp_variable = { temp_pp = OCF_fund_exchange_buttonType_var }
+							multiply_temp_variable = { temp_pp = 2.5 }
+							NOT = {
+								has_political_power < temp_var:temp_pp
+							}
+						}
+					}
+					set_temp_variable = { temp_bill = OCF_fund_exchange_buttonType_var }
+					OCF_spending_funds_other = yes
+					set_temp_variable = { temp_pp = temp_bill }
+					multiply_temp_variable = { temp_pp = -2.5 }
+					add_political_power = temp_pp
+					set_variable = { OCF_fund_exchange_buttonType_var = 0 }
+					set_country_flag = OCF_FUND_EXCHANGE_BUTTONTYPE_CLICK_FLAG
+				}
 			}
 			fund_exchange_button_add_click = {
 				set_temp_variable = { temp_fund_exchange_button = 1 }
