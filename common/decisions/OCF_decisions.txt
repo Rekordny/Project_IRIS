@@ -3545,7 +3545,7 @@ OCF_Federal_Parliament = {
 		}
 	}
 	#议会激烈讨论中
-	OCE_amidst_intense_discussions_parliament = {
+	OCF_amidst_intense_discussions_parliament = {
 		icon = GFX_decision_generic_political_discourse
 		fire_only_once = no
 		days_re_enable = 0
@@ -3573,11 +3573,11 @@ OCF_Federal_Parliament = {
 		timeout_effect = {
 			custom_effect_tooltip = OCE_amidst_intense_discussions_parliament_tt
 			OCF_randomly_changing_support = yes
-			activate_mission = OCE_amidst_intense_discussions_parliament
+			activate_mission = OCF_amidst_intense_discussions_parliament
 		}
 	}
 	#众议院席位重新划分
-	OCE_allocation_seats_House_Representatives = {
+	OCF_allocation_seats_House_Representatives = {
 		icon = GFX_decision_SWI_no_elected_president
 		fire_only_once = no
 		days_re_enable = 0
@@ -3606,7 +3606,80 @@ OCF_Federal_Parliament = {
 		timeout_effect = {
 			OCE_amidst_intense_discussions_parliament_pack = yes
 			hidden_effect = {
-				activate_mission = OCE_allocation_seats_House_Representatives
+				activate_mission = OCF_allocation_seats_House_Representatives
+			}
+		}
+	}
+	#财政预算执行中
+	OCF_during_execution_fiscal_budget = {
+		icon = GFX_decision_SWI_no_elected_president
+		fire_only_once = no
+		days_re_enable = 0
+		activation = {
+			always = no
+		}
+		visible = {
+			tag = OCF
+			NOT = {
+				has_war_with = OCE
+				has_war_with = EIA
+				has_war_with = INP
+			}
+		}
+		available = {
+			OR = {
+				has_country_flag = OCF_close_agenda_house_representatives_flag
+				has_country_flag = OCF_control_government_flag_2
+				has_country_flag = OCF_adjournment_caused_protests_flag
+				has_country_flag = OCF_adjournment_caused_protests_2_flag
+			}
+		}
+		is_good = yes
+		days_mission_timeout = 330
+		timeout_effect = {
+			country_event = { id = OCF.38 }
+			hidden_effect = {
+				activate_mission = OCF_in_process_formulating_fiscal_budget
+				clr_country_flag = OCF_sign_trigger_5_flag
+			}
+		}
+	}
+	#财政预算制定中
+	OCF_in_process_formulating_fiscal_budget = {
+		icon = GFX_decision_SWI_no_elected_president
+		fire_only_once = no
+		days_re_enable = 0
+		activation = {
+			always = no
+		}
+		visible = {
+			tag = OCF
+			NOT = {
+				has_war_with = OCE
+				has_war_with = EIA
+				has_war_with = INP
+			}
+		}
+		available = {
+			OR = {
+				has_country_flag = OCF_close_agenda_house_representatives_flag
+				has_country_flag = OCF_control_government_flag_2
+				has_country_flag = OCF_adjournment_caused_protests_flag
+				has_country_flag = OCF_adjournment_caused_protests_2_flag
+			}
+		}
+		is_good = yes
+		days_mission_timeout = 35
+		timeout_effect = {
+			if = {
+				limit = {
+					NOT = { has_country_flag = OCF_sign_trigger_5_flag }
+				}
+				country_event = { id = OCF.39 }
+			}
+			hidden_effect = {
+				activate_mission = OCE_during_execution_fiscal_budget
+				OCF_close_federal_budget_draft = yes
 			}
 		}
 	}
@@ -10086,8 +10159,8 @@ IRIS_debug_decisions_OCF = {
 			clr_country_flag = OCF_adjournment_caused_protests_flag
 			clr_country_flag = OCF_adjournment_caused_protests_2_flag
 			activate_mission = OCE_Rub_cards
-			activate_mission = OCE_amidst_intense_discussions_parliament
-			activate_mission = OCE_allocation_seats_House_Representatives
+			activate_mission = OCF_amidst_intense_discussions_parliament
+			activate_mission = OCF_allocation_seats_House_Representatives
 		}
 	}
 	#看个数组更新
@@ -10103,7 +10176,7 @@ IRIS_debug_decisions_OCF = {
 		}
 	}
 	#众议院席位重新划分
-	OCE_allocation_seats_House_Representatives_2 = {
+	OCF_allocation_seats_House_Representatives_2 = {
 		visible = {
 			is_testing = yes
 		}
@@ -10171,6 +10244,10 @@ IRIS_debug_decisions_OCF = {
 			add_IRIS_alert_unless_exists = yes
 			set_temp_variable = {
 				alert_id = token:alert_OCF_proposal_passed
+			}
+			add_IRIS_alert_unless_exists = yes
+			set_temp_variable = {
+				alert_id = token:alert_OCF_federal_budget_proposal
 			}
 			add_IRIS_alert_unless_exists = yes
 		}
