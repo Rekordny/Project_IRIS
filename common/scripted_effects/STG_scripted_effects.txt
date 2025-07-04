@@ -1646,10 +1646,10 @@ STG_rev_national_security_setup = {
             set_variable = {STG_security_agency_action_point_limit = 2}
             set_variable = {STG_armed_picket_action_point = 3}#纠察队行动点数
             set_variable = {STG_armed_picket_action_point_limit = 3}
-            set_variable = {STG_armed_picket_level = 1}#纠察队等级
-            set_variable = {STG_rev_national_security_weekly_change = -1.8}
+            set_variable = {STG_rev_national_security_weekly_change = -2}
             set_country_flag = {flag = STG_action_point_recovery_cooldown days = 180 value = 1}
             set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 180 value = 1}
+            STG_rev_national_security_weekly_change_effect = yes
         }
     }
 }
@@ -1657,31 +1657,11 @@ STG_rev_national_security_setup = {
 STG_rev_national_security_weekly_change_effect = {
     hidden_effect = {
         STG = {
-            if = {
-                limit = {
-                    check_variable = {STG_armed_picket_level = 1}
-                }
-                set_variable = {STG_rev_national_security_picket = -0.2}
-            }
-            if = {
-                limit = {
-                    check_variable = {STG_armed_picket_level = 2}
-                }
-                set_variable = {STG_rev_national_security_picket = 0}
-            }
-            if = {
-                limit = {
-                    check_variable = {STG_armed_picket_level = 3}
-                }
-                set_variable = {STG_rev_national_security_picket = 0.2}
-            }
             add_to_variable = {STG_national_security = STG_rev_national_security_weekly_change}
-            add_to_variable = {STG_national_security = STG_rev_national_security_picket}
-            add_to_variable = {STG_national_security = modifier@STG_rev_national_security_weekly_change_modifier}
+            add_to_variable = {STG_national_security = modifier@STG_national_security_weekly_change_modifier}
             set_variable = {STG_rev_national_security_weekly_change_display = 0}
             add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_weekly_change}
-            add_to_variable = {STG_rev_national_security_weekly_change_display = STG_rev_national_security_picket}
-            add_to_variable = {STG_rev_national_security_weekly_change_display = modifier@STG_rev_national_security_weekly_change_modifier}
+            add_to_variable = {STG_rev_national_security_weekly_change_display = modifier@STG_national_security_weekly_change_modifier}
             STG_rev_national_security_check = yes
             STG_action_point_recovery = yes
         }
@@ -1836,24 +1816,22 @@ STG_action_point_recovery = {
         }
     }
 }
-#纠察队效率恶化
-STG_picket_level_worsen = {
+#加减安全形势
+STG_rev_add_security = {
+    custom_effect_tooltip = STG_rev_add_security_t
     hidden_effect = {
         STG = {
-            if = {
-                limit = {
-                    NOT = {
-                        has_country_flag = STG_picket_level_worsen_cooldown
-                    }
-                }
-                add_to_variable = {STG_armed_picket_level = -1}
-                set_country_flag = {flag = STG_picket_level_worsen_cooldown days = 270 value = 1}
-            }
-            clamp_variable = {
-                var = STG_armed_picket_level
-                max = 3
-                min = 1
-            }
+            add_to_variable = {STG_national_security = STG_national_security_temp}
+            STG_rev_national_security_check = yes
+        }
+    }
+}
+#加减安全形势变化
+STG_rev_add_security_weekly_change = {
+    custom_effect_tooltip = STG_rev_add_security_weekly_change_t
+    hidden_effect = {
+        STG = {
+            add_to_variable = {STG_national_security_weekly_change = STG_national_security_weekly_change_temp}
         }
     }
 }
@@ -2501,5 +2479,63 @@ STG_ways_of_st_gloriana_bonus_update = {
                 set_variable = {STG_ways_of_st_gloriana_army_core_defence_factor = 0.1}
             }
         }
+    }
+}
+#设定FNG重建政府
+STG_sister_republic_FNG = {
+    every_state = {
+        limit = {
+            is_core_of = UNG
+        }
+        add_core_of = FNG
+    }
+    every_state = {
+        limit = {
+            is_controlled_by_ROOT_or_ally = yes
+            is_core_of = FNG
+        }
+        transfer_state_to = FNG
+    }
+    set_autonomy = {
+        target = FNG
+        autonomous_state = STG_sister_republic
+    }
+    FNG = {
+        if = {
+            limit = {
+                NOT = {
+                    has_character = UNG_weierlite
+                }
+            }
+            every_possible_country = {
+                limit = {
+                    has_character = UNG_weierlite
+                }
+                UNG_weierlite = {
+                    set_nationality = FNG
+                }
+            }
+            add_country_leader_role = {
+                character = UNG_weierlite
+                promote_leader = yes
+                country_leader={
+                    ideology = sub_Social_Democracy
+                    desc = "FNG_weierlite_desc"
+                    traits={ TRAIT_UNG_zidongshoujirenou }
+                    expire="3200.1.1.1"
+                }
+            }
+        }
+        else = {
+            promote_character = {
+                character = UNG_weierlite
+                ideology = sub_Social_Democracy
+            }
+        }
+        set_politics = {
+            ruling_party = democratic
+        }
+        set_country_flag = FNG_reconstruction_flag
+        IRIS_unlock_a_new_branch = yes
     }
 }
