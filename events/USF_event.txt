@@ -2,3 +2,440 @@
 ###################COUNTRY_EVENTS####################
 #####################################################
 add_namespace = USF
+add_namespace = USF_act
+add_namespace = USF_election
+
+#蒙特尼丑闻
+country_event = {
+    id = USF.1
+    title = USF.1.t
+	desc = USF.1.desc
+	#picture = GFX_event_USF_1
+	is_triggered_only = yes
+	fire_only_once = yes
+
+	option = {
+		name = USF.1.a
+        add_popularity = {
+            ideology = neutrality
+            popularity = -0.05
+        }
+        random_owned_controlled_state = {
+            add_extra_state_shared_building_slots = 1
+            add_building_construction = {
+                type = industrial_complex
+                level = 1
+                instant_build = yes
+            }
+            add_building_construction = {
+                type = industrial_complex
+                level = 1
+                instant_build = yes
+            }
+            add_building_construction = {
+                type = industrial_complex
+                level = 1
+                instant_build = yes
+            }
+        }
+		ai_chance = {
+			base = 10
+		}
+	}
+    option = {
+		name = USF.1.b
+        add_stability = 0.05
+        add_popularity = {
+            ideology = neutrality
+            popularity = -0.05
+        }
+        add_political_power = 50
+		ai_chance = {
+			base = 10
+		}
+	}
+    option = {
+        add_stability = -0.05
+        add_popularity = {
+            ideology = neutrality
+            popularity = 0.1
+        }
+        add_popularity = {
+            ideology = democratic
+            popularity = -0.05
+        }
+		name = USF.1.c
+		ai_chance = {
+			base = 10
+		}
+	}
+}
+
+####################################################################################################################
+#选举
+####################################################################################################################
+
+#民主党胜选
+country_event = {
+    id = USF_election.1
+    title = USF_election.1.t
+	desc = USF_election.1.desc
+	#picture = GFX_event_USF_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_election.1.a
+	}
+}
+
+#自由党胜选
+country_event = {
+    id = USF_election.2
+    title = USF_election.2.t
+	desc = USF_election.2.desc
+	#picture = GFX_event_USF_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_election.2.a
+	}
+}
+
+####################################################################################################################
+#法案
+####################################################################################################################
+#海军预算
+country_event = {
+    id = USF_act.1
+    title = USF_act.1.t
+	desc = USF_act.1.desc
+	#picture = GFX_event_USF_act_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_act.1.a
+        
+        add_timed_idea = {idea = USF_cut_naval_budget_idea days = 365}
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.c
+
+        add_political_power = -50
+
+	}
+
+}
+#征收工业巨头超额所得税
+country_event = {
+    id = USF_act.2
+    title = USF_act.2.t
+	desc = USF_act.1.desc
+	#picture = GFX_event_USF_act_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_act.1.a
+
+        add_ideas = USF_monopoly_tax
+        random_state = {
+            limit = {
+                is_owned_and_controlled_by = USF
+                industrial_complex > 1
+            }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+        random_state = {
+            limit = {
+                is_owned_and_controlled_by = USF
+                industrial_complex > 1
+            }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+        random_state = {
+            limit = {
+                is_owned_and_controlled_by = USF
+                industrial_complex > 1
+            }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+        random_state = {
+            limit = {
+                is_owned_and_controlled_by = USF
+                industrial_complex > 1
+            }
+            remove_building = {
+                type = industrial_complex
+                level = 1
+            }
+        }
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+
+    option = {
+		name = USF_act.1.c
+
+        add_political_power = -50
+
+	}
+
+}
+
+#废除爱丽诺委员审议权
+country_event = {
+    id = USF_act.3
+    title = USF_act.3.t
+	desc = USF_act.1.desc
+	#picture = GFX_event_USF_act_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_act.1.a
+        trigger = {
+            OR = {
+                is_ai = yes
+                USF_act_pass_trigger = yes
+                USF_act_pass_with_low_advantage_trigger = yes
+            }
+        }
+
+        add_ideas = USF_abolish_rights_of_ELN_commissioner_idea 
+        set_temp_variable = {USF_adp_support_temp = -15}
+        USF_adp_support_effect = yes
+
+        set_country_flag = USF_abolish_rights_of_ELN_commissioner_decision_passed
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.b
+        trigger = {
+            is_ai = no
+            OR = {
+                USF_act_reject_with_low_advantage_trigger = yes
+                USF_act_reject_trigger = yes
+            }
+        }
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.c
+        trigger = {
+            USF_veto_trigger = yes
+        }
+
+        USF_veto_effect = yes
+	}
+
+    option = {
+		name = USF_act.1.d
+        trigger = {
+            USF_reconsider_trigger = yes
+        }
+
+        USF_reconsider_effect = yes
+        if = {
+            limit = {
+                NOT = {
+                    has_country_flag = USF_abolish_rights_of_ELN_commissioner_decision
+                }
+            }
+            set_country_flag = USF_abolish_rights_of_ELN_commissioner_decision
+            activate_targeted_decision = {
+				target = USF
+				decision = USF_abolish_rights_of_ELN_commissioner_decision
+			}
+        }
+	}
+}
+
+#工业刺激
+country_event = {
+    id = USF_act.4
+    title = USF_act.4.t
+	desc = USF_act.1.desc
+	#picture = GFX_event_USF_act_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_act.1.a
+        trigger = {
+            OR = {
+                is_ai = yes
+                USF_act_pass_trigger = yes
+                USF_act_pass_with_low_advantage_trigger = yes
+            }
+        }
+
+        add_timed_idea = {idea = USF_industrial_stimulus_act_idea days = 365}
+        set_temp_variable = {USF_icp_support_temp = 10}
+        USF_icp_support_effect = yes
+
+        set_country_flag = USF_industrial_stimulus_act_decision_passed
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.b
+        trigger = {
+            is_ai = no
+            OR = {
+                USF_act_reject_with_low_advantage_trigger = yes
+                USF_act_reject_trigger = yes
+            }
+        }
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.c
+        trigger = {
+            USF_veto_trigger = yes
+        }
+
+        USF_veto_effect = yes
+	}
+
+    option = {
+		name = USF_act.1.d
+        trigger = {
+            USF_reconsider_trigger = yes
+        }
+
+        USF_reconsider_effect = yes
+        if = {
+            limit = {
+                NOT = {
+                    has_country_flag = USF_industrial_stimulus_act_decision
+                }
+            }
+            set_country_flag = USF_industrial_stimulus_act_decision
+            activate_targeted_decision = {
+				target = USF
+				decision = USF_industrial_stimulus_act_decision
+			}
+        }
+	}
+}
+
+#增购爱丽诺国债
+country_event = {
+    id = USF_act.5
+    title = USF_act.5.t
+	desc = USF_act.1.desc
+	#picture = GFX_event_USF_act_1
+	is_triggered_only = yes
+
+	option = {
+		name = USF_act.1.a
+        trigger = {
+            OR = {
+                is_ai = yes
+                USF_act_pass_trigger = yes
+                USF_act_pass_with_low_advantage_trigger = yes
+            }
+        }
+
+        swap_ideas = {
+            remove_idea = USF_ELN_national_debt
+            add_idea = USF_ELN_national_debt_2
+        }
+        ELN = {
+            add_opinion_modifier = {
+                target = USF
+                modifier = USF_purchase_ELN_national_debt_modifier_2
+            }
+        }
+        add_popularity = {
+            ideology = neutrality
+            popularity = 0.1
+        }
+        set_temp_variable = {USF_adp_support_temp = 5}
+        USF_adp_support_effect = yes
+
+        hidden_effect = {
+            country_event = {id = USF.1 days = 50}
+        }
+
+        set_country_flag = USF_purchase_ELN_national_debt_decision
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.b
+        trigger = {
+            is_ai = no
+            OR = {
+                USF_act_reject_with_low_advantage_trigger = yes
+                USF_act_reject_trigger = yes
+            }
+        }
+
+		ai_chance = {
+			base = 10
+		}
+	}
+
+    option = {
+		name = USF_act.1.c
+        trigger = {
+            USF_veto_trigger = yes
+        }
+
+        USF_veto_effect = yes
+	}
+
+    option = {
+		name = USF_act.1.d
+        trigger = {
+            USF_reconsider_trigger = yes
+        }
+
+        USF_reconsider_effect = yes
+        if = {
+            limit = {
+                NOT = {
+                    has_country_flag = USF_purchase_ELN_national_debt_decision
+                }
+            }
+            set_country_flag = USF_purchase_ELN_national_debt_decision
+            activate_targeted_decision = {
+				target = USF
+				decision = USF_purchase_ELN_national_debt_decision
+			}
+        }
+	}
+}
