@@ -11,6 +11,8 @@ NDefines.NCountry.MAX_WAR_SUPPORT = 1.0
 
 NDefines.NSupply.RIVER_RAILWAY_LEVEL = 3                            -- 水路=3级铁路
 
+NDefines.NGame.MAX_SCRIPTED_LOC_RECURSION = 1001				-- max recursion for scripted localizations 最大递归
+
 --------------------------------------------------------------------------------------------------------------
 -- DESIGNS
 --------------------------------------------------------------------------------------------------------------
