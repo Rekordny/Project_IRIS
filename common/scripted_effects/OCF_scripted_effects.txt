@@ -3115,6 +3115,8 @@ OCF_obtain_banknotes_effect_estimation = {
 	multiply_variable = {
 		tax_impact_effect_estimation = 0.004
 	}
+	add_to_variable = { tax_impact_effect_estimation = 0.005 }
+	log = "[?tax_impact_effect_estimation]"
 	#获取民用工厂
 	set_variable = {
 		OCF_obtain_banknotes_variable = ROOT.num_of_civilian_factories
@@ -3476,6 +3478,7 @@ OCF_obtain_banknotes = {
 	multiply_variable = {
 		tax_impact_100 = 0.004
 	}
+	add_to_variable = { tax_impact_100 = 0.005 }
 	#加成数值
 	OCF_obtain_banknotes_threshold = yes
 	add_to_variable = {
@@ -8587,9 +8590,18 @@ OCF_government_authority = {
 	add_to_variable = {
 		OCF_government_authority_variable = OCF_gridbox_seat_array_original_relationship_variable_8
 	}
+	# divide_variable = {
+	# 	OCF_government_authority_variable = 0.64
+	# }
 	divide_variable = {
-		OCF_government_authority_variable = 0.64
+		OCF_government_authority_variable = 0.6 #降低难度变为0.5
 	}
+
+	set_temp_variable = { ocf_authority_factor_temp = 1 }
+	add_to_temp_variable = { ocf_authority_factor_temp = modifier@ocf_authority_factor }
+	multiply_variable = { OCF_government_authority_variable = ocf_authority_factor_temp }
+	add_to_variable = { OCF_government_authority_variable = modifier@ocf_authority }
+
 	multiply_variable = {
 		OCF_government_authority_variable = OCF_stability_variable_30
 	}
@@ -8640,6 +8652,17 @@ OCF_government_authority = {
 	}
 	multiply_variable = {
 		OCF_federal_government_political_power_factor = 0.01
+	}
+
+
+
+	if = {
+		limit = { check_variable = { OCF_government_authority_variable < 0 } }
+		set_variable = { OCF_government_authority_variable = 0 }
+	}
+	if = {
+		limit = { check_variable = { OCF_government_authority_variable > 100 } }
+		set_variable = { OCF_government_authority_variable = 100 }
 	}
 }
 
@@ -17118,3 +17141,54 @@ OCF_Insert_Party_Position = {
 		}
 	}
 }
+
+
+
+
+#关于联邦议会
+OCF_regarding_federal_parliament_add = {
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var > 9 } }
+		set_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 1 }
+	}
+	else = {
+		add_to_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 1 }
+		OCF_regarding_federal_parliament_operate = yes
+	}
+}
+OCF_regarding_federal_parliament_del = {
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var < 2 } }
+		set_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 10 }
+	}
+	else = {
+		add_to_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = -1 }
+		OCF_regarding_federal_parliament_operate = yes
+	}
+}
+
+OCF_regarding_federal_parliament_operate = {
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 5 } }
+		set_country_flag = OCF_entering_parliament_flag
+	}
+	if = {
+		limit = {
+			check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var > 5 }
+			check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var < 8 }
+		}
+		set_variable = { OCF_party_opened_tab = 1 }
+	}
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 8 } }
+		set_country_flag = OCF_entering_parliament_flag
+		set_variable = { OCF_party_opened_tab = 2 }
+		OCF_show_all_party_leaders_5 = yes
+	}
+}
+
+
+
+
+
+#研究输入框
