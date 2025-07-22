@@ -308,50 +308,54 @@ USF_gain_random_support = {
     custom_effect_tooltip = USF_gain_random_support_t
     hidden_effect = {
         USF = {
-            if = {
-                limit = {
-                    check_variable = {USF_yea < 313}
-                }
-                random_list = {
-                    20 = {
-                        modifier = {
-                            factor = 0
-                            check_variable = {var = USF_adp_support value = USF_adp_seat compare = greater_than_or_equals}
-                        }
-                        set_temp_variable = {USF_adp_support_temp = 1}
-                        USF_adp_support_effect = yes
+            for_loop_effect = {
+                start = 0
+                end = USF_random_support_num_temp
+                if = {
+                    limit = {
+                        check_variable = {USF_yea < 313}
                     }
-                    20 = {
-                        modifier = {
-                            factor = 0
-                            check_variable = {var = USF_ilp_support value = USF_ilp_seat compare = greater_than_or_equals}
+                    random_list = {
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_adp_support value = USF_adp_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_adp_support_temp = 1}
+                            USF_adp_support_effect = yes
                         }
-                        set_temp_variable = {USF_ilp_support_temp = 1}
-                        USF_ilp_support_effect = yes
-                    }
-                    20 = {
-                        modifier = {
-                            factor = 0
-                            check_variable = {var = USF_unf_support value = USF_unf_seat compare = greater_than_or_equals}
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_ilp_support value = USF_ilp_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_ilp_support_temp = 1}
+                            USF_ilp_support_effect = yes
                         }
-                        set_temp_variable = {USF_unf_support_temp = 1}
-                        USF_unf_support_effect= yes
-                    }
-                    20 = {
-                        modifier = {
-                            factor = 0
-                            check_variable = {var = USF_icp_support value = USF_icp_seat compare = greater_than_or_equals}
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_unf_support value = USF_unf_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_unf_support_temp = 1}
+                            USF_unf_support_effect= yes
                         }
-                        set_temp_variable = {USF_icp_support_temp = 1}
-                        USF_icp_support_effect = yes
-                    }
-                    20 = {
-                        modifier = {
-                            factor = 0
-                            check_variable = {var = USF_slo_support value = USF_slo_seat compare = greater_than_or_equals}
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_icp_support value = USF_icp_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_icp_support_temp = 1}
+                            USF_icp_support_effect = yes
                         }
-                        set_temp_variable = {USF_slo_support_temp = 1}
-                        USF_slo_support_effect = yes
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_slo_support value = USF_slo_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_slo_support_temp = 1}
+                            USF_slo_support_effect = yes
+                        }
                     }
                 }
             }
@@ -554,5 +558,63 @@ USF_random_election_effect = {
                 }
             }
         }
+    }
+}
+
+USF_black_foaming_night_setup = { 
+    USF = {
+        set_variable = {USF_monthly_population = -0.25}
+
+        set_variable = {USF_inflation = -5}
+        set_variable = {USF_unemployment = 29}
+
+        USF_refresh_black_foaming_night_modifier = yes
+    }
+}
+
+USF_refresh_black_foaming_night_modifier = {
+    USF = {
+        set_variable = {USF_consumer_goods_expected_value_t = -0.075}
+        set_variable = {USF_consumer_goods_expected_value = USF_consumer_goods_expected_value_t}
+        set_variable = {USF_consumer_goods_expected_value_display = USF_consumer_goods_expected_value}
+        multiply_variable = {USF_consumer_goods_expected_value = USF_inflation}
+        multiply_variable = {USF_consumer_goods_expected_value_display = USF_inflation}
+        set_variable = {USF_unemployment_t = USF_unemployment}
+        set_variable = {USF_unemployment_display = USF_unemployment}
+        multiply_variable = {USF_unemployment_display = -1}
+        multiply_variable = {USF_unemployment_t = -1}
+        divide_variable = {USF_unemployment_t = 100}
+        set_variable = {USF_conscription_factor = USF_unemployment_t}
+        set_variable = {USF_production_factory_max_efficiency_factor = USF_unemployment_t}
+    }
+}
+
+USF_change_inflation_effect = {
+    custom_effect_tooltip = USF_change_inflation_desc
+    hidden_effect = {
+        USF = {
+            add_to_variable = {USF_inflation = USF_inflation_temp}
+            USF_refresh_black_foaming_night_modifier = yes
+        }
+    }
+}
+
+USF_change_unemployment_effect = {
+    custom_effect_tooltip = USF_change_unemployment_desc
+    hidden_effect = {
+        USF = {
+            add_to_variable = {USF_unemployment = USF_unemployment_temp}
+            USF_refresh_black_foaming_night_modifier = yes
+        }
+    }
+}
+
+USF_monthly_inflation_change = {
+    if = {
+        limit = {
+            has_dynamic_modifier = {modifier = USF_black_foaming_night}
+        }
+        add_to_variable = {USF_inflation = modifier@USF_monthly_inflation_modifier}
+        USF_refresh_black_foaming_night_modifier = yes
     }
 }
