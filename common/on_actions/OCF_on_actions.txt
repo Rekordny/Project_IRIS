@@ -1770,6 +1770,35 @@ on_actions = {
 			100 = OCF.20
 		}
 	}
+
+	#内战结束-或者志愿军
+	on_civil_war_end = {
+		effect = {
+			#安齐奥志愿军
+			if = {
+				limit = { ROOT = { original_tag = ANZ } }
+				OCF = {
+					remove_relation_modifier = {
+						target = FROM
+						modifier = OCF_LTA_send_volunteers_tension_1
+					}
+					remove_relation_modifier = {
+						target = ROOT
+						modifier = OCF_LTA_send_volunteers_tension_1
+					}
+					remove_relation_modifier = {
+						target = FROM
+						modifier = OCF_LTA_send_volunteers_tension_2
+					}
+					remove_relation_modifier = {
+						target = ROOT
+						modifier = OCF_LTA_send_volunteers_tension_2
+					}
+				}
+			}
+		}
+	}
+
 	on_declare_war = {
 		effect = {
 			if = {
@@ -1995,6 +2024,51 @@ on_actions = {
 						log = "[GetDateText]: [Root.GetName]: OCF_surrender_after_war_judge_flag"
 						OCF_surrender_after_war_judge = yes
 						set_country_flag = OCF_surrender_after_war_judge_flag
+					}
+				}
+			}
+		}
+	}
+
+
+
+	#新征将军
+	on_unit_leader_created = {
+		effect = {
+			character = {
+				if = { 
+					limit = {
+						is_army_leader = yes
+					}
+					if = {
+						limit = {	
+							FROM = { has_idea = OCF_cultivate_people_enthusiasm_magic }
+						}
+						root = {
+							random_list = {
+								50 = { add_unit_leader_trait = Mana_leader } 
+								50 = {}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	#将军升级
+	on_unit_leader_level_up = {
+		effect = {
+			if = { 
+				limit = { 
+					FROM = { has_idea = OCF_cultivate_people_enthusiasm_magic }
+				}
+				character = { 
+					IF = { 
+						limit = { is_army_leader = yes }
+						random_list = { 
+							10 = { add_unit_leader_trait = Mana_leader } 
+							90 = {} 
+						} 
 					}
 				}
 			}

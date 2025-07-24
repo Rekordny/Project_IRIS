@@ -1092,6 +1092,7 @@ country_event = {
 				army_ratio = 0
 				navy_ratio = 0.9
 				air_ratio = 0
+				keep_unit_leaders_trigger = { always = yes }
 			}
 		}
 		clr_country_flag = race_mark_human
@@ -5824,6 +5825,7 @@ country_event = {
 			}
 		}
 		name = OCF.44.a
+		FROM = { change_tag_from = ROOT }
 		FROM = { country_event = { id = OCF.45 days = 2 } }
 	}
 
@@ -5922,7 +5924,7 @@ country_event = {
 	desc = OCF.47.desc
 	is_triggered_only = yes
 	picture = GFX_OCF_47
-	after  = {
+	after = {
 		save_global_event_target_as = EEO_eastern_europe_unifier
 	}
 	option = {
@@ -5939,6 +5941,77 @@ country_event = {
 		name = OCF.47.b
 		set_cosmetic_tag = EEO
 		set_capital = { state = 60 }
+	}
+}
+
+
+#派遣志愿军-LTA
+country_event = {
+	id = OCF.48
+	title = OCF.48.title
+	desc = OCF.48.desc
+	is_triggered_only = no
+	fire_only_once = yes
+	# picture = GFX_OCF_48
+	trigger = {
+		NOT = { country_exists = FNC }
+		ANZ = { has_civil_war = yes }
+		has_war = no
+		original_tag = OCF
+	}
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = OCF.48.a
+		set_country_flag = OCF_48_a_flag
+		if = {
+			limit = {
+				has_country_flag = OCF_control_government_flag_8
+			}
+			add_relation_modifier = {
+				target = LTA
+				modifier = OCF_LTA_send_volunteers_tension_2
+			}
+		}
+		else = {
+			add_relation_modifier = {
+				target = LTA
+				modifier = OCF_LTA_send_volunteers_tension_1
+			}
+		}
+		LTA = {
+			add_opinion_modifier = {
+				target = OCF
+				modifier = OCF_support_lotian_add
+			}
+		}
+		every_country = {
+			limit = {
+				is_ally_with = ANZ
+			}
+			add_opinion_modifier = {
+				target = OCF
+				modifier = OCF_support_lotian_low
+			}
+		}
+	}
+	option = {
+		ai_chance = {
+			base = 0
+		}
+		name = OCF.48.b
+		if = {
+			limit = {
+				has_country_flag = OCF_control_government_flag_8
+			}
+			add_political_power = -20
+		}
+		else = {
+			OCF_gridbox_seat_array_original_relationship_variable_8^del = yes
+			custom_effect_tooltip = OCF_changes_party_relations
+			custom_effect_tooltip = OCF_reduce_relationships_VIII_3
+		}
 	}
 }
 
@@ -5996,6 +6069,122 @@ country_event = {
 		custom_effect_tooltip = OCF_reduce_relationships_I_3
 		custom_effect_tooltip = OCF_changes_parliamentary_parties
 		OCE_Rub_cards_new = yes
+	}
+}
+
+#[FROM.GetName]希望归还[901.GetName]
+country_event = {
+	id = OCF.49
+	title = OCF.49.title
+	desc = OCF.49.desc
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_opinion = {
+					target = FROM
+					value < 0
+				}
+			}
+			modifier = {
+				FROM = {
+					is_ai = yes
+				}
+				OR = {
+					original_tag = ELN
+				}
+				add = 100
+			}
+			modifier = {
+				add = 3
+				has_opinion = {
+					target = FROM
+					value > 10
+				}
+			}
+			modifier = {
+				add = 12
+				has_opinion = {
+					target = FROM
+					value > 25
+				}
+			}
+			modifier = {
+				add = 24
+				has_opinion = {
+					target = FROM
+					value > 50
+				}
+			}
+		}
+		name = OCF.49.a
+		FROM = { country_event = { id = OCF.50 days = 2 } }
+	}
+
+	option = {
+		ai_chance = {
+			base = 0
+			modifier = {
+				FROM = {
+					is_ai = yes
+				}
+				OR = {
+					original_tag = ELN
+				}
+				factor = 0
+			}
+			modifier = {
+				factor = 0
+				has_opinion = {
+					target = FROM
+					value > 60
+				}
+			}
+		}
+		name = OCF.49.b
+		FROM = { country_event = { id = OCF.51 days = 2 } }
+	}
+}
+
+#同意提案
+country_event = {
+	id = OCF.50
+	title = OCF.50.title
+	desc = OCF.50.desc
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = OCF.50.a
+		transfer_state = 901
+	}
+}
+
+#拒绝提案
+country_event = {
+	id = OCF.51
+	title = OCF.51.title
+	desc = OCF.51.desc
+	is_triggered_only = yes
+	option = {
+		ai_chance = {
+			base = 0
+		}
+		name = OCF.51.a
+	}
+	option = {
+		ai_chance = {
+			base = 1
+		}
+		name = OCF.51.b
+		create_wargoal = {
+			type = take_claimed_state
+			target = FROM
+			generator = { 901 }
+		}
 	}
 }
 
