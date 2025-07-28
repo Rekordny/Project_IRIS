@@ -240,6 +240,110 @@ USF_congress = {
 			factor = 100
 		}
 	}
+	USF_financial_corporation_act_decision = {
+		visible = {
+			has_completed_focus = USF_stablize_the_bank_system
+			check_variable = {USF_financial_corporation_act_decision_passed_var < 5}
+			NOT = {has_idea = USF_help_financial_corporation_2}
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		days_re_enable = 180
+		remove_effect = {
+			country_event = {id = USF_act.6}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				set_temp_variable = {USF_inflation_temp = -1}
+				USF_change_inflation_effect = yes
+				random_owned_controlled_state = {
+					add_extra_state_shared_building_slots = 1
+					add_building_construction = {
+						type = industrial_complex
+						level = 1
+						instant_build = yes
+					}
+				}
+				add_to_variable = {USF_financial_corporation_act_decision_passed_var = 1}
+				if = {
+					limit = {
+						check_variable = {USF_financial_corporation_act_decision_passed_var > 4}
+					}
+					swap_ideas = {
+						remove_idea = USF_help_financial_corporation
+						add_idea = USF_help_financial_corporation_2
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_cut_welfare_act_decision = {
+		visible = {
+			has_completed_focus = USF_reject_mass_welfare
+			NOT = {has_idea = USF_cut_welfare}
+		}
+		cost = 30
+		days_remove = var:USF_sub_act_time
+		remove_effect = {
+			country_event = {id = USF_act.7}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_timed_idea = {idea = USF_cut_welfare days = 364}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_increase_tariff_act_decision = {
+		available = {
+			check_variable = {USF_tariff_var = 0}#防止event target撞车
+		}
+		visible = {
+			has_completed_focus = USF_raise_trade_barrier
+			FROM = {
+				NOT = {has_country_flag = USF_tariff_flag}
+			}
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		target_array = USF_tariff_target
+		complete_effect = {
+			set_variable = {USF_tariff_var = 1}
+		}
+		remove_effect = {
+			set_variable = {USF_tariff_var = 0}
+			hidden_effect = {
+				FROM = {
+					save_event_target_as = USF_event_target
+				}
+			}
+			country_event = {id = USF_act.8}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				set_temp_variable = {USF_inflation_temp = 1}
+				USF_change_inflation_effect = yes
+				FROM = {
+					add_opinion_modifier = {
+						target = USF
+						modifier = USF_tariff_modifier
+					}
+				}
+				swap_ideas = {
+					remove_idea = USF_trade_protectionism_modifier_dummy
+					add_idea = USF_trade_protectionism_modifier_1
+				}
+				add_to_variable = {USF_production_speed_buildings_factor = 0.01}
+				add_to_variable = {USF_min_export = -0.03}
+				add_to_variable = {USF_stability_factor = 0.01}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
 
 	#收买决议
 	USF_gain_support = {
@@ -272,6 +376,9 @@ USF_congress = {
 				tooltip = USF_we_can_bribe_them
 				check_variable = {USF_adp_support < USF_adp_seat}
 			}
+			NOT = {
+				has_government = neutrality
+			}
 		}
 		cost = var:USF_bribe_adp_cost
 		days_remove = 70
@@ -294,6 +401,9 @@ USF_congress = {
 			custom_trigger_tooltip = {
 				tooltip = USF_we_can_bribe_them
 				check_variable = {USF_ilp_support < USF_ilp_seat}
+			}
+			NOT = {
+				has_government = democratic
 			}
 		}
 		cost = var:USF_bribe_ilp_cost
@@ -318,6 +428,9 @@ USF_congress = {
 				tooltip = USF_we_can_bribe_them
 				check_variable = {USF_unf_support < USF_unf_seat}
 			}
+			NOT = {
+				has_government = fascism
+			}
 		}
 		cost = var:USF_bribe_unf_cost
 		days_remove = 70
@@ -341,6 +454,9 @@ USF_congress = {
 				tooltip = USF_we_can_bribe_them
 				check_variable = {USF_icp_support < USF_icp_seat}
 			}
+			NOT = {
+				has_government = communism
+			}
 		}
 		cost = var:USF_bribe_icp_cost
 		days_remove = 70
@@ -363,6 +479,9 @@ USF_congress = {
 			custom_trigger_tooltip = {
 				tooltip = USF_we_can_bribe_them
 				check_variable = {USF_slo_support < USF_slo_seat}
+			}
+			NOT = {
+				has_government = reactionism
 			}
 		}
 		cost = var:USF_bribe_slo_cost
@@ -522,6 +641,20 @@ USF_debug = {
 		complete_effect = {
 			set_temp_variable = {USF_inflation_temp = 1}
 			USF_change_inflation_effect = yes
+		}
+	}
+	USF_congress_debug = {
+		complete_effect = {
+			set_temp_variable = {USF_adp_support_temp = 100}
+			USF_adp_support_effect = yes
+			set_temp_variable = {USF_ilp_support_temp = 100}
+			USF_ilp_support_effect = yes
+			set_temp_variable = {USF_icp_support_temp = 30}
+			USF_icp_support_effect = yes
+			set_temp_variable = {USF_unf_support_temp = 30}
+			USF_unf_support_effect = yes
+			set_temp_variable = {USF_slo_support_temp = 30}
+			USF_slo_support_effect = yes
 		}
 	}
 }
