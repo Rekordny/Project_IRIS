@@ -146,6 +146,72 @@ USF_refresh_congress = {
             set_variable = {USF_slo_approval_rate = USF_slo_support}#计算党派支持率
             divide_variable = {USF_slo_approval_rate = USF_slo_seat}
 
+            if = {#计算通过率
+                limit = {
+                    has_government = neutrality
+                }
+                set_variable = {USF_ruling_party_approval_rate = USF_adp_approval_rate}#执政党权重0.35
+                set_variable = {USF_opposite_party_approval_rate = USF_ilp_approval_rate}#反对党权重0.25
+                set_variable = {USF_popularity = USF.party_popularity@neutrality}#党派权重0.1
+            }
+            else_if = {
+                limit = {
+                    has_government = democratic
+                }
+                set_variable = {USF_ruling_party_approval_rate = USF_ilp_approval_rate}#执政党权重0.35
+                set_variable = {USF_opposite_party_approval_rate = USF_adp_approval_rate}#反对党权重0.25
+                set_variable = {USF_popularity = USF.party_popularity@democratic}#党派权重0.1
+            }
+            if = {
+                limit = {
+                    check_variable = {USF_unf_approval_rate < USF_icp_approval_rate}
+                    check_variable = {USF_unf_approval_rate < USF_slo_approval_rate}
+                }
+                set_variable = {USF_sub_party_approval_rate = USF_unf_approval_rate}#在野党派权重0.2
+            }
+            else_if = {
+                limit = {
+                    check_variable = {USF_icp_approval_rate < USF_unf_approval_rate}
+                    check_variable = {USF_icp_approval_rate < USF_slo_approval_rate}
+                }
+                set_variable = {USF_sub_party_approval_rate = USF_cip_approval_rate}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {USF_slo_approval_rate < USF_unf_approval_rate}
+                    check_variable = {USF_slo_approval_rate < USF_icp_approval_rate}
+                }
+                set_variable = {USF_sub_party_approval_rate = USF_slo_approval_rate}
+            }
+            else = {
+                random_list = {
+                    33 = {
+                        set_variable = {USF_sub_party_approval_rate = USF_unf_approval_rate}
+                    }
+                    33 = {
+                        set_variable = {USF_sub_party_approval_rate = USF_icp_approval_rate}
+                    }
+                    33 = {
+                        set_variable = {USF_sub_party_approval_rate = USF_slo_approval_rate}
+                    }
+                }
+            }
+
+            set_variable = {USF_passing_rate = 0}
+            set_variable = {USF_passing_rate_1 = USF_ruling_party_approval_rate}
+            multiply_variable = {USF_passing_rate_1 = 0.35}
+            set_variable = {USF_passing_rate_2 = USF_opposite_party_approval_rate}
+            multiply_variable = {USF_passing_rate_2 = 0.25}
+            set_variable = {USF_passing_rate_3 = USF_sub_party_approval_rate}
+            multiply_variable = {USF_passing_rate_3 = 0.2}
+            set_variable = {USF_passing_rate_4 = USF_popularity}
+            multiply_variable = {USF_passing_rate_4 = 0.1}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_1}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_2}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_3}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_4}
+            
+
             set_variable = {USF_total_approval_rate = USF_yea}
             divide_variable = {USF_total_approval_rate = 313}
 
@@ -616,5 +682,47 @@ USF_monthly_inflation_change = {
         }
         add_to_variable = {USF_inflation = modifier@USF_monthly_inflation_modifier}
         USF_refresh_black_foaming_night_modifier = yes
+    }
+}
+
+USF_refresh_tariff_target_array = {
+
+    every_other_country = {
+        limit = {
+            is_major = yes
+            NOT = {
+                tag = OCE
+            }
+            NOT = {
+                has_idea = closed_economy
+            }
+            NOT = {
+                is_in_array = {
+                    array = USF.USF_tariff_target
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = {
+            array = USF.USF_tariff_target
+            value = THIS
+        }
+    }
+    every_other_country = {
+        limit = {
+            OR = {
+                tag = OCE
+                is_major = no
+                has_idea = closed_economy
+            }
+            is_in_array = {
+                array = USF.USF_tariff_target
+                value = THIS
+            }
+        }
+        remove_from_array = {
+            array = USF.USF_tariff_target
+            value = THIS
+        }
     }
 }
