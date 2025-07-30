@@ -75,7 +75,7 @@ PixelShader =
 		{
             float width = vFirstColor.r * 1000.f;
             float height = vFirstColor.g * 1000.f;
-            float lineWidth = vFirstColor.b * 10.f;
+            float lineWidth = vFirstColor.b * 5.f;
 
 			float value = CurrentState * 1000000.f;
 			float end = mod(value, 1000.f) / height;
