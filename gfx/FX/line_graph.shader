@@ -89,18 +89,19 @@ PixelShader =
 			float y1 = 0.5f / 20.f;
 			float y2 = CurrentState / 20.f;
 
-			float xPos = v.vTexCoord0.x - 0.04f;
-			float xPos2 = v.vTexCoord0.x;
-			float xPos3 = v.vTexCoord0.x + 0.04f;
-			float xPos4 = v.vTexCoord0.x + 0.08f;
-			float yPos = v.vTexCoord0.y / 20.f; 
+			float xPos  = v.vTexCoord0.x - 0.01f; 
+    		float xPos2 = v.vTexCoord0.x - 0.005f; 
+    		float xPos3 = v.vTexCoord0.x + 0.005f;
+    		float xPos4 = v.vTexCoord0.x + 0.01f;
 
-			float dist = abs((y2 - y1) * xPos - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
-			float dist2 = abs((y2 - y1) * xPos2 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
-			float dist3 = abs((y2 - y1) * xPos3 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
-			float dist4 = abs((y2 - y1) * xPos4 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
+    		float yPos = v.vTexCoord0.y / 20.f; 
 
-			if (dist < 0.0004f || dist2 < 0.0004f || dist3 < 0.0004f || dist4 < 0.0004f)
+			float dist  = abs((y2 - y1) * xPos  - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
+    		float dist2 = abs((y2 - y1) * xPos2 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
+    		float dist3 = abs((y2 - y1) * xPos3 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
+    		float dist4 = abs((y2 - y1) * xPos4 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
+
+			if (dist < 0.0002f || dist2 < 0.0002f || dist3 < 0.0002f || dist4 < 0.0002f)
 				return tex2D( TextureOne, v.vTexCoord0.xy );
 			else
 				return tex2D( TextureTwo, v.vTexCoord0.xy );
