@@ -93,62 +93,6 @@ country_event = {
             BLA = {
                 give_guarantee = MZL
             }
-            IKR = {
-                MZL_Bhagyate = {
-                    set_nationality = MZL
-                }
-                MZL_Aishe = {
-                    set_nationality = MZL
-                }
-                MZL_Bhalaban = {
-                    set_nationality = MZL
-                }
-            }
-            MZL = {
-                add_ideas = MZL_drug
-                inherit_technology = IKR
-                division_template = {
-                    name = "穆兹拉克卫士"
-                    regiments = {
-                        infantry = { x = 0 y = 0 }
-                        infantry = { x = 0 y = 1 }
-                        infantry = { x = 0 y = 2 }
-                        infantry = { x = 1 y = 0 }
-                        infantry = { x = 1 y = 1 }
-                        infantry = { x = 1 y = 2 }
-                    }
-                }
-                every_owned_state = {
-                    limit = {
-                        is_core_of = MZL
-                    }
-                    create_unit = {
-                        division = "name = \"穆兹拉克卫士\" division_template = \"穆兹拉克卫士\" start_experience_factor = 0.15"
-                        owner = MZL
-                    }
-                    create_unit = {
-                        division = "name = \"穆兹拉克卫士\" division_template = \"穆兹拉克卫士\" start_experience_factor = 0.15"
-                        owner = MZL
-                    }
-                    create_unit = {
-                        division = "name = \"穆兹拉克卫士\" division_template = \"穆兹拉克卫士\" start_experience_factor = 0.15"
-                        owner = MZL
-                    }
-                }
-                inherit_technology = KAM
-                set_politics = {
-                    ruling_party = neutrality
-                }
-                add_popularity = {
-                    ideology = neutrality
-                    popularity = 0.50
-                }
-                promote_character = {
-                    character = MZL_Bhalaban
-                    ideology = sub_Military_Dictatorship
-                }
-                country_lock_all_division_template = yes
-            }
         }
 	}
 }
@@ -502,6 +446,51 @@ country_event = {
     is_triggered_only = yes
 	option = {
 		name = IKR.17.a
+        ai_chance = {
+            factor = 10
+        }
+	}
+}
+#部队进入穆兹拉克地区强制和平
+country_event = {
+    id = IKR.100
+    title = IKR.100.t
+	desc = IKR.100.desc
+	#picture = GFX_ungevent_1
+	fire_only_once = yes
+    trigger = {
+        tag = IKR
+        has_war_with = MZL
+        NOT = {
+            has_completed_focus = IKR_restoration_1
+        }
+        any_state = {
+            is_owned_by = MZL
+            NOT = {
+                is_fully_controlled_by = MZL
+            }
+        }
+        IKR = {
+            OR = {
+                divisions_in_state = {
+                    size > 0
+                    state = 225
+                }
+                divisions_in_state = {
+                    size > 0
+                    state = 235
+                }
+            }
+        }
+    }
+    immediate = {
+        white_peace = MZL
+    }
+    mean_time_to_happen = {
+        days = 1
+    }
+	option = {
+		name = IKR.100.a
         ai_chance = {
             factor = 10
         }
@@ -1218,6 +1207,47 @@ news_event = {
     }
     immediate = {
         set_global_flag = IKR_invaded_KAM
+        hidden_effect = {
+            set_global_flag = show_peace_popup_alert
+            set_global_flag = war_won
+            IKR = {
+                remove_mission = IKR_end_the_war_in_90_days
+                save_global_event_target_as = winning_country
+            }
+            KAM = {
+                save_global_event_target_as = losing_country
+            }
+            IRIS_peace_popup_determine_allies = yes
+            add_to_variable = { global.peace_popup_dirty = 1 }
+
+            set_global_flag = show_peace_popup_alert
+            set_global_flag = war_won
+            IKR = {
+                save_global_event_target_as = winning_country
+            }
+            BAT = {
+                save_global_event_target_as = losing_country
+            }
+            IRIS_peace_popup_determine_allies = yes
+            add_to_variable = { global.peace_popup_dirty = 1 }
+
+            IKR = {
+                annex_country = {
+                    target = KAM
+                    transfer_troops = no
+                }
+                annex_country = {
+                    target = BAT
+                    transfer_troops = no
+                }
+                if = {
+                    limit = {
+                        has_war_with = MZL
+                    }
+                    white_peace = MZL
+                }
+            }
+        }
     }
     mean_time_to_happen = {
         days = 1
@@ -1239,8 +1269,8 @@ news_event = {
         }
         hidden_effect = {
             set_country_flag = IKR_restoration_flag
-            mark_focus_tree_layout_dirty = yes
         }
+        IRIS_unlock_a_new_branch = yes
 	}
     option = {
 		name = IKR_news.4.c
@@ -1346,63 +1376,13 @@ news_event = {
             BLA = {
                 give_guarantee = MZL
             }
-            IKR = {
-                MZL_Bhagyate = {
+            every_possible_country = {
+                limit = {
+                    has_character = BAT_Aishe
+                }
+                BAT_Aishe = {
                     set_nationality = MZL
                 }
-                MZL_Aishe = {
-                    set_nationality = MZL
-                }
-                MZL_Bhalaban = {
-                    set_nationality = MZL
-                }
-            }
-            MZL = {
-                add_ideas = MZL_drug
-                division_template = {
-                    name = "穆兹拉克卫士"
-                    regiments = {
-                        infantry = { x = 0 y = 0 }
-                        infantry = { x = 0 y = 1 }
-                        infantry = { x = 0 y = 2 }
-                        infantry = { x = 1 y = 0 }
-                        infantry = { x = 1 y = 1 }
-                        infantry = { x = 1 y = 2 }
-                        cavalry = {x = 2 y = 0}
-                        cavalry = {x = 2 y = 1}
-                        cavalry = {x = 2 y = 2}
-                    }
-                }
-                every_owned_state = {
-                    limit = {
-                        is_core_of = MZL
-                    }
-                    create_unit = {
-                        division = "name = \"穆兹拉克卫士\" division_template = \"穆兹拉克卫士\" start_experience_factor = 0.15"
-                        owner = MZL
-                    }
-                    create_unit = {
-                        division = "name = \"穆兹拉克卫士\" division_template = \"穆兹拉克卫士\" start_experience_factor = 0.15"
-                        owner = MZL
-                    }
-                    create_unit = {
-                        division = "name = \"穆兹拉克卫士\" division_template = \"穆兹拉克卫士\" start_experience_factor = 0.15"
-                        owner = MZL
-                    }
-                }
-                inherit_technology = KAM
-                set_politics = {
-                    ruling_party = neutrality
-                }
-                add_popularity = {
-                    ideology = neutrality
-                    popularity = 0.50
-                }
-                promote_character = {
-                    character = MZL_Bhalaban
-                    ideology = sub_Military_Dictatorship
-                }
-                country_lock_all_division_template = yes
             }
         }
 	}
