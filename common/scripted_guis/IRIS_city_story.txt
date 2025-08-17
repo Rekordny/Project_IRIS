@@ -1,26 +1,44 @@
 scripted_gui = {
     IRIS_city_story_button_container = {
-        context_type = selected_state_context
+        context_type = player_context
         parent_window_token = selected_state_view
         window_name = "IRIS_city_story_button_container"
         visible = {
-            THIS = { has_state_flag = has_city_story }
-        }
-        properties = {
+            # THIS = { has_state_flag = has_city_story }
         }
         triggers = {
+
+        }
+        properties = {
+            IRIS_city_story_button = {
+                x = IRIS_city_story_button_x
+                frame = IRIS_city_story_button_frame
+            }
+        }
+        triggers = {
+            IRIS_city_story_button_click_enabled  = {
+                check_variable = { IRIS_city_story_button_animation = 1 }
+            }
         }
         effects = {
-			IRIS_city_story_button_click = {
+            IRIS_city_story_button_latent_click = {
                 if = {
                     limit = {
                         check_variable = { ROOT.IRIS_city_story_var = 1 }
                     }
                     set_variable = { ROOT.IRIS_city_story_var = 0 }
+
+                    set_variable = { IRIS_city_story_button_x = -120 }
+                    set_variable = { IRIS_city_story_button_frame = 192135 }
                 }
                 else = {
                     set_variable = { ROOT.IRIS_city_story_var = 1 }
+
+                    set_variable = { IRIS_city_story_button_x = -9 }
+                    set_variable = { IRIS_city_story_button_frame = 135192 }
                 }
+                add_to_variable = { IRIS_city_story_button_animation = 1 }
+                modulo_variable = { IRIS_city_story_button_animation = 2 }
             }
         }
     }
@@ -29,20 +47,75 @@ scripted_gui = {
         context_type = selected_state_context
         parent_window_token = selected_state_view
         visible = {
-            THIS = { has_state_flag = has_city_story }
+            # THIS = { has_state_flag = has_city_story }
             check_variable = { ROOT.IRIS_city_story_var = 1 }
         }
         properties = {
-			IRIS_city_pic = {
-				image = "[IRIS_city_pic]"
-			}
+            IRIS_city_pic = { image = "[IRIS_city_pic]" }
+            IRIS_ethnic_images = { image = "[IRIS_ethnic_images]" }
+            IRIS_sub_ethnic_group_iconType = { image = "[IRIS_sub_ethnic_group_iconType_small]" }
+            IRIS_national_character_1 = { image = "[IRIS_national_character_1_images]" }
+            IRIS_national_character_2 = { image = "[IRIS_national_character_2_images]" }
         }
         triggers = {
+			IRIS_national_character_1_visible = { has_variable = national_character_1 }
+            IRIS_national_character_2_visible = { has_variable = national_character_2 }
         }
         effects = {
-			close_button_click = {
+            close_button_click = {
                 set_variable = { ROOT.IRIS_city_story_var = 0 }
+
+                set_variable = { ROOT.IRIS_city_story_button_x = -120 }
+                set_variable = { ROOT.IRIS_city_story_button_frame = 192135 }
+                add_to_variable = { ROOT.IRIS_city_story_button_animation = 1 }
+                modulo_variable = { ROOT.IRIS_city_story_button_animation = 2 }
+            }
+        }
+        dynamic_lists = {
+            IRIS_sub_ethnic_group_gridboxtype = {
+                array = this.sub_ethnic_group_array
+                entry_container = IRIS_sub_ethnic_group
+                value = v
+                # change_scope = yes
             }
         }
     }
+
+    IRIS_national_ethnic_interface_window = {
+		context_type = player_context
+		parent_window_token = politics_tab
+		window_name = "IRIS_national_ethnic_interface_window"
+		ai_enabled = {
+			#always = no
+		}
+		visible = {
+			check_variable = { IRIS_national_ethnic_interface_window_v = 1 }
+		}
+		properties = {
+            ethnic_images = { image = "[IRIS_ethnic_images]" }
+			ethnic_images_list = { image = "[IRIS_sub_ethnic_group_iconType]" }
+            national_character_1 = { image = "[IRIS_national_character_1_loc]" }
+            national_character_2 = { image = "[IRIS_national_character_2_loc]" }
+            national_character_1_list = { image = "[IRIS_national_character_1_list]"}
+            national_character_2_list = { image = "[IRIS_national_character_2_list]"}
+		}
+        effects = {
+			close_button_click = {
+				set_variable = { IRIS_national_ethnic_interface_window_v = 0 }
+			}
+		}
+		dynamic_lists = {
+			IRIS_race_grid = {
+				array = IRIS_race_array
+				index = i
+				value = v
+				entry_container = IRIS_nationality_list
+			}
+		}
+		triggers = {
+			# introduce_visible = {
+			# 	historical_leaders_triggers = yes
+			# }
+		}
+	}
 }
