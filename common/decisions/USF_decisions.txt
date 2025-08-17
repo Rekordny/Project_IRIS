@@ -345,6 +345,134 @@ USF_congress = {
 		}
 	}
 
+	USF_federal_aduit_decision = {
+		allowed = { always = no }
+		visible = {
+			NOT = {
+				has_country_flag = USF_federal_aduit_decision_passed
+			}
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		remove_effect = {
+			country_event = {id = USF_act.9}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_ideas = USF_federal_aduit
+				add_popularity = {
+					ideology = democratic
+					popularity = 0.03
+				}
+				add_popularity = {
+					ideology = communism
+					popularity = 0.03
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_mana_plant_adjustment_act_decison = {
+		allowed = { always = no }
+		visible = {
+			NOT = {
+				has_country_flag = USF_mana_plant_adjustment_act_decison_passed
+			}
+		}
+		cost = 30
+		days_remove = var:USF_sub_act_time
+		remove_effect = {
+			country_event = {id = USF_act.10}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				set_temp_variable = {USF_inflation_temp = 1.5}
+				USF_change_inflation_effect = yes
+				unlock_decision_tooltip = USF_deal_with_pandemic
+				set_country_flag = USF_allow_deal_with_pandemic
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_reduce_quota_decison = {
+		available = {
+			has_dynamic_modifier = {modifier = USF_black_foaming_night}
+		}
+		visible = {	
+			has_completed_focus = USF_adjust_planting_quota
+			has_dynamic_modifier = {modifier = USF_black_foaming_night}
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		days_re_enable = 100
+		remove_effect = {
+			country_event = {id = USF_act.11}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				set_temp_variable = {USF_inflation_temp = 0.5}
+				USF_change_inflation_effect = yes
+				set_temp_variable = {USF_unemployment_temp = -0.3}
+				USF_change_unemployment_effect = yes
+				random_list = {
+					50 = {
+						set_temp_variable = {USF_ilp_support_temp = 1}
+						USF_ilp_support_effect = yes
+					}
+					50 = {
+						set_temp_variable = {USF_adp_support_temp = -3}
+						USF_adp_support_effect = yes
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_federal_insurance_company_decison = {
+		allowed = {
+			always = no
+		}
+		visible = {	
+			NOT = {has_country_flag = USF_federal_insurance_company_decison_passed}
+		}
+		cost = 30
+		days_remove = var:USF_sub_act_time
+		remove_effect = {
+			country_event = {id = USF_act.12}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_ideas = USF_inclusive_deposit_insurance
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_stock_exchange_act_decison = {
+		allowed = {
+			always = no
+		}
+		visible = {	
+			NOT = {has_country_flag = USF_stock_exchange_act_decison_passed}
+		}
+		cost = 30
+		days_remove = var:USF_imporant_act_time
+		remove_effect = {
+			country_event = {id = USF_act.13}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_stability = 0.05
+				unlock_decision_tooltip = USF_improve_supply_efficiency
+				unlock_decision_tooltip = USF_encourage_investment
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
 	#收买决议
 	USF_gain_support = {
 		cost = 50
@@ -612,6 +740,77 @@ USF_deal_with_black_foaming_night = {
 			factor = 100
 		}
 	}
+	USF_improve_supply_efficiency = {
+		visible = {
+			has_country_flag = USF_stock_exchange_act_decison_passed
+		}
+		days_remove = 100
+		modifier = {
+			political_power_cost = 0.3
+			production_speed_buildings_factor = -0.1
+			consumer_goods_expected_value = -0.1
+		}
+		remove_effect = {
+			set_temp_variable = {USF_inflation_temp = 0.5}
+			USF_change_inflation_effect = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_encourage_investment = {
+		visible = {
+			has_country_flag = USF_stock_exchange_act_decison_passed
+		}
+		days_remove = 300
+		complete_effect = {
+			USF_encourage_investment_setup = yes
+			set_country_flag = USF_encourage_investment
+		}
+		remove_effect = {
+			custom_effect_tooltip = USF_encourage_investment_t
+			effect_tooltip = {
+				add_political_power = var:USF_investment_pp_gain_d
+				set_temp_variable = {USF_unemployment_temp = USF_investment_unemployment_gain_d}
+				USF_change_unemployment_effect = yes
+			}
+			USF_encourage_investment_end = yes
+			clr_country_flag = USF_encourage_investment
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+}
+USF_deal_with_pandemic_category = {
+	USF_deal_with_pandemic = {
+        state_target = yes
+        target_root_trigger = {
+            has_country_flag = USF_allow_deal_with_pandemic
+        }
+        highlight_state_targets = {
+            state = FROM
+        }
+        target_array = USF.pandemic_states
+        target_trigger = {
+            FROM = {
+                is_owned_by = ROOT
+                has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+            }
+        }
+        cost = 30
+        days_remove = 60
+        remove_effect = {
+            FROM = {
+                remove_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+            }
+            set_temp_variable = {USF_unemployment_temp = -0.3}
+			USF_change_unemployment_effect = yes
+        }
+        ai_will_do = {
+            base = 1
+        }
+    }
 }
 USF_debug = {
 	USF_variable_debug = {
