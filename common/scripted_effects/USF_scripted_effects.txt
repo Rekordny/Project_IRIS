@@ -133,19 +133,57 @@ USF_refresh_congress = {
             set_variable = {USF_nay = 313}#计算反对
             subtract_from_variable = {USF_nay = USF_yea}
 
-            set_variable = {USF_advantage = USF_yea}#计算差额，用以判断勉强通过/否决
-            subtract_from_variable = {USF_advantage = USF_nay}
-
             set_variable = {USF_adp_approval_rate = USF_adp_support}#计算党派支持率
+            set_variable = {USF_adp_approval_rate_m = 1}
+            add_to_variable = {USF_adp_approval_rate_m = modifier@USF_adp_approval_rate_modifier}
+            multiply_variable = {USF_adp_approval_rate = USF_adp_approval_rate_m}
+            round_variable = USF_adp_approval_rate
             divide_variable = {USF_adp_approval_rate = USF_adp_seat}
             set_variable = {USF_ilp_approval_rate = USF_ilp_support}#计算党派支持率
             divide_variable = {USF_ilp_approval_rate = USF_ilp_seat}
+            set_variable = {USF_ilp_approval_rate_m = 1}
+            add_to_variable = {USF_ilp_approval_rate_m = modifier@USF_ilp_approval_rate_modifier}
+            multiply_variable = {USF_ilp_approval_rate = USF_ilp_approval_rate_m}
+            round_variable = USF_ilp_approval_rate
             set_variable = {USF_unf_approval_rate = USF_unf_support}#计算党派支持率
+            set_variable = {USF_unf_approval_rate_m = 1}
+            add_to_variable = {USF_unf_approval_rate_m = modifier@USF_unf_approval_rate_modifier}
+            multiply_variable = {USF_unf_approval_rate = USF_unf_approval_rate_m}
+            round_variable = USF_unf_approval_rate
             divide_variable = {USF_unf_approval_rate = USF_unf_seat}
             set_variable = {USF_icp_approval_rate = USF_icp_support}#计算党派支持率
             divide_variable = {USF_icp_approval_rate = USF_icp_seat}
+            set_variable = {USF_icp_approval_rate_m = 1}
+            add_to_variable = {USF_icp_approval_rate_m = modifier@USF_icp_approval_rate_modifier}
+            multiply_variable = {USF_icp_approval_rate = USF_icp_approval_rate_m}
+            round_variable = USF_icp_approval_rate
             set_variable = {USF_slo_approval_rate = USF_slo_support}#计算党派支持率
             divide_variable = {USF_slo_approval_rate = USF_slo_seat}
+            set_variable = {USF_slo_approval_rate_m = 1}
+            add_to_variable = {USF_slo_approval_rate_m = modifier@USF_slo_approval_rate_modifier}
+            multiply_variable = {USF_slo_approval_rate = USF_slo_approval_rate_m}
+            round_variable = USF_slo_approval_rate
+
+            clamp_variable = {
+                var = USF_adp_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_ilp_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_unf_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_icp_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_slo_approval_rate
+                max = 1
+            }
 
             if = {#计算通过率
                 limit = {
@@ -250,6 +288,53 @@ USF_refresh_congress = {
                 var = USF_slo_nay
                 min = 0
             }
+
+            set_variable = {USF_advantage = 0}#计算差额，用以判断勉强通过/否决，需计入修正后数值
+            set_variable = {USF_adp_support_t = USF_adp_support}
+            multiply_variable = {USF_adp_support_t = USF_adp_approval_rate_m}
+            round_variable = USF_adp_support_t
+            set_variable = {USF_ilp_support_t = USF_ilp_support}
+            multiply_variable = {USF_ilp_support_t = USF_ilp_approval_rate_m}
+            round_variable = USF_ilp_support_t
+            set_variable = {USF_unf_support_t = USF_unf_support}
+            multiply_variable = {USF_unf_support_t = USF_unf_approval_rate_m}
+            round_variable = USF_unf_support_t
+            set_variable = {USF_icp_support_t = USF_icp_support}
+            multiply_variable = {USF_icp_support_t = USF_icp_approval_rate_m}
+            round_variable = USF_icp_support_t
+            set_variable = {USF_slo_support_t = USF_slo_support}
+            multiply_variable = {USF_slo_support_t = USF_slo_approval_rate_m}
+            round_variable = USF_slo_support_t
+
+            clamp_variable = {
+                var = USF_adp_support_t
+                max = USF_adp_seat
+            }
+            clamp_variable = {
+                var = USF_ilp_support_t
+                max = USF_ilp_seat
+            }
+            clamp_variable = {
+                var = USF_unf_support_t
+                max = USF_unf_seat
+            }
+            clamp_variable = {
+                var = USF_icp_support_t
+                max = USF_icp_seat
+            }
+            clamp_variable = {
+                var = USF_slo_support_t
+                max = USF_slo_seat
+            }
+
+            add_to_variable = {USF_advantage = USF_adp_support_t}
+            add_to_variable = {USF_advantage = USF_ilp_support_t}
+            add_to_variable = {USF_advantage = USF_unf_support_t}
+            add_to_variable = {USF_advantage = USF_icp_support_t}
+            add_to_variable = {USF_advantage = USF_slo_support_t}
+            subtract_from_variable = {USF_advantage = USF_nay}
+
+            log = "USF修正后国会支持差额为[?USF_advantage]"
         }
     }
 }
@@ -728,4 +813,40 @@ USF_refresh_tariff_target_array = {
             value = THIS
         }
     }
+}
+
+USF_encourage_investment_setup = {
+    hidden_effect = {
+        set_variable = {USF_constructed_civilian_factories_1 = USF.total_constructed_civilian_factory}
+
+        log = "USF投资前民工建设数量[?USF_constructed_civilian_factories_1]"
+    }
+}
+USF_encourage_investment_end = {
+    hidden_effect = {
+        set_variable = {USF_constructed_civilian_factories_2 = USF.total_constructed_civilian_factory}
+        subtract_from_variable = {USF_constructed_civilian_factories_2 = USF_constructed_civilian_factories_1}
+        clamp_variable = {
+            var = USF_constructed_civilian_factories_2
+            min = 0
+            max = 5
+        }
+        set_variable = {USF_investment_pp_gain = USF_constructed_civilian_factories_2}
+        multiply_variable = {USF_investment_pp_gain = 30}
+        set_variable = {USF_investment_unemployment_gain = USF_constructed_civilian_factories_2}
+        multiply_variable = {USF_investment_unemployment_gain = -0.5}
+        add_political_power = var:USF_investment_pp_gain
+        set_temp_variable = {USF_unemployment_temp = USF_investment_unemployment_gain}
+        USF_change_unemployment_effect = yes
+
+        log = "USF投资期间建设工厂[?USF_constructed_civilian_factories_2]，获得PP[?USF_investment_pp_gain]，失业减少[?USF_investment_unemployment_gain|%%]"
+    }
+}
+USF_refresh_encourage_investment_result = {
+    set_variable = {USF_constructed_civilian_factories_d = USF.total_constructed_civilian_factory}
+    subtract_from_variable = {USF_constructed_civilian_factories_d = USF_constructed_civilian_factories_1}
+    set_variable = {USF_investment_pp_gain_d = USF_constructed_civilian_factories_d}
+    multiply_variable = {USF_investment_pp_gain_d = 30}
+    set_variable = {USF_investment_unemployment_gain_d = USF_constructed_civilian_factories_d}
+    multiply_variable = {USF_investment_unemployment_gain_d = -0.5}
 }
