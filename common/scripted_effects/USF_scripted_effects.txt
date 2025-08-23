@@ -288,7 +288,6 @@ USF_refresh_congress = {
                 var = USF_slo_nay
                 min = 0
             }
-
             set_variable = {USF_advantage = 0}#计算差额，用以判断勉强通过/否决，需计入修正后数值
             set_variable = {USF_adp_support_t = USF_adp_support}
             multiply_variable = {USF_adp_support_t = USF_adp_approval_rate_m}
@@ -333,7 +332,6 @@ USF_refresh_congress = {
             add_to_variable = {USF_advantage = USF_icp_support_t}
             add_to_variable = {USF_advantage = USF_slo_support_t}
             subtract_from_variable = {USF_advantage = USF_nay}
-
             log = "USF修正后国会支持差额为[?USF_advantage]"
         }
     }
@@ -587,7 +585,18 @@ USF_reconsider_effect = {
         add_political_power = -20
     }
 }
+#法案保护期间无视条件通过法案PP花费
+USF_passing_cost_when_protection_is_valid = {
 
+    if = {
+        limit = {
+            check_variable = {USF_advantage < 0}
+            has_idea = USF_act_protection
+        }
+        add_political_power = USF_advantage
+    }
+    
+}
 #大选结果
 USF_election_effect = {
     custom_effect_tooltip = USF_election_effect_t
@@ -849,4 +858,90 @@ USF_refresh_encourage_investment_result = {
     multiply_variable = {USF_investment_pp_gain_d = 30}
     set_variable = {USF_investment_unemployment_gain_d = USF_constructed_civilian_factories_d}
     multiply_variable = {USF_investment_unemployment_gain_d = -0.5}
+}
+
+USF_pandemic_setup = {
+    301 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    308 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    335 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    380 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    every_owned_state = {
+        limit = {
+            has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+            NOT = {
+                is_in_array = {
+                    array = USF.pandemic_states
+                    value = THIS.id
+                }
+            }
+        }
+        add_to_array = {
+            array = USF.pandemic_states
+            value = THIS.id
+        }
+    }
+    set_variable = {USF.USF_pandemic_count = 4}
+}
+USF_calculate_pandemic_mtth = {
+    USF = {
+        set_variable = {USF_pandemic_spread = 25}
+        set_variable = {USF_year_passed = global.year}
+        subtract_from_variable = {USF_year_passed = 3090}#当前经过年份
+        add_to_variable = {USF_year_passed = USF_pandemic_count}
+        multiply_variable = {USF_pandemic_spread = USF_year_passed}
+        add_to_variable = {USF_pandemic_spread = USF.stability}
+        round_variable = USF_pandemic_spread
+
+        log = "USF当前疫情扩散MTTH为：[?USF_pandemic_spread]"
+    }
+}
+USF_pandemic_spread = {
+    USF = {
+        if = {
+            limit = {
+                any_core_state = {
+                    has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+                    any_neighbor_state = {
+                        is_core_of = USF
+                        NOT = {
+                            OR = {
+                                is_island_state = yes
+                                has_state_category = small_island
+                                has_state_category = tiny_island
+                            }
+                        }
+                        NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
+                    }
+                }
+            }
+            random_core_state = {
+                limit = {
+                    has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+                }
+                random_neighbor_state = {
+                    limit = {
+                        is_core_of = USF
+                        NOT = {
+                            OR = {
+                                is_island_state = yes
+                                has_state_category = small_island
+                                has_state_category = tiny_island
+                            }
+                        }
+                        NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
+                    }
+                    save_event_target_as = USF_pandemic_target
+                    log = "USF疫情扩散目标为：[USF_pandemic_target.GetName]"
+                }
+            }
+        }
+    }   
 }

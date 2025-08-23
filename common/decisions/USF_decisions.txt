@@ -69,6 +69,30 @@ USF_temp = {
 }
 
 USF_congress = {
+	#大选后立法保护
+	USF_after_election_bonus = {
+		visible = {
+			has_idea = USF_united_congress
+		}
+		complete_effect = {
+			add_ideas = USF_act_protection
+		}
+		ai_will_do = {
+			factor = 0#反正AI所有法案必定通过，就不扣稳定了
+		}
+	}
+	USF_cancel_after_election_bonus = {
+		visible = {
+			has_idea = USF_united_congress
+			has_idea = USF_act_protection
+		}
+		complete_effect = {
+			remove_ideas = USF_act_protection
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
 	#开局
 	USF_cut_naval_budget = {
 		icon = mission_icon
@@ -375,6 +399,12 @@ USF_congress = {
 	}
 	USF_mana_plant_adjustment_act_decison = {
 		allowed = { always = no }
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USF_adp_approval_rate_35_t
+				check_variable = {USF_adp_approval_rate > 0.35}
+			}
+		}
 		visible = {
 			NOT = {
 				has_country_flag = USF_mana_plant_adjustment_act_decison_passed
@@ -399,6 +429,10 @@ USF_congress = {
 	USF_reduce_quota_decison = {
 		available = {
 			has_dynamic_modifier = {modifier = USF_black_foaming_night}
+			custom_trigger_tooltip = {
+				tooltip = USF_adp_approval_rate_20_t
+				check_variable = {USF_adp_approval_rate > 0.2}
+			}
 		}
 		visible = {	
 			has_completed_focus = USF_adjust_planting_quota
@@ -467,6 +501,43 @@ USF_congress = {
 				add_stability = 0.05
 				unlock_decision_tooltip = USF_improve_supply_efficiency
 				unlock_decision_tooltip = USF_encourage_investment
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_industrial_recovery_act_decison = {
+		allowed = {
+			always = no
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USF_ilp_approval_rate_80_t
+				check_variable = {USF_ilp_approval_rate > 0.8}
+			}
+		}
+		visible = {	
+			NOT = {has_country_flag = USF_industrial_recovery_act_decison_passed}
+		}
+		cost = 30
+		days_remove = var:USF_imporant_act_time
+		remove_effect = {
+			country_event = {id = USF_act.14}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				set_temp_variable = {USF_unemployment_temp = -0.3}
+				USF_change_unemployment_effect = yes
+				set_temp_variable = {USF_inflation_temp = 2.5}
+				USF_change_inflation_effect = yes
+				438 = {
+					add_dynamic_modifier = {modifier = USF_industrial_recovery}
+					add_building_construction = {
+						type = infrastructure
+						level = 1
+						instant_build = yes
+					}
+				}
 			}
 		}
 		ai_will_do = {
@@ -806,6 +877,7 @@ USF_deal_with_pandemic_category = {
             }
             set_temp_variable = {USF_unemployment_temp = -0.3}
 			USF_change_unemployment_effect = yes
+			add_to_variable = {USF.USF_pandemic_count = -1}
         }
         ai_will_do = {
             base = 1
