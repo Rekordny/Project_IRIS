@@ -306,6 +306,12 @@ on_actions = {
 						has_idea = BLA_PM_Siera
 					}
 					BLA_update_Hermann_revolution_modifier = yes
+					if = {
+						limit = {
+							NOT = {has_country_flag = BLA_Siera_random_event_triggered}
+						}
+						BLA_Siera_random_event_trigger = yes
+					}
 				}
 			}
 		}
@@ -346,6 +352,18 @@ on_actions = {
 						type = infantry_equipment
 						amount = 2500
 					}
+				}
+			}
+		}
+	}
+	on_daily_BLA = {
+		effect = {
+			BLA = {
+				if = {
+					limit = {
+						has_country_flag = BLA_HEL_crisis
+					}
+					BLA_HEL_crisis_event_trigger = yes
 				}
 			}
 		}
@@ -592,19 +610,28 @@ on_actions = {
 						target = SVI
 						autonomous_state = autonomy_imperial_march
 					}
-					add_to_faction = PSK
+					if = {
+						limit = {
+							has_war_with = NAC
+						}
+						set_autonomy = {
+							target = PSK
+							autonomous_state = autonomy_puppet
+						}
+					}
+					else = {
+						annex_country = {
+							target = PSK
+							transfer_troops = yes
+						}
+					}
 				}
+				
 				every_state = {
 					limit = {
 						is_core_of = ORE
 					}
 					remove_core_of = ORE
-				}
-				every_state = {
-					limit = {
-						is_core_of = PSK
-					}
-					remove_core_of = PSK
 				}
 				NAC = {
 					country_event = {id = NAC.50}
@@ -1039,6 +1066,64 @@ on_actions = {
 				}
 				BLA = {
 					Big_Game_result_effect = yes
+				}
+			}
+		}
+	}
+	on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { state = 199 }
+				}
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								tag = NAC
+								tag = ORE
+							}
+							
+						}
+						FROM = {
+							tag = BLA
+						}
+					}
+					FROM = {country_event = {id = BLA_rev.17}}
+					ROOT = {country_event = {id = BLA_rev.17}}
+				}
+			}
+		}
+	}
+	on_state_control_changed = { 
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = {is_core_of = BLA}
+					ROOT = {
+						OR = {
+							tag = BLA
+							tag = NAC
+						}
+					}
+					FROM = {
+						OR = {
+							tag = BLA
+							tag = NAC
+						}
+					}
+				}
+				FROM = {
+					meta_effect = {
+						text = {add_to_variable = [TAG]_morale = 2}
+						TAG = "FROM"
+					}
+				}
+				ROOT = {
+					meta_effect = {
+						text = {add_to_variable = [TAG]_morale = -2}
+						TAG = "ROOT"
+					}
 				}
 			}
 		}

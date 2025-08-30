@@ -2,6 +2,7 @@
 USF_dismantle_the_federation = {
     add_stability = -0.5
     add_war_support = -0.5
+    set_global_flag = USF_COLLAPSED_FLAG
     301 = {
         add_core_of = U01
         transfer_state_to = U01
@@ -100,4 +101,847 @@ USF_dismantle_the_federation = {
             dismantle_faction = yes
         }
     }
+}
+#国会初始化
+USF_congress_setup = {
+    USF = {
+        set_variable = {USF_adp_seat = 152} #农业民主党
+        set_variable = {USF_adp_support = 11}
+        set_variable = {USF_ilp_seat = 102} #工业自由党
+        set_variable = {USF_ilp_support = 101}
+        set_variable = {USF_unf_seat = 15} #乌斯拉尔阵线
+        set_variable = {USF_unf_support = 15}
+        set_variable = {USF_icp_seat = 35} #工业合作党
+        set_variable = {USF_icp_support = 2}
+        set_variable = {USF_slo_seat = 10} #萨勒姆组织
+        set_variable = {USF_slo_support = 0}
+
+        USF_refresh_congress = yes
+    }
+}
+#刷新国会
+USF_refresh_congress = {
+    hidden_effect = {
+        USF = {
+            set_variable = {USF_yea = 0}#计算赞成
+            add_to_variable = {USF_yea = USF_adp_support}
+            add_to_variable = {USF_yea = USF_ilp_support}
+            add_to_variable = {USF_yea = USF_unf_support}
+            add_to_variable = {USF_yea = USF_icp_support}
+            add_to_variable = {USF_yea = USF_slo_support}
+
+            set_variable = {USF_nay = 313}#计算反对
+            subtract_from_variable = {USF_nay = USF_yea}
+
+            set_variable = {USF_adp_approval_rate = USF_adp_support}#计算党派支持率
+            set_variable = {USF_adp_approval_rate_m = 1}
+            add_to_variable = {USF_adp_approval_rate_m = modifier@USF_adp_approval_rate_modifier}
+            multiply_variable = {USF_adp_approval_rate = USF_adp_approval_rate_m}
+            round_variable = USF_adp_approval_rate
+            divide_variable = {USF_adp_approval_rate = USF_adp_seat}
+            set_variable = {USF_ilp_approval_rate = USF_ilp_support}#计算党派支持率
+            divide_variable = {USF_ilp_approval_rate = USF_ilp_seat}
+            set_variable = {USF_ilp_approval_rate_m = 1}
+            add_to_variable = {USF_ilp_approval_rate_m = modifier@USF_ilp_approval_rate_modifier}
+            multiply_variable = {USF_ilp_approval_rate = USF_ilp_approval_rate_m}
+            round_variable = USF_ilp_approval_rate
+            set_variable = {USF_unf_approval_rate = USF_unf_support}#计算党派支持率
+            set_variable = {USF_unf_approval_rate_m = 1}
+            add_to_variable = {USF_unf_approval_rate_m = modifier@USF_unf_approval_rate_modifier}
+            multiply_variable = {USF_unf_approval_rate = USF_unf_approval_rate_m}
+            round_variable = USF_unf_approval_rate
+            divide_variable = {USF_unf_approval_rate = USF_unf_seat}
+            set_variable = {USF_icp_approval_rate = USF_icp_support}#计算党派支持率
+            divide_variable = {USF_icp_approval_rate = USF_icp_seat}
+            set_variable = {USF_icp_approval_rate_m = 1}
+            add_to_variable = {USF_icp_approval_rate_m = modifier@USF_icp_approval_rate_modifier}
+            multiply_variable = {USF_icp_approval_rate = USF_icp_approval_rate_m}
+            round_variable = USF_icp_approval_rate
+            set_variable = {USF_slo_approval_rate = USF_slo_support}#计算党派支持率
+            divide_variable = {USF_slo_approval_rate = USF_slo_seat}
+            set_variable = {USF_slo_approval_rate_m = 1}
+            add_to_variable = {USF_slo_approval_rate_m = modifier@USF_slo_approval_rate_modifier}
+            multiply_variable = {USF_slo_approval_rate = USF_slo_approval_rate_m}
+            round_variable = USF_slo_approval_rate
+
+            clamp_variable = {
+                var = USF_adp_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_ilp_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_unf_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_icp_approval_rate
+                max = 1
+            }
+            clamp_variable = {
+                var = USF_slo_approval_rate
+                max = 1
+            }
+
+            if = {#计算通过率
+                limit = {
+                    has_government = neutrality
+                }
+                set_variable = {USF_ruling_party_approval_rate = USF_adp_approval_rate}#执政党权重0.35
+                set_variable = {USF_opposite_party_approval_rate = USF_ilp_approval_rate}#反对党权重0.25
+                set_variable = {USF_popularity = USF.party_popularity@neutrality}#党派权重0.1
+            }
+            else_if = {
+                limit = {
+                    has_government = democratic
+                }
+                set_variable = {USF_ruling_party_approval_rate = USF_ilp_approval_rate}#执政党权重0.35
+                set_variable = {USF_opposite_party_approval_rate = USF_adp_approval_rate}#反对党权重0.25
+                set_variable = {USF_popularity = USF.party_popularity@democratic}#党派权重0.1
+            }
+            if = {
+                limit = {
+                    check_variable = {USF_unf_approval_rate < USF_icp_approval_rate}
+                    check_variable = {USF_unf_approval_rate < USF_slo_approval_rate}
+                }
+                set_variable = {USF_sub_party_approval_rate = USF_unf_approval_rate}#在野党派权重0.2
+            }
+            else_if = {
+                limit = {
+                    check_variable = {USF_icp_approval_rate < USF_unf_approval_rate}
+                    check_variable = {USF_icp_approval_rate < USF_slo_approval_rate}
+                }
+                set_variable = {USF_sub_party_approval_rate = USF_cip_approval_rate}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {USF_slo_approval_rate < USF_unf_approval_rate}
+                    check_variable = {USF_slo_approval_rate < USF_icp_approval_rate}
+                }
+                set_variable = {USF_sub_party_approval_rate = USF_slo_approval_rate}
+            }
+            else = {
+                random_list = {
+                    33 = {
+                        set_variable = {USF_sub_party_approval_rate = USF_unf_approval_rate}
+                    }
+                    33 = {
+                        set_variable = {USF_sub_party_approval_rate = USF_icp_approval_rate}
+                    }
+                    33 = {
+                        set_variable = {USF_sub_party_approval_rate = USF_slo_approval_rate}
+                    }
+                }
+            }
+
+            set_variable = {USF_passing_rate = 0}
+            set_variable = {USF_passing_rate_1 = USF_ruling_party_approval_rate}
+            multiply_variable = {USF_passing_rate_1 = 0.35}
+            set_variable = {USF_passing_rate_2 = USF_opposite_party_approval_rate}
+            multiply_variable = {USF_passing_rate_2 = 0.25}
+            set_variable = {USF_passing_rate_3 = USF_sub_party_approval_rate}
+            multiply_variable = {USF_passing_rate_3 = 0.2}
+            set_variable = {USF_passing_rate_4 = USF_popularity}
+            multiply_variable = {USF_passing_rate_4 = 0.1}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_1}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_2}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_3}
+            add_to_variable = {USF_passing_rate = USF_passing_rate_4}
+            add_to_variable = {USF_passing_rate = modifier@USF_passing_rate_modifier}
+            
+
+            set_variable = {USF_total_approval_rate = USF_yea}
+            divide_variable = {USF_total_approval_rate = 313}
+
+            set_variable = {USF_total_reject_rate = USF_nay}
+            divide_variable = {USF_total_reject_rate = 313}
+
+            set_variable = {USF_adp_nay = USF_adp_seat}#计算各个党派可收买数量
+            subtract_from_variable = {USF_adp_nay = USF_adp_support}
+            set_variable = {USF_ilp_nay = USF_ilp_seat}#计算各个党派可收买数量
+            subtract_from_variable = {USF_ilp_nay = USF_ilp_support}
+            set_variable = {USF_unf_nay = USF_unf_seat}#计算各个党派可收买数量
+            subtract_from_variable = {USF_unf_nay = USF_unf_support}
+            set_variable = {USF_icp_nay = USF_icp_seat}#计算各个党派可收买数量
+            subtract_from_variable = {USF_icp_nay = USF_icp_support}
+            set_variable = {USF_slo_nay = USF_slo_seat}#计算各个党派可收买数量
+            subtract_from_variable = {USF_slo_nay = USF_slo_support}
+            clamp_variable = {
+                var = USF_adp_nay
+                min = 0
+            }
+            clamp_variable = {
+                var = USF_ilp_nay
+                min = 0
+            }
+            clamp_variable = {
+                var = USF_unf_nay
+                min = 0
+            }
+            clamp_variable = {
+                var = USF_icp_nay
+                min = 0
+            }
+            clamp_variable = {
+                var = USF_slo_nay
+                min = 0
+            }
+            set_variable = {USF_advantage = 0}#计算差额，用以判断勉强通过/否决，需计入修正后数值
+            set_variable = {USF_adp_support_t = USF_adp_support}
+            multiply_variable = {USF_adp_support_t = USF_adp_approval_rate_m}
+            round_variable = USF_adp_support_t
+            set_variable = {USF_ilp_support_t = USF_ilp_support}
+            multiply_variable = {USF_ilp_support_t = USF_ilp_approval_rate_m}
+            round_variable = USF_ilp_support_t
+            set_variable = {USF_unf_support_t = USF_unf_support}
+            multiply_variable = {USF_unf_support_t = USF_unf_approval_rate_m}
+            round_variable = USF_unf_support_t
+            set_variable = {USF_icp_support_t = USF_icp_support}
+            multiply_variable = {USF_icp_support_t = USF_icp_approval_rate_m}
+            round_variable = USF_icp_support_t
+            set_variable = {USF_slo_support_t = USF_slo_support}
+            multiply_variable = {USF_slo_support_t = USF_slo_approval_rate_m}
+            round_variable = USF_slo_support_t
+
+            clamp_variable = {
+                var = USF_adp_support_t
+                max = USF_adp_seat
+            }
+            clamp_variable = {
+                var = USF_ilp_support_t
+                max = USF_ilp_seat
+            }
+            clamp_variable = {
+                var = USF_unf_support_t
+                max = USF_unf_seat
+            }
+            clamp_variable = {
+                var = USF_icp_support_t
+                max = USF_icp_seat
+            }
+            clamp_variable = {
+                var = USF_slo_support_t
+                max = USF_slo_seat
+            }
+
+            add_to_variable = {USF_advantage = USF_adp_support_t}
+            add_to_variable = {USF_advantage = USF_ilp_support_t}
+            add_to_variable = {USF_advantage = USF_unf_support_t}
+            add_to_variable = {USF_advantage = USF_icp_support_t}
+            add_to_variable = {USF_advantage = USF_slo_support_t}
+            subtract_from_variable = {USF_advantage = USF_nay}
+            log = "USF修正后国会支持差额为[?USF_advantage]"
+        }
+    }
+}
+#收买席位
+USF_bribe_effect = {
+    custom_effect_tooltip = USF_bribe_effect_t
+    hidden_effect = {
+        if = {
+            limit = {
+                meta_trigger = {
+                    text = {
+                        check_variable = {[PARTY]_nay > 10}
+                    }
+                    PARTY = "[?USF_bribe_temp.GetTokenKey]"
+                }
+            }
+            meta_effect = {
+                text = {
+                    set_temp_variable = {[PARTY]_support_temp = 10}
+                    [PARTY]_support_effect = yes
+                    set_variable = {[PARTY]_temp_support = [PARTY]_support_temp}
+                }
+                PARTY = "[?USF_bribe_temp.GetTokenKey]"
+            }
+        }
+        else = {
+            meta_effect = {
+                text = {
+                    set_temp_variable = {[PARTY]_support_temp = 10}
+                    clamp_temp_variable = {
+                        var = [PARTY]_support_temp
+                        max = [PARTY]_nay
+                    }
+                    [PARTY]_support_effect = yes
+                    set_variable = {[PARTY]_temp_support = [PARTY]_support_temp}
+                }
+                PARTY = "[?USF_bribe_temp.GetTokenKey]"
+            }
+        }
+    }
+}
+#收买结束
+USF_bribe_end_effect = {
+    custom_effect_tooltip = USF_bribe_end_effect_t
+    hidden_effect = {
+        meta_effect = {
+            text = {
+                set_variable = {[PARTY]_temp_support_t = [PARTY]_temp_support}
+                multiply_variable = {[PARTY]_temp_support_t = -1}
+                set_temp_variable = {[PARTY]_support_temp = [PARTY]_temp_support_t}
+                [PARTY]_support_effect = yes
+            }
+            PARTY = "[?USF_bribe_temp.GetTokenKey]"
+        }
+    }
+}
+#变更民主党支持度
+USF_adp_support_effect = {
+    custom_effect_tooltip = USF_adp_support_effect_t
+    hidden_effect = {
+        add_to_variable = {USF_adp_support = USF_adp_support_temp}
+        clamp_variable = {
+            var = USF_adp_support
+            min = 0
+            max = USF_adp_seat
+        }
+        USF_refresh_congress = yes
+    }
+}
+#变更自由党支持度
+USF_ilp_support_effect = {
+    custom_effect_tooltip = USF_ilp_support_effect_t
+    hidden_effect = {
+        add_to_variable = {USF_ilp_support = USF_ilp_support_temp}
+        clamp_variable = {
+            var = USF_ilp_support
+            min = 0
+            max = USF_ilp_seat
+        }
+        USF_refresh_congress = yes
+    }
+}
+#变更民族阵线支持度
+USF_unf_support_effect= {
+    custom_effect_tooltip = USF_change_unf_support_t
+    hidden_effect = {
+        add_to_variable = {USF_unf_support = USF_unf_support_temp}
+        clamp_variable = {
+            var = USF_unf_support
+            min = 0
+            max = USF_unf_seat
+        }
+        USF_refresh_congress = yes
+    }
+}
+#变更工合党支持度
+USF_icp_support_effect = {
+    custom_effect_tooltip = USF_icp_support_effect_t
+    hidden_effect = {
+        add_to_variable = {USF_icp_support = USF_icp_support_temp}
+        clamp_variable = {
+            var = USF_icp_support
+            min = 0
+            max = USF_icp_seat
+        }
+        USF_refresh_congress = yes
+    }
+}
+#变更萨勒姆支持度
+USF_slo_support_effect = {
+    custom_effect_tooltip = USF_slo_support_effect_t
+    hidden_effect = {
+        add_to_variable = {USF_slo_support = USF_slo_support_temp}
+        clamp_variable = {
+            var = USF_slo_support
+            min = 0
+            max = USF_slo_seat
+        }
+        USF_refresh_congress = yes
+    }
+}
+#随机支持
+USF_gain_random_support = {
+    custom_effect_tooltip = USF_gain_random_support_t
+    hidden_effect = {
+        USF = {
+            for_loop_effect = {
+                start = 0
+                end = USF_random_support_num_temp
+                if = {
+                    limit = {
+                        check_variable = {USF_yea < 313}
+                    }
+                    random_list = {
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_adp_support value = USF_adp_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_adp_support_temp = 1}
+                            USF_adp_support_effect = yes
+                        }
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_ilp_support value = USF_ilp_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_ilp_support_temp = 1}
+                            USF_ilp_support_effect = yes
+                        }
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_unf_support value = USF_unf_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_unf_support_temp = 1}
+                            USF_unf_support_effect= yes
+                        }
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_icp_support value = USF_icp_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_icp_support_temp = 1}
+                            USF_icp_support_effect = yes
+                        }
+                        20 = {
+                            modifier = {
+                                factor = 0
+                                check_variable = {var = USF_slo_support value = USF_slo_seat compare = greater_than_or_equals}
+                            }
+                            set_temp_variable = {USF_slo_support_temp = 1}
+                            USF_slo_support_effect = yes
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#提案时间初始化
+USF_act_time_setup = {
+    USF = {
+        set_variable = {USF_imporant_act_time = 150}
+        set_variable = {USF_sub_act_time = 100}
+        set_variable = {USF_minor_act_time = 50}
+    }
+}
+#计算时间
+USF_calculate_act_time = {
+    USF = {
+        USF_act_time_setup = yes
+        set_variable = {USF_act_time_multpiler = 1}
+        subtract_from_variable = {USF_act_time_multpiler = modifier@USF_act_time_modifier}
+        multiply_variable = {USF_imporant_act_time = USF_act_time_multpiler}
+        multiply_variable = {USF_sub_act_time = USF_act_time_multpiler}
+        multiply_variable = {USF_minor_act_time = USF_act_time_multpiler}
+        clamp_variable = {
+            var = USF_imporant_act_time
+            min = 0
+        }
+        clamp_variable = {
+            var = USF_sub_act_time
+            min = 0
+        }
+        clamp_variable = {
+            var = USF_minor_act_time
+            min = 0
+        }
+    }
+}
+#收买花费初始化
+USF_bribe_cost_setup = {
+    USF = {
+        set_variable = {USF_bribe_adp_cost = 30}
+        set_variable = {USF_bribe_ilp_cost = 30}
+        set_variable = {USF_bribe_unf_cost = 30}
+        set_variable = {USF_bribe_icp_cost = 30}
+        set_variable = {USF_bribe_slo_cost = 30}
+    }
+}
+#否决花费PP
+USF_veto_effect = {
+    if = {
+        limit = {
+            USF_act_pass_trigger = yes
+        }
+        add_political_power = -80
+    }
+    if = {
+        limit = {
+            USF_act_pass_with_low_advantage_trigger = yes
+        }
+        add_political_power = -40
+    }
+    add_to_variable = {USF.USF_veto_counter = 1}
+}
+#重审花费PP
+USF_reconsider_effect = {
+    if = {
+        limit = {
+            USF_act_reject_trigger = yes
+        }
+        add_political_power = -50
+    }
+    if = {
+        limit = {
+            USF_act_reject_with_low_advantage_trigger = yes
+        }
+        add_political_power = -20
+    }
+}
+#法案保护期间无视条件通过法案PP花费
+USF_passing_cost_when_protection_is_valid = {
+
+    if = {
+        limit = {
+            check_variable = {USF_advantage < 0}
+            has_idea = USF_act_protection
+        }
+        add_political_power = USF_advantage
+    }
+    
+}
+#大选结果
+USF_election_effect = {
+    custom_effect_tooltip = USF_election_effect_t
+    hidden_effect = {
+        USF = {
+            if = {
+                limit = {
+                    has_government = democratic
+                }
+                if = {
+                    limit = {
+                        democratic > 0.5
+                        neutrality < 0.3
+                        communism < 0.3
+                        fascism < 0.3
+                        reactionism < 0.3
+                    }
+                    #连任
+                    country_event = {id = USF_election.2}
+                }
+                else = {
+                    USF_random_election_effect = yes
+                }
+            }
+            else_if = {
+                limit = {
+                    has_government = neutrality
+                }
+                if = {
+                    limit = {
+                        neutrality > 0.5
+                        democratic < 0.3
+                        communism < 0.3
+                        fascism < 0.3
+                        reactionism < 0.3
+                    }
+                    #连任
+                    country_event = {id = USF_election.1}
+                }
+                else = {
+                    USF_random_election_effect = yes
+                }
+            }
+        }
+    }
+}
+#随机胜选
+USF_random_election_effect = {
+    USF = {
+        if = {
+            limit = {
+                democratic > party_popularity@neutrality
+            }
+            random_list = {
+                50 = {
+                    modifier = {
+                        factor = party_popularity@democratic
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.5
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.6
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.7
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.8
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.9
+                    }
+                    country_event = {id = USF_election.2}
+                }
+                50 = {
+                    modifier = {
+                        factor = party_popularity@neutrality
+                    }
+                    country_event = {id = USF_election.1}
+                }
+            }
+        }
+        else = {
+            random_list = {
+                50 = {
+                    modifier = {
+                        factor = party_popularity@democratic
+                    }
+                    country_event = {id = USF_election.2}
+                }
+                50 = {
+                    modifier = {
+                        factor = party_popularity@neutrality
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.5
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.6
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.7
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.8
+                    }
+                    modifier = {
+                        factor = 1.1
+                        has_stability > 0.9
+                    }
+                    country_event = {id = USF_election.1}
+                }
+            }
+        }
+    }
+}
+
+USF_black_foaming_night_setup = { 
+    USF = {
+        set_variable = {USF_monthly_population = -0.25}
+
+        set_variable = {USF_inflation = -5}
+        set_variable = {USF_unemployment = 29}
+
+        USF_refresh_black_foaming_night_modifier = yes
+    }
+}
+
+USF_refresh_black_foaming_night_modifier = {
+    USF = {
+        set_variable = {USF_consumer_goods_expected_value_t = -0.075}
+        set_variable = {USF_consumer_goods_expected_value = USF_consumer_goods_expected_value_t}
+        set_variable = {USF_consumer_goods_expected_value_display = USF_consumer_goods_expected_value}
+        multiply_variable = {USF_consumer_goods_expected_value = USF_inflation}
+        multiply_variable = {USF_consumer_goods_expected_value_display = USF_inflation}
+        set_variable = {USF_unemployment_t = USF_unemployment}
+        set_variable = {USF_unemployment_display = USF_unemployment}
+        multiply_variable = {USF_unemployment_display = -1}
+        multiply_variable = {USF_unemployment_t = -1}
+        divide_variable = {USF_unemployment_t = 100}
+        set_variable = {USF_conscription_factor = USF_unemployment_t}
+        set_variable = {USF_production_factory_max_efficiency_factor = USF_unemployment_t}
+    }
+}
+
+USF_change_inflation_effect = {
+    custom_effect_tooltip = USF_change_inflation_desc
+    hidden_effect = {
+        USF = {
+            add_to_variable = {USF_inflation = USF_inflation_temp}
+            USF_refresh_black_foaming_night_modifier = yes
+        }
+    }
+}
+
+USF_change_unemployment_effect = {
+    custom_effect_tooltip = USF_change_unemployment_desc
+    hidden_effect = {
+        USF = {
+            add_to_variable = {USF_unemployment = USF_unemployment_temp}
+            USF_refresh_black_foaming_night_modifier = yes
+        }
+    }
+}
+
+USF_monthly_inflation_change = {
+    if = {
+        limit = {
+            has_dynamic_modifier = {modifier = USF_black_foaming_night}
+        }
+        add_to_variable = {USF_inflation = modifier@USF_monthly_inflation_modifier}
+        USF_refresh_black_foaming_night_modifier = yes
+    }
+}
+
+USF_refresh_tariff_target_array = {
+
+    every_other_country = {
+        limit = {
+            is_major = yes
+            NOT = {
+                tag = OCE
+            }
+            NOT = {
+                has_idea = closed_economy
+            }
+            NOT = {
+                is_in_array = {
+                    array = USF.USF_tariff_target
+                    value = THIS
+                }
+            }
+        }
+        add_to_array = {
+            array = USF.USF_tariff_target
+            value = THIS
+        }
+    }
+    every_other_country = {
+        limit = {
+            OR = {
+                tag = OCE
+                is_major = no
+                has_idea = closed_economy
+            }
+            is_in_array = {
+                array = USF.USF_tariff_target
+                value = THIS
+            }
+        }
+        remove_from_array = {
+            array = USF.USF_tariff_target
+            value = THIS
+        }
+    }
+}
+
+USF_encourage_investment_setup = {
+    hidden_effect = {
+        set_variable = {USF_constructed_civilian_factories_1 = USF.total_constructed_civilian_factory}
+
+        log = "USF投资前民工建设数量[?USF_constructed_civilian_factories_1]"
+    }
+}
+USF_encourage_investment_end = {
+    hidden_effect = {
+        set_variable = {USF_constructed_civilian_factories_2 = USF.total_constructed_civilian_factory}
+        subtract_from_variable = {USF_constructed_civilian_factories_2 = USF_constructed_civilian_factories_1}
+        clamp_variable = {
+            var = USF_constructed_civilian_factories_2
+            min = 0
+            max = 5
+        }
+        set_variable = {USF_investment_pp_gain = USF_constructed_civilian_factories_2}
+        multiply_variable = {USF_investment_pp_gain = 30}
+        set_variable = {USF_investment_unemployment_gain = USF_constructed_civilian_factories_2}
+        multiply_variable = {USF_investment_unemployment_gain = -0.5}
+        add_political_power = var:USF_investment_pp_gain
+        set_temp_variable = {USF_unemployment_temp = USF_investment_unemployment_gain}
+        USF_change_unemployment_effect = yes
+
+        log = "USF投资期间建设工厂[?USF_constructed_civilian_factories_2]，获得PP[?USF_investment_pp_gain]，失业减少[?USF_investment_unemployment_gain|%%]"
+    }
+}
+USF_refresh_encourage_investment_result = {
+    set_variable = {USF_constructed_civilian_factories_d = USF.total_constructed_civilian_factory}
+    subtract_from_variable = {USF_constructed_civilian_factories_d = USF_constructed_civilian_factories_1}
+    set_variable = {USF_investment_pp_gain_d = USF_constructed_civilian_factories_d}
+    multiply_variable = {USF_investment_pp_gain_d = 30}
+    set_variable = {USF_investment_unemployment_gain_d = USF_constructed_civilian_factories_d}
+    multiply_variable = {USF_investment_unemployment_gain_d = -0.5}
+}
+
+USF_pandemic_setup = {
+    301 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    308 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    335 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    380 = {
+        add_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+    }
+    every_owned_state = {
+        limit = {
+            has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+            NOT = {
+                is_in_array = {
+                    array = USF.pandemic_states
+                    value = THIS.id
+                }
+            }
+        }
+        add_to_array = {
+            array = USF.pandemic_states
+            value = THIS.id
+        }
+    }
+    set_variable = {USF.USF_pandemic_count = 4}
+}
+USF_calculate_pandemic_mtth = {
+    USF = {
+        set_variable = {USF_pandemic_spread = 25}
+        set_variable = {USF_year_passed = global.year}
+        subtract_from_variable = {USF_year_passed = 3090}#当前经过年份
+        add_to_variable = {USF_year_passed = USF_pandemic_count}
+        multiply_variable = {USF_pandemic_spread = USF_year_passed}
+        add_to_variable = {USF_pandemic_spread = USF.stability}
+        round_variable = USF_pandemic_spread
+
+        log = "USF当前疫情扩散MTTH为：[?USF_pandemic_spread]"
+    }
+}
+USF_pandemic_spread = {
+    USF = {
+        if = {
+            limit = {
+                any_core_state = {
+                    has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+                    any_neighbor_state = {
+                        is_core_of = USF
+                        NOT = {
+                            OR = {
+                                is_island_state = yes
+                                has_state_category = small_island
+                                has_state_category = tiny_island
+                            }
+                        }
+                        NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
+                    }
+                }
+            }
+            random_core_state = {
+                limit = {
+                    has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+                }
+                random_neighbor_state = {
+                    limit = {
+                        is_core_of = USF
+                        NOT = {
+                            OR = {
+                                is_island_state = yes
+                                has_state_category = small_island
+                                has_state_category = tiny_island
+                            }
+                        }
+                        NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
+                    }
+                    save_event_target_as = USF_pandemic_target
+                    log = "USF疫情扩散目标为：[USF_pandemic_target.GetName]"
+                }
+            }
+        }
+    }   
 }

@@ -3,9 +3,9 @@
 #TAG = {STATE = {create_character = yes}}
 create_character = {
     if = {
-        limit = {
-            PREV.PREV = { NOT = { has_country_flag = not_create_character_flag } }
-        }
+        # limit = {
+        #     PREV.PREV = { NOT = { has_country_flag = not_create_character_flag } }
+        # }
         if = {
             limit = {
                 is_in_array = {
@@ -33,6 +33,7 @@ create_character = {
                         log="当前角色：[t_role]"
                         log="流亡角色：[t_role_2]"
                         set_variable = { THIS.role = [t_role_2] }
+                        set_variable = { THIS.role_name = THIS.role_name_@PREV }
                         log="角色经验：[?this.role_experience]"
                         set_variable = { this.role_experience = [t_role_experience] }
                         log="存入角色：[t_role]"
@@ -48,6 +49,9 @@ create_character = {
                 t_role_2 = "[?this.role_@PREV]"
                 t_role_experience = "[?this.role_experience_@PREV]"
             }
+
+            #名称
+            refresh_character_name = yes
         }
         else = {
             add_to_variable = { role_index = 1 } #存储于省份
@@ -90,11 +94,31 @@ create_character = {
                 t_state = "[?THIS.GetID]"
                 t_index = "[?THIS.role_index]"
             }
-            set_variable = {
-                THIS.role = global.new_character
-            }
+            set_variable = { THIS.role = global.new_character }
+
+
+            #名称
+            refresh_character_name = yes
+
         }
     }
+}
+
+#刷新名称
+refresh_character_name = {
+    # clear_variable = global.new_character_name_2
+    # clear_variable = role_name
+    meta_effect = {
+        text = {
+            var:role_owner = {
+                [t_chara] = {
+                    set_variable = { global.new_character_name_2 = THIS }
+                }
+            }
+        }
+        t_chara = "[?role.GetTokenKey]"
+    }
+    set_variable = { role_name = global.new_character_name_2 }
 }
 
 #流亡当地角色
@@ -113,18 +137,13 @@ exile_create_character = {
         log="地区人物流亡"
         log="流亡地区：[?this.GetID]"
         log="流亡角色：[?this.role]"
-        set_variable = {
-            this.role_@PREV = this.role
-        }
+        set_variable = { this.role_@PREV = this.role }
+        set_variable = { this.role_name_@PREV = this.role_name }
         log="角色经验：[?this.role_experience]"
-        set_variable = {
-            this.role_experience_@PREV = this.role_experience
-        }
+        set_variable = { this.role_experience_@PREV = this.role_experience }
         log="存入角色：[?this.role_@PREV]"
         log="角色国籍：[?PREV.GetTag]"
-        add_to_array = {
-            this.exile_role_array = PREV
-        }
+        add_to_array = { this.exile_role_array = PREV }
         log="-------------------------"
         # set_variable = { this.role_experience = -1 }
     }

@@ -1,100 +1,483 @@
 #还清债务
-YMI_pay_up_debt = {
+YMI_pay_up_debt_category = {
 	#偿还债务
-	YMI_pay_up_debt_01 = {
+	YMI_pay_up_debt = {
 
 		visible = {
-			has_idea = YMI_assistance_of_USF_01
-		}
-
-		available = {
-			tag = YMI
+			OR = {
+				has_idea = YMI_assistance_of_USF_01
+				has_idea = YMI_assistance_of_USF_02
+				has_idea = YMI_assistance_of_USF_03
+				has_idea = YMI_assistance_of_USF_04
+				has_idea = YMI_assistance_of_USF_05
+			}
 		}
 		ai_will_do = {
 			factor = 10
 		}
-
-		days_remove = 0
-
 		cost = 200
 
 		fire_only_once = yes
 
-		remove_effect = {
-			remove_ideas = YMI_assistance_of_USF_01
-			add_ideas = YMI_assistance_of_USF_02
+		complete_effect = {
+			if = {
+				limit = {
+					has_idea = YMI_assistance_of_USF_05
+				}
+				swap_ideas = {
+					remove_idea = YMI_assistance_of_USF_05
+					add_idea = YMI_assistance_of_USF_04
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = YMI_assistance_of_USF_04
+				}
+				swap_ideas = {
+					remove_idea = YMI_assistance_of_USF_04
+					add_idea = YMI_assistance_of_USF_03
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = YMI_assistance_of_USF_03
+				}
+				swap_ideas = {
+					remove_idea = YMI_assistance_of_USF_03
+					add_idea = YMI_assistance_of_USF_02
+				}
+				USF = {remove_resource_rights = 776}
+			}
+			else_if = {
+				limit = {
+					has_idea = YMI_assistance_of_USF_02
+				}
+				swap_ideas = {
+					remove_idea = YMI_assistance_of_USF_02
+					add_idea = YMI_assistance_of_USF_01
+				}
+			}
+			else_if = {
+				limit = {
+					has_idea = YMI_assistance_of_USF_01
+				}
+				remove_ideas = YMI_assistance_of_USF_01
+				USF = {remove_resource_rights = 806}
+			}
 		}
 	}
-	YMI_pay_up_debt_02 = {
+}
 
-		visible = {
-			has_idea = YMI_assistance_of_USF_02
-		}
-
-		available = {
-			tag = YMI
+#艾尔涅斯帝的创意工坊
+YMI_the_workshop_of_Ernesti = {
+	#集体讨论
+	YMI_group_discussion = {
+		cost = 25
+		days_remove = 10
+		days_re_enable = 30
+		remove_effect = {
+			set_temp_variable = {YMI_progress_temp = 5}
+			YMI_add_progress = yes
 		}
 		ai_will_do = {
 			factor = 10
-		}
-
-		days_remove = 0
-
-		cost = 200
-
-		fire_only_once = yes
-
-		remove_effect = {
-			remove_ideas = YMI_assistance_of_USF_02
-			add_ideas = YMI_assistance_of_USF_03
 		}
 	}
-	YMI_pay_up_debt_03 = {
-
-		visible = {
-			has_idea = YMI_assistance_of_USF_03
-		}
-
-		available = {
-			tag = YMI
+	#性能测试
+	YMI_performance_test = {
+		cost = 75
+		days_remove = 25
+		days_re_enable = 50
+		remove_effect = {
+			set_temp_variable = {YMI_progress_temp = 10}
+			YMI_add_progress = yes
 		}
 		ai_will_do = {
 			factor = 10
-		}
-
-		days_remove = 0
-
-		cost = 200
-
-		fire_only_once = yes
-
-		remove_effect = {
-			remove_ideas = YMI_assistance_of_USF_03
-			add_ideas = YMI_assistance_of_USF_04
 		}
 	}
-	YMI_pay_up_debt_04 = {
+}
 
-		visible = {
-			has_idea = YMI_assistance_of_USF_04
+YMI_debug = {
+	YMI_the_workshop_of_Ernesti_debug = {
+		complete_effect = {
+			set_country_flag = YMI_the_workshop_of_Ernesti_debug
 		}
+	}
+	YMI_add_progress_100 = {
+		complete_effect = {
+			set_temp_variable = {YMI_progress_temp = 100}
+			YMI_add_progress = yes
+		}
+	}
+}
 
+YMI_diplomacy_category = {
+	YMI_join_ATM_civ_war = {
 		available = {
-			tag = YMI
+			country_exists = ACD
+			ACD = {
+				OR = {
+					has_war_with = ATM
+					has_war_with = ATS
+				}
+			}
+			if = {
+				limit = {
+					country_exists = ATM
+				}
+				NOT = {
+					has_war_with = ATM
+				}
+			}
+			if = {
+				limit = {
+					country_exists = ATS
+				}
+				NOT = {
+					has_war_with = ATS
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = YMI_stablize_the_west
+			OR = {
+				country_exists = ATM
+				country_exists = ATS
+			}
+		}
+		cost = 20
+		days_remove = 20
+		fire_only_once = yes
+		remove_effect = {
+			country_event = {id = YMI.12}
 		}
 		ai_will_do = {
 			factor = 10
 		}
-
-		days_remove = 0
-
-		cost = 200
-
+	}
+	YMI_cooperate_with_HBG = {
+		available = {
+			country_exists = HBG
+			NOT = {
+				has_war_with = HBG
+			}
+		}
+		visible = {
+			has_completed_focus = YMI_stablize_the_west
+			country_exists = HBG
+		}
+		cost = 20
+		days_remove = 20
 		fire_only_once = yes
-
 		remove_effect = {
-			remove_ideas = YMI_assistance_of_USF_04
-			add_ideas = YMI_assistance_of_USF_05
+			HBG = {
+				country_event = {id = YMI.11}
+			}
+			add_ideas = YMI_war_is_approaching
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = YMI_anti_imperalism_dummy
+					add_idea = YMI_anti_imperalism_modifier_5
+				}
+			}
+			add_to_variable = {YMI_stability_factor = 0.05}
+			add_to_variable = {YMI_war_support_factor = 0.05}
+			add_to_variable = {YMI_mobilization_speed = 0.2}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	YMI_cooperate_with_AKL = {
+		available = {
+			country_exists = AKL
+			NOT = {
+				has_war_with = AKL
+			}
+		}
+		visible = {
+			has_completed_focus = YMI_stablize_the_west
+			country_exists = AKL
+		}
+		cost = 20
+		days_remove = 20
+		fire_only_once = yes
+		remove_effect = {
+			country_event = {id = YMI.15}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	YMI_create_faction = {
+		visible = {
+			has_completed_focus = YMI_stablize_the_west
+		}
+		cost = 20
+		days_remove = 28
+		fire_only_once = yes
+		remove_effect = {
+			create_faction = YMI_FACTION
+			hidden_effect = {
+				every_possible_country = {
+					limit = {
+						OR = {
+							tag = ATM
+							tag = ATS
+							tag = HBG
+							tag = SCA
+							tag = NAT
+						}
+					}
+					add_to_array = {
+						array = YMI.potential_faction_member
+						value = THIS
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	YMI_invite_allies = {
+        visible = {
+			has_completed_focus = YMI_stablize_the_west
+            is_in_faction = yes
+        }
+        target_array = YMI.potential_faction_member
+        target_trigger = {
+            FROM = {
+				is_in_faction = no
+				NOT = {has_country_flag = invited_by_YMI_flag}
+            }
+        }
+        days_remove = 3
+        remove_effect = {
+            FROM = {
+                country_event = {id = YMI.16}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+	YMI_intervene_ACD = {
+		available = {
+			is_faction_leader = yes
+			country_exists = ACD
+			NOT = {
+				country_exists = ATM
+				country_exists = ATS
+			}
+			is_neighbor_of = ACD
+		}
+		visible = {
+			country_exists = ACD
+			has_completed_focus = YMI_stablize_the_west
+        }
+		fire_only_once = yes
+		days_remove = 30
+		war_with_on_remove = ACD
+		remove_effect = {
+			declare_war_on = {
+				target = ACD
+				type = annex_everything
+			}
+			set_global_flag = YMI_INTERVENE_ACD_FLAG
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	YMI_intervene_BLN = {
+		available = {
+			is_faction_leader = yes
+
+			OR = {
+				country_exists = BLN
+				country_exists = DKG
+			}
+			NOT = {
+				country_exists = SCA
+			}
+		}
+		visible = {
+			OR = {
+				country_exists = BLN
+				country_exists = DKG
+			}
+			NOT = {
+				country_exists = SCA
+			}
+			has_global_flag = BLN_CIV_WAR_FLAG
+			has_completed_focus = YMI_stablize_the_west
+        }
+		fire_only_once = yes
+		days_remove = 30
+		war_with_on_remove = BLN
+		remove_effect = {
+			if = {
+				limit = {
+					country_exists = BLN
+				}
+				declare_war_on = {
+					target = BLN
+					type = annex_everything
+				}
+			}
+			if = {
+				limit = {
+					country_exists = DKG
+				}
+				declare_war_on = {
+					target = DKG
+					type = annex_everything
+				}
+			}
+			set_global_flag = YMI_INTERVENE_BLN_FLAG
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+
+	YMI_penetrate_TDL = {
+		available = {
+		}
+		visible = {
+			has_completed_focus = YMI_defend_against_TDL
+        }
+		fire_only_once = yes
+		cost = 30
+		days_remove = 30
+		remove_effect = {
+			set_country_flag = YMI_penetrate_TDL
+			add_intel = {
+				target = TDL
+				civilian_intel = 25
+				army_intel = 25
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	YMI_prepare_factories = {
+		available = {
+		}
+		visible = {
+			has_completed_focus = YMI_defend_against_TDL
+        }
+		fire_only_once = yes
+		cost = 45
+		days_remove = 60
+		remove_effect = {
+			set_country_flag = YMI_prepare_factories
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = YMI_anti_imperalism_dummy
+					add_idea = YMI_anti_imperalism_modifier_6
+				}
+			}
+			add_to_variable = {YMI_production_speed_arms_factory_factor = 0.25}
+			add_to_variable = {YMI_military_factory_donation = 2}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	YMI_prepare_naval_bunkers = {
+		available = {
+		}
+		visible = {
+			has_completed_focus = YMI_defend_against_TDL
+        }
+		fire_only_once = yes
+		cost = 30
+		days_remove = 30
+		remove_effect = {
+			set_country_flag = YMI_prepare_naval_bunkers
+			805 = {
+				add_building_construction = {
+					province = 7915
+					type = coastal_bunker
+					level = 2
+					instant_build = yes
+				}
+			}
+			776 = {
+				add_building_construction = {
+					province = 4286
+					type = coastal_bunker
+					level = 2
+					instant_build = yes
+				}
+			}
+			775 = {
+				add_building_construction = {
+					province = 4751
+					type = bunker
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	YMI_prepare_for_war = {
+		available = {
+			has_country_flag = YMI_penetrate_TDL
+			has_country_flag = YMI_prepare_factories
+			has_country_flag = YMI_prepare_naval_bunkers
+		}
+		visible = {
+			has_completed_focus = YMI_defend_against_TDL
+        }
+		fire_only_once = yes
+		days_remove = 50
+		remove_effect = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = YMI_anti_imperalism_dummy
+					add_idea = YMI_anti_imperalism_modifier_7
+				}
+			}
+			add_to_variable = {YMI_max_dig_in_factor = 0.05}
+			add_to_variable = {YMI_army_morale_factor = 0.05}
+			add_to_variable = {YMI_army_org_factor = 0.05}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+	YMI_cooperate_with_XZJ = {
+		available = {
+			country_exists = XZJ
+			NOT = {has_war_with = XZJ}
+			XZJ = {
+				has_opinion = {
+					target = YMI
+					value > 29
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = YMI_patriotism
+		}
+		cost = 20
+		days_remove = 20
+		fire_only_once = yes
+		remove_effect = {
+			XZJ = {
+				give_guarantee = YMI
+			}
+		}
+		ai_will_do = {
+			factor = 1000
 		}
 	}
 }

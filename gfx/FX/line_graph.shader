@@ -100,10 +100,10 @@ PixelShader =
 			float dist3 = abs((y2 - y1) * xPos3 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
 			float dist4 = abs((y2 - y1) * xPos4 - (1.f) * yPos + y1) / sqrt((y2 - y1) * (y2 - y1) + 1.f);
 
-			if (dist < 0.0004f || dist2 < 0.0004f || dist3 < 0.0004f || dist4 < 0.0004f)
-				return tex2D( TextureOne, v.vTexCoord0.xy );
-			else
-				return tex2D( TextureTwo, v.vTexCoord0.xy );
+			float smallest = min(min(min(dist, dist2 - 0.0001f), dist3), dist4);
+			float sat = saturate((smallest - 0.0002f) / 0.0005f);
+
+			return tex2D(TextureOne, v.vTexCoord0.xy) * (1.f - sat) + tex2D(TextureTwo, v.vTexCoord0.xy) * (sat);
 		}
 		
 	]]
@@ -129,4 +129,3 @@ Effect Texture
 	VertexShader = "VertexShader"
 	PixelShader = "PixelTexture"
 }
-

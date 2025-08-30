@@ -212,116 +212,80 @@ BLA_increase_all_opinion = {
 BLA_decrease_all_opinion = {
     custom_effect_tooltip = BLA_decrease_all_opinion_desc
     hidden_effect = {
-    BLA = {add_to_variable = {BLA_nobility_opinion = -5}}
-    BLA_check_nobility_opinion = yes
-    BLA = {add_to_variable = {BLA_church_opinion = -5}}
-    BLA_check_church_opinion = yes
-    BLA = {add_to_variable = {BLA_army_opinion = -5}}
-    BLA_check_army_opinion = yes
-    BLA = {add_to_variable = {BLA_capitalist_opinion = -5}}
-    BLA_check_capitalist_opinion = yes
-    BLA = {add_to_variable = {BLA_freeman_opinion = -5}}
-    BLA_check_freeman_opinion = yes
-    BLA = {add_to_variable = {BLA_serf_opinion = -5}}
-    BLA_check_serf_opinion = yes
+        BLA_decrease_nobility_opinion = yes
+        BLA_decrease_church_opinion = yes
+        BLA_decrease_army_opinion = yes
+        BLA_decrease_capitalist_opinion = yes
+        BLA_decrease_freeman_opinion = yes
+        BLA_decrease_serf_opinion = yes
     }
 }
 #检测贵族好感
 BLA_check_nobility_opinion = {
-    if = {
-        limit = {
-            check_variable = {BLA_nobility_opinion < -100}
-        }   
-        set_variable = {BLA_nobility_opinion = -100}
-    }
-    if = {
-        limit = {
-            check_variable = {BLA_nobility_opinion < -75}
-            NOT = {has_country_flag = BLA_nobility_plot_triggered}
-        }   
-        country_event = {id = BLA_pol.999}
-        set_country_flag = BLA_nobility_plot_triggered
-    }
-    if = {
-        limit = {
-            check_variable = {BLA_nobility_opinion > 100}
+    BLA = {
+        clamp_variable = {
+            var = BLA_nobility_opinion
+            max = 100
+            min = -100
         }
-        set_variable = {BLA_nobility_opinion = 100}
+        if = {
+            limit = {
+                check_variable = {BLA_nobility_opinion < -75}
+                NOT = {has_country_flag = BLA_nobility_plot_triggered}
+            }   
+            country_event = {id = BLA_pol.999}
+            set_country_flag = BLA_nobility_plot_triggered
+        }
     }
 }
 #检测教会好感
 BLA_check_church_opinion = {
-    if = {
-        limit = {
-            check_variable = {BLA_church_opinion < -100}
+    BLA = {
+        clamp_variable = {
+            var = BLA_church_opinion
+            max = 100
+            min = -100
         }
-        set_variable = {BLA_church_opinion = -100}
-    }
-    if = {
-        limit = {
-            check_variable = {BLA_church_opinion > 100}
-        }
-       set_variable = {BLA_church_opinion = 100}
     }
 }
 #检测军队好感
 BLA_check_army_opinion = {
-    if = {
-        limit = {
-           check_variable = {BLA_army_opinion < -100}
+    BLA = {
+        clamp_variable = {
+            var = BLA_army_opinion
+            max = 100
+            min = -100
         }
-        set_variable = {BLA_army_opinion = -100}
-    }
-    if = {
-        limit = {
-            check_variable = {BLA_army_opinion > 100}
-        }
-        set_variable = {BLA_army_opinion = 100}
     }
 }
 #检测实业家好感
 BLA_check_capitalist_opinion = {
-    if = {
-        limit = {
-            check_variable = {BLA_capitalist_opinion < -100}
+    BLA = {
+        clamp_variable = {
+            var = BLA_capitalist_opinion
+            max = 100
+            min = -100
         }
-        set_variable = {BLA_capitalist_opinion = -100}
-    }
-    if = {
-        limit = {
-           check_variable = {BLA_capitalist_opinion > 100}
-        }
-       set_variable = {BLA_capitalist_opinion = 100}
     }
 }
 #检测自由民好感
 BLA_check_freeman_opinion = {
-    if = {
-        limit = {
-            check_variable = {BLA_freeman_opinion < -100}
+    BLA = {
+        clamp_variable = {
+            var = BLA_freeman_opinion
+            max = 100
+            min = -100
         }
-        set_variable = {BLA_freeman_opinion = -100}
-    }
-    if = {
-        limit = {
-            check_variable = {BLA_freeman_opinion > 100}
-        }
-        set_variable = {BLA_freeman_opinion = 100}
     }
 }
 #检测农奴好感
 BLA_check_serf_opinion = {
-    if = {
-        limit = {
-            check_variable = {BLA_serf_opinion < -100}
+    BLA = {
+        clamp_variable = {
+            var = BLA_serf_opinion
+            max = 100
+            min = -100
         }
-        set_variable = {BLA_serf_opinion = -100}
-    }
-    if = {
-        limit = {
-            check_variable = {BLA_serf_opinion > 20}
-        }
-        set_variable = {BLA_serf_opinion = 20}
     }
 }
 #每周变化
@@ -413,6 +377,18 @@ BLA_gain_random_secret = {
                 25 = {
                     add_to_variable = {BLA_capitalist_secret = 1}
                 }
+            }
+        }
+    }
+}
+BLA_change_fund = {
+    custom_effect_tooltip = BLA_change_fund_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_industralization_fund = BLA_industralization_fund_temp}
+            clamp_variable = {
+                var = BLA_industralization_fund
+                min = 0
             }
         }
     }
@@ -574,7 +550,10 @@ BLA_calculate_total_tax = {
         add_to_variable = {BLA_industralization_fund_t = BLA_revenue}
         log = "[GetDateText]: [Root.GetName]: 修正前总和 [?BLA.BLA_industralization_fund_t] 税收效率 [?BLA.modifier@BLA_fund_gain_efficiency_modifier]"
         multiply_variable = {BLA_industralization_fund_t = modifier@BLA_fund_gain_efficiency_modifier}
-        log = "[GetDateText]: [Root.GetName]: 修正后总和 [?BLA.BLA_industralization_fund_t] 税收效率 [?BLA.modifier@BLA_fund_gain_efficiency_modifier]"
+        set_variable = {BLA_fund_gain_efficiency_factor_modifier_t = 1}
+        add_to_variable = {BLA_fund_gain_efficiency_factor_modifier_t = modifier@BLA_fund_gain_efficiency_factor_modifier}
+        multiply_variable = {BLA_industralization_fund_t = BLA_fund_gain_efficiency_factor_modifier_t}
+        log = "[GetDateText]: [Root.GetName]: 修正后总和 [?BLA.BLA_industralization_fund_t] 税收效率 [?BLA.modifier@BLA_fund_gain_efficiency_modifier] 税收效率修正 [?BLA_fund_gain_efficiency_factor_modifier_t]"
         add_to_variable = {BLA_industralization_fund = BLA_industralization_fund_t}
         subtract_from_variable = {BLA_industralization_fund = BLA_total_interest}
     }
@@ -607,13 +586,13 @@ BLA_upgrade_industralization = {
             limit = {
                 check_variable = {BLA_industralization_status = 5}
             }
-            country_event = {id = BLA_general.59}
+            country_event = {id = BLA_general.50}
         }
         if = {
             limit = {
                 check_variable = {BLA_industralization_status = 10}
             }
-            country_event = {id = BLA_general.60}
+            country_event = {id = BLA_general.51}
         }
     }
 }
@@ -1180,10 +1159,6 @@ Rossiya_Revolution_NAC_army_effect = {
             limit = {
                 is_historical_focus_on = yes 
                 NAC = {is_ai = yes}
-            }
-            create_unit = {
-                division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.25"
-                owner = NAC
             }
             create_unit = {
                 division = "name = \"自由农民旅\" division_template = \"自由农民旅\" start_experience_factor = 0.25"
@@ -2461,91 +2436,42 @@ BLA_update_unity_modifier = {
         multiply_variable = {BLA_stability_factor_dynamic = BLA_unity}
     }
 }
-BLA_increase_negotiation_progress_20 = {
-    custom_effect_tooltip = BLA_increase_negotiation_progress_20_desc
+BLA_add_negotiation_progress = {
+    custom_effect_tooltip = BLA_add_negotiation_progress_t
     hidden_effect = {
         BLA = {
-            add_to_variable = {BLA_negotiation_progress = 20}
+            add_to_variable = {BLA_negotiation_progress = BLA_negotiation_progress_temp}
         }
     }
 }
-BLA_increase_negotiation_progress_10 = {
-    custom_effect_tooltip = BLA_increase_negotiation_progress_10_desc
+BLA_add_negotiation_barrier = {
+    custom_effect_tooltip = BLA_add_negotiation_barrier_t
     hidden_effect = {
         BLA = {
-            add_to_variable = {BLA_negotiation_progress = 10}
+            add_to_variable = {BLA_negotiation_barrier = BLA_negotiation_barrier_temp}
         }
     }
 }
-BLA_increase_negotiation_progress_5 = {
-    custom_effect_tooltip = BLA_increase_negotiation_progress_5_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_progress = 5}
+BLA_HEL_crisis_event_trigger = {
+    BLA = {
+        add_to_variable = {BLA_HEL_crisis_var = 1}
+        if = {
+            limit = {
+                check_variable = {BLA_HEL_crisis_var = 20}
+            }
+            country_event = {id = BLA_sanya_crisis.2}
         }
-    }
-}
-BLA_decrease_negotiation_progress_3 = {
-    custom_effect_tooltip = BLA_decrease_negotiation_progress_3_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_progress = -3}
+        if = {
+            limit = {
+                check_variable = {BLA_HEL_crisis_var = 50}
+            }
+            country_event = {id = BLA_sanya_crisis.3}
         }
-    }
-}
-BLA_decrease_negotiation_progress_5 = {
-    custom_effect_tooltip = BLA_decrease_negotiation_progress_5_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_progress = -5}
-        }
-    }
-}
-BLA_decrease_negotiation_progress_15 = {
-    custom_effect_tooltip = BLA_decrease_negotiation_progress_15_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_progress = -15}
-        }
-    }
-}
-BLA_increase_negotiation_barrier_25 = {
-    custom_effect_tooltip = BLA_increase_negotiation_barrier_25_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_barrier = 25}
-        }
-    }
-}
-BLA_increase_negotiation_barrier_3 = {
-    custom_effect_tooltip = BLA_increase_negotiation_barrier_3_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_barrier = 3}
-        }
-    }
-}
-BLA_increase_negotiation_barrier_5 = {
-    custom_effect_tooltip = BLA_increase_negotiation_barrier_5_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_barrier = 5}
-        }
-    }
-}
-BLA_decrease_negotiation_barrier_5 = {
-    custom_effect_tooltip = BLA_decrease_negotiation_barrier_5_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_barrier = -5}
-        }
-    }
-}
-BLA_decrease_negotiation_barrier_15 = {
-    custom_effect_tooltip = BLA_decrease_negotiation_barrier_15_desc
-    hidden_effect = {
-        BLA = {
-            add_to_variable = {BLA_negotiation_barrier = -15}
+        if = {
+            limit = {
+                check_variable = {BLA_HEL_crisis_var = 80}
+            }
+            country_event = {id = BLA_sanya_crisis.4}
         }
     }
 }
@@ -3279,7 +3205,7 @@ BLA_rev_check = {
                     NOT = {has_country_flag = BLA_cul_rev_successed}
                     check_variable = {BLA_cul_rev > 79}
                 }
-                country_event = {id = BLA_general.104}
+                country_event = {id = BLA_siera.24}
                 set_country_flag = BLA_cul_rev_successed
             }
             if = {
@@ -3287,7 +3213,7 @@ BLA_rev_check = {
                     NOT = {has_country_flag = BLA_mil_rev_successed}
                     check_variable = {BLA_mil_rev > 79}
                 }
-                country_event = {id = BLA_general.103}
+                country_event = {id = BLA_siera.23}
                 set_country_flag = BLA_mil_rev_successed
             }
             if = {
@@ -3295,7 +3221,7 @@ BLA_rev_check = {
                     NOT = {has_country_flag = BLA_pol_rev_successed}
                     check_variable = {BLA_pol_rev > 79}
                 }
-                country_event = {id = BLA_general.102}
+                country_event = {id = BLA_siera.22}
                 set_country_flag = BLA_pol_rev_successed
             }
         }
@@ -3321,6 +3247,15 @@ BLA_update_Hermann_revolution_modifier = {
             multiply_variable = {BLA_army_opinion_modifier_rev = BLA_mil_rev}
             multiply_variable = {BLA_army_org_factor_rev = BLA_mil_rev}
             multiply_variable = {BLA_army_morale_factor_rev = BLA_mil_rev}
+        }
+    }
+}
+BLA_add_corrupt_3 = {
+    custom_effect_tooltip = BLA_add_corrupt_3_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_corruption_rev = 3}
+            BLA_rev_check = yes
         }
     }
 }
@@ -3351,6 +3286,15 @@ BLA_reduce_corrupt_10 = {
         }
     }
 }
+BLA_decrease_pol_4 = {
+    custom_effect_tooltip = BLA_decrease_pol_4_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_pol_rev = -4}
+            BLA_update_Hermann_revolution_modifier = yes
+        }
+    }
+}
 BLA_increase_pol_4 = {
     custom_effect_tooltip = BLA_increase_pol_4_desc
     hidden_effect = {
@@ -3369,6 +3313,15 @@ BLA_increase_pol_10 = {
         }
     }
 }
+BLA_decrease_mil_4 = {
+    custom_effect_tooltip = BLA_decrease_mil_4_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_mil_rev = -4}
+            BLA_update_Hermann_revolution_modifier = yes
+        }
+    }
+}
 BLA_increase_mil_4 = {
     custom_effect_tooltip = BLA_increase_mil_4_desc
     hidden_effect = {
@@ -3383,6 +3336,15 @@ BLA_increase_mil_10 = {
     hidden_effect = {
         BLA = {
             add_to_variable = {BLA_mil_rev = 10}
+            BLA_update_Hermann_revolution_modifier = yes
+        }
+    }
+}
+BLA_decrease_cul_4 = {
+    custom_effect_tooltip = BLA_decrease_cul_4_desc
+    hidden_effect = {
+        BLA = {
+            add_to_variable = {BLA_cul_rev = -4}
             BLA_update_Hermann_revolution_modifier = yes
         }
     }
@@ -3408,13 +3370,75 @@ BLA_increase_cul_10 = {
 BLA_reduce_aug_opinion = {
     custom_effect_tooltip = BLA_reduce_aug_opinion_desc
     hidden_effect = {
-        BLA = {add_to_variable = {BLA_cooperate_with_August_cost = 10}}
+        BLA = {add_to_variable = {BLA_cooperate_with_August_cost = 5}}
     }
 }
 BLA_increase_aug_opinion = {
     custom_effect_tooltip = BLA_increase_aug_opinion_desc
     hidden_effect = {
-        BLA = {add_to_variable = {BLA_cooperate_with_August_cost = -10}}
+        BLA = {add_to_variable = {BLA_cooperate_with_August_cost = -5}}
+    }
+}
+BLA_increase_Sanya_opinion = {
+    custom_effect_tooltip = BLA_increase_Sanya_opinion_desc
+    hidden_effect = {
+        BLA = {add_to_variable = {BLA_Sanya_opinion = 1}}
+    }
+}
+BLA_decrease_Sanya_opinion = {
+    custom_effect_tooltip = BLA_decrease_Sanya_opinion_desc
+    if = {
+        limit = {
+            BLA = {check_variable = {BLA_Sanya_opinion < 2}}
+        }
+        custom_effect_tooltip = BLA_low_Sanya_opinion_warning_tt
+    }
+    hidden_effect = {
+        BLA = {add_to_variable = {BLA_Sanya_opinion = -1}}
+    }
+}
+BLA_Siera_random_event_trigger = {
+    BLA = {
+        set_variable_to_random = {
+            var = BLA_siera_random_var
+            max = 31
+            min = 1
+            integer = yes
+        }
+        set_variable_to_random = {
+            var = BLA_siera_random_time_var
+            max = 20
+            min = 1
+            integer = yes
+        }
+        log = "[GetDateText]: [Root.GetName]: BLA_siera_random_var:[?BLA_siera_random_var]"
+        if = {
+            limit = {
+                OR = {
+                    AND = {
+                        check_variable = {BLA_siera_random_var = 4}
+                        check_variable = {BLA_num_of_mil_focus_completed < 10} #完成军事国策少于10个不触发，下逻辑同
+                    }
+                    AND = {
+                        check_variable = {BLA_siera_random_var = 5}
+                        check_variable = {BLA_num_of_mil_focus_completed > 14}
+                    }
+                    check_variable = {BLA_siera_random_var = BLA_last_event_var} #大概能防止重复触发？
+                }
+            }
+            #无效果
+        }
+        else = {
+            meta_effect = {
+                text = {
+                    country_event = {id = BLA_random.[BLA_SIERA_RANDOM_VAR] days = [BLA_SIERA_RANDOM_TIME_VAR]}
+                    set_variable = {BLA_last_event_var = [BLA_SIERA_RANDOM_VAR]}
+                }
+                BLA_SIERA_RANDOM_VAR = "[?BLA_siera_random_var]"
+                BLA_SIERA_RANDOM_TIME_VAR = "[?BLA_siera_random_time_var]"
+            }
+        }
+        set_country_flag = {flag = BLA_Siera_random_event_triggered value = 1 days = 200}
     }
 }
 BLA_check_tsar_order = {
@@ -3430,11 +3454,8 @@ BLA_check_tsar_order = {
                     has_country_flag = BLA_tsar_order_recovered
                 }
             }
-            set_variable = {BLA_tsar_order_gain = BLA_tsar_order_limit}
-            multiply_variable = {BLA_tsar_order_gain = 0.5}
-            round_variable = BLA_tsar_order_gain
-            add_to_variable = {BLA_tsar_order = BLA_tsar_order_gain}
-            set_country_flag = {flag = BLA_tsar_order_recovered days = 180 value = 1}
+            add_to_variable = {BLA_tsar_order = 1}
+            set_country_flag = {flag = BLA_tsar_order_recovered days = 200 value = 1}
         }
         clamp_variable = {
             var = BLA_tsar_order

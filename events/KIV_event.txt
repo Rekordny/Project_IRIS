@@ -1,14 +1,17 @@
 add_namespace = KIV
 add_namespace = KIV_incomplete
 add_namespace = SCS
+add_namespace = HGN
+add_namespace = AHS
 
 country_event = {
 	id = SCS.1
 	title = SCS.1.title
 	desc = SCS.1.desc
 	is_triggered_only = yes
+	picture = GFX_SCS_1
 	immediate = {
-		
+
 	}
 	option = {
 		name = SCS.1.a
@@ -18,10 +21,375 @@ country_event = {
 			country_leader = {
 				ideology = sub_Theocracy
 				desc = "KIV_zhu_desc"
-				traits = { chamberlain_appeaser }
+				traits = { chamberlain_appeaser rearmer }
 			}
 		}
 		set_global_flag = G_SCS_1_FLAG
+		add_stability = -0.1
+		hidden_effect = { country_event = { id = SCS.2 days = 333 } }
+	}
+}
+
+country_event = {
+	id = SCS.2
+	title = SCS.2.title
+	desc = SCS.2.desc
+	is_triggered_only = yes
+	picture = GFX_SCS_1
+	immediate = {
+
+	}
+	option = {
+		name = SCS.2.a
+		920 = {
+			set_victory_points = {
+				province = 16684
+				value = 10
+			}
+		}
+		KIV = {
+			end_puppet = SCS
+			end_puppet = GEH
+		}
+		SCS = { leave_faction = yes }
+		GEH = { leave_faction = yes }
+		ACA = {
+			transfer_state = 920
+			set_capital = { state = 920 }
+			division_template = {
+				name = "阿里乌斯部队"
+				regiments = {
+					trash_fish_infantry = { x = 0 y = 0 }
+					trash_fish_infantry = { x = 0 y = 1 }
+					trash_fish_infantry = { x = 0 y = 2 }
+					trash_fish_infantry = { x = 0 y = 3 }
+					trash_fish_infantry = { x = 1 y = 0 }
+					trash_fish_infantry = { x = 1 y = 1 }
+					artillery_brigade = { x = 2 y = 0 }
+					artillery_brigade = { x = 2 y = 1 }
+					artillery_brigade = { x = 2 y = 2 }
+				}
+				support = {
+					engineer = { x = 0 y = 0 }
+				}
+			}
+			920 = {
+				create_unit = {
+					division = "division_template = \"阿里乌斯部队\" start_experience_factor = 0.15 start_equipment_factor = 0.75"
+					owner = ACA
+					count = 5
+				}
+			}
+			declare_war_on = { target = SCS type = take_state }
+			declare_war_on = { target = GEH type = take_state }
+		}
+		GEH = { declare_war_on = { target = SCS type = take_state } }
+		country_event = { id = SCS.3 days = 7 }
+	}
+}
+
+
+country_event = {
+	id = SCS.3
+	title = SCS.3.title
+	desc = SCS.3.desc
+	is_triggered_only = yes
+	picture = GFX_SCS_1
+	immediate = {
+
+	}
+	option = {
+		name = SCS.3.a
+		SCS = { white_peace = GEH country_event = { id = SCS.4 days = 2 } }
+		ACA = { white_peace = GEH }
+		GEH = {
+			white_peace = SCS
+			KIV = {
+				set_autonomy = {
+					target = PREV
+					autonomous_state = autonomy_integrated_puppet
+				}
+			}
+			set_politics = {
+				ruling_party = fascism
+				elections_allowed = no
+			}
+			set_popularities = {
+				democratic = 0
+				neutrality = 10
+				fascism = 90
+				communism = 0
+				reactionism = 0
+			}
+		}
+	}
+}
+
+country_event = {
+	id = SCS.4
+	title = SCS.4.title
+	desc = SCS.4.desc
+	is_triggered_only = yes
+	picture = GFX_SCS_1
+	immediate = {
+
+	}
+	option = {
+		name = SCS.4.a
+		KIV = { end_puppet = AHS }
+		AHS = {
+			leave_faction = yes
+			add_to_war = {
+				targeted_alliance = SCS
+				enemy = ACA
+				hostility_reason = asked_to_join
+			}
+			set_country_flag = AHS_intervention_in_war_ACA_SCS_FLAG #介入战争
+		}
+	}
+}
+
+country_event = {
+	id = AHS.1
+	title = AHS.1.title
+	desc = AHS.1.desc
+	is_triggered_only = yes
+	# picture = GFX_AHS_1
+	immediate = {
+
+	}
+	option = {
+		name = AHS.1.a
+		KIV = { end_puppet = AHS }
+		AHS = {
+			set_nationality = {
+				target_country = ZTZ
+				character = KIV_xingye #小鸟游 星野
+			}
+			if = {
+				limit = {
+					has_character = KIV_lingyin
+				}
+				if = {
+					limit = {
+						KIV_lingyin = {
+							has_ideology_group = democratic
+						}
+					}
+					promote_character = KIV_lingyin
+				}
+				else = {
+					add_country_leader_role = {
+						character = KIV_lingyin
+						promote_leader = yes
+						country_leader = {
+							ideology = sub_Academia
+							desc = "KIV_lingyin_desc"
+							traits = { }
+						}
+					}
+				}
+			}
+			leave_faction = yes
+			set_country_flag = AHS_intervention_in_war_AHS_KAI_FLAG #战争
+			division_template = {
+				name = "圣三一炮兵联队"
+				is_locked = yes
+				regiments = {
+					trash_fish_infantry = { x = 0 y = 0 }
+					trash_fish_infantry = { x = 0 y = 1 }
+					trash_fish_infantry = { x = 0 y = 2 }
+					trash_fish_infantry = { x = 1 y = 0 }
+					trash_fish_infantry = { x = 1 y = 1 }
+					artillery_brigade = { x = 2 y = 0 }
+					artillery_brigade = { x = 2 y = 1 }
+					artillery_brigade = { x = 2 y = 2 }
+				}
+				support = {
+					engineer = { x = 0 y = 0 }
+				}
+			}
+			division_template = {
+				name = "68便利屋援军"
+				is_locked = yes
+				regiments = {
+					trash_fish_infantry = { x = 0 y = 0 }
+					trash_fish_infantry = { x = 0 y = 1 }
+					trash_fish_infantry = { x = 0 y = 2 }
+					trash_fish_infantry = { x = 1 y = 0 }
+				}
+			}
+			862 = {
+				create_unit = {
+					division = "division_template = \"圣三一炮兵联队\" start_experience_factor = 0.3 start_equipment_factor = 1"
+					owner = AHS
+					count = 2
+				}
+				create_unit = {
+					division = "division_template = \"68便利屋援军\" start_experience_factor = 1 start_equipment_factor = 1"
+					owner = AHS
+					count = 2
+				}
+			}
+		}
+		KAI = {
+			transfer_state = 921
+			set_politics = {
+				ruling_party = reactionism
+				elections_allowed = no
+			}
+			set_popularities = {
+				democratic = 0
+				neutrality = 50
+				fascism = 0
+				communism = 0
+				reactionism =50
+			}
+			create_country_leader = {
+				name = KIV_kaiser_general
+				desc = "KIV_kaiser_general_desc"
+				picture = "gfx/leaders/KIV/KIV_kaiser_general.dds"
+				ideology = sub_Reactionism
+				traits = {
+					IRIS_authoritarian_tendency
+				}
+			}
+			division_template = {
+				name = "凯撒PMC"
+				regiments = {
+					trash_fish_infantry = { x = 0 y = 0 }
+					artillery_brigade = { x = 1 y = 0 }
+				}
+			}
+			division_template = {
+				name = "PMC直升机编队"
+				is_locked = yes
+				regiments = {
+					attack_heli = { x = 0 y = 0 }
+					attack_heli = { x = 0 y = 1 }
+					attack_heli = { x = 0 y = 2 }
+					attack_heli = { x = 0 y = 4 }
+				}
+				support = {
+					logistics_company = { x = 0 y = 0 }
+					maintenance_company = { x = 0 y = 1 }
+					signal_company = { x = 0 y = 2 }
+				}
+			}
+			create_equipment_variant = {
+				name = "PMC武装直升机"
+				type = helicopter_airframe_chassis_1
+				parent_version = 0
+				modules = {
+					turret_type_slot = empty
+					engine_type_slot = helicopter_engine_1
+					special_type_slot_1 = tank_radio_1
+					special_type_slot_2 = tank_heavy_machine_gun
+					special_type_slot_3 = empty
+				}
+				upgrades = {
+					helicopter_engine_upgrade = 2
+					helicopter_armor_upgrade = 3
+				}
+				# icon = ""
+			}
+			add_equipment_to_stockpile = {
+				type = helicopter_airframe_chassis_1
+				amount = 50
+				variant_name = "PMC武装直升机"
+			}
+			921 = {
+				create_unit = {
+					division = "division_template = \"凯撒PMC\" start_experience_factor = 0.3 start_equipment_factor = 1"
+					owner = KAI
+					count = 5
+				}
+				create_unit = {
+					division = "division_template = \"PMC直升机编队\" start_experience_factor = 0.15 start_equipment_factor = 0.4"
+					owner = KAI
+					count = 3
+				}
+			}
+			declare_war_on = { target = AHS type = take_state }
+		}
+	}
+}
+
+country_event = {
+	id = AHS.2
+	title = AHS.2.title
+	desc = AHS.2.desc
+	is_triggered_only = yes
+	# picture = GFX_AHS_2
+	immediate = {
+
+	}
+	option = {
+		name = AHS.2.a
+		add_ideas = AHS_xialai_support
+	}
+}
+
+country_event = {
+	id = AHS.3
+	title = AHS.3.title
+	desc = AHS.3.desc
+	is_triggered_only = yes
+	# picture = GFX_AHS_3
+	immediate = {
+
+	}
+	option = {
+		name = AHS.3.a
+		swap_ideas = {
+			remove_idea = AHS_debt_crisis
+			add_idea = AHS_debt_transfer			
+		}
+	}
+}
+
+country_event = {
+	id = HGN.1
+	title = HGN.1.title
+	desc = HGN.1.desc
+	is_triggered_only = yes
+	picture = GFX_HGN_1
+	immediate = {
+
+	}
+	option = {
+		name = HGN.1.a
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = no
+		}
+		set_popularities = {
+			democratic = 43
+			neutrality = 37
+			fascism = 0
+			communism = 0
+			reactionism = 20
+		}
+		if = {
+			limit = {
+				KIV_amachi_niya = {
+					has_ideology_group = democratic
+				}
+			}
+			promote_character = KIV_amachi_niya
+		}
+		else = {
+			add_country_leader_role = {
+				character = KIV_amachi_niya
+				promote_leader = yes
+				country_leader = {
+					ideology = sub_Academia
+					desc = "KIV_amachi_niya_desc"
+					traits = { KIV_reconciled_to_situation }
+				}
+			}
+		}
+		set_global_flag = G_HGN_1_FLAG
 	}
 }
 
@@ -30,82 +398,100 @@ country_event = {
 	title = KIV.1.title
 	desc = KIV.1.desc
 	is_triggered_only = yes
-	hidden = yes
+	# hidden = yes
+	picture = GFX_KIV_1
 	immediate = {
-		hidden_effect = {
-			KIV = {
-				load_focus_tree = KIV_general
-				KIV_GSC_president = {
-					remove_unit_leader = yes
-				}
-				remove_country_leader_role = {
-					character = KIV_GSC_president
-					ideology = sub_Techno_Bureaucracy
-				}
-				promote_character = {
-					character = KIV_qishenlin
-					ideology = sub_Techno_Bureaucracy
-				}
-				set_politics = {
-					ruling_party = democratic
-					elections_allowed = no
-				}
-				remove_ideas = KIV_idea_federal_student_union
-				add_timed_idea = {
-					idea = KIV_chaos_congress
-					days = 365
-				}
-				add_to_array = {
-					IRIS_Historical_leaders_Array = token:KIV_qishenlin
-				}
-				#七神 凛
-				add_to_array = {
-					IRIS_Historical_leaders_2_Array = token:KIV_oki_aoi
-				}
-				#扇喜 葵
-				add_to_array = {
-					IRIS_Historical_leaders_voting_rate_Array = 1005
-				}
-				add_to_array = {
-					GetNameIRISHistoricalDate = global.year
-				}
-				KIV_boom = yes
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_CONSUMER_GOODS_FACTOR_VAR = 0.4
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_PRODUCTION_SPEED_BUILDINGS_FACTOR_VAR = -0.5
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_LOCAL_RESOURCES_FACTOR_VAR = -0.45
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_JUSTIFY_WAR_GOAL_TIME_VAR = 3
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_INDUSTRIAL_CAPACITY_FACTORY_VAR = -0.43
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_MOBILIZATION_SPEED_VAR = -0.95
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_STABILITY_FACTOR_VAR = -0.35
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_CIRWC_MODIFIER_VAR = 5
-			}
-			set_variable = {
-				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_PRS_MODIFIER = 1
-			}
-			add_dynamic_modifier = {
-				modifier = KIV_unregulated_school_conflicts_modifier
-				scope = KIV
-			}
-		}
 	}
 	option = {
 		name = KIV.1.a
+		KIV = {
+			load_focus_tree = KIV_general
+			KIV_GSC_president = {
+				remove_unit_leader = yes
+			}
+			remove_country_leader_role = {
+				character = KIV_GSC_president
+				ideology = sub_Techno_Bureaucracy
+			}
+			promote_character = {
+				character = KIV_qishenlin
+				ideology = sub_Techno_Bureaucracy
+			}
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = no
+			}
+			remove_ideas = KIV_idea_federal_student_union
+			add_timed_idea = {
+				idea = KIV_chaos_congress
+				days = 365
+			}
+			add_to_array = {
+				IRIS_Historical_leaders_Array = token:KIV_qishenlin
+			}
+			#七神 凛
+			add_to_array = {
+				IRIS_Historical_leaders_2_Array = token:KIV_oki_aoi
+			}
+			#扇喜 葵
+			add_to_array = {
+				IRIS_Historical_leaders_voting_rate_Array = 1005
+			}
+			add_to_array = {
+				GetNameIRISHistoricalDate = global.year
+			}
+			country_event = {
+				id = kivnews.1
+				days = 1
+			}
+			country_event = {
+				id = kivnews.2
+				days = 6
+			}
+			KIV_boom = yes
+		}
+		868 = { set_demilitarized_zone = yes }
+		920 = { set_demilitarized_zone = yes }
+		921 = { set_demilitarized_zone = yes }
+		925 = { set_demilitarized_zone = yes }
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_CONSUMER_GOODS_FACTOR_VAR = 0.4
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_PRODUCTION_SPEED_BUILDINGS_FACTOR_VAR = -0.5
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_LOCAL_RESOURCES_FACTOR_VAR = -0.45
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_JUSTIFY_WAR_GOAL_TIME_VAR = 3
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_INDUSTRIAL_CAPACITY_FACTORY_VAR = -0.43
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_MOBILIZATION_SPEED_VAR = -0.95
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_STABILITY_FACTOR_VAR = -0.35
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_CIRWC_MODIFIER_VAR = 5
+		}
+		set_variable = {
+			global.KIV_UNREGULATED_SCHOOL_CONFLICTS_PRS_MODIFIER = 1
+		}
+		add_dynamic_modifier = {
+			modifier = KIV_unregulated_school_conflicts_modifier
+			scope = KIV
+		}
+		hidden_effect = {
+			AHS = {
+				country_event = { id= AHS.1 days = 124 }
+				country_event = { id= AHS.2 days = 12 }
+				country_event = { id= AHS.3 days = 620 }
+			}
+		}
 	}
 }
 
@@ -200,8 +586,9 @@ country_event = {
 	id = KIV_incomplete.3
 	title = KIV_incomplete.3.t
 	desc = KIV_incomplete.3.desc
-	hidden = yes
+	# hidden = yes
 	fire_only_once = yes
+	picture = GFX_KIV_incomplete_3
 	trigger = {
 		tag = KIV
 		KIV = {
@@ -219,7 +606,15 @@ country_event = {
 		}
 	}
 	immediate = {
+
+	}
+	fire_only_once = no
+	option = {
+		name = KIV_incomplete.3.a
 		KIV = {
+			hidden_effect = {
+				set_cosmetic_tag = KIV_shiranui_kaya
+			}
 			add_ideas = KIV_idea_federal_student_union
 			set_politics = {
 				ruling_party = neutrality
@@ -266,124 +661,125 @@ country_event = {
 				global.KIV_UNREGULATED_SCHOOL_CONFLICTS_PRS_MODIFIER = 0
 			}
 			KIV_unregulated_school_conflicts_modifier_effects_prevent_overflow = yes
-			random_list = {
-				#被捕
-				1 = {
-					modifier = {
-						factor = 0
-						OR = {
-							#不知火 花耶将会变得温和。
-							has_game_rule = {
-								rule = KIV_ai_behavior
-								option = KIV_shiranui_kaya_3
-							}
-							#不知火 花耶将会变得极端。
-							has_game_rule = {
-								rule = KIV_ai_behavior
-								option = KIV_shiranui_kaya_4
-							}
-							#不知火 花耶将会尝试统一美乐蒂。
-							has_game_rule = {
-								rule = KIV_ai_behavior
-								option = KIV_shiranui_kaya_5
-							}
-						}
-					}
-					country_event = {
-						id = KIV_incomplete.5
-						days = 35
-					}
-				}
-				#小将
-				1 = {
-					modifier = {
-						factor = 0
-						OR = {
-							#默认
-							has_game_rule = {
-								rule = KIV_ai_behavior
-								option = KIV_RULE_OPTION_RANDOM
-							}
-							#不知火 花耶被捕。
-							has_game_rule = {
-								rule = KIV_ai_behavior
-								option = KIV_shiranui_kaya_2
-							}
-						}
-					}
-					country_event = {
-						id = kivnews.6
-						days = 15
-					}
-					country_event = {
-						id = KIV_incomplete.7
-						days = 35
-					}
-					add_ai_strategy = {
-						type = declare_war
-						id = PCC
-						value = 300
-					}
-				}
+			country_event = {
+				id = KIV_incomplete.8
+				days = 25
 			}
+			# random_list = {
+			# 	#被捕
+			# 	1 = {
+			# 		modifier = {
+			# 			factor = 0
+			# 			OR = {
+			# 				#不知火 花耶将会变得温和。
+			# 				has_game_rule = {
+			# 					rule = KIV_ai_behavior
+			# 					option = KIV_shiranui_kaya_3
+			# 				}
+			# 				#不知火 花耶将会变得极端。
+			# 				has_game_rule = {
+			# 					rule = KIV_ai_behavior
+			# 					option = KIV_shiranui_kaya_4
+			# 				}
+			# 				#不知火 花耶将会尝试统一美乐蒂。
+			# 				has_game_rule = {
+			# 					rule = KIV_ai_behavior
+			# 					option = KIV_shiranui_kaya_5
+			# 				}
+			# 			}
+			# 		}
+			# 		country_event = {
+			# 			id = KIV_incomplete.5
+			# 			days = 35
+			# 		}
+			# 	}
+			# 	#小将
+			# 	1 = {
+			# 		modifier = {
+			# 			factor = 0
+			# 			OR = {
+			# 				#默认
+			# 				has_game_rule = {
+			# 					rule = KIV_ai_behavior
+			# 					option = KIV_RULE_OPTION_RANDOM
+			# 				}
+			# 				#不知火 花耶被捕。
+			# 				has_game_rule = {
+			# 					rule = KIV_ai_behavior
+			# 					option = KIV_shiranui_kaya_2
+			# 				}
+			# 			}
+			# 		}
+			# 		country_event = {
+			# 			id = kivnews.6
+			# 			days = 15
+			# 		}
+			# 		country_event = {
+			# 			id = KIV_incomplete.7
+			# 			days = 35
+			# 		}
+			# 		add_ai_strategy = {
+			# 			type = declare_war
+			# 			id = PCC
+			# 			value = 300
+			# 		}
+			# 	}
+			# }
 		}
-	}
-	fire_only_once = no
-	option = {
-		name = KIV_incomplete.3.a
 	}
 }
 
-country_event = {
-	id = KIV_incomplete.4
-	title = KIV_incomplete.4.t
-	desc = KIV_incomplete.4.desc
-	fire_only_once = yes
-	hidden = yes
-	trigger = {
-		tag = KIV
-		KIV = {
-			NOT = {
-				has_government = democratic
-			}
-			has_civil_war = no
-			democratic > 0.5
-		}
-	}
-	immediate = {
-		KIV = {
-			set_politics = {
-				ruling_party = democratic
-			}
-			add_to_array = {
-				IRIS_Historical_leaders_Array = token:KIV_qishenlin
-			}
-			#七神 凛
-			add_to_array = {
-				IRIS_Historical_leaders_2_Array = token:KIV_oki_aoi
-			}
-			#扇喜 葵
-			add_to_array = {
-				IRIS_Historical_leaders_voting_rate_Array = 1005
-			}
-			add_to_array = {
-				GetNameIRISHistoricalDate = global.year
-			}
-		}
-	}
-	fire_only_once = no
-	option = {
-		name = KIV_incomplete.4.a
-	}
-}
+# country_event = {
+# 	id = KIV_incomplete.4
+# 	title = KIV_incomplete.4.t
+# 	desc = KIV_incomplete.4.desc
+# 	fire_only_once = yes
+# 	hidden = yes
+# 	trigger = {
+# 		tag = KIV
+# 		KIV = {
+# 			NOT = {
+# 				has_government = democratic
+# 			}
+# 			has_civil_war = no
+# 			democratic > 0.5
+# 		}
+# 	}
+# 	immediate = {
+# 		KIV = {
+# 			set_politics = {
+# 				ruling_party = democratic
+# 			}
+# 			add_to_array = {
+# 				IRIS_Historical_leaders_Array = token:KIV_qishenlin
+# 			}
+# 			#七神 凛
+# 			add_to_array = {
+# 				IRIS_Historical_leaders_2_Array = token:KIV_oki_aoi
+# 			}
+# 			#扇喜 葵
+# 			add_to_array = {
+# 				IRIS_Historical_leaders_voting_rate_Array = 1005
+# 			}
+# 			add_to_array = {
+# 				GetNameIRISHistoricalDate = global.year
+# 			}
+# 		}
+# 	}
+# 	fire_only_once = no
+# 	option = {
+# 		name = KIV_incomplete.4.a
+# 	}
+# }
 
 country_event = {
 	id = KIV_incomplete.5
 	title = KIV_incomplete.5.t
 	desc = KIV_incomplete.5.desc
-	hidden = yes
+	# hidden = yes
 	fire_only_once = yes
 	is_triggered_only = yes
+	picture = GFX_KIV_incomplete_8
 	trigger = {
 		tag = KIV
 		NOT = {
@@ -391,7 +787,14 @@ country_event = {
 		}
 	}
 	immediate = {
+
+	}
+	option = {
+		name = KIV_incomplete.5.a
 		KIV = {
+			hidden_effect = {
+				set_cosmetic_tag = KIV_police_officer
+			}
 			KIV_shiranui_kaya = {
 				remove_unit_leader = yes
 			}
@@ -480,10 +883,6 @@ country_event = {
 			set_global_flag = KIV_shiranui_kaya_be_arrested
 		}
 	}
-	fire_only_once = no
-	option = {
-		name = KIV_incomplete.3.a
-	}
 }
 
 country_event = {
@@ -492,12 +891,20 @@ country_event = {
 	desc = KIV_incomplete.6.desc
 	fire_only_once = yes
 	is_triggered_only = yes
-	hidden = yes
+	# hidden = yes
 	trigger = {
 		tag = KIV
 	}
+	picture = GFX_KIV_incomplete_8
 	immediate = {
+
+	}
+	option = {
+		name = KIV_incomplete.6.a
 		KIV = {
+			hidden_effect = {
+				drop_cosmetic_tag = yes
+			}
 			retire_country_leader = yes
 			promote_character = {
 				character = KIV_qishenlin
@@ -530,10 +937,6 @@ country_event = {
 			}
 		}
 	}
-	fire_only_once = no
-	option = {
-		name = KIV_incomplete.6.a
-	}
 }
 
 country_event = {
@@ -542,17 +945,28 @@ country_event = {
 	desc = KIV_incomplete.7.desc
 	fire_only_once = yes
 	is_triggered_only = yes
-	hidden = yes
+	# hidden = yes
+	picture = GFX_KIV_incomplete_7
 	trigger = {
 		tag = KIV
 	}
 	immediate = {
+
+	}
+	option = {
+		name = KIV_incomplete.7.a
 		KIV = {
 			declare_war_on = {
 				target = PCC
 				type = annex_everything
 			}
-			add_ideas = KIV_WAR_TO_PCC
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				add_ideas = KIV_WAR_TO_PCC
+			}
+
 			division_template = {
 				name = "联邦学生军"
 				regiments = {
@@ -642,6 +1056,13 @@ country_event = {
 					tag = ODY
 				}
 			}
+			every_character = {
+				set_nationality = ROOT
+			}
+			send_equipment_fraction = {
+				value = 1
+				target = KIV
+			}
 			KIV = {
 				annex_country = {
 					target = PREV
@@ -650,8 +1071,286 @@ country_event = {
 			}
 		}
 	}
-	fire_only_once = no
+}
+
+#瓦尔基里的反扑
+country_event = {
+	id = KIV_incomplete.8
+	title = KIV_incomplete.8.t
+	desc = KIV_incomplete.8.desc
+	fire_only_once = yes
+	is_triggered_only = yes
+	# hidden = yes
+	trigger = {
+		tag = KIV
+	}
+	immediate = {
+
+	}
+	picture = GFX_KIV_incomplete_8
 	option = {
-		name = KIV_incomplete.7.a
+		name = KIV_incomplete.8.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				OR = {
+					#不知火 花耶将会变得温和。
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_3
+					}
+					#不知火 花耶将会变得极端。
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_4
+					}
+					#不知火 花耶将会尝试统一美乐蒂。
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_5
+					}
+				}
+			}
+		}
+		country_event = {
+			id = KIV_incomplete.5
+		}
+	}
+	option = {
+		name = KIV_incomplete.8.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				OR = {
+					#默认
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_RULE_OPTION_RANDOM
+					}
+					#不知火 花耶被捕。
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_2
+					}
+				}
+			}
+		}
+		country_event = {
+			id = kivnews.6
+			days = 3
+		}
+		country_event = {
+			id = KIV_incomplete.7
+			days = 10
+		}
+	}
+}
+
+
+#学园都市初步建立
+country_event = {
+	id = KIV_incomplete.9
+	title = KIV_incomplete.9.t
+	desc = KIV_incomplete.9.desc
+	fire_only_once = yes
+	is_triggered_only = yes
+	# hidden = yes
+	trigger = {
+		tag = KIV
+	}
+	picture = GFX_KIV_incomplete_7
+	immediate = {
+
+	}
+	option = {
+		name = KIV_incomplete.9.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				#不知火 花耶将会变得温和。
+				has_game_rule = {
+					rule = KIV_ai_behavior
+					option = KIV_shiranui_kaya_3
+				}
+			}
+		}
+		every_country = {
+			hidden_effect = {
+				set_variable = {
+					se_display = 21
+				}
+				SE_center = yes
+			}
+		}
+		set_portraits = {
+			character = KIV_shiranui_kaya
+			civilian = {
+				large = "gfx/leaders/KIV/KIV_shiranui_kaya_bad.dds"
+			}
+			army = {
+				large = "gfx/leaders/KIV/KIV_shiranui_kaya_bad.dds"
+			}
+		}
+		remove_ideas = KIV_idea_federal_student_union
+		add_country_leader_trait = KIV_president_general_student_union
+		add_country_leader_trait = KIV_true_superman
+		create_wargoal = {
+			target = TAU
+			type = annex_everything
+		}
+		create_wargoal = {
+			target = NEV
+			type = annex_everything
+		}
+		create_wargoal = {
+			target = BDC
+			type = annex_everything
+		}
+		add_ai_strategy = {
+			type = declare_war
+			id = NEV
+			value = 300
+		}
+	}
+	option = {
+		name = KIV_incomplete.9.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				#不知火 花耶将会变得极端。
+				OR = {
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_4
+					}
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_5
+					}
+				}
+			}
+		}
+		every_country = {
+			hidden_effect = {
+				set_variable = {
+					se_display = 23
+				}
+				SE_center = yes
+			}
+		}
+		set_portraits = {
+			character = KIV_shiranui_kaya
+			civilian = {
+				large = "gfx/leaders/KIV/KIV_shiranui_kaya_good.dds"
+			}
+			army = {
+				large = "gfx/leaders/KIV/KIV_shiranui_kaya_good.dds"
+			}
+		}
+		add_country_leader_role = {
+			character = KIV_shiranui_kaya
+			promote_leader = yes
+			country_leader = {
+				ideology = sub_Academia
+				traits = {
+					KIV_hua_xiaojiang
+					KIV_not_good_at_politics
+				}
+			}
+		}
+		add_popularity = {
+			ideology = democratic
+			popularity = 0.6
+		}
+		set_politics = {
+			ruling_party = democratic
+			elections_allowed = no
+		}
+		add_country_leader_trait = KIV_president_general_student_union
+		add_country_leader_trait = KIV_true_superman
+		create_wargoal = {
+			target = NEV
+			type = annex_everything
+		}
+		create_wargoal = {
+			target = BDC
+			type = annex_everything
+		}
+		add_ai_strategy = {
+			type = declare_war
+			id = NEV
+			value = 300
+		}
+	}
+}
+
+
+#建立一个更大的学院都市？
+country_event = {
+	id = KIV_incomplete.10
+	title = KIV_incomplete.10.t
+	desc = KIV_incomplete.10.desc
+	fire_only_once = yes
+	is_triggered_only = yes
+	# hidden = yes
+	trigger = {
+		tag = KIV
+	}
+	picture = GFX_KIV_incomplete_7
+	immediate = {
+
+	}
+	option = {
+		name = KIV_incomplete.10.a
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				NOT = {
+					has_game_rule = {
+						rule = KIV_ai_behavior
+						option = KIV_shiranui_kaya_5
+					}
+				}
+			}
+		}
+		every_country = {
+			limit = {
+				is_IRIS_melody_country = yes
+				OR = {
+					NOT = {
+						is_ally_with = KIV
+					}
+					NOT = {
+						TAG = KIV
+					}
+				}
+			}
+			KIV = {
+				create_wargoal = {
+					target = PREV
+					type = annex_everything
+				}
+			}
+		}
+	}
+	option = {
+		name = KIV_incomplete.10.b
+		ai_chance = {
+			base = 1
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = KIV_ai_behavior
+					option = KIV_shiranui_kaya_5
+				}
+			}
+		}
+		add_stability = 0.1
+		add_political_power = 150
 	}
 }

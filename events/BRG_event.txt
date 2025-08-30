@@ -19,7 +19,8 @@ country_event = {
 		OCF = {
 			set_autonomy = {
 				target = BRG
-				autonomous_state = ocf_federal_district
+				# autonomous_state = ocf_federal_district
+				autonomous_state = autonomy_integrated_puppet
 				end_wars = yes
 				end_civil_wars = yes
 			}
@@ -234,61 +235,85 @@ country_event = {
 			}
 			set_country_flag = BRG_civil_war_General_Douglas_MacArthur_flag #标记为 道格拉斯·麦克阿瑟
 			add_timed_idea = { idea = BRG_united_states_base_support days = 90 }
-			effect_tooltip = {
-				create_country_leader = {
-					name = "道格拉斯·麦克阿瑟"
-					desc = "BRG_General_Douglas_MacArthur_desc"
-					picture = GFX_BRG_General_Douglas_MacArthur
-					expire = "3100.1.1"
-					ideology = sub_Junta
-					traits = {
-						BRG_General_Douglas_MacArthur_traits
-					}
-				}
-				create_field_marshal = {
-					name = "道格拉斯·麦克阿瑟"
-					desc = "BRG_General_Douglas_MacArthur_desc"
-					portrait_path = "GFX_BRG_General_Douglas_MacArthur"
-					traits = { offensive_doctrine inspirational_leader panzer_leader }
-					skill = 6
-					attack_skill = 7
-					defense_skill = 6
-					planning_skill = 8
-					logistics_skill = 5
+			# effect_tooltip = {
+			# 	create_country_leader = {
+			# 		name = "道格拉斯·麦克阿瑟"
+			# 		desc = "BRG_General_Douglas_MacArthur_desc"
+			# 		picture = GFX_BRG_General_Douglas_MacArthur
+			# 		expire = "3100.1.1"
+			# 		ideology = sub_Junta
+			# 		traits = {
+			# 			BRG_General_Douglas_MacArthur_traits
+			# 		}
+			# 	}
+			# 	create_field_marshal = {
+			# 		name = "道格拉斯·麦克阿瑟"
+			# 		desc = "BRG_General_Douglas_MacArthur_desc"
+			# 		portrait_path = "GFX_BRG_General_Douglas_MacArthur"
+			# 		traits = { offensive_doctrine inspirational_leader panzer_leader }
+			# 		skill = 6
+			# 		attack_skill = 7
+			# 		defense_skill = 6
+			# 		planning_skill = 8
+			# 		logistics_skill = 5
+			# 	}
+			# }
+			BRG = {
+				set_nationality = {
+					target_country = PREV
+					character = BRG_General_Douglas_MacArthur
 				}
 			}
 			hidden_effect = {
-				create_country_leader = {
-					name = BRG_General_Douglas_MacArthur
-					desc = "BRG_General_Douglas_MacArthur_desc"
-					picture = GFX_BRG_General_Douglas_MacArthur
-					expire = "3100.1.1"
-					ideology = sub_Junta
-					traits = {
-						BRG_General_Douglas_MacArthur_traits
+				if = {
+					limit = {
+						has_character = BRG_General_Douglas_MacArthur
+					}
+					if = {
+						limit = {
+							BRG_General_Douglas_MacArthur = { has_ideology_group = neutrality }
+						}
+						set_politics = {
+							ruling_party =  neutrality elections_allowed = no
+						}
+						set_popularities = {
+							neutrality = 70
+							democratic = 20
+							fascism = 10
+							communism = 0
+							reactionism = 0
+						}
+						promote_character = {
+							character = BRG_General_Douglas_MacArthur
+							ideology = sub_Industrial_Liberalism
+						}
+						promote_character = {
+							character = BRG_General_Douglas_MacArthur
+							ideology = sub_Junta
+						}
 					}
 				}
-				create_field_marshal = {
-					name = "道格拉斯·麦克阿瑟"
-					desc = "BRG_General_Douglas_MacArthur_desc"
-					portrait_path = "GFX_BRG_General_Douglas_MacArthur"
-					traits = { offensive_doctrine inspirational_leader panzer_leader }
-					skill = 6
-					attack_skill = 7
-					defense_skill = 6
-					planning_skill = 8
-					logistics_skill = 5
-				}
-				set_politics = {
-					ruling_party =  neutrality elections_allowed = no
-				}
-				set_popularities = {
-					neutrality = 70
-					democratic = 20
-					fascism = 10
-					communism = 0
-					reactionism = 0
-				}
+				# create_country_leader = {
+				# 	name = BRG_General_Douglas_MacArthur
+				# 	desc = "BRG_General_Douglas_MacArthur_desc"
+				# 	picture = GFX_BRG_General_Douglas_MacArthur
+				# 	expire = "3100.1.1"
+				# 	ideology = sub_Junta
+				# 	traits = {
+				# 		BRG_General_Douglas_MacArthur_traits
+				# 	}
+				# }
+				# create_field_marshal = {
+				# 	name = "道格拉斯·麦克阿瑟"
+				# 	desc = "BRG_General_Douglas_MacArthur_desc"
+				# 	portrait_path = "GFX_BRG_General_Douglas_MacArthur"
+				# 	traits = { offensive_doctrine inspirational_leader panzer_leader }
+				# 	skill = 6
+				# 	attack_skill = 7
+				# 	defense_skill = 6
+				# 	planning_skill = 8
+				# 	logistics_skill = 5
+				# }
 			}
 			add_offsite_building = { type = arms_factory level = 3 }
 			division_template = {
@@ -530,7 +555,7 @@ country_event = {
 	option = {
 		name = BRG.4.c
 		ai_chance = {
-			base = 1
+			base = 0
 		}
 
 	}
@@ -607,26 +632,36 @@ country_event = {
 		ai_chance = {
 			factor = 1
 		}
-		every_country = {
-			limit = {
-				original_tag = BRG
-				is_ally_with = OCF
+		# every_country = {
+		# 	limit = {
+		# 		original_tag = BRG
+		# 		is_ally_with = OCF
+		# 	}
+		# 	THIS = {
+		# 		every_country = {
+		# 			limit = {
+		# 				original_tag = BRG
+		# 				is_ally_with = USF
+		# 			}
+		# 			PREV = {
+		# 				annex_country = { target = PREV transfer_troops = yes }
+		# 			}
+		# 			PREV.PREV = {
+		# 				transfer_navy = {
+		# 					target = OCF
+		# 				}
+		# 			}
+		# 		}
+		# 	}
+		# }
+		BRG = { annex_country = { target = BR1 transfer_troops = no } }
+		BR1 = {
+			transfer_navy = {
+				target = BRG
 			}
-			THIS = {
-				every_country = {
-					limit = {
-						original_tag = BRG
-						is_ally_with = USF
-					}
-					PREV = {
-						annex_country = { target = PREV transfer_troops = yes }
-					}
-					PREV.PREV = {
-						transfer_navy = {
-							target = OCF
-						}
-					}
-				}
+			set_nationality = {
+				target_country = USF
+				character = BRG_General_Douglas_MacArthur
 			}
 		}
 		country_event = { id = brgnews.5 days = 1 }

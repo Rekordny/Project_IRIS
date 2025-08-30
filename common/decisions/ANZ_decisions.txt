@@ -40,6 +40,32 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 	}
 	
+	#动员黑色先锋队
+	ANZ_militia_on_moving = {
+		allowed = {
+			original_tag = ANZ
+		}
+		activation = {
+			has_completed_focus = ANZ_ignite_the_black_flame
+		}
+		days_mission_timeout = 60
+		timeout_effect = {
+			add_power_balance_value = {
+				id = ANZ_industrialization_against_manalisation
+				value = 0.10 #0.15
+			}
+			custom_effect_tooltip = ANZ_militia_on_moving_tt
+			add_to_variable = {
+				anz_militia_power = 1
+			}
+		}
+		available = {
+			NOT = { has_power_balance = {
+				id = ANZ_industrialization_against_manalisation
+			} }
+		}
+	}
+	
 	#地方性妥协
 	ANZ_compromise_with_local = {
 		allowed = {
@@ -250,7 +276,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				has_country_flag = ANZ_ANZIO
 				power_balance_value = {
 					id = ANZ_industrialization_against_manalisation
-					value > 0.5
+					value > 0.19
 				}
 				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_nobles }
 				add = 5
@@ -259,7 +285,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				has_country_flag = ANZ_LOTHIAN
 				power_balance_value = {
 					id = ANZ_industrialization_against_manalisation
-					value > 0.5
+					value > 0.19
 				}
 				NOT = { has_completed_focus = ANZ_icorporation_of_diocese_of_aldrich }
 				add = 5
@@ -341,7 +367,7 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				has_country_flag = ANZ_ANZIO
 				power_balance_value = {
 					id = ANZ_industrialization_against_manalisation
-					value > 0.65
+					value > 0.19
 				}
 				NOT = { has_completed_focus = ANZ_ensure_the_loyalty_of_the_nobles }
 				add = 1
@@ -350,9 +376,13 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 				has_country_flag = ANZ_LOTHIAN
 				power_balance_value = {
 					id = ANZ_industrialization_against_manalisation
-					value > 0.65
+					value > 0.19
 				}
 				NOT = { has_completed_focus = ANZ_icorporation_of_diocese_of_aldrich }
+				add = 1
+			}
+			modifier = {
+				has_political_power < 4
 				add = 1
 			}
 		}
@@ -399,22 +429,22 @@ ANZ_industrialization_against_manalisation_decision_cat ={
 		}
 		ai_will_do = {
 			base = 0
-			modifier = {
-				has_country_flag = ANZ_ANZIO
-				power_balance_value = {
-					id = ANZ_industrialization_against_manalisation
-					value < 0.65
-				}
-				add = 1
-			}
-			modifier = {
-				has_country_flag = ANZ_LOTHIAN
-				power_balance_value = {
-					id = ANZ_industrialization_against_manalisation
-					value < 0.55
-				}
-				add = 2
-			}
+			#modifier = {
+			#	has_country_flag = ANZ_ANZIO
+			#	power_balance_value = {
+			#		id = ANZ_industrialization_against_manalisation
+			#		value < 0.65
+			#	}
+			#	add = 1
+			#}
+			#modifier = {
+			#	has_country_flag = ANZ_LOTHIAN
+			#	power_balance_value = {
+			#		id = ANZ_industrialization_against_manalisation
+			#		value < 0.55
+			#	}
+			#	add = 2
+			#}
 		}
 	}
 }
@@ -563,7 +593,6 @@ ANZ_secret_senshado_cat = {
 			}
 		}
 	}
-	
 }
 #去玛娜化
 ANZ_demanarization = {
@@ -1410,27 +1439,27 @@ ANZ_pizza_economy_cat = {
 					level = 1
 					instant_build = yes
 				}
-				add_building_construction = {
-					type = coastal_bunker
-					level = 1
-					instant_build = yes
-					province = {
-						all_provinces = yes
-						#limit_to_naval_base = yes
-				    }
-				}
+				#add_building_construction = {
+				#	type = coastal_bunker
+				#	level = 1
+				#	instant_build = yes
+				#	province = {
+				#		all_provinces = yes
+				#		#limit_to_naval_base = yes
+				#    }
+				#}
 				set_state_flag = ANZ_invest_nav_once
 			}
         }
 
 		ai_will_do = {
 			base = 100
-			modifier = {
-				factor = 0.5
-				FROM = {
-					has_state_flag = ANZ_invest_nav_once
-				}
-			}
+			#modifier = {
+			#	factor = 0.5
+			#	FROM = {
+			#		has_state_flag = ANZ_invest_nav_once
+			#	}
+			#}
 		}
 	}
 
@@ -1518,15 +1547,15 @@ ANZ_pizza_economy_cat = {
 						level = 1
 						instant_build = yes
 					}
-					add_building_construction = {
-						type = coastal_bunker
-						level = 1
-						instant_build = yes
-						province = {
-							all_provinces = yes
-							#limit_to_naval_base = yes
-						}
-					}
+					#add_building_construction = {
+					#	type = coastal_bunker
+					#	level = 1
+					#	instant_build = yes
+					#	province = {
+					#		all_provinces = yes
+					#		#limit_to_naval_base = yes
+					#	}
+					#}
 				}
 			}
         }
@@ -2064,10 +2093,167 @@ ANZ_scramble_for_troops_and_officers = {
 				NOT = { has_trait = ANZ_fazione_di_mana } 
 				NOT = { has_trait = ANZ_scuola_industriale }
 			}
+			NOT = {
+				has_active_mission = ANZ_securing_officers_always
+			}
 		}
-		cost = 50
-		days_remove = 50
-		remove_effect = {
+		cost = ANZ_securing_officers_cost
+		#days_remove = 50
+		#remove_effect = {
+		#	random_unit_leader = {
+		#		limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
+		#		if = {  
+		#			limit = { ANZ = { has_country_flag = ANZ_LOTHIAN } }
+		#			add_trait = { 
+		#				trait = ANZ_fazione_di_mana
+		#			}
+		#		}
+		#		else_if = {
+		#			limit = { ANZ = { has_country_flag = ANZ_ANZIO } }
+		#			add_trait = {
+		#				trait = ANZ_scuola_industriale
+		#			}
+		#		}
+		#	}
+		#	custom_effect_tooltip = ANZ_tooltip28
+		#	add_to_variable = {
+		#		anz_civil_our_power = 3
+		#	}
+		#}
+
+		complete_effect = {
+			activate_mission = ANZ_securing_officers_always
+			if = {
+				limit = {
+					has_country_flag = ANZ_ANZIO
+				}
+				custom_effect_tooltip = ANZ_securing_officers_anzio_tt
+			}
+			else_if = {
+				limit = {
+					has_country_flag = ANZ_LOTHIAN
+				}
+				custom_effect_tooltip = ANZ_securing_officers_lothian_tt
+			}
+			custom_effect_tooltip = ANZ_tooltip28
+			set_country_flag = ANZ_securing_officers_start
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+
+	#停止拉拢军官
+	ANZ_securing_officers_stop = {
+		allowed = {
+			original_tag = ANZ
+		}
+		visible = {
+			has_country_flag = ANZ_securing_officers_start
+			any_unit_leader = {
+				NOT = { has_trait = ANZ_fazione_di_mana } 
+				NOT = { has_trait = ANZ_scuola_industriale }
+			}
+		}
+		cost = 0
+		#days_remove = 50
+		#remove_effect = {
+		#	random_unit_leader = {
+		#		limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
+		#		if = {  
+		#			limit = { ANZ = { has_country_flag = ANZ_LOTHIAN } }
+		#			add_trait = { 
+		#				trait = ANZ_fazione_di_mana
+		#			}
+		#		}
+		#		else_if = {
+		#			limit = { ANZ = { has_country_flag = ANZ_ANZIO } }
+		#			add_trait = {
+		#				trait = ANZ_scuola_industriale
+		#			}
+		#		}
+		#	}
+		#	custom_effect_tooltip = ANZ_tooltip28
+		#	add_to_variable = {
+		#		anz_civil_our_power = 3
+		#	}
+		#}
+
+		complete_effect = {
+			clr_country_flag = ANZ_securing_officers_start
+			custom_effect_tooltip = ANZ_securing_officers_stop_tt
+		}
+		ai_will_do = {
+			base = 0
+		}
+	}
+
+	#恢复拉拢军官
+	ANZ_securing_officers_restart = {
+		allowed = {
+			original_tag = ANZ
+		}
+		visible = {
+			any_unit_leader = {
+				NOT = { has_trait = ANZ_fazione_di_mana } 
+				NOT = { has_trait = ANZ_scuola_industriale }
+			}
+			NOT = {
+				has_country_flag = ANZ_securing_officers_start
+			}
+			has_active_mission = ANZ_securing_officers_always
+		}
+		cost = 0
+		#days_remove = 50
+		#remove_effect = {
+		#	random_unit_leader = {
+		#		limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
+		#		if = {  
+		#			limit = { ANZ = { has_country_flag = ANZ_LOTHIAN } }
+		#			add_trait = { 
+		#				trait = ANZ_fazione_di_mana
+		#			}
+		#		}
+		#		else_if = {
+		#			limit = { ANZ = { has_country_flag = ANZ_ANZIO } }
+		#			add_trait = {
+		#				trait = ANZ_scuola_industriale
+		#			}
+		#		}
+		#	}
+		#	custom_effect_tooltip = ANZ_tooltip28
+		#	add_to_variable = {
+		#		anz_civil_our_power = 3
+		#	}
+		#}
+
+		complete_effect = {
+			set_country_flag = ANZ_securing_officers_start
+		}
+		ai_will_do = {
+			base = 10
+		}
+	}
+	
+	#持续拉拢军官
+	ANZ_securing_officers_always = {
+		allowed = {
+			original_tag = ANZ
+		}
+		activation = {
+			always = no
+		}
+		fire_only_once = no
+		days_mission_timeout = 50
+		is_good = yes
+		
+		available = {
+			NOT = { has_power_balance = {
+				id = ANZ_industrialization_against_manalisation
+			} }
+		}
+
+		timeout_effect = {
 			random_unit_leader = {
 				limit = { NOT = { has_trait = ANZ_fazione_di_mana } NOT = { has_trait = ANZ_scuola_industriale } }
 				if = {  
@@ -2087,9 +2273,32 @@ ANZ_scramble_for_troops_and_officers = {
 			add_to_variable = {
 				anz_civil_our_power = 3
 			}
-		}
-		ai_will_do = {
-			base = 10
+			
+			if = {
+				limit = {
+					has_country_flag = ANZ_securing_officers_start
+					any_unit_leader = {
+						NOT = { has_trait = ANZ_fazione_di_mana } 
+						NOT = { has_trait = ANZ_scuola_industriale }
+					}
+				}
+				set_temp_variable = {
+					ANZ_securing_officers_cost_temp = 0
+				}
+				subtract_from_temp_variable = {
+					ANZ_securing_officers_cost_temp = ANZ_securing_officers_cost
+				}
+				activate_mission = ANZ_securing_officers_always
+				add_political_power = ANZ_securing_officers_cost_temp
+			}
+			else_if = {
+				limit = {
+					NOT = {
+						has_country_flag = ANZ_securing_officers_start
+					}
+				}
+				custom_effect_tooltip = ANZ_securing_officers_stop_tt
+			}
 		}
 	}
 }

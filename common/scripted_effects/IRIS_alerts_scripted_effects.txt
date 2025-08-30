@@ -16,7 +16,7 @@ add_IRIS_alert = {
 		add_to_array = { array = IRIS_alerts value = alert_id index = 0 }
 		# add_to_array = { array = IRIS_alert_data value = alert_data index = 0 }
 
-		sound_effect = "alert_decision_new_sound"
+		hidden_effect = { sound_effect = "alert_decision_new_sound" }
 	}
 }
 
@@ -44,11 +44,13 @@ IRIS_alert_click = {
 		set_variable = { crisisoverview_window = 1 }
 	}
 	if = {
-		limit = {
-			check_variable = { alert_id = token:alert_USR_new_stamp }
-		}
+		limit = { check_variable = { alert_id = token:alert_USR_new_stamp } }
 		set_country_flag = USR_STAMP_ALBUM_ON
 		del_IRIS_alert = yes
+	}
+	if = {
+		limit = { check_variable = { alert_id = token:alert_OCF_federal_budget_proposal } }
+		OCF_activate_federal_budget_draft = yes
 	}
 }
 
@@ -56,7 +58,10 @@ IRIS_alert_click = {
 IRIS_alert_right_button = {
 	if = {
 		limit = {
-			NOT = { check_variable = { alert_id = token:alert_IRIS_world_conflict_marker } } #区域冲突
+			OR = {
+				NOT = { check_variable = { alert_id = token:alert_IRIS_world_conflict_marker } } #区域冲突
+				NOT = { check_variable = { alert_id = token:alert_OCF_federal_budget_proposal } } #制定预算草案
+			}
 		}
 		remove_from_array = { array = IRIS_alerts index = alert_idx }
 		# remove_from_array = { array = IRIS_alert_data index = alert_idx }

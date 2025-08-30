@@ -3027,6 +3027,7 @@ enable_ocf_improved_logistics = {
 
 #添加资金
 OCF_spending_funds_other = {
+	custom_effect_tooltip = OCF_spending_funds_change
 	custom_effect_tooltip = {
 		localization_key = OCF_SPENDING_FUNDS_TT
 		FUNDS = "[?temp_bill]"
@@ -3054,6 +3055,30 @@ OCF_spending_funds_temp = {
 		set_variable = {
 			OCF_fund_exchange_buttonType_var = 0
 		}
+	}
+
+	#关闭动画
+	if = {
+		limit = {
+			check_variable = { OCF_fund_exchange_buttonType_var = 0 }
+			NOT = { check_variable = { OCF_bank_bill_y = 140 } }
+		}
+		add_to_variable = { OCF_bank_bill_animation = 1 }
+		modulo_variable = { OCF_bank_bill_animation = 2 }
+		set_variable = { OCF_bank_bill_frame = 501501 }
+		set_variable = { OCF_bank_bill_y = 40 }
+	}
+
+	#打开动画
+	if = {
+		limit = {
+			check_variable = { OCF_fund_exchange_buttonType_var > 0 }
+			NOT = { check_variable = { OCF_bank_bill_y = 240 } }
+		}
+		add_to_variable = { OCF_bank_bill_animation = 1 }
+		modulo_variable = { OCF_bank_bill_animation = 2 }
+		set_variable = { OCF_bank_bill_frame = 1500500 }
+		set_variable = { OCF_bank_bill_y = 240 }
 	}
 }
 
@@ -3114,6 +3139,8 @@ OCF_obtain_banknotes_effect_estimation = {
 	multiply_variable = {
 		tax_impact_effect_estimation = 0.004
 	}
+	add_to_variable = { tax_impact_effect_estimation = 0.005 }
+	log = "[?tax_impact_effect_estimation]"
 	#获取民用工厂
 	set_variable = {
 		OCF_obtain_banknotes_variable = ROOT.num_of_civilian_factories
@@ -3475,6 +3502,7 @@ OCF_obtain_banknotes = {
 	multiply_variable = {
 		tax_impact_100 = 0.004
 	}
+	add_to_variable = { tax_impact_100 = 0.005 }
 	#加成数值
 	OCF_obtain_banknotes_threshold = yes
 	add_to_variable = {
@@ -3495,7 +3523,7 @@ OCF_obtain_banknotes = {
 #获取资金阈值（预估）
 OCF_obtain_banknotes_threshold_estimate = {
 	set_variable = {
-		OCF_obtain_banknotes_threshold_variable = 70		#这里就是基础值
+		OCF_obtain_banknotes_threshold_variable = 200		#这里就是基础值
 	}
 	#计算修正（税收上限修正）
 	add_to_variable = {
@@ -3526,7 +3554,7 @@ OCF_obtain_banknotes_threshold_estimate = {
 #获取资金阈值
 OCF_obtain_banknotes_threshold = {
 	set_variable = {
-		OCF_obtain_banknotes_threshold_variable = 70
+		OCF_obtain_banknotes_threshold_variable = 200
 	}
 	#计算修正（税收上限修正）
 	add_to_variable = {
@@ -4084,6 +4112,678 @@ OCF_proposal_can_passed_del_sign = {
 	}
 	del_IRIS_alert = yes
 }
+
+#联邦预算案剩余计算
+# OCF_remaining_calculation_federal_budget_scripted_effects = {
+# 	log = "检测完毕"
+# 	set_variable = { remaining_federal_budget = 0 }
+# 	add_to_variable = { remaining_federal_budget = OCF_federal_budget_proposal_gui_lists_1_array^num }
+# 	add_to_variable = { remaining_federal_budget = OCF_federal_budget_proposal_gui_lists_2_array^num }
+# 	add_to_variable = { remaining_federal_budget = OCF_federal_budget_proposal_gui_lists_3_array^num }
+# 	add_to_variable = { remaining_federal_budget = OCF_federal_budget_proposal_gui_lists_4_array^num }
+# 	add_to_variable = { remaining_federal_budget = OCF_federal_budget_proposal_gui_lists_5_array^num }
+
+
+# 	# set_variable = { remaining_federal_budget = total_federal_budget_proposal }
+# 	# subtract_from_variable = { remaining_federal_budget = current_federal_budget_points }
+# }
+
+#校准联邦预算
+# OCF_calibrate_federal_budget = {
+# 	set_variable = { highest_1_x_threshold = 3 }
+# 	add_to_variable = { highest_1_x_threshold = modifier@ocf_administrative_expenses_max_1 }
+# 	set_variable = { minimum_1_x_threshold = 6 }
+# 	add_to_variable = { minimum_1_x_threshold = modifier@ocf_administrative_expenses_min_1 }
+# 	set_variable = { highest_2_x_threshold = 3 }
+# 	add_to_variable = { highest_2_x_threshold = modifier@ocf_administrative_expenses_max_2 }
+# 	set_variable = { minimum_2_x_threshold = 6 }
+# 	add_to_variable = { minimum_2_x_threshold = modifier@ocf_administrative_expenses_min_2 }
+# 	set_variable = { highest_3_x_threshold = 3 }
+# 	add_to_variable = { highest_3_x_threshold = modifier@ocf_administrative_expenses_max_3 }
+# 	set_variable = { minimum_3_x_threshold = 6 }
+# 	add_to_variable = { minimum_3_x_threshold = modifier@ocf_administrative_expenses_min_3 }
+# 	set_variable = { highest_4_x_threshold = 3 }
+# 	add_to_variable = { highest_4_x_threshold = modifier@ocf_administrative_expenses_max_4 }
+# 	set_variable = { minimum_4_x_threshold = 6 }
+# 	add_to_variable = { minimum_4_x_threshold = modifier@ocf_administrative_expenses_min_4 }
+# 	set_variable = { highest_5_x_threshold = 3 }
+# 	add_to_variable = { highest_5_x_threshold = modifier@ocf_administrative_expenses_max_5 }
+# 	set_variable = { minimum_5_x_threshold = 6 }
+# 	add_to_variable = { minimum_5_x_threshold = modifier@ocf_administrative_expenses_min_5 }
+
+# 	if = {
+# 		limit = { highest_1_x_threshold > 10 }
+# 		set_variable = { highest_1_x_threshold = 10 }
+# 	}
+# 	if = {
+# 		limit = { highest_2_x_threshold > 10 }
+# 		set_variable = { highest_2_x_threshold = 10 }
+# 	}
+# 	if = {
+# 		limit = { highest_3_x_threshold > 10 }
+# 		set_variable = { highest_3_x_threshold = 10 }
+# 	}
+# 	if = {
+# 		limit = { highest_4_x_threshold > 10 }
+# 		set_variable = { highest_4_x_threshold = 10 }
+# 	}
+# 	if = {
+# 		limit = { highest_5_x_threshold > 10 }
+# 		set_variable = { highest_5_x_threshold = 10 }
+# 	}
+# 	if = {
+# 		limit = { minimum_1_x_threshold < 1 }
+# 		set_variable = { minimum_1_x_threshold = 1 }
+# 	}
+# 	if = {
+# 		limit = { minimum_2_x_threshold < 1 }
+# 		set_variable = { minimum_2_x_threshold = 1 }
+# 	}
+# 	if = {
+# 		limit = { minimum_3_x_threshold < 1 }
+# 		set_variable = { minimum_3_x_threshold = 1 }
+# 	}
+# 	if = {
+# 		limit = { minimum_4_x_threshold < 1 }
+# 		set_variable = { minimum_4_x_threshold = 1 }
+# 	}
+# 	if = {
+# 		limit = { minimum_5_x_threshold < 1 }
+# 		set_variable = { minimum_5_x_threshold = 1 }
+# 	}
+# }
+
+#启用联邦预算草案
+OCF_activate_federal_budget_draft = {
+	set_variable = { OCF_federal_budget_proposal = 1 }
+	set_temp_variable = { alert_id = token:alert_OCF_federal_budget_proposal }
+	add_IRIS_alert_unless_exists = yes
+}
+
+#关闭联邦预算草案
+OCF_close_federal_budget_draft = {
+	set_variable = { OCF_federal_budget_proposal = 0 }
+	set_temp_variable = { alert_id = token:alert_OCF_federal_budget_proposal }
+	del_IRIS_alert = yes
+}
+
+#开支
+OCF_expenses_1_max = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_1_MAX_TT
+		EXP = "[?OCF_expenses_1_max_temp]"
+	}
+	add_to_variable = { highest_1_x_threshold = OCF_expenses_1_max_temp }
+	if = {
+		limit = { check_variable = { highest_1_x_threshold > 10 } }
+		set_variable = { highest_1_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { highest_1_x_threshold < 1 } }
+		set_variable = { highest_1_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { highest_1_x_threshold < minimum_1_x_threshold } }
+		set_variable = { highest_1_x_threshold = minimum_1_x_threshold }
+	}
+}
+OCF_expenses_1_min = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_1_MIN_TT
+		EXP = "[?OCF_expenses_1_min_temp]"
+	}
+	add_to_variable = { minimum_1_x_threshold = OCF_expenses_1_min_temp }
+	if = {
+		limit = { check_variable = { minimum_1_x_threshold > 10 } }
+		set_variable = { minimum_1_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { minimum_1_x_threshold < 1 } }
+		set_variable = { minimum_1_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { minimum_1_x_threshold > highest_1_x_threshold } }
+		set_variable = { minimum_1_x_threshold = highest_1_x_threshold }
+	}
+}
+
+OCF_expenses_2_max = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_2_MAX_TT
+		EXP = "[?OCF_expenses_2_max_temp]"
+	}
+	add_to_variable = { highest_2_x_threshold = OCF_expenses_2_max_temp }
+	if = {
+		limit = { check_variable = { highest_2_x_threshold > 10 } }
+		set_variable = { highest_2_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { highest_2_x_threshold < 1 } }
+		set_variable = { highest_2_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { highest_2_x_threshold < minimum_2_x_threshold } }
+		set_variable = { highest_2_x_threshold = minimum_2_x_threshold }
+	}
+}
+OCF_expenses_2_min = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_2_MIN_TT
+		EXP = "[?OCF_expenses_2_min_temp]"
+	}
+	add_to_variable = { minimum_2_x_threshold = OCF_expenses_2_min_temp }
+	if = {
+		limit = { check_variable = { minimum_2_x_threshold > 10 } }
+		set_variable = { minimum_2_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { minimum_2_x_threshold < 1 } }
+		set_variable = { minimum_2_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { minimum_2_x_threshold > highest_2_x_threshold } }
+		set_variable = { minimum_2_x_threshold = highest_2_x_threshold }
+	}
+}
+
+OCF_expenses_3_max = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_3_MAX_TT
+		EXP = "[?OCF_expenses_3_max_temp]"
+	}
+	add_to_variable = { highest_3_x_threshold = OCF_expenses_3_max_temp }
+	if = {
+		limit = { check_variable = { highest_3_x_threshold > 10 } }
+		set_variable = { highest_3_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { highest_3_x_threshold < 1 } }
+		set_variable = { highest_3_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { highest_3_x_threshold < minimum_3_x_threshold } }
+		set_variable = { highest_3_x_threshold = minimum_3_x_threshold }
+	}
+}
+OCF_expenses_3_min = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_3_MIN_TT
+		EXP = "[?OCF_expenses_3_min_temp]"
+	}
+	add_to_variable = { minimum_3_x_threshold = OCF_expenses_3_min_temp }
+	if = {
+		limit = { check_variable = { minimum_3_x_threshold > 10 } }
+		set_variable = { minimum_3_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { minimum_3_x_threshold < 1 } }
+		set_variable = { minimum_3_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { minimum_3_x_threshold > highest_3_x_threshold } }
+		set_variable = { minimum_3_x_threshold = highest_3_x_threshold }
+	}
+}
+
+OCF_expenses_4_max = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_4_MAX_TT
+		EXP = "[?OCF_expenses_4_max_temp]"
+	}
+	add_to_variable = { highest_4_x_threshold = OCF_expenses_4_max_temp }
+	if = {
+		limit = { check_variable = { highest_4_x_threshold > 10 } }
+		set_variable = { highest_4_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { highest_4_x_threshold < 1 } }
+		set_variable = { highest_4_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { highest_4_x_threshold < minimum_4_x_threshold } }
+		set_variable = { highest_4_x_threshold = minimum_4_x_threshold }
+	}
+}
+OCF_expenses_4_min = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_4_MIN_TT
+		EXP = "[?OCF_expenses_4_min_temp]"
+	}
+	add_to_variable = { minimum_4_x_threshold = OCF_expenses_4_min_temp }
+	if = {
+		limit = { check_variable = { minimum_4_x_threshold > 10 } }
+		set_variable = { minimum_4_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { minimum_4_x_threshold < 1 } }
+		set_variable = { minimum_4_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { minimum_4_x_threshold > highest_4_x_threshold } }
+		set_variable = { minimum_4_x_threshold = highest_4_x_threshold }
+	}
+}
+
+OCF_expenses_5_max = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_5_MAX_TT
+		EXP = "[?OCF_expenses_5_max_temp]"
+	}
+	add_to_variable = { highest_5_x_threshold = OCF_expenses_5_max_temp }
+	if = {
+		limit = { check_variable = { highest_5_x_threshold > 10 } }
+		set_variable = { highest_5_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { highest_5_x_threshold < 1 } }
+		set_variable = { highest_5_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { highest_5_x_threshold < minimum_5_x_threshold } }
+		set_variable = { highest_5_x_threshold = minimum_5_x_threshold }
+	}
+}
+OCF_expenses_5_min = {
+	custom_effect_tooltip = {
+		localization_key = OCF_EXPENSES_5_MIN_TT
+		EXP = "[?OCF_expenses_5_min_temp]"
+	}
+	add_to_variable = { minimum_5_x_threshold = OCF_expenses_5_min_temp }
+	if = {
+		limit = { check_variable = { minimum_5_x_threshold > 10 } }
+		set_variable = { minimum_5_x_threshold = 10 }
+	}
+	if = {
+		limit = { check_variable = { minimum_5_x_threshold < 1 } }
+		set_variable = { minimum_5_x_threshold = 1 }
+	}
+	if = {
+		limit = { check_variable = { minimum_5_x_threshold > highest_5_x_threshold } }
+		set_variable = { minimum_5_x_threshold = highest_5_x_threshold }
+	}
+}
+
+OCF_total_federal_budget_proposal = {
+	custom_effect_tooltip = {
+		localization_key = OCF_TOTAL_FEDERAL_BUDGET_PROPOSAL_TT
+		EXP = "[?OCF_total_federal_budget_proposal_temp]"
+	}
+	add_to_variable = { total_federal_budget_proposal = OCF_total_federal_budget_proposal_temp }
+
+	set_variable = { total_federal_budget_proposal_mini = minimum_1_x_threshold }
+	add_to_variable = { total_federal_budget_proposal_mini = minimum_2_x_threshold }
+	add_to_variable = { total_federal_budget_proposal_mini = minimum_3_x_threshold }
+	add_to_variable = { total_federal_budget_proposal_mini = minimum_4_x_threshold }
+	add_to_variable = { total_federal_budget_proposal_mini = minimum_5_x_threshold }
+	if = {
+		limit = { check_variable = { total_federal_budget_proposal < minimum_5_x_threshold } }
+		set_variable = { total_federal_budget_proposal = minimum_5_x_threshold }
+	}
+}
+
+OCF_ai_financial_budget_formulation = {
+	#行政开支 4
+	set_temp_variable = { sign_click_temp_1 = highest_1_x_threshold }
+	add_to_temp_variable = { sign_click_temp_1 = minimum_1_x_threshold }
+	multiply_temp_variable = { sign_click_temp_1 = 0.5 }
+	round_temp_variable = sign_click_temp_1
+	add_to_temp_variable = { sign_click_temp_1 = 1 }
+
+	subtract_from_temp_variable = { sign_click_temp_1 = 4 }
+	if = {
+		limit = { sign_click_temp_1 > 0 }
+		set_temp_variable = { OCF_federal_budget_proposal_political_power_factor_temp = 0.06 }
+		set_temp_variable = { OCF_federal_budget_proposal_drift_defence_factor_temp = 0.12 }
+	}
+	else = {
+		set_temp_variable = { OCF_federal_budget_proposal_political_power_factor_temp = 0.12 }
+		set_temp_variable = { OCF_federal_budget_proposal_drift_defence_factor_temp = 0.24 }
+	}
+	multiply_temp_variable = { OCF_federal_budget_proposal_political_power_factor_temp = sign_click_temp_1 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_drift_defence_factor_temp = sign_click_temp_1 }
+
+	set_variable = {#政治点数
+		OCF_federal_budget_proposal_political_power_factor = OCF_federal_budget_proposal_political_power_factor_temp
+		tooltip = political_power_factor_tt
+	}
+	set_variable = {#意识形态抵制力度
+		OCF_federal_budget_proposal_drift_defence_factor = OCF_federal_budget_proposal_drift_defence_factor_temp
+		tooltip = drift_defence_factor_tt
+	}
+
+	#政府开支 5
+	set_temp_variable = { sign_click_temp_2 = highest_2_x_threshold }
+	add_to_temp_variable = { sign_click_temp_2 = minimum_2_x_threshold }
+	multiply_temp_variable = { sign_click_temp_2 = 0.5 }
+	round_temp_variable = sign_click_temp_2
+	add_to_temp_variable = { sign_click_temp_2 = 1 }
+
+	subtract_from_temp_variable = { sign_click_temp_2 = 5 }
+	if = {
+		limit = { sign_click_temp_2 > 0 }
+		set_temp_variable = { OCF_federal_budget_proposal_trade_opinion_factor_temp = 0.05 }
+		set_temp_variable = { OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp = -0.08 }
+		set_temp_variable = { OCF_federal_budget_proposal_opinion_gain_monthly_factor_temp = 0.03 }
+	}
+	else = {
+		set_temp_variable = { OCF_federal_budget_proposal_trade_opinion_factor_temp = 0.1 }
+		set_temp_variable = { OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp = -0.16 }
+		set_temp_variable = { OCF_federal_budget_proposal_opinion_gain_monthly_factor_temp = 0.06 }
+	}
+	multiply_temp_variable = { OCF_federal_budget_proposal_trade_opinion_factor_temp = sign_click_temp_2 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp = sign_click_temp_2 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_opinion_gain_monthly_factor_temp = sign_click_temp_2 }
+
+	set_variable = {#贸易协定关系修正
+		OCF_federal_budget_proposal_trade_opinion_factor = OCF_federal_budget_proposal_trade_opinion_factor_temp
+		tooltip = trade_opinion_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_mobilization_laws_cost_factor = OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp
+		tooltip = mobilization_laws_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_trade_laws_cost_factor = OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp
+		tooltip = trade_laws_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_economy_cost_factor = OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp
+		tooltip = economy_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_political_advisor_cost_factor = OCF_federal_budget_proposal_mobilization_laws_cost_factor_temp
+		tooltip = political_advisor_cost_factor_tt
+	}
+	set_variable = {#改善关系
+		OCF_federal_budget_proposal_opinion_gain_monthly_factor = OCF_federal_budget_proposal_opinion_gain_monthly_factor_temp
+		tooltip = opinion_gain_monthly_factor_tt
+	}
+
+	#军事开支 3
+	set_temp_variable = { sign_click_temp_3 = highest_3_x_threshold }
+	add_to_temp_variable = { sign_click_temp_3 = minimum_3_x_threshold }
+	multiply_temp_variable = { sign_click_temp_3 = 0.5 }
+	round_temp_variable = sign_click_temp_3
+	add_to_temp_variable = { sign_click_temp_3 = 1 }
+
+	subtract_from_temp_variable = { sign_click_temp_3 = 3 }
+	if = {
+		limit = { sign_click_temp_3 > 0 }
+		set_temp_variable = { OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp = -0.08 }
+		set_temp_variable = { OCF_federal_budget_proposal_army_org_factor_temp = 0.02 }
+		set_temp_variable = { OCF_federal_budget_proposal_army_morale_factor_temp = 0.03 }
+		set_temp_variable = { OCF_federal_budget_proposal_industrial_capacity_factory_temp = 0.05 }
+	}
+	else = {
+		set_temp_variable = { OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp = -0.16 }
+		set_temp_variable = { OCF_federal_budget_proposal_army_org_factor_temp = 0.04 }
+		set_temp_variable = { OCF_federal_budget_proposal_army_morale_factor_temp = 0.06 }
+		set_temp_variable = { OCF_federal_budget_proposal_industrial_capacity_factory_temp = 0.1 }
+	}
+	multiply_temp_variable = { OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp = sign_click_temp_3 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_army_org_factor_temp = sign_click_temp_3 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_army_morale_factor_temp = sign_click_temp_3 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_industrial_capacity_factory_temp = sign_click_temp_3 }
+
+	set_variable = {#制造商花费
+		OCF_federal_budget_proposal_tank_manufacturer_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = tank_manufacturer_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_naval_manufacturer_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = naval_manufacturer_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_aircraft_manufacturer_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = aircraft_manufacturer_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_materiel_manufacturer_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = materiel_manufacturer_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_industrial_concern_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = industrial_concern_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_theorist_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = theorist_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_army_chief_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = army_chief_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_promote_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = promote_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_navy_chief_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = navy_chief_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_air_chief_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = air_chief_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_high_command_cost_factor = OCF_federal_budget_proposal_tank_manufacturer_cost_factor_temp
+		tooltip = high_command_cost_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_army_org_factor = OCF_federal_budget_proposal_army_org_factor_temp
+		tooltip = army_org_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_army_morale_factor = OCF_federal_budget_proposal_army_morale_factor_temp
+		tooltip = army_morale_factor_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_industrial_capacity_factory = OCF_federal_budget_proposal_industrial_capacity_factory_temp
+		tooltip = industrial_capacity_factory_tt
+	}
+	set_variable = {#
+		OCF_federal_budget_proposal_industrial_capacity_dockyard = OCF_federal_budget_proposal_industrial_capacity_factory_temp
+		tooltip = industrial_capacity_dockyard_tt
+	}
+
+	#社会开支 6
+	set_temp_variable = { sign_click_temp_4 = highest_4_x_threshold }
+	add_to_temp_variable = { sign_click_temp_4 = minimum_4_x_threshold }
+	multiply_temp_variable = { sign_click_temp_4 = 0.5 }
+	round_temp_variable = sign_click_temp_4
+	add_to_temp_variable = { sign_click_temp_4 = 1 }
+
+	subtract_from_temp_variable = { sign_click_temp_4 = 6 }
+	if = {
+		limit = { sign_click_temp_4 > 0 }
+		set_temp_variable = { OCF_federal_budget_proposal_consumer_goods_factor_temp = -0.06 }
+		set_temp_variable = { OCF_federal_budget_proposal_resistance_decay_temp = 0.07 }
+		set_temp_variable = { OCF_federal_budget_proposal_production_speed_buildings_factor_temp = 0.05 }
+		set_temp_variable = { OCF_federal_budget_proposal_research_speed_factor_temp = 0.04 }
+	}
+	else = {
+		set_temp_variable = { OCF_federal_budget_proposal_trade_opinion_factor_temp = -0.12 }
+		set_temp_variable = { OCF_federal_budget_proposal_resistance_decay_temp = 0.14 }
+		set_temp_variable = { OCF_federal_budget_proposal_production_speed_buildings_factor_temp = 0.1 }
+		set_temp_variable = { OCF_federal_budget_proposal_research_speed_factor_temp = 0.08 }
+	}
+	multiply_temp_variable = { OCF_federal_budget_proposal_consumer_goods_factor_temp = sign_click_temp_4 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_resistance_decay_temp = sign_click_temp_4 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_production_speed_buildings_factor_temp = sign_click_temp_4 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_research_speed_factor_temp = sign_click_temp_4 }
+
+	set_variable = {#生活消费品
+		OCF_federal_budget_proposal_consumer_goods_factor = OCF_federal_budget_proposal_consumer_goods_factor_temp
+		tooltip = consumer_goods_factor_tt
+	}
+	# set_variable = {#抵抗下降速度
+	# 	OCF_federal_budget_proposal_resistance_decay = OCF_federal_budget_proposal_resistance_decay_temp
+	# 	tooltip = resistance_decay_tt
+	# }
+	set_variable = {#顺从度增长速度
+		OCF_federal_budget_proposal_compliance_growth = OCF_federal_budget_proposal_resistance_decay_temp
+		tooltip = compliance_growth_tt
+	}
+	set_variable = {#建造
+		OCF_federal_budget_proposal_production_speed_buildings_factor = OCF_federal_budget_proposal_production_speed_buildings_factor_temp
+		tooltip = production_speed_buildings_factor_tt
+	}
+	set_variable = {#科研
+		OCF_federal_budget_proposal_research_speed_factor = OCF_federal_budget_proposal_research_speed_factor_temp
+		tooltip = research_speed_factor_tt
+	}
+
+	#其他开支 5
+	set_temp_variable = { sign_click_temp_5 = highest_5_x_threshold }
+	add_to_temp_variable = { sign_click_temp_5 = minimum_5_x_threshold }
+	multiply_temp_variable = { sign_click_temp_5 = 0.5 }
+	round_temp_variable = sign_click_temp_5
+	add_to_temp_variable = { sign_click_temp_5 = 1 }
+
+	subtract_from_temp_variable = { sign_click_temp_5 = 3 }
+	if = {
+		limit = { sign_click_temp_5 > 0 }
+		set_temp_variable = { OCF_federal_budget_proposal_ocf_tax_cap_correction_temp = 5 }
+		set_temp_variable = { OCF_federal_budget_proposal_ocf_tax_revenue_stability_correction_temp = -0.11 }
+		set_temp_variable = { OCF_federal_budget_proposal_ocf_capital_expenditure_correction_temp = -0.05 }
+	}
+	else = {
+		set_temp_variable = { OCF_federal_budget_proposal_ocf_tax_cap_correction_temp = 10 }
+		set_temp_variable = { OCF_federal_budget_proposal_ocf_tax_revenue_stability_correction_temp = -0.22 }
+		set_temp_variable = { OCF_federal_budget_proposal_ocf_capital_expenditure_correction_temp = -0.1 }
+	}
+	multiply_temp_variable = { OCF_federal_budget_proposal_ocf_tax_cap_correction_temp = sign_click_temp_5 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_ocf_tax_revenue_stability_correction_temp = sign_click_temp_5 }
+	multiply_temp_variable = { OCF_federal_budget_proposal_ocf_capital_expenditure_correction_temp = sign_click_temp_5 }
+
+	set_variable = {#税收上限修正
+		OCF_federal_budget_proposal_ocf_tax_cap_correction = OCF_federal_budget_proposal_ocf_tax_cap_correction_temp
+		tooltip = ocf_tax_cap_correction_tt
+	}
+	set_variable = {#抬高税收稳定度修正
+		OCF_federal_budget_proposal_ocf_tax_revenue_stability_correction = OCF_federal_budget_proposal_ocf_tax_revenue_stability_correction_temp
+		tooltip = ocf_tax_revenue_stability_correction_tt
+	}
+	set_variable = {#资金总开支修正
+		OCF_federal_budget_proposal_ocf_capital_expenditure_correction = OCF_federal_budget_proposal_ocf_capital_expenditure_correction_temp
+		tooltip = ocf_capital_expenditure_correction_tt
+	}
+	set_country_flag = OCF_sign_trigger_5_flag
+}
+
+
+#载入预算案最低值进度
+OCF_loading_minimum_budget_progress = {
+	clear_array = OCF_federal_budget_proposal_gui_lists_1_array
+	clear_array = OCF_federal_budget_proposal_gui_lists_2_array
+	clear_array = OCF_federal_budget_proposal_gui_lists_3_array
+	clear_array = OCF_federal_budget_proposal_gui_lists_4_array
+	clear_array = OCF_federal_budget_proposal_gui_lists_5_array
+	clear_array = OCF_federal_budget_proposal_gui_lists_1_array_nonnull
+	clear_array = OCF_federal_budget_proposal_gui_lists_2_array_nonnull
+	clear_array = OCF_federal_budget_proposal_gui_lists_3_array_nonnull
+	clear_array = OCF_federal_budget_proposal_gui_lists_4_array_nonnull
+	clear_array = OCF_federal_budget_proposal_gui_lists_5_array_nonnull
+
+
+	#载入最低值-黄点
+	for_loop_effect = {
+		start = 0
+		end = minimum_1_x_threshold
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_1_array = 1 }
+	}
+	for_each_loop = {
+		array = OCF_federal_budget_proposal_gui_lists_1_array
+		value = v
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_1_array_nonnull = v }
+	}
+	set_temp_variable = { spare_temp = 10 }
+	subtract_from_temp_variable = { spare_temp = minimum_1_x_threshold }
+	for_loop_effect = {
+		start = 0
+		end = spare_temp
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_1_array = 3 }
+	}
+
+
+	for_loop_effect = {
+		start = 0
+		end = minimum_2_x_threshold
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_2_array = 1 }
+	}
+	for_each_loop = {
+		array = OCF_federal_budget_proposal_gui_lists_2_array
+		value = v
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_2_array_nonnull = v }
+	}
+	set_temp_variable = { spare_temp = 10 }
+	subtract_from_temp_variable = { spare_temp = minimum_2_x_threshold }
+	for_loop_effect = {
+		start = 0
+		end = spare_temp
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_2_array = 3 }
+	}
+
+
+	for_loop_effect = {
+		start = 0
+		end = minimum_3_x_threshold
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_3_array = 1 }
+	}
+	for_each_loop = {
+		array = OCF_federal_budget_proposal_gui_lists_3_array
+		value = v
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_3_array_nonnull = v }
+	}
+	set_temp_variable = { spare_temp = 10 }
+	subtract_from_temp_variable = { spare_temp = minimum_3_x_threshold }
+	for_loop_effect = {
+		start = 0
+		end = spare_temp
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_3_array = 3 }
+	}
+
+
+	for_loop_effect = {
+		start = 0
+		end = minimum_4_x_threshold
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_4_array = 1 }
+	}
+	for_each_loop = {
+		array = OCF_federal_budget_proposal_gui_lists_4_array
+		value = v
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_4_array_nonnull = v }
+	}
+	set_temp_variable = { spare_temp = 10 }
+	subtract_from_temp_variable = { spare_temp = minimum_4_x_threshold }
+	for_loop_effect = {
+		start = 0
+		end = spare_temp
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_4_array = 3 }
+	}
+	# log = "社会开支最小值为：[?minimum_4_x_threshold]"
+	# log = "新增[?spare_temp]个空位"
+
+
+	for_loop_effect = {
+		start = 0
+		end = minimum_5_x_threshold
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_5_array = 1 }
+	}
+	for_each_loop = {
+		array = OCF_federal_budget_proposal_gui_lists_5_array
+		value = v
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_5_array_nonnull = v }
+	}
+	set_temp_variable = { spare_temp = 10 }
+	subtract_from_temp_variable = { spare_temp = minimum_5_x_threshold }
+	for_loop_effect = {
+		start = 0
+		end = spare_temp
+		add_to_array = { OCF_federal_budget_proposal_gui_lists_5_array = 3 }
+	}
+}
+
 
 ########     ###    ########  ######## ##    ##    ########  ######## ##          ###    ######## ####  #######  ##    ##  ######     ########  ######## ######## ########  ########  ######  ##     ##
 ##     ##   ## ##   ##     ##    ##     ##  ##     ##     ## ##       ##         ## ##      ##     ##  ##     ## ###   ## ##    ##    ##     ## ##       ##       ##     ## ##       ##    ## ##     ##
@@ -7939,9 +8639,18 @@ OCF_government_authority = {
 	add_to_variable = {
 		OCF_government_authority_variable = OCF_gridbox_seat_array_original_relationship_variable_8
 	}
+	# divide_variable = {
+	# 	OCF_government_authority_variable = 0.64
+	# }
 	divide_variable = {
-		OCF_government_authority_variable = 0.64
+		OCF_government_authority_variable = 0.6 #降低难度变为0.5
 	}
+
+	set_temp_variable = { ocf_authority_factor_temp = 1 }
+	add_to_temp_variable = { ocf_authority_factor_temp = modifier@ocf_authority_factor }
+	multiply_variable = { OCF_government_authority_variable = ocf_authority_factor_temp }
+	add_to_variable = { OCF_government_authority_variable = modifier@ocf_authority }
+
 	multiply_variable = {
 		OCF_government_authority_variable = OCF_stability_variable_30
 	}
@@ -7992,6 +8701,17 @@ OCF_government_authority = {
 	}
 	multiply_variable = {
 		OCF_federal_government_political_power_factor = 0.01
+	}
+
+
+
+	if = {
+		limit = { check_variable = { OCF_government_authority_variable < 0 } }
+		set_variable = { OCF_government_authority_variable = 0 }
+	}
+	if = {
+		limit = { check_variable = { OCF_government_authority_variable > 100 } }
+		set_variable = { OCF_government_authority_variable = 100 }
 	}
 }
 
@@ -10511,7 +11231,7 @@ OCF_show_all_party_leaders_1 = {
 	}
 	clear_array = OCF_Party_SubGUI_2_lists_array
 	add_to_array = {
-		OCF_Party_SubGUI_2_lists_array = token:OCF_Yasumori_Minori
+		OCF_Party_SubGUI_2_lists_array = token:OCF_Labor_Conference
 	}
 }
 
@@ -10533,14 +11253,17 @@ OCF_show_all_party_leaders_3 = {
 	# add_to_array = {
 	# 	OCF_Party_SubGUI_2_lists_array = token:OCF_Alisa_Mikhaylovna_Kujo
 	# }
+	# add_to_array = {
+	# 	OCF_Party_SubGUI_2_lists_array = token:OCF_Megumi
+	# }
+	# add_to_array = {
+	# 	OCF_Party_SubGUI_2_lists_array = token:OCF_Rumi
+	# }
+	# add_to_array = {
+	# 	OCF_Party_SubGUI_2_lists_array = token:OCF_Azumi
+	# }
 	add_to_array = {
-		OCF_Party_SubGUI_2_lists_array = token:OCF_Megumi
-	}
-	add_to_array = {
-		OCF_Party_SubGUI_2_lists_array = token:OCF_Rumi
-	}
-	add_to_array = {
-		OCF_Party_SubGUI_2_lists_array = token:OCF_Azumi
+		OCF_Party_SubGUI_2_lists_array = token:OCF_Algei_Seven_Kai_Delamond
 	}
 }
 
@@ -10747,10 +11470,10 @@ OCF_refresh_party_leader = {
 		limit = {
 			has_country_flag = OCF_control_government_flag_1
 			NOT = {
-				has_idea = OCF_idea_Yasumori_Minori
+				has_idea = OCF_Labor_Conference
 			}
 		}
-		add_ideas = OCF_idea_Yasumori_Minori
+		add_ideas = OCF_Labor_Conference
 	}
 	if = {
 		limit = {
@@ -10823,10 +11546,10 @@ OCF_refresh_party_leader = {
 		limit = {
 			has_country_flag = OCF_control_government_flag_1_yes
 			NOT = {
-				has_idea = OCF_idea_Yasumori_Minori
+				has_idea = OCF_Labor_Conference
 			}
 		}
-		add_ideas = OCF_idea_Yasumori_Minori
+		add_ideas = OCF_Labor_Conference
 	}
 	if = {
 		limit = {
@@ -11310,6 +12033,7 @@ OCF_elected_faction_8 = {
 ##     ##  ######     ##     #######  ##     ## ######## ########    ##        ######   ######## ##    ## ######## ##     ## ##     ##    ##    ########       ##    ##     ## ########     ######   ##     ## ##     ## ##        ##     ##    ######## #### ##    ## ########     ######  ########  ######   ##     ## ######## ##    ##    ##     ######
 #生成派系支持历史折线图  只要他在跑，就别动他！( ˘•ω•˘ )
 OCF_generate_factional_support_for_historical_line_charts = {
+	@Y_COORDINATE_OFFSET_MULTIPLIER_FOR_PARLIAMENTARY_HISTORY = 1.5
 	OCF_tax_revenue_civil_factories_correctionresh_national_support_rate = yes
 	add_to_variable = {
 		OCF_SAMPLE_count = 1
@@ -11317,54 +12041,71 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	set_variable = {
 		OCF_SAMPLE_TIME = global.date
 	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_1 = OCF_SAMPLE_y_position_1
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_1 = OCF_SAMPLE_y_position_1
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_1 = OCF_national_support_proportion^1
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_2 = OCF_SAMPLE_y_position_2
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_2 = OCF_national_support_proportion^2
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_3 = OCF_SAMPLE_y_position_3
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_3 = OCF_national_support_proportion^3
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_4 = OCF_SAMPLE_y_position_4
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_4 = OCF_national_support_proportion^4
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_5 = OCF_SAMPLE_y_position_5
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_5 = OCF_national_support_proportion^5
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_6 = OCF_SAMPLE_y_position_6
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_6 = OCF_national_support_proportion^6
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_7 = OCF_SAMPLE_y_position_7
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_7 = OCF_national_support_proportion^7
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_last_y_position_8 = OCF_SAMPLE_y_position_8
+	# }
+	# set_variable = {
+	# 	OCF_SAMPLE_y_position_8 = OCF_national_support_proportion^8
+	# }
+
+	for_loop_effect = {
+		start = 1
+		end = 9
+		value = temp
+
+		meta_effect = {
+			text = {
+				set_variable = { OCF_SAMPLE_last_y_position_[V] = OCF_SAMPLE_y_position_[V] }
+				set_variable = { OCF_SAMPLE_y_position_[V] = OCF_national_support_proportion^[V] }
+				multiply_variable = { OCF_SAMPLE_y_position_[V] = 2 }
+				# log = "[V]"
+			}
+			V = "[?temp]"
+		}
 	}
-	set_variable = {
-		OCF_SAMPLE_y_position_1 = OCF_national_support_proportion^1
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_2 = OCF_SAMPLE_y_position_2
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_2 = OCF_national_support_proportion^2
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_3 = OCF_SAMPLE_y_position_3
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_3 = OCF_national_support_proportion^3
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_4 = OCF_SAMPLE_y_position_4
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_4 = OCF_national_support_proportion^4
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_5 = OCF_SAMPLE_y_position_5
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_5 = OCF_national_support_proportion^5
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_6 = OCF_SAMPLE_y_position_6
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_6 = OCF_national_support_proportion^6
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_7 = OCF_SAMPLE_y_position_7
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_7 = OCF_national_support_proportion^7
-	}
-	set_variable = {
-		OCF_SAMPLE_last_y_position_8 = OCF_SAMPLE_y_position_8
-	}
-	set_variable = {
-		OCF_SAMPLE_y_position_8 = OCF_national_support_proportion^8
-	}
+
 	if = {
 		limit = {
 			check_variable = {
@@ -11476,12 +12217,28 @@ OCF_generate_factional_support_for_historical_line_charts = {
 			index = 0
 		}
 	}
+	# for_loop_effect = {
+	# 	start = 1
+	# 	end = 8
+	# 	value = temp
+
+	# 	meta_effect = {
+	# 		text = {
+	# 			set_temp_variable = { OCF_SAMPLE_last_y_position_[V] = OCF_SAMPLE_last_y_position_[V] }
+	# 			multiply_temp_variable = { OCF_offset_[V] = @Y_COORDINATE_OFFSET_MULTIPLIER_FOR_PARLIAMENTARY_HISTORY }
+	# 			add_to_array = { global.OCF_historical_parliament_segmentation_[V] = OCF_offset_[V] }
+	# 			# log = "[V]"
+	# 		}
+	# 		V = "[?temp]"
+	# 	}
+	# }
 	set_temp_variable = {
 		OCF_offset_1 = OCF_SAMPLE_last_y_position_1
 	}
 	multiply_temp_variable = {
 		OCF_offset_1 = -1
 	}
+	multiply_temp_variable = { OCF_offset_1 = 1.5 }
 	add_to_array = {
 		global.OCF_historical_parliament_segmentation_1 = OCF_offset_1
 	}
@@ -11554,9 +12311,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_1 = OCF_SAMPLE_last_y_position_1
 	}
-	divide_temp_variable = {
-		OCF_diff_1 = 2
-	}
+	divide_temp_variable = { OCF_diff_1 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_1 = 50
 	}
@@ -11569,9 +12324,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_2 = OCF_SAMPLE_last_y_position_2
 	}
-	divide_temp_variable = {
-		OCF_diff_2 = 2
-	}
+	divide_temp_variable = { OCF_diff_2 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_2 = 50
 	}
@@ -11584,9 +12337,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_3 = OCF_SAMPLE_last_y_position_3
 	}
-	divide_temp_variable = {
-		OCF_diff_3 = 2
-	}
+	divide_temp_variable = { OCF_diff_3 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_3 = 50
 	}
@@ -11599,9 +12350,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_4 = OCF_SAMPLE_last_y_position_4
 	}
-	divide_temp_variable = {
-		OCF_diff_4 = 2
-	}
+	divide_temp_variable = { OCF_diff_4 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_4 = 50
 	}
@@ -11614,9 +12363,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_5 = OCF_SAMPLE_last_y_position_5
 	}
-	divide_temp_variable = {
-		OCF_diff_5 = 2
-	}
+	divide_temp_variable = { OCF_diff_5 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_5 = 50
 	}
@@ -11629,9 +12376,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_6 = OCF_SAMPLE_last_y_position_6
 	}
-	divide_temp_variable = {
-		OCF_diff_6 = 2
-	}
+	divide_temp_variable = { OCF_diff_6 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_6 = 50
 	}
@@ -11644,9 +12389,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_7 = OCF_SAMPLE_last_y_position_7
 	}
-	divide_temp_variable = {
-		OCF_diff_7 = 2
-	}
+	divide_temp_variable = { OCF_diff_7 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_7 = 50
 	}
@@ -11659,9 +12402,7 @@ OCF_generate_factional_support_for_historical_line_charts = {
 	subtract_from_temp_variable = {
 		OCF_diff_8 = OCF_SAMPLE_last_y_position_8
 	}
-	divide_temp_variable = {
-		OCF_diff_8 = 2
-	}
+	divide_temp_variable = { OCF_diff_8 = 2 }
 	add_to_temp_variable = {
 		OCF_diff_8 = 50
 	}
@@ -16467,3 +17208,54 @@ OCF_Insert_Party_Position = {
 		}
 	}
 }
+
+
+
+
+#关于联邦议会
+OCF_regarding_federal_parliament_add = {
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var > 9 } }
+		set_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 1 }
+	}
+	else = {
+		add_to_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 1 }
+		OCF_regarding_federal_parliament_operate = yes
+	}
+}
+OCF_regarding_federal_parliament_del = {
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var < 2 } }
+		set_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 10 }
+	}
+	else = {
+		add_to_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = -1 }
+		OCF_regarding_federal_parliament_operate = yes
+	}
+}
+
+OCF_regarding_federal_parliament_operate = {
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 5 } }
+		set_country_flag = OCF_entering_parliament_flag
+	}
+	if = {
+		limit = {
+			check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var > 5 }
+			check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var < 8 }
+		}
+		set_variable = { OCF_party_opened_tab = 1 }
+	}
+	if = {
+		limit = { check_variable = { GetOcfParliamentaryIntroductionWindowTitleDesc_var = 8 } }
+		set_country_flag = OCF_entering_parliament_flag
+		set_variable = { OCF_party_opened_tab = 2 }
+		OCF_show_all_party_leaders_5 = yes
+	}
+}
+
+
+
+
+
+#研究输入框

@@ -48,7 +48,7 @@ AKL_upgrade_test_of_oomigami = {
                         character = AKL_Kanami
                     }
                     has_country_leader = {
-                        character = AKL_Eruza
+                        character = AKL_Elsa
                     }
                 }   
             }
@@ -101,12 +101,72 @@ AKL_update_dynamic_modifier = {
     set_variable = {AKL_dynamic_political_power_factor_t = -0.004}
     set_variable = {AKL_dynamic_political_power_factor = AKL_dynamic_political_power_factor_t}
     multiply_variable = {AKL_dynamic_political_power_factor = AKL_pressure}
+    AKL = {
+        if = {
+            limit = {
+                has_country_flag = AKL_Akari_dynamic_portrait_on
+            }
+            if = {
+                limit = {
+                    check_variable = {AKL.AKL_pressure < 1}
+                }
+                set_country_leader_portrait = {
+                    portrait = GFX_AKL_Akari_p0
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {AKL.AKL_pressure < 21}
+                    check_variable = {AKL.AKL_pressure > 0}
+                }
+                set_country_leader_portrait = {
+                    portrait = GFX_AKL_Akari_p1
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {AKL.AKL_pressure > 20}
+                    check_variable = {AKL.AKL_pressure < 41}
+                }
+                set_country_leader_portrait = {
+                    portrait = GFX_AKL_Akari_p2
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {AKL.AKL_pressure > 40}
+                    check_variable = {AKL.AKL_pressure < 61}
+                }
+                set_country_leader_portrait = {
+                    portrait = GFX_AKL_Akari_p3
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {AKL.AKL_pressure > 60}
+                    check_variable = {AKL.AKL_pressure < 81}
+                }
+                set_country_leader_portrait = {
+                    portrait = GFX_AKL_Akari_p4
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {AKL.AKL_pressure > 80}
+                }
+                set_country_leader_portrait = {
+                    portrait = GFX_AKL_Akari_p5
+                }
+            }
+        }
+    }
 }
 #增加压力
 AKL_increase_pressure = {
     custom_effect_tooltip = AKL_increase_pressure_desc
     hidden_effect = {
         add_to_variable = {AKL.AKL_pressure = 10}
+        AKL_update_dynamic_modifier = yes
     }
 }
 #减少压力
@@ -114,6 +174,7 @@ AKL_decrease_pressure = {
     custom_effect_tooltip = AKL_decrease_pressure_desc
     hidden_effect = {
         add_to_variable = {AKL.AKL_pressure = -8}
+        AKL_update_dynamic_modifier = yes
     }
 }
 #增加皇权3
@@ -367,53 +428,129 @@ AKL_increase_kanami_var = {
         }
     }
 }
-AKL_eruza_var_monthly_update = {
+AKL_elsa_var_monthly_update = {
     AKL = {
         clamp_variable = {
-            var = AKL_eruza_var
+            var = AKL_elsa_var
             max = 100
             min = 0
         }
         if = {
             limit = {
-                check_variable = {AKL_eruza_var > 99}
+                check_variable = {AKL_elsa_var > 99}
             }
-            set_country_flag = AKL_eruza_var_lock
+            set_country_flag = AKL_elsa_var_lock
         }
         if = {
             limit = {
-                NOT = {has_country_flag = AKL_eruza_var_lock}
+                NOT = {has_country_flag = AKL_elsa_var_lock}
             }
-            add_to_variable = {AKL_eruza_var = -2}#自然衰减
+            if = {
+                limit = {
+                    NOT = {
+                        has_completed_focus = AKL_elsa_9
+                    }
+                }
+                add_to_variable = {AKL_elsa_var = -2}#自然衰减
+            }
+            else = {
+                add_to_variable = {AKL_elsa_var = -1.5}#自然衰减
+            }
         }
         clamp_variable = {
-            var = AKL_eruza_var
+            var = AKL_elsa_var
             max = 100
             min = 0
         }
     }
 }
-AKL_update_eruza_var = {
+AKL_update_elsa_var = {
     AKL = {
         clamp_variable = {
-            var = AKL_eruza_var
+            var = AKL_elsa_var
             max = 100
             min = 0
         }
         if = {
             limit = {
-                check_variable = {AKL_eruza_var > 99}
+                check_variable = {AKL_elsa_var > 99}
             }
-            set_country_flag = AKL_eruza_var_lock
+            set_country_flag = AKL_elsa_var_lock
         }
     }
 }
-AKL_increase_eruza_var = {
-    custom_effect_tooltip = AKL_increase_eruza_var_desc
+AKL_increase_elsa_var = {
+    custom_effect_tooltip = AKL_increase_elsa_var_desc
     hidden_effect = {
         AKL = {
-            add_to_variable = {AKL_eruza_var = AKL_eruza_var_temp}
-            AKL_update_eruza_var = yes
+            add_to_variable = {AKL_elsa_var = AKL_elsa_var_temp}
+            AKL_update_elsa_var = yes
         }
+    }
+}
+AKL_kanami_work_on_focus_start = {
+    hidden_effect = {
+        meta_effect = {
+            text = {
+                activate_shine_on_focus = AKL_kanami_sub_[KANAMI_FOCUS]
+            }
+            KANAMI_FOCUS = "[?AKL_kanami_focus_var]"
+        }
+    }
+}
+AKL_kanami_work_on_focus_end = {
+    if = {
+        limit = {
+            meta_trigger = {
+                text = {
+                    has_shine_effect_on_focus = AKL_kanami_sub_[KANAMI_FOCUS]
+                }
+                KANAMI_FOCUS = "[?AKL_kanami_focus_var]"
+            }
+        }
+        meta_effect = {
+            text = {
+                complete_national_focus = {
+                    focus = AKL_kanami_sub_[KANAMI_FOCUS]
+                    use_side_message = yes
+                    originator_name = AKL_Kanami
+                }
+            }
+            KANAMI_FOCUS = "[?AKL_kanami_focus_var]"
+        }
+        add_to_variable = {AKL_kanami_focus_var = 1}
+    }
+}
+AKL_elsa_work_on_focus_start = {
+    hidden_effect = {
+        meta_effect = {
+            text = {
+                activate_shine_on_focus = AKL_elsa_sub_[ERUZA_FOCUS]
+            }
+            ERUZA_FOCUS = "[?AKL_elsa_focus_var]"
+        }
+    }
+}
+AKL_elsa_work_on_focus_end = {
+    if = {
+        limit = {
+            meta_trigger = {
+                text = {
+                    has_shine_effect_on_focus = AKL_elsa_sub_[ERUZA_FOCUS]
+                }
+                KANAMI_FOCUS = "[?AKL_elsa_focus_var]"
+            }
+        }
+        meta_effect = {
+            text = {
+                complete_national_focus = {
+                    focus = AKL_elsa_sub_[ERUZA_FOCUS]
+                    use_side_message = yes
+                    originator_name = AKL_Elsa
+                }
+            }
+            ERUZA_FOCUS = "[?AKL_elsa_focus_var]"
+        }
+        add_to_variable = {AKL_elsa_focus_var = 1}
     }
 }

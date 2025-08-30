@@ -1,22 +1,73 @@
 scripted_gui = {
-    STG_parliament_issues_window = {
-        window_name = "STG_parliament_issues_window"
+    STG_parliament_window = {
+        window_name = "STG_parliament_window"
         context_type = decision_category
+        visible = {
+            tag = STG
+        }
         dynamic_lists = {
-            #众议院
-            STG_parliament_issues_grid = {
-                array = STG_parliament_issues_array
-                index = idx
-                entry_container = OCF_gridbox_seat
-                change_scope = no
+			STG_ruling_party_list = {
+				array = STG_ruling_party_Array
+				index = i
+				value = v
+				entry_container = STG_ruling_party_entry
+			}
+            STG_other_party_list = {
+				array = STG_other_party_Array
+				index = i
+				value = v
+				entry_container = STG_other_party_entry
+			}
+            STG_illegal_party_list = {
+				array = STG_illegal_party_Array
+				index = i
+				value = v
+				entry_container = STG_illegal_party_entry
+			}
+		}
+        triggers = {
+            STG_ministers_button_visible = {
+                has_country_flag = STG_ministers_com
+            }
+            STG_ministers_button_click_enabled = {
+                has_country_flag = STG_ministers_com
+            }
+            STG_parliament_icon_visible = {
+                NOT = {has_country_flag = STG_ministers_com}
+            }
+            STG_illegal_mark_visible = {
+                meta_trigger = {
+                    text = {
+                        has_country_flag = [PARTY]_illegalized
+                    }
+                    PARTY = "[?v.GetTokenKey]"
+                }
             }
         }
-
+        effects = {
+            STG_ministers_button_click = {
+                STG = {
+                    if = {
+                        limit = {
+                            check_variable = {STG_ministers_display = 0}
+                        }
+                        set_variable = {STG_ministers_display = 1}
+                    }
+                    else = {
+                        set_variable = {STG_ministers_display = 0}
+                    }
+                }
+            }
+        }
         properties = {
-            OCF_gridbox_seat_icon = {
-                x = STG_seat_x_array^idx
-                y = STG_seat_y_array^idx
-                frame = STG_parliament_issues_array^idx
+            STG_ruling_party_pic = {
+                image = "[STG_party_pic_scripted_loc]"
+            }
+            STG_other_party_pic = {
+                image = "[STG_party_pic_scripted_loc]"
+            }
+            STG_illegal_party_pic = {
+                image = "[STG_party_pic_scripted_loc]"
             }
         }
     }
@@ -45,12 +96,44 @@ scripted_gui = {
         }
         triggers = {
             STG_ministers_button_visible = {
-                has_country_flag = STG_ministers_flag
+                has_country_flag = STG_ministers_com
             }
         }
         effects = {
             STG_ministers_button_click = {
-                STG = {set_variable = {STG_ministers_display = 1}}
+                STG = {
+                    if = {
+                        limit = {
+                            check_variable = {STG_ministers_display = 0}
+                        }
+                        set_variable = {STG_ministers_display = 1}
+                    }
+                    else = {
+                        set_variable = {STG_ministers_display = 0}
+                    }
+                }
+            }
+        }
+    }
+    STG_ministers_icon_2 = {
+        window_name = "STG_ministers_icon_2"
+        context_type = decision_category
+        visible = {
+            tag = STG   
+        }
+        effects = {
+            STG_ministers_button_2_click = {
+                STG = {
+                    if = {
+                        limit = {
+                            check_variable = {STG_ministers_display = 0}
+                        }
+                        set_variable = {STG_ministers_display = 1}
+                    }
+                    else = {
+                        set_variable = {STG_ministers_display = 0}
+                    }
+                }
             }
         }
     }

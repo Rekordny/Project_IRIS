@@ -425,7 +425,7 @@ IRIS_activate_world_conflict_1 = {
                 is_ally_with = USF
                 tag = USF
                 AND = {
-                    NOT = { has_war_with = NAC } 
+                    NOT = { has_war_with = NAC }
                     is_ally_with = BLA
                     tag = BLA
                 }
@@ -444,7 +444,14 @@ IRIS_activate_world_conflict_1 = {
             }
         }
         add_to_array = { global.neutral_member_@var:tag_temp = THIS }
-        country_event = { id = BRG.4 }
+        #随机24-240小时触发
+        set_temp_variable_to_random = {
+            var = IRIS_activate_world_conflict_1_random_num
+            min = 24
+            max = 240
+            integer = yes
+        }
+        country_event = { id = BRG.4 hours = IRIS_activate_world_conflict_1_random_num }
     }
     #进攻
     OCF = {
@@ -476,19 +483,27 @@ IRIS_activate_world_conflict_2 = {
     #添加中立
     every_country = {
         limit = {
+            is_major = yes
             OR = {
-                AND = {
-                    is_major = yes
-                    OR = {
-                        is_IRIS_eu_country = yes
-                        is_IRIS_GBA_country = yes
-                    }
+                is_IRIS_eu_country = yes
+                is_IRIS_GBA_country = yes
+            }
+            NOT = {
+                OR = {
+                    tag = DOC
+                    tag = URU
+                    tag = PLP
                 }
-                tag = URU
-                tag = PLP
-                tag = DOC
             }
         }
+        #随机24-240小时触发
+        set_temp_variable_to_random = {
+            var = IRIS_activate_world_conflict_2_random_num
+            min = 24
+            max = 120
+            integer = yes
+        }
+        country_event = { id = DOC.20103 hours = IRIS_activate_world_conflict_2_random_num }
         if = {
             limit = {
                 NOT = { has_country_flag = PLP_OR_URU_Admitting_it }
@@ -535,6 +550,39 @@ IRIS_activate_world_conflict_3 = {
     ESI = { IRIS_activate_world_war_member = yes }
     #防御
     DYM = { IRIS_activate_world_defense_member = yes }
+}
+
+#爱丽诺民族国合法性争端
+IRIS_activate_world_conflict_4 = {
+    set_temp_variable = { tag_temp = PEN }
+    IRIS_activate_world_conflict_initialization = yes
+    #添加中立
+    for_each_loop = {
+        array = global.WML_stakeholder_countries_array
+        value = v
+        add_to_array = { global.neutral_member_@var:tag_temp = v }
+    }
+    add_to_array = { global.neutral_member_@var:tag_temp = WML }
+    add_to_array = { global.neutral_member_@var:tag_temp = EML }
+    for_each_scope_loop = {
+        array = global.neutral_member_@var:tag_temp
+        #随机24-240小时触发
+        set_temp_variable_to_random = {
+            var = IRIS_activate_world_conflict_4_random_num
+            min = 24
+            max = 240
+            integer = yes
+        }
+        if = {
+            limit = { NOT = { tag = ELN } }
+            country_event = { id = PEN.2 hours = IRIS_activate_world_conflict_4_random_num }
+        }
+    }
+    #进攻
+    PEN = { IRIS_activate_world_war_member = yes }
+
+    #防御
+    ELN = { IRIS_activate_world_defense_member = yes }
 }
 
 

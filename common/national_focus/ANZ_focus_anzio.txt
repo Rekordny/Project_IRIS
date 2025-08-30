@@ -1179,11 +1179,274 @@ focus_tree = {
 		}
 	}
 
+	#重振指挥链
+	focus = {
+		id = ANZ_reorganize_command_chain
+		icon = GFX_focus_ANZ_reorganize_command_chain
+		x = 16
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			add_timed_idea = {
+				idea = ANZ_idea_reorganize_command_chain
+				days = 90
+			}
+		}
+	}
+
+	#召回老兵
+	focus = {
+		id = ANZ_recall_veterans
+		icon = GFX_focus_ANZ_recall_veterans
+		relative_position_id = ANZ_reorganize_command_chain
+		prerequisite = { focus = ANZ_reorganize_command_chain }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			add_timed_idea = {
+				idea = ANZ_idea_recall_veterans
+				days = 180
+			}
+		}
+	}
+
+	#千代美的最后通牒
+	focus = {
+		id = ANZ_the_ultimatum
+		icon = GFX_focus_ANZ_the_ultimatum
+		relative_position_id = ANZ_recall_veterans
+		prerequisite = { focus = ANZ_recall_veterans }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			add_ideas = ANZ_idea_the_ultimatum
+			var:anz_civil_revolter_tag = {
+				add_war_support = -0.15
+			}
+		}
+	}
+
+	#战时征用法案
+	focus = {
+		id = ANZ_war_requisition_act
+		icon = ANZ_war_requisition_act
+		relative_position_id = ANZ_reorganize_command_chain
+		x = 2
+		y = 0
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			add_timed_idea = {
+				idea = ANZ_idea_war_requisition_act
+				days = 90
+			}
+		}
+	}
+
+	#授予大统帅最高权力
+	focus = {
+		id = ANZ_grante_the_highest_authority
+		icon = ANZ_grante_the_highest_authority
+		relative_position_id = ANZ_war_requisition_act
+		prerequisite = { focus = ANZ_war_requisition_act }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			ANZ_Anchovy = {
+				add_trait = {
+					ideology = sub_Facism
+					trait = ANZ_festivale_everyday
+				}
+			}
+		}
+	}
+
+	#千代美的斡旋
+	focus = {
+		id = ANZ_the_mediate
+		icon = GFX_focus_ANZ_the_mediate
+		relative_position_id = ANZ_grante_the_highest_authority
+		prerequisite = { focus = ANZ_grante_the_highest_authority }
+		x = 0
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			every_country = {
+				limit = {
+					OR = {	
+						AND = {
+							original_tag = USR
+							OR = {
+								has_idea = USR_another_leader_Erika
+								has_idea = USR_another_leader_Adolfine
+								has_country_leader = {
+									character = USR_Nishizumis
+									ruling_only = yes
+								}
+								has_country_leader = {
+									character = USR_Maho
+									ruling_only = yes
+								}
+							}
+						}
+						AND = {
+							original_tag = STG
+							OR = {
+								has_idea = STG_darjeeling_leader
+								has_country_leader = {
+									character = STG_darjeeling
+									ruling_only = yes
+								}
+							}
+						}
+						AND = {
+							original_tag = OCE
+							has_country_leader = {
+								character = OCE_osia
+								ruling_only = yes
+							}
+						}
+					}
+				}
+				add_relation_modifier = {
+					target = ROOT
+					modifier = ANZ_send_volunteers_tension
+				}
+			}
+		}
+	}
+
+	#崭新的军队
+	focus = {
+		id = ANZ_our_new_amry
+		icon = GFX_focus_ANZ_our_new_amry
+		relative_position_id = ANZ_the_mediate
+		prerequisite = { focus = ANZ_the_ultimatum }
+		prerequisite = { focus = ANZ_the_mediate }
+		x = -1
+		y = 1
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			
+		}
+		completion_reward = {
+			set_technology = {
+				militia_tech = 1
+				popup = no
+			}
+			set_division_template_lock = {
+				division_template = "Anzio Militia"
+				is_locked = no
+			}
+			custom_effect_tooltip = ANZ_our_new_amry_tt
+			swap_ideas = {
+				remove_idea = ANZ_idea_the_ultimatum
+				add_idea = ANZ_idea_the_ultimatum_2
+			}
+			hidden_effect = {
+				add_units_to_division_template = {
+					template_name = "Anzio Militia"
+					regiments = {
+						militia = 0
+						artillery_brigade = 2
+						artillery_brigade = 2
+					}
+					support = {
+						engineer= 0
+						artillery = 0
+					}
+				}
+				set_temp_variable = { #计算补充步枪
+					anz_temp_militia_infantry_weapon = anz_militia_power_count
+				}
+				multiply_temp_variable = {
+					anz_temp_militia_infantry_weapon = 4
+				}
+				multiply_temp_variable = {
+					anz_temp_militia_infantry_weapon = 110
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment
+					amount = anz_temp_militia_infantry_weapon
+				}
+				
+				set_temp_variable = { #计算补充火炮
+					anz_temp_militia_artillery = anz_militia_power_count
+				}
+				multiply_temp_variable = {
+					anz_temp_militia_artillery = 4
+				}
+				multiply_temp_variable = {
+					anz_temp_militia_artillery = 84
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = var:anz_temp_militia_artillery
+				}
+				
+				set_temp_variable = { #计算补充支援装备
+					anz_temp_militia_support = anz_militia_power_count
+				}
+				multiply_temp_variable = {
+					anz_temp_militia_support = 4
+				}
+				multiply_temp_variable = {
+					anz_temp_militia_support = 30
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = var:anz_temp_militia_support
+				}
+			}
+		}
+	}
+
 	#重建安齐奥
 	focus = {
 		id = ANZ_rebuild_anzio
 		icon = GFX_focus_ANZ_rebuild_anzio
-		x = 25
+		x = 29
 		y = 0
 		cost = 8
 		ai_will_do = {
@@ -1197,7 +1460,7 @@ focus_tree = {
 			custom_effect_tooltip = ANZ_tooltip20
 			add_dynamic_modifier = {
 				modifier = ANZ_idea_rebuild_anzio
-				days = 730
+				days = 365 #730
 			}
 		}
 	}
@@ -1283,23 +1546,23 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
-			random_core_state = {
-				limit = {
-					is_fully_controlled_by = ROOT
-					free_building_slots = {
-						building = industrial_complex
-						size > 0
-						include_locked = yes
-					}
-				}
-				prioritize = { 251 } 
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = industrial_complex
-					level = 1
-					instant_build = yes
-				}
-			}
+			#random_core_state = {
+			#	limit = {
+			#		is_fully_controlled_by = ROOT
+			#		free_building_slots = {
+			#			building = industrial_complex
+			#			size > 0
+			#			include_locked = yes
+			#		}
+			#	}
+			#	prioritize = { 251 } 
+			#	add_extra_state_shared_building_slots = 1
+			#	add_building_construction = {
+			#		type = industrial_complex
+			#		level = 1
+			#		instant_build = yes
+			#	}
+			#}
 		}
 	}
 
