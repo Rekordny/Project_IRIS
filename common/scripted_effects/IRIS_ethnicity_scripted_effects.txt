@@ -45,7 +45,7 @@ IRIS_import_opening_race = {
 		#北安齐奥
 		if = {
 			limit = {
-				OR = {
+				NOT = {
 					is_core_of = USR
 					is_core_of = ELN
 				}
@@ -354,7 +354,7 @@ IRIS_import_opening_race = {
 		}
 		#邵伊尔
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 204
 					state = 215
@@ -365,7 +365,7 @@ IRIS_import_opening_race = {
 		}
 		#罗姆裔帕夏
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 824
 					state = 294
@@ -405,9 +405,9 @@ IRIS_import_opening_race = {
 			set_variable = { ethnicity = token:ethnicity_tadrik }
 		}
 		if = {
-			limit = { 
+			limit = {
 				OR = {
-					is_core_of = USF 
+					is_core_of = USF
 					is_core_of = USN
 				}
 			}
@@ -415,7 +415,7 @@ IRIS_import_opening_race = {
 		}
 		#乌斯拉尔裔移民
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					region = 30
 					state = 407
@@ -431,7 +431,7 @@ IRIS_import_opening_race = {
 		}
 		#爱丽诺裔移民
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					region = 27
 					state = 406
@@ -447,7 +447,7 @@ IRIS_import_opening_race = {
 		}
 		#赛莲斯裔移民
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 360
 				}
@@ -456,7 +456,7 @@ IRIS_import_opening_race = {
 		}
 		#罗西亚裔移民
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 333
 					state = 335
@@ -467,7 +467,7 @@ IRIS_import_opening_race = {
 		}
 		#昂格利亚裔移民
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 412
 					state = 407
@@ -477,7 +477,7 @@ IRIS_import_opening_race = {
 		}
 		#归化罗姆
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 301
 					state = 308
@@ -489,7 +489,7 @@ IRIS_import_opening_race = {
 		}
 		#塞勒姆
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					state = 829
 					state = 476
@@ -657,6 +657,28 @@ IRIS_import_opening_race = {
 			limit = { is_core_of = STE}
 			set_variable = { ethnicity = token:ethnicity_tenth_spirit }
 		}
+		# this = {
+		# 	IRIS_assign_regional_ethnicity = yes
+		# 	IRIS_add_regional_ethnicity = yes
+		# }
+	}
+
+	#摩萨血族 不知道放哪个省
+
+	every_possible_country = {
+		this = {
+			if = {
+				limit = { NOT = { has_variable = ethnicity } }
+				random_core_state = {
+					limit = { is_controlled_by = this }
+					set_variable = { prev.ethnicity = this.ethnicity }
+				}
+			}
+			IRIS_country_list_testing_region = yes
+			IRIS_add_national_ethnicity = yes
+		}
+	}
+	every_state = {
 		this = {
 			IRIS_assign_regional_ethnicity = yes
 			IRIS_add_regional_ethnicity = yes
@@ -938,43 +960,58 @@ IRIS_country_list_testing_region = {
 			NC = "[?IRIS_race_array^i.GetTokenKey]"
 		}
 	}
+	add_to_array = { IRIS_race_array_display = 0 }
 }
 
 #地区转移-异文化检测
 IRIS_regional_transfer_intercultural_testing = {
 	ROOT = {
-		every_owned_state = {
-			limit = {
-				NOT = { check_variable = { root.ethnicity = this.ethnicity } }
-				NOT = { is_in_array = { root.IRIS_race_array = this.ethnicity } }
-			}
-			#相近的文化
-			if = {
-				limit = {
-					IRIS_similar_cultures_state_trigger = yes
-				}
-				add_dynamic_modifier = { modifier = IRIS_similar_cultures }
-				remove_dynamic_modifier = { modifier = IRIS_foreign_cultures }
-				remove_dynamic_modifier = { modifier = IRIS_hostile_cultures }
-			}
-			#敌对文化
-			else_if = {
-				limit = {
-					OR = {
-						AND = {
-							always = no
+		hidden_effect = {
+			IRIS_add_national_ethnicity = yes
+			every_owned_state = {
+				#是接纳民族
+				if = {
+					limit = {
+						OR = {
+							check_variable = { root.ethnicity = this.ethnicity }
+							is_in_array = { root.IRIS_race_array = this.ethnicity }
 						}
 					}
+					if = { limit = { has_dynamic_modifier = { modifier = IRIS_foreign_cultures } } remove_dynamic_modifier = { modifier = IRIS_foreign_cultures } }
+					else_if = { limit = { has_dynamic_modifier = { modifier = IRIS_hostile_cultures } } remove_dynamic_modifier = { modifier = IRIS_hostile_cultures } }
+					else_if = { limit = { has_dynamic_modifier = { modifier = IRIS_similar_cultures } } remove_dynamic_modifier = { modifier = IRIS_similar_cultures } }
 				}
-				remove_dynamic_modifier = { modifier = IRIS_similar_cultures }
-				remove_dynamic_modifier = { modifier = IRIS_foreign_cultures }
-				add_dynamic_modifier = { modifier = IRIS_hostile_cultures }
-			}
-			#异文化
-			else = {
-				remove_dynamic_modifier = { modifier = IRIS_similar_cultures }
-				add_dynamic_modifier = { modifier = IRIS_foreign_cultures }
-				remove_dynamic_modifier = { modifier = IRIS_hostile_cultures }
+				#不是接纳民族
+				else = {
+					#相近的文化
+					if = {
+						limit = {
+							IRIS_similar_cultures_state_trigger = yes
+						}
+						add_dynamic_modifier = { modifier = IRIS_similar_cultures }
+						if = { limit = { has_dynamic_modifier = { modifier = IRIS_foreign_cultures } } remove_dynamic_modifier = { modifier = IRIS_foreign_cultures } }
+						else_if = { limit = { has_dynamic_modifier = { modifier = IRIS_hostile_cultures } } remove_dynamic_modifier = { modifier = IRIS_hostile_cultures } }
+					}
+					#敌对文化
+					else_if = {
+						limit = {
+							OR = {
+								AND = {
+									always = no
+								}
+							}
+						}
+						if = { limit = { has_dynamic_modifier = { modifier = IRIS_foreign_cultures } } remove_dynamic_modifier = { modifier = IRIS_foreign_cultures } }
+						else_if = { limit = { has_dynamic_modifier = { modifier = IRIS_similar_cultures } } remove_dynamic_modifier = { modifier = IRIS_similar_cultures } }
+						add_dynamic_modifier = { modifier = IRIS_hostile_cultures }
+					}
+					#异文化
+					else = {
+						if = { limit = { has_dynamic_modifier = { modifier = IRIS_hostile_cultures } } remove_dynamic_modifier = { modifier = IRIS_hostile_cultures } }
+						else_if = { limit = { has_dynamic_modifier = { modifier = IRIS_similar_cultures } } remove_dynamic_modifier = { modifier = IRIS_similar_cultures } }
+						add_dynamic_modifier = { modifier = IRIS_foreign_cultures }
+					}
+				}
 			}
 		}
 	}
@@ -1024,3 +1061,9 @@ IRIS_assign_regional_ethnicity = {
 		NC = "[?ethnicity.GetTokenKey]"
 	}
 }
+
+#添加国家子民族
+#临时变量 national_sub_ethnicity
+# IRIS_add_national_sub_ethnicity = {
+# 	custom_effect_tooltip = IRIS_add_national_sub_ethnicity_tooltip
+# }
