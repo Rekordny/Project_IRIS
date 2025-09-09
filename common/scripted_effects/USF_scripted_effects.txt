@@ -130,7 +130,7 @@ USF_refresh_congress = {
             add_to_variable = {USF_yea = USF_icp_support}
             add_to_variable = {USF_yea = USF_slo_support}
 
-            set_variable = {USF_nay = 313}#计算反对
+            set_variable = {USF_nay = 314}#计算反对
             subtract_from_variable = {USF_nay = USF_yea}
 
             set_variable = {USF_adp_approval_rate = USF_adp_support}#计算党派支持率
@@ -584,6 +584,24 @@ USF_reconsider_effect = {
         }
         add_political_power = -20
     }
+
+    meta_effect = {
+        text = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_country_flag = [USF_ACT]
+                    }
+                }
+                set_country_flag = [USF_ACT]
+                activate_targeted_decision = {
+                    target = USF
+                    decision = [USF_ACT]
+                }
+            }
+        }
+        USF_ACT = "[?USF_act_temp.GetTokenKey]"
+    }
 }
 #法案保护期间无视条件通过法案PP花费
 USF_passing_cost_when_protection_is_valid = {
@@ -594,6 +612,12 @@ USF_passing_cost_when_protection_is_valid = {
             has_idea = USF_act_protection
         }
         add_political_power = USF_advantage
+    }
+    if = {
+        limit = {
+            has_idea = USF_truly_united_congress
+        }
+        add_political_power = 30
     }
     
 }
@@ -723,7 +747,20 @@ USF_random_election_effect = {
         }
     }
 }
-
+#凯伊妙妙小开关群体洗脑国会
+USF_yuri_is_master = {
+    custom_effect_tooltip = USF_yuri_is_master_desc
+    hidden_effect = {
+        USF = {
+            set_variable = {USF_adp_support = USF_adp_seat}
+            set_variable = {USF_ilp_support = USF_ilp_seat}
+            set_variable = {USF_unf_support = USF_unf_seat}
+            set_variable = {USF_icp_support = USF_icp_seat}
+            set_variable = {USF_slo_support = USF_slo_seat}
+            USF_refresh_congress = yes
+        }
+    }
+}
 USF_black_foaming_night_setup = { 
     USF = {
         set_variable = {USF_monthly_population = -0.25}
@@ -929,13 +966,10 @@ USF_pandemic_spread = {
                 random_neighbor_state = {
                     limit = {
                         is_core_of = USF
-                        NOT = {
-                            OR = {
-                                is_island_state = yes
-                                has_state_category = small_island
-                                has_state_category = tiny_island
-                            }
-                        }
+                        NOT = {has_state_category = wasteland}
+                        NOT = {has_state_category = enclave}
+                        NOT = {has_state_category = small_island}
+                        NOT = {has_state_category = tiny_island}
                         NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
                     }
                     save_event_target_as = USF_pandemic_target
@@ -944,4 +978,99 @@ USF_pandemic_spread = {
             }
         }
     }   
+}
+#计算基建覆盖率
+USF_calculate_infrastructure_coverage_ratio = {
+    USF = {
+        set_variable = {USF_total_core_state_infrastructure = 0}#核心省份
+        set_variable = {USF_total_core_state_possible_infrastructure = 0}
+
+        set_variable = {USF_total_non_core_state_infrastructure = 0}#非核心
+        set_variable = {USF_total_non_core_state_possible_infrastructure = 0}
+
+        every_owned_state = {#遍历核心省份基建
+            limit = {
+                is_core_of = USF
+                NOT = {has_state_category = wasteland}
+                NOT = {has_state_category = enclave}
+                NOT = {has_state_category = small_island}
+                NOT = {has_state_category = tiny_island}
+            }
+
+            add_to_variable = {USF.USF_total_core_state_infrastructure = non_damaged_building_level@infrastructure}
+            add_to_variable = {USF.USF_total_core_state_possible_infrastructure = 5}
+        }
+
+        log = "USF所有核心基建等级总和为 [?USF_total_core_state_infrastructure]，上限为 [?USF_total_core_state_possible_infrastructure]"
+
+        every_owned_state = {#遍历非核心省份基建
+            limit = {
+                NOT = {is_core_of = USF}
+                NOT = {has_state_category = wasteland}
+                NOT = {has_state_category = enclave}
+                NOT = {has_state_category = small_island}
+                NOT = {has_state_category = tiny_island}
+            }
+
+            add_to_variable = {USF.USF_total_non_core_state_infrastructure = non_damaged_building_level@infrastructure}
+            add_to_variable = {USF.USF_total_non_core_state_possible_infrastructure = 5}
+        }
+
+        log = "USF所有非核心基建等级总和为 [?USF_total_non_core_state_infrastructure]，上限为 [?USF_total_non_core_state_possible_infrastructure]"
+
+        set_variable = {USF_core_state_infrastructure_ratio = USF_total_core_state_infrastructure}
+        divide_variable = {USF_core_state_infrastructure_ratio = USF_total_core_state_possible_infrastructure}
+
+        log = "USF所有核心基建覆盖率为 [?USF_core_state_infrastructure_ratio]"
+
+        set_variable = {USF_non_core_state_infrastructure_ratio = USF_total_non_core_state_infrastructure}
+        divide_variable = {USF_non_core_state_infrastructure_ratio = USF_total_non_core_state_possible_infrastructure}
+
+        log = "USF所有非核心基建覆盖率为 [?USF_non_core_state_infrastructure_ratio]"
+
+        #公式 核心覆盖率*1.5+非核心覆盖率
+
+        set_variable = {USF_total_infrastructure_coverage_ratio = USF_core_state_infrastructure_ratio}
+        multiply_variable = {USF_total_infrastructure_coverage_ratio = 1.5}
+        add_to_variable = {USF_total_infrastructure_coverage_ratio = USF_non_core_state_infrastructure_ratio}
+        multiply_variable = {USF_total_infrastructure_coverage_ratio = 150}
+        round_variable = USF_total_infrastructure_coverage_ratio
+
+        log = "预期收益为 [?USF_total_infrastructure_coverage_ratio]"
+    }
+}
+USF_Herbert_cic_bonus = {
+    USF_calculate_infrastructure_coverage_ratio = yes
+    add_cic = var:USF_total_infrastructure_coverage_ratio
+}
+
+USF_calculate_arms_to_civ_ratio = {
+    USF = {
+        set_variable = {USF_num_of_arms_f = USF.num_of_military_factories}
+        set_variable = {USF_num_of_civ_f = USF.num_of_civilian_factories}
+        set_variable = {USF_arms_to_civ_ratio = USF_num_of_arms_f}
+        divide_variable = {USF_arms_to_civ_ratio = USF_num_of_civ_f}
+        set_variable = {USF_Kay_cic = USF_arms_to_civ_ratio}
+
+        log = "USF军民工厂比率为 [?USF_arms_to_civ_ratio]"
+
+        multiply_variable = {USF_Kay_cic = 700}
+        round_variable = USF_Kay_cic
+    }
+}
+USF_Kay_cic_bonus = {
+    USF_calculate_arms_to_civ_ratio = yes
+    add_cic = var:USF_Kay_cic
+}
+
+USF_refresh_free_trade_union_modifier = {
+    USF = {
+        set_variable = {USF_consumer_goods_factor = -0.015}
+        set_variable = {USF_num_of_subject = USF.num_subjects}
+        clamp_variable = {
+            var = USF_num_of_subject
+            max = 10
+        }
+        multiply_variable = {USF_consumer_goods_factor = USF_num_of_subject}
+    }
 }

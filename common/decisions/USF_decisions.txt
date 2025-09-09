@@ -93,8 +93,47 @@ USF_congress = {
 			factor = 0
 		}
 	}
+	USF_arms_expansion = {
+		available = {
+			num_of_civilian_factories_available_for_projects > 9
+			controls_state = 481
+		}
+		visible = {
+			has_completed_focus = USF_heavy_industry
+		}
+		days_remove = 180
+		modifier = {
+			political_power_cost = 1
+			civilian_factory_use = 10
+		}
+		remove_effect = {
+			add_tech_bonus = {
+				category = industry
+				bonus = 0.75
+				uses = 2
+			}
+			add_tech_bonus = {
+				category = electronics
+				bonus = 0.75
+				uses = 2
+			}
+			481 = {
+				add_building_construction = {
+                    type = land_facility
+                    level = 1
+                    instant_build = yes
+                    province = {
+                        id = 12720
+                    }
+                }
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
 	#开局
-	USF_cut_naval_budget = {
+	USF_cut_naval_budget_decision = {
 		icon = mission_icon
         is_good = no
 		days_mission_timeout = 45
@@ -119,7 +158,7 @@ USF_congress = {
 		}
 
 	}
-	USF_impose_excess_profits_tax = {
+	USF_impose_excess_profits_tax_decision = {
 		icon = mission_icon
         is_good = no
 		days_mission_timeout = 87
@@ -306,6 +345,7 @@ USF_congress = {
 	USF_cut_welfare_act_decision = {
 		visible = {
 			has_completed_focus = USF_reject_mass_welfare
+			NOT = {has_completed_focus = USF_no_more_divergence}
 			NOT = {has_idea = USF_cut_welfare}
 		}
 		cost = 30
@@ -397,7 +437,7 @@ USF_congress = {
 			factor = 100
 		}
 	}
-	USF_mana_plant_adjustment_act_decison = {
+	USF_mana_plant_adjustment_act_decision = {
 		allowed = { always = no }
 		available = {
 			custom_trigger_tooltip = {
@@ -407,7 +447,7 @@ USF_congress = {
 		}
 		visible = {
 			NOT = {
-				has_country_flag = USF_mana_plant_adjustment_act_decison_passed
+				has_country_flag = USF_mana_plant_adjustment_act_decision_passed
 			}
 		}
 		cost = 30
@@ -426,7 +466,7 @@ USF_congress = {
 			factor = 100
 		}
 	}
-	USF_reduce_quota_decison = {
+	USF_reduce_quota_decision = {
 		available = {
 			has_dynamic_modifier = {modifier = USF_black_foaming_night}
 			custom_trigger_tooltip = {
@@ -465,12 +505,12 @@ USF_congress = {
 			factor = 100
 		}
 	}
-	USF_federal_insurance_company_decison = {
+	USF_federal_insurance_company_decision = {
 		allowed = {
 			always = no
 		}
 		visible = {	
-			NOT = {has_country_flag = USF_federal_insurance_company_decison_passed}
+			NOT = {has_country_flag = USF_federal_insurance_company_decision_passed}
 		}
 		cost = 30
 		days_remove = var:USF_sub_act_time
@@ -485,12 +525,12 @@ USF_congress = {
 			factor = 100
 		}
 	}
-	USF_stock_exchange_act_decison = {
+	USF_stock_exchange_act_decision = {
 		allowed = {
 			always = no
 		}
 		visible = {	
-			NOT = {has_country_flag = USF_stock_exchange_act_decison_passed}
+			NOT = {has_country_flag = USF_stock_exchange_act_decision_passed}
 		}
 		cost = 30
 		days_remove = var:USF_imporant_act_time
@@ -507,7 +547,7 @@ USF_congress = {
 			factor = 100
 		}
 	}
-	USF_industrial_recovery_act_decison = {
+	USF_industrial_recovery_act_decision = {
 		allowed = {
 			always = no
 		}
@@ -518,7 +558,7 @@ USF_congress = {
 			}
 		}
 		visible = {	
-			NOT = {has_country_flag = USF_industrial_recovery_act_decison_passed}
+			NOT = {has_country_flag = USF_industrial_recovery_act_decision_passed}
 		}
 		cost = 30
 		days_remove = var:USF_imporant_act_time
@@ -544,6 +584,272 @@ USF_congress = {
 			factor = 100
 		}
 	}
+	USF_subject_trade_priority_decision = {
+		visible = {
+			has_completed_focus = USF_control_south_pole
+			any_country = {
+				is_subject_of = USF
+				NOT = {
+					has_idea = USF_subject_trade_priority
+				}
+            }
+		}
+		available = {
+			any_country = {
+				is_subject_of = USF
+				NOT = {
+					has_idea = USF_subject_trade_priority
+				}
+            }
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		remove_effect = {
+			country_event = {id = USF.15}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				random_subject_country = {
+					add_ideas = USF_subject_trade_priority
+				}
+			}
+		}
+	}
+	USF_decrease_subject_autonomy_decision = {
+		visible = {
+			has_completed_focus = USF_control_south_pole
+			any_country = {
+				is_subject_of = USF
+				NOT = {
+                        has_autonomy_state = autonomy_integrated_puppet
+				}
+				NOT = {
+					has_autonomy_state = autonomy_dominion
+				}
+            }
+		}
+		available = {
+			any_country = {
+				is_subject_of = USF
+				NOT = {
+                        has_autonomy_state = autonomy_integrated_puppet
+				}
+				NOT = {
+					has_autonomy_state = autonomy_dominion
+				}
+            }
+		}
+		cost = 30
+		days_remove = var:USF_sub_act_time
+		remove_effect = {
+			country_event = {id = USF.16}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				random_subject_country = {
+					USF = {
+						set_autonomy = {
+							target = PREV
+							autonomous_state = autonomy_integrated_puppet
+						}
+					}
+				}
+			}
+		}
+	}
+	USF_complete_BLA_trade_order_decision = {
+		allowed = {
+			always = no
+		}
+		available = {
+			country_exists = BLA
+			NOT = {
+				has_war_with = BLA
+			}
+		}
+		visible = {
+			NOT = {has_country_flag = USF_complete_BLA_trade_order_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_imporant_act_time
+		remove_effect = {
+			country_event = {id = USF_act.17}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				if = {
+					limit = {
+						BLA = {
+							has_war = yes
+						}
+					}
+					custom_effect_tooltip = USF_gain_extra_profit_when_BLA_has_war
+					add_cic = 6000
+				}
+				else = {
+					custom_effect_tooltip = USF_gain_extra_profit_if_BLA_has_war
+					add_cic = 4000
+				}
+				BLA = {
+					add_equipment_to_stockpile = {
+						type = infantry_equipment
+						amount = 6000
+						producer = USF
+					}
+					add_equipment_to_stockpile = {
+						type = artillery_equipment
+						amount = 300
+						producer = USF
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_industrial_nationalization_decision = {
+		allowed = {
+			always = no
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USF_has_80_approval_rate
+				check_variable = {USF_total_approval_rate > 0.79}
+			}
+		}
+		visible = {
+			NOT = {has_country_flag = USF_industrial_nationalization_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_imporant_act_time
+		remove_effect = {
+			country_event = {id = USF_act.18}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_tech_bonus = {
+					category = mana_tech
+					bonus = 1.0
+					uses = 3
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_mana_nationalization_decision = {
+		allowed = {
+			always = no
+		}
+		available = {
+			custom_trigger_tooltip = {
+				tooltip = USF_has_80_approval_rate
+				check_variable = {USF_total_approval_rate > 0.79}
+			}
+		}
+		visible = {
+			NOT = {has_country_flag = USF_mana_nationalization_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_imporant_act_time
+		remove_effect = {
+			country_event = {id = USF_act.19}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_tech_bonus = {
+					category = mana_tech
+					bonus = 1.0
+					uses = 3
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_end_emergency_relief_act_decision = {
+		allowed = {
+			always = no
+		}
+		available = {
+			has_idea = USF_emergency_relief_act
+		}
+		visible = {
+			NOT = {has_country_flag = USF_end_emergency_relief_act_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_sub_act_time
+		remove_effect = {
+			country_event = {id = USF_act.20}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				remove_ideas = USF_emergency_relief_act
+				add_timed_idea = {idea = USF_extra_budget days = 720}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_energy_protection_decision = {
+		allowed = {
+			always = no
+		}
+		visible = {
+			NOT = {has_country_flag = USF_energy_protection_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_imporant_act_time
+		remove_effect = {
+			country_event = {id = USF_act.21}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_ideas = USF_energy_protection_law
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_prohibit_unlawful_forces_decision = {
+		allowed = {
+			always = no
+		}
+		visible = {
+			NOT = {has_country_flag = USF_prohibit_unlawful_forces_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		remove_effect = {
+			country_event = {id = USF_act.22}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_ideas = USF_prohibit_unlawful_forces_idea
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_civil_security_company_decision = {
+		allowed = {
+			always = no
+		}
+		visible = {
+			NOT = {has_country_flag = USF_civil_security_company_decision_passed}
+		}
+		cost = 30
+		days_remove = var:USF_minor_act_time
+		remove_effect = {
+			country_event = {id = USF_act.23}
+			custom_effect_tooltip = USF_act_passed_display
+			effect_tooltip = {
+				add_ideas = USF_civil_security_company_idea
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+
 	#收买决议
 	USF_gain_support = {
 		cost = 50
@@ -813,7 +1119,7 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_improve_supply_efficiency = {
 		visible = {
-			has_country_flag = USF_stock_exchange_act_decison_passed
+			has_country_flag = USF_stock_exchange_act_decision_passed
 		}
 		days_remove = 100
 		modifier = {
@@ -831,7 +1137,7 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_encourage_investment = {
 		visible = {
-			has_country_flag = USF_stock_exchange_act_decison_passed
+			has_country_flag = USF_stock_exchange_act_decision_passed
 		}
 		days_remove = 300
 		complete_effect = {
@@ -913,7 +1219,208 @@ USF_deal_with_pandemic_category = {
         }
     }
 }
+USF_rnd_category = {
+	USF_rnd_industrial_bonus = {
+		cost = 80
+		days_remove = 50
+		days_re_enable = 270
+		remove_effect = {
+			random_list = {
+				33 = {
+					add_tech_bonus = {
+						category = industry
+						bonus = 0.5
+						uses = 1
+					}
+				}
+				33 = {
+					add_tech_bonus = {
+						category = electronics
+						bonus = 0.5
+						uses = 1
+					}
+				}
+				33 = {
+					add_tech_bonus = {
+						category = construction_tech
+						bonus = 0.5
+						uses = 1
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	USF_rnd_land_bonus = {
+		visible = {
+			has_completed_focus = USF_bureau_of_national_defence_research
+		}
+		cost = 80
+		days_remove = 50
+		days_re_enable = 270
+		remove_effect = {
+			random_list = {
+				33 = {
+					add_tech_bonus = {
+						category = infantry_weapons
+						bonus = 0.5
+						uses = 1
+					}
+				}
+				33 = {
+					add_tech_bonus = {
+						category = armor
+						bonus = 0.5
+						uses = 1
+					}
+				}
+				33 = {
+					add_tech_bonus = {
+						category = artillery
+						bonus = 0.5
+						uses = 1
+					}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	USF_rnd_naval_bonus = {
+		visible = {
+			has_completed_focus = USF_bureau_of_national_defence_research
+		}
+		cost = 80
+		days_remove = 50
+		days_re_enable = 270
+		remove_effect = {
+			add_tech_bonus = {
+				category = naval_equipment
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	USF_rnd_air_bonus = {
+		visible = {
+			has_completed_focus = USF_bureau_of_national_defence_research
+		}
+		cost = 80
+		days_remove = 50
+		days_re_enable = 270
+		remove_effect = {
+			add_tech_bonus = {
+				category = air_equipment
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	USF_rnd_mana_bonus = {
+		visible = {
+			has_completed_focus = USF_research_on_mana
+		}
+		cost = 80
+		days_remove = 50
+		days_re_enable = 270
+		remove_effect = {
+			add_tech_bonus = {
+				category = mana_tech
+				bonus = 0.5
+				uses = 1
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+	USF_rnd_extra_slot = {
+		cost = var:USF_extra_slot_cost?300
+		days_remove = 365
+		complete_effect = {
+			add_research_slot = 1
+			custom_effect_tooltip = USF_cost_doubles_t
+		}
+		remove_effect = {
+			add_research_slot = -1
+			multiply_variable = {USF_extra_slot_cost = 2}
+			clamp_variable = {
+				var = USF_extra_slot_cost
+				max = 2000
+			}
+		}
+		ai_will_do = {
+			factor = 1
+		}
+	}
+}
+USF_market_thawing_category = {
+	USF_market_thawing_mission = {
+		icon = mission_icon
+		on_map_mode = decision_view_only
+        is_good = no
+		days_mission_timeout = 365
+		highlight_states = {
+			highlight_states_trigger = {
+				is_owned_by = USF
+				is_core_of = USF
+				infrastructure < 5
+			}
+		}
+        available = {
+            all_core_state = {
+				infrastructure > 4
+			}
+        }
+		activation = {
+			always = no
+		}
+		cancel_trigger = {
+			always = no
+		}
+		complete_effect = {
+			add_cic = 40000
+			set_country_flag = USF_market_thawing_mission_ended
+		}
+		timeout_effect = {
+			if = {
+				limit = {
+					is_ai = yes #AI无视条件获得奖励
+				}
+				add_cic = 40000
+			}
+			set_country_flag = USF_market_thawing_mission_ended
+		}
+	}
+}
 USF_debug = {
+	USF_load_focus_debug = {
+		complete_effect = {
+			set_country_flag = USF_focus_debug
+			mark_focus_tree_layout_dirty = yes
+		}
+	}
+	USF_elsa_debug = {
+		complete_effect = {
+			create_country_leader = {
+				name = AKL_Elsa
+				picture = GFX_AKL_Elsa
+				expire = "3200.1.1"
+				ideology = sub_Social_Democracy
+				traits = {
+				}
+			}
+		}
+	}
 	USF_variable_debug = {
 		available = {
 			always = no
