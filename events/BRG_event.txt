@@ -25,6 +25,7 @@ country_event = {
 				end_civil_wars = yes
 			}
 		}
+		set_global_flag = global_macarthur_is_a_bit_busy_flag
 	}
 
 	option = {
@@ -36,6 +37,7 @@ country_event = {
 			country_event = { id = BRG.3 days = 3 }
 		}
 	}
+	# set_global_flag = global_macarthur_is_a_bit_busy_flag
 }
 
 
@@ -205,6 +207,7 @@ country_event = {
 		# 		}
 		# 	}
 		# }
+		clr_global_flag = global_macarthur_is_a_bit_busy_flag
 		country_event = { id = brgnews.1 days = 0 }
 		add_political_power = -50
 		add_war_support = 0.1
@@ -222,7 +225,7 @@ country_event = {
 			add_to_array = { IRIS_race_array = token:ethnicity_varyag }
 			#强制刷新
 			IRIS_regional_transfer_intercultural_testing = yes
-			
+
 			add_political_power = 150
 			transfer_state = 825
 			add_ideas = {
@@ -400,7 +403,19 @@ country_event = {
 				amount = 400
 				producer = USF
 			}
+			BRG = {
+				transfer_units_fraction= {
+					target = PREV
+					size = 0
+					stockpile_ratio = 0
+					army_ratio = 0
+					navy_ratio = 0.5
+					air_ratio = 0
+					keep_unit_leaders_trigger = { always = yes }
+				}
+			}
 		}
+
 		custom_effect_tooltip = tooltip_white_line
 		OCF = {
 			set_autonomy = {
@@ -441,8 +456,15 @@ country_event = {
 			base = 0
 		}
 		name = BRG.2.b
+		clr_global_flag = global_macarthur_is_a_bit_busy_flag
 		add_political_power = -30
 		add_war_support = -0.05
+		custom_effect_tooltip = tooltip_white_line
+		BRG = {
+			USF_General_Douglas_MacArthur = { set_nationality = ROOT }
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = USF_General_Douglas_MacArthur
+		}
 	}
 }
 
@@ -513,10 +535,10 @@ country_event = {
 				factor = 0
 				OR = {
 					has_war_with = OCF
-					has_opinion = {
-						target = OCF
-						value < 0
-					}
+					# has_opinion = {
+					# 	target = OCF
+					# 	value < 0
+					# }
 					is_ally_with = USF
 				}
 			}
@@ -532,6 +554,21 @@ country_event = {
 		name = BRG.4.b
 		ai_chance = {
 			base = 0
+			modifier = {
+				add = 10
+				OR = {
+					AND = {
+						original_tag = USR
+						is_faction_leader = yes
+					}
+					AND = {
+						USR = {
+							is_faction_leader = yes
+						}
+						is_ally_with = USR
+					}
+				}
+			}
 			modifier = {
 				add = 10
 				has_opinion = {
@@ -557,10 +594,10 @@ country_event = {
 				factor = 0
 				OR = {
 					has_war_with = USF
-					has_opinion = {
-						target = USF
-						value < 0
-					}
+					# has_opinion = {
+					# 	target = USF
+					# 	value < 0
+					# }
 					is_ally_with = OCF
 				}
 			}
@@ -595,9 +632,22 @@ country_event = {
 			modifier = {
 				add = 30
 				set_temp_variable = { tag_temp = OCF }
-				IRIS_attacking_side_has_advantage_3 = yes
+				NOT = { IRIS_attacking_side_has_advantage_2 = yes }
 			}
 		}
+		if = {
+			limit = {
+				set_temp_variable = { tag_temp = OCF }
+				IRIS_attacking_side_has_advantage_1 = yes
+			}
+			set_temp_variable = { temp_political_power = global.war_member_variable_@var:tag_temp }
+			add_to_temp_variable = { temp_political_power = -0.5 }
+			multiply_temp_variable = { temp_political_power = -200 }
+			set_temp_variable = { IRIS_conflict = 1 }
+			custom_effect_tooltip = IRIS_conflict_disadvantage
+			add_political_power = temp_political_power
+		}
+		add_war_support = 0.05
 		country_event = { id = brgnews.2 days = 0 }
 		set_temp_variable = { tag_temp = OCF }
 		IRIS_closing_world_conflicts = yes
@@ -630,13 +680,23 @@ country_event = {
 			modifier = {
 				add = 30
 				set_temp_variable = { tag_temp = OCF }
-				IRIS_attacking_side_has_advantage_1 = yes
+				IRIS_attacking_side_has_advantage_2 = yes
 			}
 		}
+		add_war_support = -0.15
 		set_temp_variable = { tag_temp = OCF }
 		IRIS_closing_world_conflicts = yes
 		OCF = { country_event = { id = BRG.6 } }
 		clr_global_flag = BRG_2_a_flag
+
+		effect_tooltip = {
+			custom_effect_tooltip = tooltip_white_line
+			BRG = {
+				USF_General_Douglas_MacArthur = { set_nationality = ROOT }
+				custom_effect_tooltip = available_chief_of_army
+				show_ideas_tooltip = USF_General_Douglas_MacArthur
+			}
+		}
 	}
 }
 
