@@ -33,6 +33,10 @@ focus_tree = {
                 }
                 kill_country_leader = yes
             }
+            promote_character = {
+                character = MZL_Bhagyate
+                ideology = sub_Military_Dictatorship
+            }
             custom_effect_tooltip = MZL_Mafamutes_return
             hidden_effect = {
                 IKR = {
@@ -310,6 +314,30 @@ focus_tree = {
             add_ideas = MZL_fight_for_pasha
             IKR = {
                 add_war_support = -0.20
+                end_puppet = KLC
+            }
+            if = {
+                limit = {
+                    country_exists = KLC
+                }
+                random_list = {
+                    60 = {
+                        white_peace = KLC
+                    }
+                    40 = {
+                        white_peace = KLC
+                        set_autonomy = {
+                            target = KLC
+                            autonomous_state = IKR_sultanate
+                        }
+                        KLC = {
+                            declare_war_on = {
+                                target = IKR
+                                type = annex_everything
+                            }
+                        }
+                    }
+                }
             }
             add_equipment_to_stockpile = {
                 type = convoy
@@ -334,35 +362,6 @@ focus_tree = {
                     296 = {is_owned_by = IKR}
                 }
                 296 = {
-                    transfer_state_to = MZL
-                    for_loop_effect = {
-                        start = 0
-                        end = 6
-                        create_unit = {
-                            division = "name = \"大都市军团\" division_template = \"大都市军团\" start_experience_factor = 0.3"
-                            owner = MZL
-                        }
-                    }
-                    if = {
-                        limit = {
-                            MZL = {is_ai = yes}
-                        }
-                        for_loop_effect = {
-                            start = 0
-                            end = 6
-                            create_unit = {
-                                division = "name = \"大都市军团\" division_template = \"大都市军团\" start_experience_factor = 0.3"
-                                owner = MZL
-                            }
-                        }
-                    }
-                }
-            }
-            else_if = {
-                limit = {
-                    276 = {is_owned_by = IKR}
-                }
-                276 = {
                     transfer_state_to = MZL
                     for_loop_effect = {
                         start = 0
@@ -549,10 +548,20 @@ focus_tree = {
                 limit = {
                     OR = {
                         is_core_of = KAM
+                        is_core_of = BAT
+                        is_core_of = KLC
                         is_core_of = IKR
                     }
                 }
                 add_core_of = MZL
+            }
+            if = {
+                limit = {
+                    country_exists = KLC
+                }
+                annex_country = {
+                    target = KLC
+                }
             }
             set_cosmetic_tag = KAM_Pasha_communism
 			set_capital = {state = 271}
@@ -1170,6 +1179,401 @@ focus_tree = {
                 add_stability = 0.10
                 add_political_power = 100
             }
+		}
+    }
+}
+
+focus_tree = {
+	id = MZL_bhalaban
+	country = {
+		factor = 0
+        modifier = {
+            add = 10 
+            tag = MZL
+        }
+	}
+	default = no
+
+	continuous_focus_position = {
+		x = 2000
+		y = 0
+	}
+
+    #红虎的野望
+    focus = {
+        id = MZL_the_ambition_of_red_tiger
+        icon = GFX_MZL_the_ambition_of_red_tiger
+        x = 0
+        y = 0
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        
+        completion_reward = {
+            add_political_power = 50
+            army_experience = 25
+		}
+    }
+    #控制巴尔塔
+    focus = {
+        id = MZL_control_BAT
+        icon = GFX_MZL_control_BAT
+        x = -1
+        y = 1
+        relative_position_id = MZL_the_ambition_of_red_tiger
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            country_exists = BAT
+            OR = {
+                is_in_faction_with = BAT
+                has_guaranteed = BAT
+            }
+        }
+        prerequisite = {
+            focus = MZL_the_ambition_of_red_tiger
+        }
+        completion_reward = {
+            BAT = {
+                swap_ideas = {
+                    remove_idea = BAT_rely_on_MZL
+                    add_idea = BAT_rely_on_MZL_2
+                }
+            }
+		}
+    }
+    #兄妹同心
+    focus = {
+        id = MZL_we_are_family
+        icon = GFX_MZL_we_are_family
+        x = 0
+        y = 1
+        relative_position_id = MZL_control_BAT
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        prerequisite = {
+            focus = MZL_control_BAT
+        }
+        completion_reward = {
+            add_stability = 0.1
+            add_war_support = 0.1
+            BAT = {
+                add_stability = 0.1
+                add_war_support = 0.1
+            }
+		}
+    }
+    #讨好罗西亚
+    focus = {
+        id = MZL_befriend_BLA
+        icon = GFX_MZL_befriend_BLA
+        x = 1
+        y = 1
+        relative_position_id = MZL_the_ambition_of_red_tiger
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            is_in_faction_with = BLA
+        }
+        prerequisite = {
+            focus = MZL_the_ambition_of_red_tiger
+        }
+        completion_reward = {
+            add_offsite_building = {type = arms_factory level = 1}
+		}
+    }
+    #帝国武备
+    focus = {
+        id = MZL_imperial_weapon
+        icon = GFX_MZL_imperial_weapon
+        x = 0
+        y = 1
+        relative_position_id = MZL_befriend_BLA
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            is_in_faction_with = BLA
+        }
+        prerequisite = {
+            focus = MZL_befriend_BLA
+        }
+        completion_reward = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 2000
+                producer = BLA
+            }
+		}
+    }
+    #扩编叶尼切利军团
+    focus = {
+        id = MZL_expand_janissary
+        icon = GFX_MZL_expand_janissary
+        x = 1
+        y = 1
+        relative_position_id = MZL_we_are_family
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        prerequisite = {
+            focus = MZL_we_are_family
+        }
+        prerequisite = {
+            focus = MZL_imperial_weapon
+        }
+        completion_reward = {
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"“帕尔斯苍狼”\" division_template = \"叶尼切利军团\" start_experience_factor = 0.3"
+                    owner = MZL
+                }
+            }
+            set_division_template_lock = {
+                division_template = "叶尼切利军团"
+                is_locked = no
+            }
+		}
+    }
+
+    #东方大敌
+    focus = {
+        id = MZL_enemy_from_east
+        icon = GFX_MZL_enemy_from_east
+        x = 6
+        y = 0
+        cost = 1
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            has_war_with = IKR
+        }
+        completion_reward = {
+            add_war_support = 0.05
+            add_manpower = 2500
+            custom_effect_tooltip = MZL_we_must_defend_them_tt
+		}
+    }
+    #伊斯塔布的铁壁
+    focus = {
+        id = MZL_shield_of_istabul
+        icon = GFX_MZL_shield_of_istabul
+        x = -1
+        y = 1
+        relative_position_id = MZL_enemy_from_east
+        cost = 2
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            has_war_with = IKR
+            country_exists = BAT
+            839 = {
+                OR = {
+                    is_controlled_by = MZL
+                    is_controlled_by = BAT
+                    is_controlled_by = KAM
+                }
+            }
+        }
+        bypass = {
+            839 = {
+                is_controlled_by = IKR
+            }
+        }
+        prerequisite = {
+            focus = MZL_enemy_from_east
+        }
+        completion_reward = {
+            839 = {
+                add_building_construction = {
+                    type = bunker
+                    province = 1735
+                    level = 2
+                    instant_build = yes
+                }
+            }
+            IKR = {
+                add_war_support = -0.05
+                add_days_mission_timeout = {
+                    mission = IKR_end_the_war_in_90_days
+                    days = -10
+                }
+            }
+		}
+    }
+    #希萨尔捍卫者
+    focus = {
+        id = MZL_defender_of_shisaher
+        icon = GFX_MZL_defender_of_shisaher
+        x = 1
+        y = 1
+        relative_position_id = MZL_enemy_from_east
+        cost = 2
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            has_war_with = IKR
+            country_exists = KAM
+            260 = {
+                OR = {
+                    is_controlled_by = MZL
+                    is_controlled_by = BAT
+                    is_controlled_by = KAM
+                }
+            }
+        }
+        bypass = {
+            260 = {
+                is_controlled_by = IKR
+            }
+        }
+        prerequisite = {
+            focus = MZL_enemy_from_east
+        }
+        completion_reward = {
+            260 = {
+                add_building_construction = {
+                    type = bunker
+                    province = 1023
+                    level = 2
+                    instant_build = yes
+                }
+            }
+            IKR = {
+                add_war_support = -0.05
+                add_days_mission_timeout = {
+                    mission = IKR_end_the_war_in_90_days
+                    days = -10
+                }
+            }
+		}
+    }
+    #向帝国求援
+    focus = {
+        id = MZL_ask_BLA_for_help
+        icon = GFX_MZL_ask_BLA_for_help
+        x = 0
+        y = 1
+        relative_position_id = MZL_shield_of_istabul
+        cost = 2
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        mutually_exclusive = {
+            focus = MZL_turn_to_USF
+        }
+        available = {
+            NOT = {has_war_with = BLA}
+            country_exists = BLA
+        }
+        prerequisite = {
+            focus = MZL_shield_of_istabul
+            focus = MZL_defender_of_shisaher
+        }
+        completion_reward = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 3000
+                producer = BLA
+            }
+		}
+    }
+    #转向南方
+    focus = {
+        id = MZL_turn_to_USF
+        icon = GFX_MZL_turn_to_USF
+        x = 0
+        y = 1
+        relative_position_id = MZL_defender_of_shisaher
+        cost = 2
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        mutually_exclusive = {
+            focus = MZL_ask_BLA_for_help
+        }
+        available = {
+            NOT = {has_war_with = USF}
+            country_exists = USF
+        }
+        prerequisite = {
+            focus = MZL_shield_of_istabul
+            focus = MZL_defender_of_shisaher
+        }
+        completion_reward = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 1500
+                producer = USF
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 100
+                producer = USF
+            }
+		}
+    }
+    #虎踞帕尔斯
+    focus = {
+        id = MZL_glorious_victory
+        icon = GFX_MZL_glorious_victory
+        x = 1
+        y = 1
+        relative_position_id = MZL_ask_BLA_for_help
+        cost = 4
+        available_if_capitulated = yes
+        ai_will_do = {
+            factor = 100
+		}
+        available = {
+            has_global_flag = IKR_INVASION_FAILED
+        }
+        prerequisite = {
+            focus = MZL_ask_BLA_for_help
+            focus = MZL_turn_to_USF
+        }
+        completion_reward = {
+            annex_country = {
+                target = BAT
+                transfer_troops = yes
+            }
+            annex_country = {
+                target = KAM
+                transfer_troops = yes
+            }
+            every_state = {
+                limit = {
+                    OR = {
+                        is_core_of = BAT
+                        is_core_of = KAM
+                    }
+                }
+                add_core_of = MZL
+            }
+            set_cosmetic_tag = MZL_empire
 		}
     }
 }

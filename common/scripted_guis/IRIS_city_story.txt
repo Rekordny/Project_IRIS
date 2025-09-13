@@ -1,26 +1,47 @@
 scripted_gui = {
     IRIS_city_story_button_container = {
-        context_type = selected_state_context
+        context_type = player_context
         parent_window_token = selected_state_view
         window_name = "IRIS_city_story_button_container"
         visible = {
-            THIS = { has_state_flag = has_city_story }
-        }
-        properties = {
+            # THIS = { has_state_flag = has_city_story }
         }
         triggers = {
+
+        }
+        properties = {
+            IRIS_city_story_button = {
+                x = IRIS_city_story_button_x
+                frame = IRIS_city_story_button_frame
+            }
+            IRIS_city_story_button_latent = {
+                x = IRIS_city_story_button_x
+            }
+        }
+        triggers = {
+            IRIS_city_story_button_click_enabled  = {
+                check_variable = { IRIS_city_story_button_animation = 1 }
+            }
         }
         effects = {
-			IRIS_city_story_button_click = {
+            IRIS_city_story_button_latent_click = {
                 if = {
                     limit = {
                         check_variable = { ROOT.IRIS_city_story_var = 1 }
                     }
                     set_variable = { ROOT.IRIS_city_story_var = 0 }
+
+                    set_variable = { IRIS_city_story_button_x = -120 }
+                    set_variable = { IRIS_city_story_button_frame = 192135 }
                 }
                 else = {
                     set_variable = { ROOT.IRIS_city_story_var = 1 }
+
+                    set_variable = { IRIS_city_story_button_x = -9 }
+                    set_variable = { IRIS_city_story_button_frame = 135192 }
                 }
+                add_to_variable = { IRIS_city_story_button_animation = 1 }
+                modulo_variable = { IRIS_city_story_button_animation = 2 }
             }
         }
     }
@@ -29,20 +50,151 @@ scripted_gui = {
         context_type = selected_state_context
         parent_window_token = selected_state_view
         visible = {
-            THIS = { has_state_flag = has_city_story }
+            # THIS = { has_state_flag = has_city_story }
             check_variable = { ROOT.IRIS_city_story_var = 1 }
         }
         properties = {
-			IRIS_city_pic = {
-				image = "[IRIS_city_pic]"
-			}
+            IRIS_city_pic = { image = "[IRIS_city_pic]" }
+            IRIS_ethnic_images = { image = "[IRIS_ethnic_images]" }
+            IRIS_sub_ethnic_group_iconType = { image = "[IRIS_sub_ethnic_group_iconType_small]" }
+            IRIS_national_character_1 = { image = "[IRIS_national_character_1_images]" }
+            IRIS_national_character_2 = { image = "[IRIS_national_character_2_images]" }
         }
         triggers = {
+            # IRIS_national_character_1_visible = { has_variable = national_character_1 }
+            # IRIS_national_character_2_visible = { has_variable = national_character_2 }
         }
         effects = {
-			close_button_click = {
+            close_button_click = {
                 set_variable = { ROOT.IRIS_city_story_var = 0 }
+
+                set_variable = { ROOT.IRIS_city_story_button_x = -120 }
+                set_variable = { ROOT.IRIS_city_story_button_frame = 192135 }
+                add_to_variable = { ROOT.IRIS_city_story_button_animation = 1 }
+                modulo_variable = { ROOT.IRIS_city_story_button_animation = 2 }
             }
+        }
+        dynamic_lists = {
+            IRIS_sub_ethnic_group_gridboxtype = {
+                array = this.sub_ethnic_group_array
+                entry_container = IRIS_sub_ethnic_group
+                value = v
+                # change_scope = yes
+            }
+        }
+    }
+
+    IRIS_national_ethnic_interface_window = {
+        context_type = player_context
+        parent_window_token = politics_tab
+        window_name = "IRIS_national_ethnic_interface_window"
+        ai_enabled = {
+            #always = no
+        }
+        visible = {
+            check_variable = { IRIS_national_ethnic_interface_window_v = 1 }
+        }
+        properties = {
+            ethnic_images = { image = "[IRIS_ethnic_images]" }
+            ethnic_images_list = { image = "[IRIS_sub_ethnic_group_iconType]" }
+            national_character_1 = { image = "[IRIS_national_character_1_loc]" }
+            national_character_2 = { image = "[IRIS_national_character_2_loc]" }
+            national_character_1_list = { image = "[IRIS_national_character_1_list_images]"}
+            national_character_2_list = { image = "[IRIS_national_character_2_list_images]"}
+            tab_identify_with_race = { frame = tab_identify_with_race_click_frame }
+            tab_all_races = { frame = tab_all_races_click_frame }
+        }
+        effects = {
+            close_button_click = {
+                set_variable = { IRIS_national_ethnic_interface_window_v = 0 }
+            }
+            tab_identify_with_race_click = {
+                clear_array = IRIS_race_array_display
+                for_each_loop = {
+                    array = IRIS_race_array
+                    value = v
+                    add_to_array = { IRIS_race_array_display = v }
+                }
+                IRIS_country_list_testing_region = yes
+                set_variable = { tab_identify_with_race_click_frame = 1 }
+                set_variable = { tab_all_races_click_frame = 2 }
+            }
+            tab_all_races_click = {
+                set_variable = { tab_identify_with_race_click_frame = 2 }
+                set_variable = { tab_all_races_click_frame = 1 }
+                clear_array = IRIS_race_array_display
+                every_state = {
+                    limit = { is_controlled_by = ROOT }
+
+                    #检测是否已载入 主要民族
+                    if = {
+                        limit = {
+                            NOT = { check_variable = { root.ethnicity = this.ethnicity } }
+                            NOT = { is_in_array = { root.IRIS_race_array_display = this.ethnicity } }
+                            has_variable = this.ethnicity
+                        }
+                        # log = "state民族检测：[this.GetName]"
+                        add_to_array = { root.IRIS_race_array_display = this.ethnicity }
+                    }
+                    #检测是否已载入 次要民族
+                    for_each_loop = {
+                        array = sub_ethnic_group_array
+                        value = v
+                        if = {
+                            limit = {
+                                NOT = { check_variable = { root.ethnicity = v } }
+                                NOT = { is_in_array = { root.IRIS_race_array_display = v } }
+                            }
+                            # log = "state民族检测：[this.GetName]"
+                            add_to_array = { root.IRIS_race_array_display = v }
+                        }
+                    }
+                    # log = "state民族检测：[this.GetName]-[root.GetName]"
+                    # log="------------[?IRIS_race_array_display^num]-------------"
+                }
+                #主要民族
+                clear_array = IRIS_race_array_nc_main
+                meta_effect = {
+                    text = {
+                        add_to_array = { IRIS_race_array_nc_main = global.[E]_nc^0 }
+                        add_to_array = { IRIS_race_array_nc_main = global.[E]_nc^1 }
+                    }
+                    E = "[?ethnicity.GetTokenKey]"
+                }
+                # log="------------[?IRIS_race_array_nc_main^num]-------------"
+                # log="------------检查数组的每个民族-------------"
+                #检查数组的每个民族
+                clear_array = IRIS_race_array_nc_1
+                clear_array = IRIS_race_array_nc_2
+                for_loop_effect = {
+                    start = 0
+                    end = IRIS_race_array_display^num
+                    value = i
+                    # log="------------[?global.ethnicity_wallachia_transylvania_nc^num]-------------"
+                    meta_effect = {
+                        text = {
+                            add_to_array = { IRIS_race_array_nc_1 = global.[NC]_nc^0 }
+                            add_to_array = { IRIS_race_array_nc_2 = global.[NC]_nc^1 }
+                        }
+                        NC = "[?IRIS_race_array_display^i.GetTokenKey]"
+                    }
+                }
+                add_to_array = { IRIS_race_array_display = 0 }
+            }
+        }
+        dynamic_lists = {
+            IRIS_race_grid = {
+                array = IRIS_race_array_display
+                index = i
+                value = v
+                # entry_container = IRIS_nationality_list
+                entry_container = [IRIS_race_grid_loc]
+            }
+        }
+        triggers = {
+            # introduce_visible = {
+            # 	historical_leaders_triggers = yes
+            # }
         }
     }
 }

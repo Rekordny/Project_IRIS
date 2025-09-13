@@ -1,0 +1,126 @@
+USF_test_line = {
+    clear_array = USF_economic_discount_numbers_actual
+    add_to_array = { USF_economic_discount_numbers_actual = 62.7 }
+    add_to_array = { USF_economic_discount_numbers_actual = 60.9 }
+    add_to_array = { USF_economic_discount_numbers_actual = 57.62 }
+    add_to_array = { USF_economic_discount_numbers_actual = 55.7 }
+    add_to_array = { USF_economic_discount_numbers_actual = 52.1 }
+    add_to_array = { USF_economic_discount_numbers_actual = 51.3 }
+    USF_calculate_economic_line_chart = yes
+}
+
+USF_calculate_economic_line_chart_weekly = {
+    set_temp_variable = { temp_stability = usf.stability } #stability 0~1
+    multiply_temp_variable = { temp_stability = 100 }
+    add_to_array = { USF_economic_discount_numbers_actual = temp_stability }
+    remove_from_array = {
+        array = USF_economic_discount_numbers_actual
+        index = 0
+    }
+    USF_calculate_economic_line_chart = yes
+}
+
+#计算黒沫夜折线图
+USF_calculate_economic_line_chart = {
+    #查找图表的最大和最小值
+    #USF_economic_discount_y_label为y坐标，USF_economic_discount_frame_label是角度
+    #USF_economic_discount_numbers存储真数值
+
+    clear_array = USF_economic_discount_numbers
+    clear_array = USF_economic_discount_y_label
+    clear_array = USF_economic_discount_frame_label
+    for_loop_effect = {
+        start = 0
+        end = USF_economic_discount_numbers_actual^num
+        value = i
+        set_temp_variable = { v = USF_economic_discount_numbers_actual^i }
+        multiply_temp_variable = { v = 0.72 }
+        add_to_array = { USF_economic_discount_numbers = v }
+    }
+    set_temp_variable = { min = USF_economic_discount_numbers^0 }
+    set_temp_variable = { max = USF_economic_discount_numbers^0 }
+    for_loop_effect = {
+        start = 0
+        end = USF_economic_discount_numbers^num
+        value = i
+        if = {
+            limit = { check_variable = { USF_economic_discount_numbers^i > max } }
+            log = "找到了更大的：原：[?max] 现：[?USF_economic_discount_numbers^i]"
+            set_temp_variable = { max = USF_economic_discount_numbers^i }
+        }
+        if = {
+            limit = { check_variable = { USF_economic_discount_numbers^i < min } }
+            set_temp_variable = { min = USF_economic_discount_numbers^i }
+        }
+    }
+
+    #随意移动或修改
+    #我们的范围是（最小值/1.1）-（最大值*1.1）
+    set_temp_variable = { max2 = max }
+    multiply_temp_variable = { max = 1.3 }
+    set_temp_variable = { min2 = min }
+    divide_temp_variable = { min = 1.3 }
+
+    set_temp_variable = { range = max } #范围
+    subtract_from_temp_variable = { range = min }
+    divide_temp_variable = { range = 50 }
+
+    set_temp_variable = { range2 = max2 } #范围
+    subtract_from_temp_variable = { range2 = min2 }
+    divide_temp_variable = { range2 = 50 }
+
+    log = "最大值：[?max]"
+    log = "最小值：[?min]"
+    log = "范围：[?range]"
+
+    #计算新坐标
+    clear_array = USF_economic_discount_numbers
+    for_loop_effect = {
+        start = 0
+        end = USF_economic_discount_numbers_actual^num
+        value = i
+        set_temp_variable = { v = USF_economic_discount_numbers_actual^i }
+        subtract_from_temp_variable = { v = min }
+        divide_temp_variable = { v = range }
+        add_to_array = { USF_economic_discount_numbers = v }
+    }
+
+    for_loop_effect = {
+        start = 0
+        end = USF_economic_discount_numbers^num
+        value = i
+        log = "----------第[?i]次计算----------"
+        set_temp_variable = { last = i }
+        subtract_from_temp_variable = { last = 1 }
+
+        #计算y坐标 要负数
+        set_temp_variable = { last_variable = USF_economic_discount_numbers^last }
+        log = "上一个数大小为(坐标)：[?last_variable]"
+        multiply_temp_variable = { last_variable = -1 }
+        # add_to_temp_variable = { last_variable = 90 }
+        log = "存入(坐标)：[?last_variable]"
+        add_to_array = { USF_economic_discount_y_label = last_variable }
+
+        #计算角度 必须等于（y2-y1）/2+50
+        log = "当前角度为：[?USF_economic_discount_numbers^i]"
+        set_temp_variable = { current = USF_economic_discount_numbers^i }
+        subtract_from_temp_variable = { current = USF_economic_discount_numbers^last }
+        log = "减去上一个后角度为：[?current]"
+        divide_temp_variable = { current = 2 }
+        add_to_temp_variable = { current = 50 }
+        log = "最终存入角度为：[?current]"
+        add_to_array = { USF_economic_discount_frame_label = current }
+    }
+
+    #计算目标线位置 有个偏移y=3
+    #y最大是75最小是5 （加上偏移量）
+
+    set_temp_variable = { USF_stable_line_chart_expectation_y_temp = 70 } #目标值
+    # multiply_temp_variable = { USF_stable_line_chart_expectation_y_temp = 0.72 } #与上方同等缩小
+    subtract_from_temp_variable = { USF_stable_line_chart_expectation_y_temp = min }
+    log = "传入目标线y坐标：[?USF_stable_line_chart_expectation_y_temp]"
+    divide_temp_variable = { USF_stable_line_chart_expectation_y_temp = range }
+    multiply_temp_variable = { USF_stable_line_chart_expectation_y_temp = -1 }
+    add_to_temp_variable = { USF_stable_line_chart_expectation_y_temp = 75 }
+    set_variable = { USF_stable_line_chart_expectation_y = USF_stable_line_chart_expectation_y_temp }
+}

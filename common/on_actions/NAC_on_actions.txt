@@ -16,21 +16,21 @@ on_actions = {
                 set_variable = {NAC_katyusha_power = 30}
                 #基础数值
                 set_variable = { NAC_army_attack_factor = 0.002}
-				set_variable = { NAC_army_defence_factor = 0.002}
+                set_variable = { NAC_army_defence_factor = 0.002}
                 set_variable = { NAC_equipment_capture_factor_bonus = 0.001}
-                set_variable = { NAC_army_morale_factor_bonus = 0.002 } 
-                set_variable = { NAC_army_org_factor_bonus = 0.002 } 
-                set_variable = { NAC_land_reinforce_rate_bonus = 0.002 } 
+                set_variable = { NAC_army_morale_factor_bonus = 0.002 }
+                set_variable = { NAC_army_org_factor_bonus = 0.002 }
+                set_variable = { NAC_land_reinforce_rate_bonus = 0.002 }
 
                 #计算
                 set_variable = {NAC_revolution_dynamic_army_attack_factor = NAC_army_attack_factor}
-				set_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_army_defence_factor}
+                set_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_army_defence_factor}
                 set_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_equipment_capture_factor_bonus}
                 set_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_army_morale_factor_bonus}
                 set_variable = {NAC_revolution_dynamic_army_org_factor = NAC_army_org_factor_bonus}
                 set_variable = {NAC_revolution_dynamic_land_reinforce_rate = NAC_land_reinforce_rate_bonus}
                 multiply_variable = {NAC_revolution_dynamic_army_attack_factor = NAC_morale}
-				multiply_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_morale}
+                multiply_variable = {NAC_revolution_dynamic_army_defence_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_equipment_capture_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_army_morale_factor = NAC_morale}
                 multiply_variable = {NAC_revolution_dynamic_army_org_factor = NAC_morale}
@@ -56,24 +56,24 @@ on_actions = {
         }
     }
     on_weekly_NAC = {
-		effect = {
-			NAC = {
-				if = {
-					limit = {
+        effect = {
+            NAC = {
+                if = {
+                    limit = {
                         has_completed_focus = NAC_prewar_12
-						NOT = {has_global_flag = End_Big_Game_flag}
-						NOT = {has_country_flag = NAC_propaganda_in_progress}
-					}
-					set_temp_variable = { alert_id = token:alert_Rossiya_avaiable_propaganda }
-					add_IRIS_alert_unless_exists = yes
-				}
-				else = {
-					set_temp_variable = { alert_id = token:alert_Rossiya_avaiable_propaganda }
-					del_IRIS_alert = yes
-				}
-			}
-		}
-	}
+                        NOT = {has_global_flag = End_Big_Game_flag}
+                        NOT = {has_country_flag = NAC_propaganda_in_progress}
+                    }
+                    set_temp_variable = { alert_id = token:alert_Rossiya_avaiable_propaganda }
+                    add_IRIS_alert_unless_exists = yes
+                }
+                else = {
+                    set_temp_variable = { alert_id = token:alert_Rossiya_avaiable_propaganda }
+                    del_IRIS_alert = yes
+                }
+            }
+        }
+    }
     on_weekly_NAC = {
         effect = {
             if = {
@@ -91,7 +91,6 @@ on_actions = {
                     NAC = {
                         NOT = {has_completed_focus = NAC_dip_3}
                     }
-            
                 }
                 every_country = {
                     limit = {
@@ -112,6 +111,16 @@ on_actions = {
                         }
                     }
                     send_embargo = NAC
+                }
+                every_country = {
+                    limit = {
+                        is_embargoing = NAC
+                        OR = {
+                            has_government = NAC
+                            has_country_flag = recoginized_NAC
+                        }
+                    }
+                    break_embargo = NAC
                 }
             }
             NAC = {
@@ -340,6 +349,28 @@ on_actions = {
                         }
                     }
                 }
+                
+                if = {
+                    limit = { OCF = { has_war_with = USF } }
+                    if = {
+                        limit = { BRG = { is_puppet_of = USF } }
+                        remove_ideas = BRG_pain_separation
+                        USF = { end_puppet = BRG }
+                        OCF = {
+                            set_autonomy = {
+                                target = BRG
+                                autonomous_state = autonomy_integrated_puppet
+                                end_wars = yes
+                                end_civil_wars = yes
+                            }
+                        }
+                    }
+                    OCF = {
+                        if = { limit = { USF = { owns_state = 303 } } transfer_state = 303 }
+                        if = { limit = { USF = { owns_state = 266 } } transfer_state = 266 }
+                    }
+                }
+
                 set_global_flag = show_peace_popup_alert
                 set_global_flag = war_won
                 FROM = {

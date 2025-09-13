@@ -3,7 +3,7 @@ ANZ_let_be_final_civil_war = {
 	news_event = { id = anz_news.1 }
 	country_lock_all_division_template = no
 	#处理什么国策都没点的懒狗
-	if = { 
+	if = {
 		limit = { NOT = { has_country_flag = ANZ_ANZIO } NOT = { has_country_flag = ANZ_LOTHIAN } }
 		set_country_flag = ANZ_ANZIO
 		#加点料
@@ -11,7 +11,7 @@ ANZ_let_be_final_civil_war = {
 			anz_civil_enemy_power = 7
 		}
 	}
-	
+
 	#安齐奥
 	if = {
 		limit = { has_country_flag = ANZ_ANZIO }
@@ -32,7 +32,7 @@ ANZ_let_be_final_civil_war = {
 		set_variable = {
 			anz_civil_ratio = 0.45
 		}
-		if = {  
+		if = {
 			limit = { ANZ = { is_ai = no } }
 			add_to_variable = {
 				anz_civil_ratio = 0.25
@@ -48,33 +48,57 @@ ANZ_let_be_final_civil_war = {
 		#内战具体设置
 		start_civil_war = {
 			set_cosmetic_tag = ANZ_LOTHIAN
+			### 2025.07.24调整：添加LTA TAG标签
+			save_global_event_target_as = LTA_unifier
+
+			### 2025.08.20调整：添加民族
+			set_variable = { ethnicity = token:ethnicity_north_anzio }
+			add_to_array = { IRIS_race_array = token:ethnicity_south_anzio }
+			#强制刷新
+			IRIS_regional_transfer_intercultural_testing = yes
+			IRIS_country_list_testing_region = yes
+
 			ideology = democratic
 			size = 0.5
 			#ai玩家区分修改
 			army_ratio = anz_civil_ratio
-    		navy_ratio = 0
+			navy_ratio = 0
+
+			### 2025.07.24调整：修复将军转移问题
+			##################################################
 			keep_unit_leaders_trigger = {
-				has_trait = ANZ_scuola_industriale
+				always = yes
 			}
 			#keep_all_characters = no
 			#有bug！还是会出现对方将领在我们这边，直接丢掉
-			PREV = { 
+			ROOT = {
 				every_unit_leader = {
 					limit = { has_trait = ANZ_fazione_di_mana }
-					retire = yes
+					# retire = yes
+					set_nationality = LTA
 				}
 			}
+			#有bug！领导人为将军时将会出错
+			LTA = {
+				promote_character = {
+					character = ANZ_Martina
+					ideology = sub_Academia
+				}
+			}
+
+			##################################################
+
 			states = { 251 239 227 237 220 223 }
 			#为ai调整难度
 			#if = {
 			#	limit = { PREV = { is_ai = yes } }
 			#	add_ideas = ANZ_hidden_weaken_civil
 			#}
-			
+
 			#保存动态国家TAG
 			set_variable = { PREV.anz_civil_revolter_tag = THIS }
 			#处理敌人难度增加师
-			if = { 
+			if = {
 				limit = { PREV = { is_ai = no } }
 				division_template = {
 					name = "Lottian Congregation"
@@ -114,7 +138,7 @@ ANZ_let_be_final_civil_war = {
 			#副领导人切换
 			if = {
 				limit = { ANZ = { has_idea = ANZ_another_leader_Giovanna } }
-				ANZ = { 
+				ANZ = {
 					ANZ_retire_vice_country_leader = yes
 					add_ideas = ANZ_another_leader_Adriana
 				}
@@ -136,11 +160,11 @@ ANZ_let_be_final_civil_war = {
 		}
 		#乌斯拉尔援助
 		if = {
-			limit = { 
+			limit = {
 				NOT = { has_idea = ANZ_USR_support }
 				check_variable = {
 					ANZ.anz_fascism_tension > 4
-				} 
+				}
 			}
 			add_timed_idea = {
 				idea = ANZ_USR_support
@@ -170,59 +194,59 @@ ANZ_let_be_final_civil_war = {
 		#	}
 		#}
 		#else = {
-			#为玩家增加常规内战难度
-			set_temp_variable = {
-				anz_civil_enemy_power_tmp = ANZ.anz_civil_enemy_power
-			}
-			divide_temp_variable = {
-				anz_civil_enemy_power_tmp = 2
-			}
-			set_temp_variable = {
-				anz_civil_enemy_power_tmp_2 = anz_civil_enemy_power_tmp
-			}
-			set_temp_variable = {
-				anz_fascism_tmp = ANZ.party_popularity@fascism
-			}
-			set_temp_variable = {
-				anz_democratic_tmp = ANZ.party_popularity@democratic
-			}
-			divide_temp_variable = {
-				anz_democratic_tmp = anz_fascism_tmp
-			}
-			multiply_temp_variable = {
-				anz_civil_enemy_power_tmp_2 = anz_democratic_tmp
-			}
-			add_to_temp_variable = {
-				anz_civil_enemy_power_tmp = anz_civil_enemy_power_tmp_2
-			}
-			set_variable = { #only for check
-				ANZ.anz_civil_enemy_power_fi = anz_civil_enemy_power_tmp
-			}
+		#为玩家增加常规内战难度
+		set_temp_variable = {
+			anz_civil_enemy_power_tmp = ANZ.anz_civil_enemy_power
+		}
+		divide_temp_variable = {
+			anz_civil_enemy_power_tmp = 2
+		}
+		set_temp_variable = {
+			anz_civil_enemy_power_tmp_2 = anz_civil_enemy_power_tmp
+		}
+		set_temp_variable = {
+			anz_fascism_tmp = ANZ.party_popularity@fascism
+		}
+		set_temp_variable = {
+			anz_democratic_tmp = ANZ.party_popularity@democratic
+		}
+		divide_temp_variable = {
+			anz_democratic_tmp = anz_fascism_tmp
+		}
+		multiply_temp_variable = {
+			anz_civil_enemy_power_tmp_2 = anz_democratic_tmp
+		}
+		add_to_temp_variable = {
+			anz_civil_enemy_power_tmp = anz_civil_enemy_power_tmp_2
+		}
+		set_variable = { #only for check
+			ANZ.anz_civil_enemy_power_fi = anz_civil_enemy_power_tmp
+		}
 
-			while_loop_effect = {
-				limit = { check_variable = {
-					anz_civil_enemy_power_tmp > 0
-				} }
-				add_to_variable = {
-					anz_civil_enemy_power_tmp = -1
-				}
-				var:anz_civil_revolter_tag = {
-					205 = {
-						create_unit = {
-							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
-							owner = THIS.owner
-						}
+		while_loop_effect = {
+			limit = { check_variable = {
+				anz_civil_enemy_power_tmp > 0
+			} }
+			add_to_variable = {
+				anz_civil_enemy_power_tmp = -1
+			}
+			var:anz_civil_revolter_tag = {
+				205 = {
+					create_unit = {
+						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+						owner = THIS.owner
 					}
 				}
 			}
+		}
 		#}
-		
+
 		#洛蒂安需要删除所有装甲部队模板
 		var:anz_civil_revolter_tag = {
 			delete_unit_template_and_units = {
 				division_template = "Anzio Panzer Division"
 			}
-		#救救玩家吧.jpg 移除山地师部队模板
+			#救救玩家吧.jpg 移除山地师部队模板
 			delete_unit_template_and_units = {
 				division_template = "Lottian Mountaineer Division"
 			}
@@ -252,7 +276,7 @@ ANZ_let_be_final_civil_war = {
 		#			ANZ.anz_civil_our_power = -1
 		#		}
 		#	}
-		#	
+		#
 		#	223 = {
 		#		#如果是笨比ai的话给个炮
 		#		if = {
@@ -276,10 +300,10 @@ ANZ_let_be_final_civil_war = {
 			anz_militia_power_count = anz_militia_power
 		}
 		if = {
-			limit = { 
+			limit = {
 				check_variable = {
 					ANZ.anz_militia_power > 0
-				} 
+				}
 			}
 			division_template = {
 				name = "Anzio Militia"
@@ -289,7 +313,7 @@ ANZ_let_be_final_civil_war = {
 					militia = { x = 0 y = 0 }
 					militia = { x = 0 y = 1 }
 					militia = { x = 0 y = 2 }
-					
+
 					militia = { x = 1 y = 0 }
 					militia = { x = 1 y = 1 }
 					militia = { x = 1 y = 2 }
@@ -331,7 +355,7 @@ ANZ_let_be_final_civil_war = {
 	}
 	#洛蒂安
 	else_if = {
-		limit = { has_country_flag = ANZ_LOTHIAN }	
+		limit = { has_country_flag = ANZ_LOTHIAN }
 		set_cosmetic_tag = ANZ_LOTHIAN
 		#转换中立将
 		every_unit_leader = {
@@ -358,13 +382,13 @@ ANZ_let_be_final_civil_war = {
 			ideology = ROOT
 			size = 0.5
 			army_ratio = anz_civil_ratio
-    		navy_ratio = 1
+			navy_ratio = 1
 			keep_unit_leaders_trigger = {
 				has_trait = ANZ_fazione_di_mana
 			}
 			#keep_all_characters = no
 			#有bug！还是会出现对方将领在我们这边，直接丢掉
-			PREV = { 
+			PREV = {
 				every_unit_leader = {
 					limit = { has_trait = ANZ_scuola_industriale }
 					retire = yes
@@ -376,7 +400,7 @@ ANZ_let_be_final_civil_war = {
 
 			set_country_flag = ANZ_ANZIO
 			#副领导人切换
-			if = { 
+			if = {
 				limit = { ANZ = { has_idea = ANZ_another_leader_Adriana } }
 				ANZ = {
 					ANZ_retire_vice_country_leader = yes
@@ -412,64 +436,64 @@ ANZ_let_be_final_civil_war = {
 		#	}
 		#}
 		#else = {
-			#为玩家增加常规内战难度
-			set_temp_variable = {
-				anz_civil_enemy_power_tmp = ANZ.anz_civil_enemy_power
-			}
-			divide_temp_variable = {
-				anz_civil_enemy_power_tmp = 2
-			}
-			set_temp_variable = {
-				anz_civil_enemy_power_tmp_2 = anz_civil_enemy_power_tmp
-			}
-			set_temp_variable = {
-				anz_fascism_tmp = ANZ.party_popularity@fascism
-			}
-			set_temp_variable = {
-				anz_democratic_tmp = ANZ.party_popularity@democratic
-			}
-			divide_temp_variable = {
-				anz_fascism_tmp = anz_democratic_tmp
-			}
-			multiply_temp_variable = {
-				anz_civil_enemy_power_tmp_2 = anz_fascism_tmp
-			}
-			add_to_temp_variable = {
-				anz_civil_enemy_power_tmp = anz_civil_enemy_power_tmp_2
-			}
-			set_variable = { #only for check
-				ANZ.anz_civil_enemy_power_fi = anz_civil_enemy_power_tmp
-			}
+		#为玩家增加常规内战难度
+		set_temp_variable = {
+			anz_civil_enemy_power_tmp = ANZ.anz_civil_enemy_power
+		}
+		divide_temp_variable = {
+			anz_civil_enemy_power_tmp = 2
+		}
+		set_temp_variable = {
+			anz_civil_enemy_power_tmp_2 = anz_civil_enemy_power_tmp
+		}
+		set_temp_variable = {
+			anz_fascism_tmp = ANZ.party_popularity@fascism
+		}
+		set_temp_variable = {
+			anz_democratic_tmp = ANZ.party_popularity@democratic
+		}
+		divide_temp_variable = {
+			anz_fascism_tmp = anz_democratic_tmp
+		}
+		multiply_temp_variable = {
+			anz_civil_enemy_power_tmp_2 = anz_fascism_tmp
+		}
+		add_to_temp_variable = {
+			anz_civil_enemy_power_tmp = anz_civil_enemy_power_tmp_2
+		}
+		set_variable = { #only for check
+			ANZ.anz_civil_enemy_power_fi = anz_civil_enemy_power_tmp
+		}
 
-			while_loop_effect = {
-				limit = { check_variable = {
-					anz_civil_enemy_power_tmp > 0
-				} }
-				add_to_variable = {
-					anz_civil_enemy_power_tmp = -1
-				}
-				var:anz_civil_revolter_tag = {
-					205 = {
-						create_unit = {
-							division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
-							owner = THIS.owner
-						}
+		while_loop_effect = {
+			limit = { check_variable = {
+				anz_civil_enemy_power_tmp > 0
+			} }
+			add_to_variable = {
+				anz_civil_enemy_power_tmp = -1
+			}
+			var:anz_civil_revolter_tag = {
+				205 = {
+					create_unit = {
+						division = "name = \"Lottian Infantry Division\" division_template = \"Lottian Infantry Division\" start_experience_factor = 0.15"
+						owner = THIS.owner
 					}
 				}
 			}
+		}
 		#}
-		
+
 		#安齐奥需要删除所有魔法部队模板
 		var:anz_civil_revolter_tag = {
 			delete_unit_template_and_units = {
 				division_template = "Lottian Arcane Platton"
 			}
-		#救救玩家吧.jpg 移除山地师部队模板
+			#救救玩家吧.jpg 移除山地师部队模板
 			delete_unit_template_and_units = {
 				division_template = "Lottian Mountaineer Division"
 			}
 		}
-		
+
 		#洛蒂安需要删除所有装甲部队模板
 		delete_unit_template_and_units = {
 			division_template = "Anzio Panzer Division"
@@ -495,7 +519,7 @@ ANZ_let_be_final_civil_war = {
 		#			ANZ.anz_civil_our_power = -1
 		#		}
 		#	}
-		#	
+		#
 		#	220 = {
 		#		#如果是笨比ai的话给个炮
 		#		if = {
@@ -519,10 +543,10 @@ ANZ_let_be_final_civil_war = {
 			load_oob = "ANZ_crusader"
 		}
 		while_loop_effect = {
-			limit = { 
+			limit = {
 				check_variable = {
 					ANZ.anz_num_recruit_devout_individuals > 0
-				} 
+				}
 			}
 			add_to_variable = {
 				ANZ.anz_num_recruit_devout_individuals = -1
@@ -530,10 +554,10 @@ ANZ_let_be_final_civil_war = {
 			add_manpower = 10000
 		}
 		while_loop_effect = {
-			limit = { 
+			limit = {
 				check_variable = {
 					ANZ.anz_num_pact_with_mana_secular_state > 0
-				} 
+				}
 			}
 			add_to_variable = {
 				ANZ.anz_num_pact_with_mana_secular_state = -1
@@ -645,7 +669,7 @@ ANZ_retire_vice_country_leader = {
 #GLOBAL克莱门地区仲裁
 ANZ_clement_treaty_trial = {
 	news_event = usr_news.2
-	159 = { 
+	159 = {
 		transfer_state_to = ANZ
 		add_compliance = 70
 		set_demilitarized_zone = no
