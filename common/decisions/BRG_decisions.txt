@@ -89,6 +89,116 @@ BRG_foreign_policy = {
 
 #博林克尼亚岛屿冲突
 BRG_conflict_crisis = {
+    #外交调解中
+    BRG_in_diplomatic_mediation = {
+        icon = GFX_decision_SWI_no_elected_president
+        fire_only_once = no
+        days_re_enable = 0
+        activation = {
+            always = no
+        }
+        visible = {
+
+        }
+        available = {
+            NOT = {
+                has_country_flag = BRG_conflict_crisis_flag
+                has_global_flag = BRG_2_a_flag
+            }
+        }
+        is_good = yes
+        days_mission_timeout = 21
+        timeout_effect = {
+            effect_tooltip = {
+                set_temp_variable = { temp = 1 }
+                BRG_modify_situation_battle = yes
+            }
+            hidden_effect = {
+                activate_mission = BRG_conflict_ongoing
+                if = {
+                    limit = { tag = BRG }
+                    set_temp_variable = { temp = 1 }
+                    BRG_modify_situation_battle = yes
+                }
+            }
+        }
+    }
+
+    #边境冲突进行中
+    BRG_border_conflict_ongoing = {
+        icon = GFX_decision_border_war
+        fire_only_once = no
+        days_re_enable = 0
+        activation = {
+            always = no
+        }
+        visible = {
+
+        }
+        available = {
+            NOT = {
+                has_country_flag = BRG_conflict_crisis_flag
+                has_global_flag = BRG_2_a_flag
+            }
+        }
+        is_good = no
+        days_mission_timeout = 7
+        timeout_effect = {
+            effect_tooltip = {
+                set_temp_variable = { temp = 1 }
+                BRG_modify_situation_battle = yes
+            }
+            hidden_effect = {
+                activate_mission = BRG_conflict_ongoing
+                if = {
+                    limit = { tag = BRG }
+                    set_temp_variable = { temp = 1 }
+                    BRG_modify_situation_battle = yes
+                }
+            }
+        }
+    }
+
+    #冲突持续进行中
+    BRG_conflict_ongoing = {
+        icon = GFX_decision_border_war
+        fire_only_once = no
+        days_re_enable = 0
+        activation = {
+            always = no
+        }
+        visible = {
+
+        }
+        available = {
+            OR = {
+                set_temp_variable = { temp = 10 }
+                BRG_war_situation_trigger = yes
+                NOT = {
+                    has_country_flag = BRG_conflict_crisis_flag
+                    has_global_flag = BRG_2_a_flag
+                }
+            }
+        }
+        is_good = no
+        days_mission_timeout = 30
+        timeout_effect = {
+            effect_tooltip = {
+                set_temp_variable = { temp = 1 }
+                BRG_modify_situation_battle = yes
+            }
+            hidden_effect = {
+                activate_mission = BRG_conflict_ongoing
+                if = {
+                    limit = { tag = BRG }
+                    set_temp_variable = { temp = 1 }
+                    BRG_modify_situation_battle = yes
+                }
+            }
+            hidden_effect = { activate_mission = BRG_conflict_ongoing }
+        }
+    }
+
     #大洋
 
     #前线准备
@@ -105,20 +215,25 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            original_tag = OCF
         }
         available = {
 
         }
         complete_effect = {
-
+            BRG = {
+                add_timed_idea = { idea = BRG_frontline_preparation days = 180 }
+            }
         }
         days_remove = 180
-        targeted_modifier = {
-            tag = BRG
-            army_core_defence_factor = 0.2
-            planning_speed = 0.25
-            max_planning = 0.1
-        }
+        # targeted_modifier = {
+        #     tag = BRG
+        #     army_core_defence_factor = 0.2
+        #     planning_speed = 0.25
+        #     max_planning = 0.1
+        # }
     }
 
     #申请停战
@@ -135,12 +250,18 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            original_tag = OCF
         }
         available = {
-
+            custom_trigger_tooltip = {
+                tooltip = OCF_USF_apply_for_ceasefire_TT
+                check_variable = { global.BRG_conflict_intensity_level < 70 }
+            }
         }
         complete_effect = {
-
+            USF = { country_event = { id = BRG.15 } }
         }
     }
 
@@ -159,20 +280,26 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            original_tag = USF
         }
         available = {
 
         }
         complete_effect = {
-
+            BR1 = {
+                add_timed_idea = { idea = BRG_united_states_base_support days = 180 }
+                set_country_flag = USF_activated_military_base_flag #标记为 启用军事基地
+            }
         }
-        days_remove = 180
-        targeted_modifier = {
-            tag = BR1
-            army_core_attack_factor = 0.25
-            army_speed_factor = 0.25
-            experience_loss_factor = -0.1
-        }
+        # days_remove = 180
+        # targeted_modifier = {
+        #     tag = BR1
+        #     army_core_attack_factor = 0.25
+        #     army_speed_factor = 0.25
+        #     experience_loss_factor = -0.1
+        # }
     }
 
     #申请停战
@@ -189,12 +316,18 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            original_tag = USF
         }
         available = {
-
+            custom_trigger_tooltip = {
+                tooltip = OCF_USF_apply_for_ceasefire_TT
+                check_variable = { global.BRG_conflict_intensity_level < 70 }
+            }
         }
         complete_effect = {
-
+            USF = { country_event = { id = BRG.16 } }
         }
     }
 
@@ -213,6 +346,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
 
@@ -220,7 +356,8 @@ BRG_conflict_crisis = {
         days_re_enable = 80
         days_remove = 10
         complete_effect = {
-
+            set_temp_variable = { temp = 2 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         remove_effect = {
             if = {
@@ -276,12 +413,15 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
 
         }
         complete_effect = {
-
+            OCF = { country_event = { id = BRG.13 days = 2 } }
         }
     }
 
@@ -299,6 +439,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
             OCF = {
@@ -337,6 +480,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
             OCF = {
@@ -348,7 +494,8 @@ BRG_conflict_crisis = {
         days_re_enable = 50
         days_remove = 10
         complete_effect = {
-
+            set_temp_variable = { temp = 1 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         remove_effect = {
             OCF = {
@@ -375,6 +522,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
             OCF = {
@@ -414,8 +564,14 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
+
+        }
+        complete_effect = {
 
         }
         days_remove = 7
@@ -464,20 +620,25 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BRG
         }
         available = {
 
         }
         complete_effect = {
-
+            BR1 = {
+                add_timed_idea = { idea = BRG_naval_shelling_other_shore_flower_ocean days = 20 }
+            }
         }
-        days_remove = 30
-        targeted_modifier = {
-            tag = BR1
-            army_core_attack_factor = -0.2
-            army_core_defence_factor = -0.25
-            army_speed_factor = -0.45
-        }
+        # days_remove = 30
+        # targeted_modifier = {
+        #     tag = BR1
+        #     army_core_attack_factor = -0.2
+        #     army_core_defence_factor = -0.25
+        #     army_speed_factor = -0.45
+        # }
     }
 
     #麦克阿瑟
@@ -496,6 +657,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
 
@@ -523,12 +687,16 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
 
         }
         complete_effect = {
-
+            set_temp_variable = { temp = 2 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         days_remove = 80
         modifier = {
@@ -556,6 +724,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
             USF = {
@@ -594,6 +765,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
             USF = {
@@ -605,7 +779,8 @@ BRG_conflict_crisis = {
         days_re_enable = 60
         days_remove = 15
         complete_effect = {
-
+            set_temp_variable = { temp = 1 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         remove_effect = {
             USF = {
@@ -632,6 +807,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
             USF = {
@@ -670,6 +848,9 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
 
@@ -677,14 +858,30 @@ BRG_conflict_crisis = {
         days_re_enable = 60
         days_remove = 15
         complete_effect = {
-
+            set_temp_variable = { temp = 1 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         remove_effect = {
-            # add_equipment_to_stockpile = {
-            #     type = support_equipment
-            #     amount = 70
-            #     producer = USF
-            # }
+            create_equipment_variant = {
+                name = "A-20 浩劫"
+                type = small_plane_cas_airframe_2
+                modules = {
+                    fixed_main_weapon_slot = small_bomb_bay
+                    fixed_auxiliary_weapon_slot_1 = bomb_locks
+                    engine_type_slot = engine_2_2x
+                    special_type_slot_1 = armor_plate_small
+                    special_type_slot_2 = fuel_tanks_small
+                }
+            }
+            hidden_effect = {
+                add_equipment_to_stockpile = {
+                    type = small_plane_cas_airframe_2
+                    amount = 150
+                    producer = DOC
+                    variant_name = "A-20 浩劫"
+                }
+            }
+            custom_effect_tooltip = BR1_apply_for_airplane_TT
         }
     }
 
@@ -703,12 +900,16 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
 
         }
         complete_effect = {
-
+            set_temp_variable = { temp = 2 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         days_remove = 50
         modifier = {
@@ -737,13 +938,17 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
         }
         available = {
 
         }
         fire_only_once = yes
         complete_effect = {
-
+            set_temp_variable = { temp = 2 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
         days_remove = 12
         remove_effect = {
@@ -800,14 +1005,19 @@ BRG_conflict_crisis = {
 
                 has_country_flag = debug_switch
             }
+            has_country_flag = BRG_conflict_crisis_flag
+            has_global_flag = BRG_2_a_flag
+            tag = BR1
+            has_country_flag = USF_activated_military_base_flag #标记为 启用军事基地
         }
         available = {
 
         }
         complete_effect = {
-
+            set_temp_variable = { temp = 1 }
+            BRG_modify_conflict_intensity_battle_situation = yes
         }
-        days_remove = 40
+        days_remove = 50
         modifier = {
             production_speed_buildings_factor = -0.5
             planning_speed = 0.25
