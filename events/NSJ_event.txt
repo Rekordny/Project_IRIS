@@ -1,4 +1,5 @@
 add_namespace = NSJ
+add_namespace = NSJ_temp
 
 country_event = {#第一次回响
     id = NSJ.1
@@ -292,3 +293,132 @@ country_event = {#
     }
 }
 
+country_event = {#事件和平
+    id = NSJ_temp.1
+    title = NSJ_temp.1.t
+    desc = NSJ_temp.1.desc
+    #picture = GFX_event_NSJ_1
+    is_triggered_only = yes
+    
+
+    option = {
+        name = NSJ_temp.1.a
+        667 = {
+            transfer_state_to = NSJ
+            add_core_of = NSJ
+        }
+        every_country = {
+            limit = {
+                has_war_with = NSJ
+                OR = {
+                    tag = TDL
+                    is_subject_of = TDL
+                }
+            }
+            white_peace = NSJ
+        }
+        hidden_effect = {
+            NSJ = {
+                save_global_event_target_as = winning_country
+            }
+            TDL = {
+                save_global_event_target_as = losing_country
+            }
+            IRIS_peace_popup_determine_allies = yes
+            add_to_variable = { global.peace_popup_dirty = 1 }
+        }
+        if = {
+            limit = {
+                NOT = {
+                    has_global_flag = NSJ_INDEPENDENCE_FLAG
+                }
+                USF = {
+                    set_autonomy = {
+                        target = NSJ
+                        autonomous_state = naval_command
+                    }
+                }
+            }
+        }
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+country_event = {#合众国得知NSJ投降过半
+    id = NSJ_temp.2
+    title = NSJ_temp.2.t
+    desc = NSJ_temp.2.desc
+    #picture = GFX_event_NSJ_1
+    trigger = {
+        tag = USF
+        NOT = {
+            has_global_flag = NSJ_INDEPENDENCE_FLAG
+        }
+        NSJ = {
+            has_war_with = TDL
+            surrender_progress > 0.49
+        }
+    }
+    fire_only_once = yes
+    mean_time_to_happen = {
+        days = 1
+    }
+    
+
+    option = {
+        name = NSJ_temp.2.a
+        TDL = {
+            country_event = {id = NSJ_temp.3 days = 3}
+        }
+        
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+country_event = {#笑死，根本惹不起
+    id = NSJ_temp.3
+    title = NSJ_temp.3.t
+    desc = NSJ_temp.3.desc
+    #picture = GFX_event_NSJ_1
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    
+
+    option = {
+        name = NSJ_temp.3.a
+        white_peace = NSJ
+        every_country = {
+            limit = {
+                is_subject_of = TDL
+                has_war_with = NSJ
+            }
+            white_peace = NSJ
+        }
+
+        781 = {
+            set_demilitarized_zone = yes
+        }
+
+        hidden_effect = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_global_flag = NSJ_INDEPENDENCE_FLAG
+                    }
+                    USF = {
+                        set_autonomy = {
+                            target = NSJ
+                            autonomous_state = naval_command
+                        }
+                    }
+                }
+            }
+        }
+        ai_chance = {
+            base = 10
+        }
+    }
+}
