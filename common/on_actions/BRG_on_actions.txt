@@ -20,7 +20,202 @@ on_actions = {
                         aluminium
                     }
                 }
+                BRG_separatist_tendency_effect_modification = yes
             }
         }
+    }
+
+    #斯沃斯科岛
+    on_capitulation = {
+        effect = {
+            if = {
+                limit = {
+                    has_global_flag = BRG_2_a_flag
+                    ROOT = { original_tag = BRG }
+                }
+                clr_global_flag = BRG_2_a_flag
+                clr_global_flag = global_macarthur_is_a_bit_busy_flag
+                OCF = { clr_country_flag = BRG_conflict_crisis_flag }
+                USF = { clr_country_flag = BRG_conflict_crisis_flag }
+                BRG = { clr_country_flag = BRG_conflict_crisis_flag }
+                BR1 = { clr_country_flag = BRG_conflict_crisis_flag }
+                log = "[GetDateText]: FROM: [From.GetName] ROOT: [Root.GetName] on_capitulation"
+
+                set_global_flag = show_peace_popup_alert
+                set_global_flag = war_won
+                #合众国战败
+                if = {
+                    limit = {
+                        ROOT = { tag = BR1 }
+                    }
+                    OCF = {
+                        country_event = { id = brgnews.3 days = 1 }
+                        save_global_event_target_as = winning_country
+                    }
+                    USF = {
+                        save_global_event_target_as = losing_country
+                    }
+                    IRIS_peace_popup_determine_allies = yes
+                    BRG = { transfer_state = 825 }
+                    ROOT = {
+                        transfer_navy = {
+                            target = USF
+                        }
+                    }
+                    if = {
+                        limit = { OCF = { controls_state = 303 } }
+                        OCF = { transfer_state = 303 }
+                    }
+                    if = {
+                        limit = { OCF = { controls_state = 266 } }
+                        OCF = { transfer_state = 266 }
+                    }
+                    # every_country = {
+                    # 	limit = {
+                    # 		OR = {
+                    # 			is_ally_with = OCF
+                    # 			original_tag = OCF
+                    # 		}
+                    # 		has_war_with = USF
+                    # 	}
+                    # 	THIS = {
+                    # 		white_peace = USF
+                    # 	}
+                    # }
+                    BR1 = {
+                        set_nationality = {
+                            target_country = USF
+                            character = USF_General_Douglas_MacArthur
+                        }
+                    }
+                    OCF = {
+                        set_autonomy = {
+                            target = BRG
+                            autonomous_state = autonomy_integrated_puppet
+                        }
+                    }
+                }
+                #大洋战败
+                if = {
+                    limit = {
+                        # OR = {
+                        # 	ROOT = {
+                        # 		original_tag = BRG
+                        # 		is_ally_with = OCF
+                        # 	}
+                        # 	OCF = {
+                        # 		surrender_progress > 0.1
+                        # 	}
+                        # }
+                        ROOT = { tag = BRG }
+                    }
+                    set_global_flag = show_peace_popup_alert
+                    set_global_flag = war_won
+                    USF = {
+                        country_event = { id = brgnews.4 days = 1 }
+                        save_global_event_target_as = winning_country
+                    }
+                    OCF = {
+                        save_global_event_target_as = losing_country
+                    }
+                    IRIS_peace_popup_determine_allies = yes
+                    #保险一些
+                    BRG = {
+                        transfer_navy = {
+                            target = BR1
+                        }
+                    }
+                    BR1 = {
+                        transfer_state = 226
+                        set_capital = { state = 226 remember_old_capital = no }
+                        annex_country = {
+                            target = ROOT transfer_troops = no
+                        }
+                    }
+                    if = {
+                        limit = { OCF = { controls_state = 303 } }
+                        OCF = { transfer_state = 303 }
+                    }
+                    if = {
+                        limit = { OCF = { controls_state = 266 } }
+                        OCF = { transfer_state = 266 }
+                    }
+                    # every_country = {
+                    # 	limit = {
+                    # 		OR = {
+                    # 			is_ally_with = OCF
+                    # 			original_tag = OCF
+                    # 		}
+                    # 		has_war_with = USF
+                    # 	}
+                    # 	THIS = {
+                    # 		white_peace = USF
+                    # 	}
+                    # }
+                    USF = {
+                        set_autonomy = {
+                            target = BR1
+                            autonomous_state = autonomy_dominion
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    #规模计算
+    on_army_leader_won_combat = {
+        effect = {
+            if = {
+                limit = {
+                    FROM = {
+                        original_tag = BRG
+                    }
+                    has_global_flag = BRG_2_a_flag
+                }
+                BRG_update_conflict_intensity_battle = yes
+            }
+        }
+    }
+    on_army_leader_lost_combat = {
+        effect = {
+            if = {
+                limit = {
+                    FROM = {
+                        original_tag = BRG
+                    }
+                    has_global_flag = BRG_2_a_flag
+                }
+                BRG_update_conflict_intensity_battle = yes
+            }
+        }
+    }
+
+    on_weekly_BRG = {
+		effect = {
+			if = {
+                limit = { has_country_leader_with_trait = BRG_separatist_tendency }
+                BRG_separatist_tendency_effect_modification = yes
+            }
+		}
+	}
+
+    on_war = {
+        effect = {
+			if = {
+                limit = { has_country_leader_with_trait = BRG_separatist_tendency }
+                BRG_separatist_tendency_effect_modification = yes
+            }
+		}
+    }
+
+    on_peace = {
+        effect = {
+			if = {
+                limit = { has_country_leader_with_trait = BRG_separatist_tendency }
+                BRG_separatist_tendency_effect_modification = yes
+            }
+		}
     }
 }
