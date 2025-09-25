@@ -1,0 +1,269 @@
+#战局态势刷新
+BRG_update_situation_battle = {
+    meta_effect = {
+        text = {
+            BRG_update_situation_battle_[V] = yes
+        }
+        V = "[?global.BRG_war_escalation_level]"
+    }
+}
+
+#战局态势修改
+BRG_modify_situation_battle = {
+    custom_effect_tooltip = {
+        localization_key = BRG_MODIFY_SITUATION_BATTLE_TT
+        SITUATION = "[?temp]"
+    }
+    add_to_variable = { global.BRG_war_escalation_level = temp }
+    hidden_effect = {
+        BRG_update_situation_battle = yes
+        BRG_update_conflict_intensity_battle = yes
+    }
+}
+
+#战局烈度修改
+BRG_modify_conflict_intensity_battle_situation = {
+    custom_effect_tooltip = {
+        localization_key = BRG_MODIFY_CONFLICT_INTENSITY_BATTLE_SITUATION_TT
+        SITUATION = "[?temp]"
+    }
+    add_to_variable = { global.BRG_government_mediation = temp }
+    hidden_effect = {
+        BRG_update_conflict_intensity_battle = yes
+    }
+}
+
+#一级
+BRG_update_situation_battle_1 = {
+    # USF = { country_event = { id = BRG.2 days = 3 } }
+    USF = { country_event = { id = BRG.2 } }
+}
+
+#二级
+BRG_update_situation_battle_2 = {
+    set_temp_variable = { IRIS_conflict_temp = 1 }
+    IRIS_activate_world_conflict = yes
+    custom_effect_tooltip = tooltip_white_line
+}
+
+#三级
+BRG_update_situation_battle_3 = {
+    USF = { country_event = { id = BRG.5 } }
+}
+
+#四级
+BRG_update_situation_battle_4 = {
+}
+
+#五级
+BRG_update_situation_battle_5 = {
+    OCF = { country_event = { id = BRG.7 } }
+    USF = { country_event = { id = BRG.8 } }
+}
+
+#六级
+BRG_update_situation_battle_6 = {
+    BR1 = { country_event = { id = BRG.9 } }
+    USF = { country_event = { id = BRG.20 } }
+}
+
+#七级
+BRG_update_situation_battle_7 = {
+    if = {
+        limit = {
+            USF = { is_ai = yes }
+            OCF = { is_ai = yes }
+        }
+        clr_global_flag = BRG_2_a_flag
+        clr_global_flag = global_macarthur_is_a_bit_busy_flag
+        BRG = { clr_country_flag = BRG_conflict_crisis_flag }
+        BR1 = {
+            white_peace = BRG
+            clr_country_flag = BRG_conflict_crisis_flag
+        }
+        OCF = {
+            set_autonomy = {
+                target = BRG
+                autonomous_state = autonomy_integrated_puppet
+            }
+            clr_country_flag = BRG_conflict_crisis_flag
+        }
+        USF = {
+            set_autonomy = {
+                target = BR1
+                autonomous_state = autonomy_dominion
+            }
+            clr_country_flag = BRG_conflict_crisis_flag
+        }
+        country_event = { id = brgnews.6 days = 1 }
+    }
+}
+
+#八级
+BRG_update_situation_battle_8 = {
+    BRG = { country_event = { id = BRG.10 } }
+    OCF = { country_event = { id = BRG.21 } }
+}
+
+#九级
+BRG_update_situation_battle_9 = {
+    OCF = { country_event = { id = BRG.11 } }
+    USF = { country_event = { id = BRG.12 } }
+}
+
+#十级
+BRG_update_situation_battle_10 = {
+    country_event = { id = brgnews.7 }
+    USF = {
+        set_autonomy = {
+            target = BR1
+            autonomous_state = autonomy_dominion
+            end_wars = no
+            end_civil_wars = no
+        }
+        every_country = {
+            limit = {
+                original_tag = BRG
+                is_ally_with = ROOT
+            }
+            add_to_war = {
+                targeted_alliance = USF
+                enemy = BRG
+                hostility_reason = asked_to_join
+            }
+        }
+    }
+
+    OCF = {
+        set_autonomy = {
+            target = BRG
+            # autonomous_state = ocf_federal_district
+            autonomous_state = autonomy_integrated_puppet
+            end_wars = no
+            end_civil_wars = no
+        }
+        add_to_war = {
+            targeted_alliance = BRG
+            enemy = USF
+            hostility_reason = asked_to_join
+        }
+    }
+
+    hidden_effect = {
+        OCF = { clr_country_flag = BRG_conflict_crisis_flag }
+        USF = { clr_country_flag = BRG_conflict_crisis_flag }
+        BRG = { clr_country_flag = BRG_conflict_crisis_flag }
+        BR1 = { clr_country_flag = BRG_conflict_crisis_flag }
+    }
+    clr_global_flag = global_macarthur_is_a_bit_busy_flag
+}
+
+
+#战局烈度刷新(伤亡，通过作战刷新)
+BRG_update_conflict_intensity_battle = {
+    #casualties_k 战损人数
+    #计算伤亡人数
+    set_variable = { global.BRG_casualties_number = BRG.casualties_k }
+    add_to_variable = { global.BRG_casualties_number = BR1.casualties_k }
+    multiply_variable = { global.BRG_casualties_number = 0.75 }
+
+    #计算部署数量
+    #陆军
+    set_variable = { global.BRG_num_battalions = BRG.num_battalions }
+    add_to_variable = { global.BRG_num_battalions = BR1.num_battalions }
+    multiply_variable = { global.BRG_num_battalions = 0.05 }
+
+    #空军
+    set_variable = { global.BRG_num_deployed_planes = BRG.num_deployed_planes }
+    add_to_variable = { global.BRG_num_deployed_planes = BR1.num_deployed_planes }
+    multiply_variable = { global.BRG_num_deployed_planes = 0.09 }
+
+    #海军
+    set_variable = { global.BRG_num_ships = BRG.num_ships }
+    add_to_variable = { global.BRG_num_ships = BR1.num_ships }
+    multiply_variable = { global.BRG_num_ships = 0.16 }
+
+    set_variable = { global.BRG_war_escalation_level_temp = global.BRG_war_escalation_level }
+    add_to_variable = { global.BRG_war_escalation_level_temp = -3 }
+    if = {
+        limit = { check_variable = { global.BRG_war_escalation_level_temp < 0 } }
+        set_variable = { global.BRG_war_escalation_level_temp = 0 }
+    }
+    multiply_variable = { global.BRG_war_escalation_level_temp = 2.5 }
+
+    set_variable = { global.BRG_conflict_intensity_level = global.BRG_war_escalation_level_temp }
+
+    add_to_variable = { global.BRG_conflict_intensity_level = global.BRG_casualties_number }
+    add_to_variable = { global.BRG_conflict_intensity_level = global.BRG_num_battalions }
+    add_to_variable = { global.BRG_conflict_intensity_level = global.BRG_num_deployed_planes }
+    add_to_variable = { global.BRG_conflict_intensity_level = global.BRG_num_ships }
+    add_to_variable = { global.BRG_conflict_intensity_level = global.BRG_government_mediation }
+
+
+    #设置战局烈度 修正
+
+    BRG = {
+        set_variable = { BRG_intensity_battle_situation_army_org_factor = global.BRG_conflict_intensity_level }
+        multiply_variable = { BRG_intensity_battle_situation_army_org_factor = -0.005 }
+        add_to_variable = { BRG_intensity_battle_situation_army_org_factor = 0.15 }
+
+        set_variable = { BRG_intensity_battle_situation_army_attack_factor = global.BRG_conflict_intensity_level }
+        multiply_variable = { BRG_intensity_battle_situation_army_attack_factor = -0.003 }
+        add_to_variable = { BRG_intensity_battle_situation_army_attack_factor = 0.1 }
+
+        set_variable = { BRG_intensity_battle_situation_army_defence_factor = 0 }
+        # multiply_variable = { BRG_intensity_battle_situation_army_defence_factor = -0.007 }
+        # add_to_variable = { BRG_intensity_battle_situation_army_defence_factor = 0.2 }
+
+        set_variable = { BRG_intensity_battle_situation_experience_loss_factor = global.BRG_conflict_intensity_level }
+        multiply_variable = { BRG_intensity_battle_situation_experience_loss_factor = 0.008 }
+        add_to_variable = { BRG_intensity_battle_situation_experience_loss_factor = -0.08 }
+    }
+    BR1 = {
+        set_variable = { BRG_intensity_battle_situation_army_org_factor = global.BRG_conflict_intensity_level }
+        multiply_variable = { BRG_intensity_battle_situation_army_org_factor = -0.002 }
+        add_to_variable = { BRG_intensity_battle_situation_army_org_factor = 0.25 }
+
+        set_variable = { BRG_intensity_battle_situation_army_attack_factor = 0 }
+        # multiply_variable = { BRG_intensity_battle_situation_army_attack_factor = -0.006 }
+        # add_to_variable = { BRG_intensity_battle_situation_army_attack_factor = 0.15 }
+
+        set_variable = { BRG_intensity_battle_situation_army_defence_factor = global.BRG_conflict_intensity_level }
+        multiply_variable = { BRG_intensity_battle_situation_army_defence_factor = -0.009 }
+        add_to_variable = { BRG_intensity_battle_situation_army_defence_factor = 0.27 }
+
+        set_variable = { BRG_intensity_battle_situation_experience_loss_factor = global.BRG_conflict_intensity_level }
+        multiply_variable = { BRG_intensity_battle_situation_experience_loss_factor = 0.003 }
+        add_to_variable = { BRG_intensity_battle_situation_experience_loss_factor = -0.2 }
+    }
+}
+
+#若即若离效果修改
+BRG_separatist_tendency_effect_modification = {
+    if = {
+        limit = {
+            has_war = no
+            NOT = { has_idea = BRG_separatist_tendency_idea_1 }
+        }
+        add_ideas = BRG_separatist_tendency_idea_1
+        if = {
+            limit = {
+                has_idea = BRG_separatist_tendency_idea_2
+            }
+            remove_ideas = BRG_separatist_tendency_idea_2
+        }
+    }
+    if = {
+        limit = {
+            has_war = yes
+            NOT = { has_idea = BRG_separatist_tendency_idea_2 }
+        }
+        add_ideas = BRG_separatist_tendency_idea_2
+        if = {
+            limit = {
+                has_idea = BRG_separatist_tendency_idea_1
+            }
+            remove_ideas = BRG_separatist_tendency_idea_1
+        }
+    }
+}

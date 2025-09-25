@@ -208,6 +208,7 @@ IRIS_import_opening_race = {
 						state = 71
 						state = 226
 						state = 825
+						state = 142
 					}
 				}
 				add_to_array = { sub_ethnic_group_array = token:ethnicity_varyag }
@@ -268,7 +269,7 @@ IRIS_import_opening_race = {
 		}
 		#东方罗西亚
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					region = 5
 					region = 6
@@ -402,11 +403,11 @@ IRIS_import_opening_race = {
 		}
 		#帕尔斯
 		if = {
-			limit = { 
+			limit = {
 				OR = {
 					is_core_of = MZL
-					is_core_of = KAM 
-					is_core_of = BAT 
+					is_core_of = KAM
+					is_core_of = BAT
 				}
 			}
 			set_variable = { ethnicity = token:ethnicity_pars }
@@ -824,13 +825,13 @@ IRIS_import_opening_race = {
 		}
 		set_variable = { ethnicity = token:ethnicity_monster }
 	}
-	
+
 	#摩萨血族 不知道放哪个省
 
 	every_possible_country = {
 		this = {
 			IRIS_country_list_testing_region = yes
-			IRIS_add_national_ethnicity = yes 
+			IRIS_add_national_ethnicity = yes
 		}
 	}
 	# every_state = {
@@ -988,8 +989,8 @@ IRIS_add_ethnic_identity_nation = {
 	add_to_array = { global.ethnicity_witch_nc = token:national_character_exclusive }
 	add_to_array = { global.ethnicity_witch_nc = token:national_character_aliens }
 
-	add_to_array = { global.ethnicity_kivotos_nc = token:national_character_null }
-	add_to_array = { global.ethnicity_kivotos_nc = token:national_character_null }
+	add_to_array = { global.ethnicity_kivotos_nc = token:national_character_born_for_war }
+	add_to_array = { global.ethnicity_kivotos_nc = token:national_character_tech_worship }
 
 	add_to_array = { global.ethnicity_kivotos_scs_nc = token:national_character_pious }
 	add_to_array = { global.ethnicity_kivotos_scs_nc = token:national_character_devout }
@@ -1000,8 +1001,8 @@ IRIS_add_ethnic_identity_nation = {
 	add_to_array = { global.ethnicity_kivotos_geh_nc = token:national_character_unruly }
 	add_to_array = { global.ethnicity_kivotos_geh_nc = token:national_character_lawless }
 
-	add_to_array = { global.ethnicity_student_nc = token:national_character_null }
-	add_to_array = { global.ethnicity_student_nc = token:national_character_null }
+	add_to_array = { global.ethnicity_student_nc = token:national_character_optimistic }
+	add_to_array = { global.ethnicity_student_nc = token:national_character_tech_worship }
 
 	add_to_array = { global.ethnicity_racehorse_nc = token:national_character_exclusive }
 	add_to_array = { global.ethnicity_racehorse_nc = token:national_character_aliens }
@@ -1126,7 +1127,13 @@ IRIS_regional_transfer_intercultural_testing = {
 						limit = {
 							OR = {
 								AND = {
-									always = no
+									root = {
+										OR = {
+											original_tag = OCE
+											original_tag = TFD
+										}
+									}
+									this = { check_variable = { ethnicity = token:ethnicity_wallachia_transylvania } }
 								}
 							}
 						}
@@ -1137,7 +1144,7 @@ IRIS_regional_transfer_intercultural_testing = {
 					#异文化
 					else = {
 						if = { limit = { has_dynamic_modifier = { modifier = IRIS_hostile_cultures } } remove_dynamic_modifier = { modifier = IRIS_hostile_cultures } }
-						else_if = { limit = { has_dynamic_modifier = { modifier = IRIS_similar_cultures } } remove_dynamic_modifier = { modifier = IRIS_similar_cultures } }
+						else_if = { limit = { has_dynamic_modifier = {. modifier = IRIS_similar_cultures } } remove_dynamic_modifier = { modifier = IRIS_similar_cultures } }
 						add_dynamic_modifier = { modifier = IRIS_foreign_cultures }
 					}
 				}
@@ -1196,3 +1203,93 @@ IRIS_assign_regional_ethnicity = {
 # IRIS_add_national_sub_ethnicity = {
 # 	custom_effect_tooltip = IRIS_add_national_sub_ethnicity_tooltip
 # }
+
+#添加国家子民族
+#temp_ethnicity 民族
+IRIS_ADD_NATIONAL_SUB_ETHNICITY = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { IRIS_race_array = temp_ethnicity } }
+		}
+		add_to_array = { IRIS_race_array = temp_ethnicity }
+	}
+	custom_effect_tooltip = {
+		localization_key = IRIS_ADD_NATIONAL_SUB_ETHNICITY_TOOLTIP
+		INDENTATION = ""
+		NATIONAL = "[?temp_ethnicity.GetTokenLocalizedKey]"
+	}
+}
+
+#移除国家子民族
+#temp_ethnicity 民族
+IRIS_REMOVE_NATIONAL_SUB_ETHNICITY = {
+	if = {
+		limit = {
+			is_in_array = { IRIS_race_array = temp_ethnicity }
+		}
+		remove_from_array = { IRIS_race_array = temp_ethnicity }
+	}
+	custom_effect_tooltip = {
+		localization_key = IRIS_REMOVE_NATIONAL_SUB_ETHNICITY_TOOLTIP
+		INDENTATION = ""
+		NATIONAL = "[?temp_ethnicity.GetTokenLocalizedKey]"
+	}
+}
+
+#添加地区子民族
+#temp_ethnicity 民族
+IRIS_ADD_STATE_SUB_ETHNICITY = {
+	if = {
+		limit = {
+			NOT = { is_in_array = { sub_ethnic_group_array = temp_ethnicity } }
+		}
+		add_to_array = { sub_ethnic_group_array = temp_ethnicity }
+	}
+	custom_effect_tooltip = {
+		localization_key = IRIS_ADD_STATE_SUB_ETHNICITY_TOOLTIP
+		INDENTATION = ""
+		NATIONAL = "[?temp_ethnicity.GetTokenLocalizedKey]"
+	}
+}
+
+#移除地区子民族
+#temp_ethnicity 民族
+IRIS_REMOVE_STATE_SUB_ETHNICITY = {
+	if = {
+		limit = {
+			is_in_array = { sub_ethnic_group_array = temp_ethnicity }
+		}
+		remove_from_array = { sub_ethnic_group_array = temp_ethnicity }
+	}
+	custom_effect_tooltip = {
+		localization_key = IRIS_REMOVE_STATE_SUB_ETHNICITY_TOOLTIP
+		INDENTATION = ""
+		NATIONAL = "[?temp_ethnicity.GetTokenLocalizedKey]"
+	}
+}
+
+#替换主要民族 地区
+# IRIS_CHANGE_STATE_MAIN_ETHNICITY = {
+# 	set_variable = { ethnicity = temp_ethnicity }
+# 	custom_effect_tooltip = {
+# 		localization_key = IRIS_CHANGE_STATE_MAIN_ETHNICITY_TOOLTIP
+# 		INDENTATION = ""
+# 		NATIONAL = "[?temp_ethnicity.GetTokenLocalizedKey]"
+# 	}
+# 	hidden_effect = { IRIS_add_regional_ethnicity = yes }
+# }
+
+#替换主要民族 地区 国家
+IRIS_CHANGE_NATIONAL_MAIN_ETHNICITY = {
+	set_variable = { ethnicity = temp_ethnicity }
+	custom_effect_tooltip = {
+		localization_key = IRIS_CHANGE_NATIONAL_MAIN_ETHNICITY_TOOLTIP
+		INDENTATION = ""
+		NATIONAL = "[?temp_ethnicity.GetTokenLocalizedKey]"
+	}
+	hidden_effect = {
+		IRIS_add_regional_ethnicity = yes
+		IRIS_assign_regional_ethnicity = yes
+		IRIS_add_national_ethnicity = yes
+	}
+}
