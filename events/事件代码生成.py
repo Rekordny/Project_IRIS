@@ -1,14 +1,14 @@
 def generate_hoi4_event_code(event_number):
     return f"""country_event = {{#
-    id = USF.{event_number}
-    title = USF.{event_number}.t
-    desc = USF.{event_number}.desc
+    id = USF_temp.{event_number}
+    title = USF_temp.{event_number}.t
+    desc = USF_temp.{event_number}.desc
     #picture = GFX_event_USF_{event_number}
     is_triggered_only = yes
     fire_only_once = yes
 
     option = {{
-        name = USF.{event_number}.a
+        name = USF_temp.{event_number}.a
 
         ai_chance = {{
             base = 10
