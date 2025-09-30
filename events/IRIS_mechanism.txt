@@ -1,0 +1,67 @@
+add_namespace = IRIS_mechanism
+
+country_event = {
+	id = IRIS_mechanism.0
+	hidden = yes
+
+	trigger = {
+
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		# sound_effect = "diplomatic_notification"
+		# add_to_array = { IRIS_prompt_alerts = 1 } #大洋议会
+		# add_to_array = { IRIS_prompt_alerts_progressbars = -317 }
+		# add_to_array = { IRIS_prompt_alert_flags = ROOT }
+		# add_to_array = { IRIS_prompt_alert_flags2 = ROOT }
+		
+		# sound_effect = "diplomatic_notification"
+		add_to_array = { IRIS_prompt_alert_operations = 1 }
+		IRIS_prompt_alert_operation = yes
+		# country_event = { id = IRIS_mechanism.1 }
+	}
+}
+
+
+country_event = {
+	id = IRIS_mechanism.1
+	hidden = yes
+
+	trigger = {
+
+	}
+
+	is_triggered_only = yes
+
+	option = {
+		set_temp_variable = { temp = 0 }
+		for_loop_effect = {
+			end = IRIS_prompt_alerts^num
+
+			add_to_variable = { IRIS_prompt_alerts_progressbars^temp = 4.528 }
+
+			if = {
+				limit = { check_variable = { IRIS_prompt_alerts_progressbars^temp > 0 } } #70小时
+				remove_from_array = { IRIS_prompt_alerts = IRIS_prompt_alerts^temp }
+				remove_from_array = { IRIS_prompt_alerts_progressbars = IRIS_prompt_alerts_progressbars^temp }
+				remove_from_array = { IRIS_prompt_alert_flags = IRIS_prompt_alert_flags^temp }
+				remove_from_array = { IRIS_prompt_alert_flags2 = IRIS_prompt_alert_flags2^temp }
+				remove_from_array = { IRIS_prompt_alert_other_var1 = IRIS_prompt_alert_other_var1^temp }
+				remove_from_array = { IRIS_prompt_alert_other_var2 = IRIS_prompt_alert_other_var2^temp }
+				remove_from_array = { IRIS_prompt_alert_other_var3 = IRIS_prompt_alert_other_var3^temp }
+				remove_from_array = { IRIS_prompt_alert_other_var4 = IRIS_prompt_alert_other_var4^temp }
+				remove_from_array = { IRIS_prompt_alert_other_var5 = IRIS_prompt_alert_other_var5^temp }
+				scoped_sound_effect = "menu_close_window"
+			}
+
+			add_to_temp_variable = { temp = 1 }
+		}
+		set_variable_to_random = global.IRIS_alerts_dirty
+		if = {
+			limit = { check_variable = { IRIS_prompt_alerts^num > 0 } }
+			country_event = { id = IRIS_mechanism.1 hours = 1 }
+		}
+	}
+}
