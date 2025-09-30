@@ -1,29 +1,23 @@
 import os
 from datetime import datetime
 
-def generate_character_code(country_key, character_key):
+def generate_all_codes(country_key, character_key):
     """
-    生成HOI4人物代码
-    
-    Args:
-        country_key (str): 国家键值（如YUZ）
-        character_key (str): 人物键值（如Yoshino）
+    一次性生成所有类型的代码
     """
-    
     full_key = f"{country_key}_{character_key}"
-    portrait_large = f"GFX_{full_key}"
-    portrait_small = f"GFX_idea_{full_key}"
     
-    code_template = f"""{full_key} = {{
+    # 1. 生成人物代码
+    character_code = f"""{full_key} = {{
     name={full_key}
     portraits={{
         army={{
-            large={portrait_large}
-            small={portrait_small}
+            large=GFX_{full_key}
+            small=GFX_idea_{full_key}
         }}
         civilian={{
-            large={portrait_large}
-            small={portrait_small}
+            large=GFX_{full_key}
+            small=GFX_idea_{full_key}
         }}
     }}
     corps_commander = {{
@@ -37,33 +31,33 @@ def generate_character_code(country_key, character_key):
     }}
 }}"""
     
-    return code_template
+    # 2. 生成本地化代码
+    localization_code = f' {full_key}: ""'
+    
+    # 3. 生成GFX注册代码
+    gfx_code = f"""SpriteType = {{
+    name = "GFX_{full_key}"
+    texturefile = "gfx/leaders/{country_key}/{full_key}.png"
+    legacy_lazy_load = no
+}}
 
-def save_to_file(content, filename=None, folder="output"):
-    """
-    将内容保存到txt文件
+SpriteType = {{
+    name = "GFX_idea_{full_key}"
+    texturefile = "gfx/interface/ideas/{country_key}/{full_key}.png"
+}}"""
     
-    Args:
-        content (str): 要保存的内容
-        filename (str): 文件名，如果为None则自动生成
-        folder (str): 保存文件夹
-    """
-    
-    # 创建输出文件夹
+    return character_code, localization_code, gfx_code
+
+def save_to_file(content, filename, folder="output"):
+    """保存内容到文件"""
     if not os.path.exists(folder):
         os.makedirs(folder)
     
-    # 生成文件名
-    if filename is None:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"hoi4_characters_{timestamp}.txt"
-    elif not filename.endswith('.txt'):
+    if not filename.endswith('.txt'):
         filename += '.txt'
     
-    # 完整文件路径
     filepath = os.path.join(folder, filename)
     
-    # 写入文件
     try:
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(content)
@@ -72,162 +66,239 @@ def save_to_file(content, filename=None, folder="output"):
         print(f"保存文件时出错: {e}")
         return None
 
-def single_character_mode():
+def single_mode():
     """
     单个人物生成模式
     """
-    print("\n=== 单个人物生成模式 ===")
-    country_key = input("请输入国家键值（如YUZ）: ").strip()
-    character_key = input("请输入人物键值（如Chisaki）: ").strip()
-    
-    if not country_key or not character_key:
-        print("错误：国家键值和人物键值不能为空！")
-        return
-    
-    # 生成代码
-    character_code = generate_character_code(country_key, character_key)
-    
-    # 输出结果
-    print("\n生成的人物代码：")
-    print(character_code)
-    
-    # 保存选项
-    print("\n保存选项：")
-    print("1. 保存到单独文件")
-    print("2. 保存到汇总文件")
-    print("3. 不保存")
-    
-    save_choice = input("请选择保存方式 (1/2/3): ").strip()
-    
-    if save_choice == "1":
-        # 保存到单独文件
-        filename = f"{country_key}_{character_key}.txt"
-        filepath = save_to_file(character_code, filename)
-        if filepath:
-            print(f"✓ 代码已保存到: {filepath}")
-    
-    elif save_choice == "2":
-        # 保存到汇总文件
-        filename = input("请输入汇总文件名（不含后缀）: ").strip() or "hoi4_characters"
-        filepath = save_to_file(character_code, filename)
-        if filepath:
-            print(f"✓ 代码已保存到汇总文件: {filepath}")
-    
-    return character_code
-
-def batch_generate_mode():
-    """
-    批量生成模式
-    """
-    print("\n=== 批量人物生成模式 ===")
-    print("请输入多组国家-人物键值对（输入空值结束）")
-    
-    characters = []
-    all_codes = []
+    print("\n" + "="*60)
+    print("          单个人物生成模式")
+    print("="*60)
     
     while True:
-        print(f"\n第 {len(characters) + 1} 个人物:")
-        country_key = input("国家键值 (直接回车结束): ").strip()
+        print("\n请输入人物信息（输入空值返回主菜单）:")
+        country_key = input("国家键值: ").strip()
         if not country_key:
-            break
-        
+            return
+            
         character_key = input("人物键值: ").strip()
         if not character_key:
-            break
+            return
         
-        characters.append((country_key, character_key))
+        print(f"\n正在为 {country_key}_{character_key} 生成所有代码...")
+        
+        # 生成所有代码
+        character_code, localization_code, gfx_code = generate_all_codes(country_key, character_key)
+        
+        # 显示所有生成的代码
+        print("\n" + "="*60)
+        print("生成的人物代码：")
+        print(character_code)
+        
+        print("\n" + "="*60)
+        print("生成的本地化代码：")
+        print(localization_code)
+        
+        print("\n" + "="*60)
+        print("生成的GFX注册代码：")
+        print(gfx_code)
+        
+        # 自动保存所有文件
+        print("\n" + "="*60)
+        print("正在自动保存文件...")
+        
+        # 保存人物代码
+        save_to_file(character_code, f"{country_key}_{character_key}_character.txt")
+        print("✓ 人物代码已保存")
+        
+        # 保存本地化代码
+        save_to_file(localization_code, f"{country_key}_{character_key}_localization.txt")
+        print("✓ 本地化代码已保存")
+        
+        # 保存GFX代码
+        save_to_file(gfx_code, f"{country_key}_{character_key}_gfx.txt")
+        print("✓ GFX代码已保存")
+        
+        # 保存合并文件
+        combined_content = f"""=== HOI4人物全代码 ===
+生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+人物: {country_key}_{character_key}
+
+=== 1. 人物代码 ===
+{character_code}
+
+=== 2. 本地化代码 ===
+{localization_code}
+
+=== 3. GFX注册代码 ===
+{gfx_code}"""
+        
+        save_to_file(combined_content, f"{country_key}_{character_key}_all_codes.txt")
+        print("✓ 合并文件已保存")
+        
+        print(f"\n✓ 所有代码生成完成！文件保存在 output/ 文件夹")
+        print("\n" + "="*60)
+
+def batch_mode():
+    """
+    批量人物生成模式
+    """
+    print("\n" + "="*60)
+    print("          批量人物生成模式")
+    print("="*60)
+    
+    print("\n请输入多个人物信息（每行一个，格式：国家键值 人物键值）")
+    print("示例: YUZ Chisaki")
+    print("输入空行结束输入")
+    print("-" * 40)
+    
+    characters = []
+    line_count = 0
+    
+    while True:
+        line_count += 1
+        input_line = input(f"人物 {line_count}: ").strip()
+        
+        if not input_line:
+            break
+            
+        parts = input_line.split()
+        if len(parts) >= 2:
+            country_key = parts[0]
+            character_key = parts[1]
+            characters.append((country_key, character_key))
+            print(f"✓ 已添加: {country_key}_{character_key}")
+        else:
+            print("❌ 格式错误，请按 '国家键值 人物键值' 格式输入")
+            line_count -= 1
     
     if not characters:
-        print("未输入任何有效数据！")
+        print("❌ 未输入任何人物信息！")
         return
     
-    # 生成所有代码
-    print(f"\n正在生成 {len(characters)} 个人物代码...")
+    print(f"\n开始为 {len(characters)} 个人物生成所有代码...")
+    print("-" * 40)
+    
+    # 存储所有生成的代码
+    all_character_codes = []
+    all_localization_codes = []
+    all_gfx_codes = []
+    
+    # 为每个人物生成代码
     for i, (country_key, character_key) in enumerate(characters, 1):
-        code = generate_character_code(country_key, character_key)
-        all_codes.append(code)
-        print(f"\n--- 人物 {i}: {country_key}_{character_key} ---")
-        print(code)
-    
-    # 合并所有代码
-    combined_code = "\n\n".join(all_codes)
-    
-    # 保存选项
-    print(f"\n批量生成完成！共生成 {len(characters)} 个人物代码")
-    print("保存选项：")
-    print("1. 保存到单个文件（所有人物）")
-    print("2. 分别保存到单独文件")
-    print("3. 两者都保存")
-    print("4. 不保存")
-    
-    save_choice = input("请选择保存方式 (1/2/3/4): ").strip()
-    
-    if save_choice in ["1", "3"]:
-        # 保存到单个文件
-        filename = input("请输入汇总文件名（不含后缀）: ").strip() or "hoi4_characters_batch"
-        filepath = save_to_file(combined_code, filename)
-        if filepath:
-            print(f"✓ 所有人物代码已保存到: {filepath}")
-    
-    if save_choice in ["2", "3"]:
-        # 分别保存到单独文件
-        saved_count = 0
-        for (country_key, character_key), code in zip(characters, all_codes):
-            filename = f"{country_key}_{character_key}.txt"
-            filepath = save_to_file(code, filename)
-            if filepath:
-                saved_count += 1
-                print(f"✓ 已保存: {filename}")
-        print(f"✓ 共保存了 {saved_count} 个单独文件")
-    
-    return combined_code
+        print(f"正在生成第 {i}/{len(characters)} 个人物: {country_key}_{character_key}")
+        
+        character_code, localization_code, gfx_code = generate_all_codes(country_key, character_key)
+        
+        all_character_codes.append(character_code)
+        all_localization_codes.append(localization_code)
+        all_gfx_codes.append(gfx_code)
+        
+        # 为每个人物保存单独文件
+        save_to_file(character_code, f"{country_key}_{character_key}_character.txt")
+        save_to_file(localization_code, f"{country_key}_{character_key}_localization.txt")
+        save_to_file(gfx_code, f"{country_key}_{character_key}_gfx.txt")
+        
+        # 保存合并文件
+        combined_content = f"""=== HOI4人物全代码 ===
+生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+人物: {country_key}_{character_key}
 
-def view_saved_files():
-    """
-    查看已保存的文件
-    """
-    folder = "output"
-    if not os.path.exists(folder):
-        print("输出文件夹不存在，尚未保存任何文件。")
-        return
+=== 1. 人物代码 ===
+{character_code}
+
+=== 2. 本地化代码 ===
+{localization_code}
+
+=== 3. GFX注册代码 ===
+{gfx_code}"""
+        
+        save_to_file(combined_content, f"{country_key}_{character_key}_all_codes.txt")
     
-    files = [f for f in os.listdir(folder) if f.endswith('.txt')]
-    if not files:
-        print("输出文件夹中没有txt文件。")
-        return
+    print("\n" + "="*60)
+    print("正在生成批量汇总文件...")
     
-    print(f"\n=== 已保存的文件（共 {len(files)} 个）===")
-    for i, file in enumerate(sorted(files), 1):
-        filepath = os.path.join(folder, file)
-        file_size = os.path.getsize(filepath)
-        print(f"{i}. {file} ({file_size} bytes)")
+    # 生成时间戳
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    # 1. 批量人物代码文件
+    batch_character_content = "\n\n".join(all_character_codes)
+    batch_character_file = f"batch_characters_{timestamp}.txt"
+    save_to_file(batch_character_content, batch_character_file)
+    print(f"✓ 批量人物代码: {batch_character_file}")
+    
+    # 2. 批量本地化文件
+    batch_localization_content = "\n".join(all_localization_codes)
+    batch_localization_file = f"batch_localization_{timestamp}.txt"
+    save_to_file(batch_localization_content, batch_localization_file)
+    print(f"✓ 批量本地化代码: {batch_localization_file}")
+    
+    # 3. 批量GFX文件
+    batch_gfx_content = "\n\n".join(all_gfx_codes)
+    batch_gfx_file = f"batch_gfx_{timestamp}.txt"
+    save_to_file(batch_gfx_content, batch_gfx_file)
+    print(f"✓ 批量GFX代码: {batch_gfx_file}")
+    
+    # 4. 生成报告文件
+    report_content = f"""HOI4人物代码批量生成报告
+================================
+生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+生成数量: {len(characters)} 个人物
+
+人物列表:
+"""
+    for i, (country_key, character_key) in enumerate(characters, 1):
+        report_content += f"{i:2d}. {country_key}_{character_key}\n"
+    
+    report_content += f"""
+生成的文件:
+1. {batch_character_file} - 所有人物代码
+2. {batch_localization_file} - 所有本地化代码  
+3. {batch_gfx_file} - 所有GFX注册代码
+
+此外，每个人物都有单独的4个文件:
+- 国家_人物_character.txt
+- 国家_人物_localization.txt  
+- 国家_人物_gfx.txt
+- 国家_人物_all_codes.txt
+"""
+    
+    report_file = f"batch_report_{timestamp}.txt"
+    save_to_file(report_content, report_file)
+    print(f"✓ 批量生成报告: {report_file}")
+    
+    print("\n" + "="*60)
+    print("🎉 批量生成完成！")
+    print(f"✓ 共生成 {len(characters)} 个人物的所有代码")
+    print(f"✓ 生成 {len(characters) * 4} 个单独文件")
+    print(f"✓ 生成 4 个批量汇总文件")
+    print(f"✓ 生成 1 个报告文件")
+    print(f"✓ 总计: {len(characters) * 4 + 5} 个文件")
+    print(f"✓ 所有文件保存在 output/ 文件夹")
+    print("="*60)
 
 def main():
     """
     主函数
     """
     while True:
-        print("\n" + "="*50)
-        print("        HOI4人物代码生成器")
-        print("="*50)
+        print("\n" + "="*60)
+        print("          HOI4人物代码生成器")
+        print("="*60)
         print("1. 单个人物生成")
         print("2. 批量人物生成")
-        print("3. 查看已保存的文件")
-        print("4. 退出程序")
+        print("3. 退出程序")
         
-        choice = input("\n请选择功能 (1/2/3/4): ").strip()
+        choice = input("\n请选择模式 (1/2/3): ").strip()
         
         if choice == "1":
-            single_character_mode()
+            single_mode()
         elif choice == "2":
-            batch_generate_mode()
+            batch_mode()
         elif choice == "3":
-            view_saved_files()
-        elif choice == "4":
             print("感谢使用HOI4人物代码生成器！")
             break
         else:
-            print("无效选择，请重新输入！")
+            print("❌ 无效选择，请重新输入！")
         
         input("\n按回车键继续...")
 
