@@ -1,0 +1,90 @@
+#IRIS_prompt_alert_operations
+#temp_tag
+#temp_tag2
+IRIS_prompt_alert_operation = {
+	hidden_effect = {
+		scoped_sound_effect = "diplomatic_notification"
+		add_to_array = { IRIS_prompt_alerts = IRIS_prompt_alert_operations^0 }
+		add_to_array = { IRIS_prompt_alert_other_var1 = IRIS_prompt_alert_operations^1 }
+		add_to_array = { IRIS_prompt_alert_other_var2 = IRIS_prompt_alert_operations^2 }
+		add_to_array = { IRIS_prompt_alert_other_var3 = IRIS_prompt_alert_operations^3 }
+		add_to_array = { IRIS_prompt_alert_other_var4 = IRIS_prompt_alert_operations^4 }
+		add_to_array = { IRIS_prompt_alert_other_var5 = IRIS_prompt_alert_operations^5 }
+
+		if = {
+			limit = {
+				has_variable = temp_var:temp_tag
+			}
+			add_to_array = { IRIS_prompt_alert_flags = temp_tag }
+		}
+		else = {
+			add_to_array = { IRIS_prompt_alert_flags = ROOT }
+		}
+		if = {
+			limit = {
+				has_variable = temp_var:temp_tag2
+			}
+			add_to_array = { IRIS_prompt_alert_flags2 = temp_tag2 }
+		}
+		else = {
+			add_to_array = { IRIS_prompt_alert_flags2 = ROOT }
+		}
+
+		add_to_array = { IRIS_prompt_alerts_progressbars = -317 }
+		set_variable_to_random = global.IRIS_alerts_dirty
+
+		clear_array = IRIS_prompt_alert_operations
+
+		country_event = { id = IRIS_mechanism.1 }
+	}
+}
+
+OCF_parliament_reminds_operation = {
+	add_to_array = { IRIS_prompt_alert_operations = 1 }
+	add_to_array = { IRIS_prompt_alert_operations = global.OCF_changes_in_parliamentary_history_change_record_array^0 }
+	IRIS_prompt_alert_operation = yes
+}
+
+#即将宣战警告
+#宣战方 temp_tag
+#被攻击方 temp_tag2
+
+# set_temp_variable = { temp_tag = THIS }
+# set_temp_variable = { temp_tag2 = OCE }
+# IRIS_warning_imminent_declaration_war = yes
+
+IRIS_warning_imminent_declaration_war = {
+	hidden_effect = {
+		set_variable = { global.IRIS_warning_imminent_declaration_war_tag = temp_var:temp_tag }
+		set_variable = { global.IRIS_warning_imminent_declaration_war_tag2 = temp_var:temp_tag2 }
+		log = "------------------------------"
+		log = "即将宣战警告运行前：[?global.IRIS_warning_imminent_declaration_war_tag.GetNameDefCap]  [?global.IRIS_warning_imminent_declaration_war_tag2.GetNameDefCap]"
+		# set_variable
+		every_country = {
+			limit = {
+				OR = {
+					is_ally_with = temp_var:temp_tag2
+					has_guaranteed = temp_var:temp_tag2
+					civilwar_target = temp_var:temp_tag2
+					is_ally_with = temp_var:temp_tag
+				}
+				NOT = { tag = temp_var:temp_tag }
+			}
+			add_to_array = { IRIS_prompt_alert_operations = 4 }
+			log = "看看初始宣战方：[?global.IRIS_warning_imminent_declaration_war_tag.GetNameDefCap]"
+			set_temp_variable = { temp_tag = global.IRIS_warning_imminent_declaration_war_tag }
+			set_temp_variable = { temp_tag2 = global.IRIS_warning_imminent_declaration_war_tag2 }
+			log = "宣战方对比：[?global.IRIS_warning_imminent_declaration_war_tag.GetNameDefCap]  [?this.temp_tag.GetNameDefCap]"
+			log = "被攻击方对比：[?global.IRIS_warning_imminent_declaration_war_tag2.GetNameDefCap]  [?this.temp_tag2.GetNameDefCap]"
+			IRIS_prompt_alert_operation = yes
+			scoped_sound_effect = alert_enemy_generate_wargoal_sound
+			set_variable_to_random = global.IRIS_alerts_dirty
+			# clear_variable = temp_tag
+			# clear_variable = temp_tag2
+		}
+		# clear_variable = temp_tag
+		# clear_variable = temp_tag2
+		# clear_variable = global.IRIS_warning_imminent_declaration_war_tag
+		# clear_variable = global.IRIS_warning_imminent_declaration_war_tag2
+	}
+}
