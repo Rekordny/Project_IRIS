@@ -188,6 +188,68 @@ scripted_gui = {
 
 			}
 		}
+		triggers = {
+			OCF_gridbox_seat_icon_visible = { #OCF_dail_party^1
+				meta_trigger = {
+					text = {
+						#计算占比
+						set_temp_variable = { OCF_gridbox_seat_icon_temp = OCF_dail_party^[V] }
+						divide_temp_variable = { OCF_gridbox_seat_icon_temp = 600 }
+
+						#计算未来走向
+						set_temp_variable = { OCF_gridbox_seat_icon_temp_2 = OCF_gridbox_seat_icon_temp }
+						multiply_temp_variable = { OCF_gridbox_seat_icon_temp_2 = 100 }#当前
+						set_temp_variable = { float_temp = OCF_national_support_proportion^[V] }#未来
+						subtract_from_temp_variable = { float_temp = OCF_gridbox_seat_icon_temp_2 }
+
+						if = {
+							limit = { check_variable = { temp_var:float_temp > 0 } }
+							#涨幅小于0.25
+							if = {
+								limit = { check_variable = { temp_var:float_temp < 0.25 } }
+								set_temp_variable = { float_icon_temp = 1 }
+							}
+							#涨幅小于1
+							else_if = {
+								limit = { check_variable = { temp_var:float_temp < 1 } }
+								set_temp_variable = { float_icon_temp = 2 }
+							}
+							#涨幅小于2
+							else_if = {
+								limit = { check_variable = { temp_var:float_temp < 2 } }
+								set_temp_variable = { float_icon_temp = 3 }
+							}
+							#涨幅大于2
+							else = {
+								set_temp_variable = { float_icon_temp = 4 }
+							}
+						}
+						else = {
+							#降幅小于0.25
+							if = {
+								limit = { check_variable = { temp_var:float_temp > -0.25 } }
+								set_temp_variable = { float_icon_temp = 5 }
+							}
+							#降幅小于1
+							else_if = {
+								limit = { check_variable = { temp_var:float_temp > -1 } }
+								set_temp_variable = { float_icon_temp = 6 }
+							}
+							#降幅小于2
+							else_if = {
+								limit = { check_variable = { temp_var:float_temp > -2 } }
+								set_temp_variable = { float_icon_temp = 7 }
+							}
+							#降幅大于2
+							else = {
+								set_temp_variable = { float_icon_temp = 8 }
+							}
+						}
+					}
+					V = "[?v]"
+				}
+			}
+		}
 		properties = {
 			OCF_gridbox_seat_icon = {
 				x = OCF_seat_x_array^idx
