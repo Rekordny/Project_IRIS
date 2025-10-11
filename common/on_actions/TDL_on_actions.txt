@@ -1,24 +1,67 @@
 on_actions = {
-	# on_startup = {
-	# 	effect = {
-	# 		TDL = {
-	# 			clr_country_flag = start_clean
-	# 		}
-	# 	}
-	# }
-
-	# on_daily_TDL = {
-	# 	effect = {
-	# 		if = {
-	# 			limit = {
-	# 				has_country_flag = TDL_ggzy
-	# 				has_country_leader = {
-    #             		character = TDL_Constantine
-    #         		}
-	# 			}
-	# 			country_event = TDLK.4
-	# 			clr_country_flag = TDL_ggzy
-	# 		}
-	# 	}
-	# }
+	on_startup = {
+		effect = {
+			TDL = {
+				country_event = {id = TDL_temp.1 days = 70}
+				country_event = {id = TDL_temp.2 days = 365}
+				country_event = {id = TDL_temp.3 days = 700}
+				country_event = {id = TDL_temp.4 days = 1100}
+			}
+		}
+	}
+	on_capitulation = {
+        effect = {
+            if = {
+                limit = {
+					has_global_flag = TDL_RECLAIM_WAR
+					NOT = {
+						has_global_flag = TDL_RECLAIM_WAR_ENDED
+					}
+                    FROM = {
+                        OR = {
+							tag = TDL
+							is_subject_of = TDL
+						}
+                    }
+                    ROOT = {
+                        is_IRIS_SAS_sub_country = yes
+                    }
+                }
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_won
+				FROM = {
+					save_global_event_target_as = winning_country
+				}
+				ROOT = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
+                FROM = {
+                    white_peace = {
+                        tag = ROOT
+                    }
+                }
+                every_country = {
+                    limit = {
+                        has_war_with = ROOT
+                        OR = {
+                            is_in_faction_with = FROM
+                            is_subject_of = FROM
+                        }
+                    }
+                    white_peace = {
+                        tag = ROOT
+                    }
+                }
+                FROM = {
+                    white_peace = ROOT
+                    set_autonomy = {
+                        target = ROOT
+                        autonomy_state = autonomy_puppet
+                    }
+                }
+            }
+        }
+    }
 }
