@@ -1380,6 +1380,9 @@ USF_foreign_policy_category = {
             has_idea = USF_treaty_of_kiritani
 			NOT = {has_country_flag = recently_signed_treaty_of_kinitani}
         }
+		visible = {
+			has_idea = USF_treaty_of_kiritani
+		}
         cost = 150
         days_remove = 15
         remove_effect = {
@@ -1411,6 +1414,11 @@ USF_foreign_policy_category = {
 		cost = 20
 		visible = {
 			has_completed_focus = USF_strategic_plans
+			NOT = {
+				has_country_leader = {
+					character = USF_Herbert
+				}
+			}
 		}
 		fire_only_once = yes
 		days_re_enable = 30
@@ -1439,6 +1447,11 @@ USF_foreign_policy_category = {
 				is_IRIS_SAS_sub_country = yes
 				has_country_flag = USF_support_target_SAS
 			}
+			NOT = {
+				has_country_leader = {
+					character = USF_Herbert
+				}
+			}
 		}
 		fire_only_once = yes
 		days_re_enable = 60
@@ -1460,6 +1473,428 @@ USF_foreign_policy_category = {
 		}
 		ai_will_do = {
 			factor = 100
+		}
+	}
+	#胡华三大征
+	USF_SAS_affair_annex_them_all = {
+		available = {
+			has_army_manpower = {size > 499999}
+			date > 3094.1.1
+		}
+		visible = {
+			has_completed_focus = USF_strategic_plans
+			has_country_leader = {
+				character = USF_Herbert
+			}
+		}
+		fire_only_once = yes
+		days_remove = 120
+		cost = 100
+		remove_effect = {
+			every_country = {
+				limit = {
+					is_IRIS_SAS_sub_country = yes
+					NOT = {is_subject_of = USF}
+				}
+				USF = {
+					declare_war_on = {
+						target = PREV
+						type = annex_everything
+					}
+				}
+			}
+			set_global_flag = USF_SAS_CAMPAIGN
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	#支援土耳基
+	USF_support_IKR = {
+		available = {
+			IKR = {
+				exists = yes
+				OR = {
+					is_subject = no
+					is_subject_of = USF
+				}
+			}
+			NOT = {
+				has_war_with = IKR
+			}
+		}
+		visible = {
+			has_completed_focus = USF_northen_plans
+		}
+		fire_only_once = yes
+		cost = 20
+		days_remove = 30
+		remove_effect = {
+			IKR = {
+				add_offsite_building = {type = industrial_complex level = 2}
+				add_offsite_building = {type = arms_factory level = 2}
+			}
+			add_relation_modifier = {
+				target = IKR
+				modifier = USF_send_volunteers_tension
+			}
+			add_ai_strategy = {
+				type = send_volunteers_desire
+				id = IKR
+				value = 1000
+			}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	#再军事化海峡
+	USF_control_the_strait = {
+		available = {
+			country_exists = PSC
+		}
+		visible = {
+			BLA = {
+				OR = {
+					has_capitulated = yes
+					exists = no
+				}
+			}
+		}
+		cost = 30
+		days_remove = 7
+		fire_only_once = yes
+		remove_effect = {
+			if = {
+				limit = {
+					has_idea = IKR_treaty_of_west_Istabul
+				}
+				remove_ideas = IKR_treaty_of_west_Istabul
+			}
+			IKR = {
+				add_relation_modifier = {
+					target = USF
+					modifier = USF_break_treaty_of_west_Istabul
+				}
+			}
+			annex_country = {
+				target = PSC
+			}
+			custom_effect_tooltip = USF_will_lead_to_crisis_t
+			news_event = {id = USF_news.4 days = 3}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	#支持赛莲斯代理人
+	USF_support_TIA = {
+		available = {
+			TIA = {
+				exists = yes
+				OR = {
+					is_subject = no
+					is_subject_of = USF
+				}
+			}
+			NOT = {
+				has_war_with = TIA
+			}
+			has_equipment = {
+				infantry_equipment > 3999
+			}
+		}
+		visible = {
+			has_completed_focus = USF_northen_plans
+		}
+		cost = 30
+		days_remove = 7
+		fire_only_once = yes
+		remove_effect = {
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 4000
+				target = TIA
+			}
+			add_relation_modifier = {
+				target = TIA
+				modifier = USF_send_volunteers_tension
+			}
+			every_state = {
+				limit = {
+					OR = {
+						is_core_of = QIN
+					}
+				}
+				add_core_of = TIA
+			}
+			TIA = {
+				create_wargoal = {
+					target = QIN
+					type = annex_everything
+				}
+				add_ai_strategy = {
+					type = conquer
+					id = QIN
+					value = 1000
+				}
+			}
+			add_ai_strategy = {
+				type = send_volunteers_desire
+				id = TIA
+				value = 1000
+			}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	#扩大在赛莲斯南方利益
+	USF_expand_LMN = {
+		available = {
+			NOT = {
+				has_war_with = LMN
+			}
+			TIA = {
+				exists = yes
+				OR = {
+					is_subject = no
+					is_subject_of = USF
+				}
+			}
+			has_equipment = {
+				infantry_equipment > 1999
+			}
+		}
+		visible = {
+			has_completed_focus = USF_northen_plans
+		}
+		cost = 30
+		days_remove = 14
+		fire_only_once = yes
+		remove_effect = {
+			add_ideas = USF_profit_of_LMN
+			send_equipment = {
+				equipment = infantry_equipment
+				amount = 2000
+				target = LMN
+			}
+			add_ai_strategy = {
+				type = send_volunteers_desire
+				id = LMN
+				value = 1000
+			}
+			LMN = {
+				division_template = {
+					name = "北阿西娅公署警备"
+					regiments = {
+						infantry = {x = 0 y = 0}
+						infantry = {x = 0 y = 1}
+						infantry = {x = 0 y = 2}
+						infantry = {x = 1 y = 0}
+						infantry = {x = 1 y = 1}
+						infantry = {x = 1 y = 2}
+						infantry = {x = 2 y = 0}
+						infantry = {x = 2 y = 1}
+						infantry = {x = 2 y = 2}
+					}
+				}
+				every_owned_state = {
+					create_unit = {
+						division = "name = \"北阿西娅公署警备\" division_template = \"北阿西娅公署警备\" start_experience_factor = 0.3"
+						owner = LMN
+					}
+					create_unit = {
+						division = "name = \"北阿西娅公署警备\" division_template = \"北阿西娅公署警备\" start_experience_factor = 0.3"
+						owner = LMN
+					}
+					create_unit = {
+						division = "name = \"北阿西娅公署警备\" division_template = \"北阿西娅公署警备\" start_experience_factor = 0.3"
+						owner = LMN
+					}
+				}
+				306 = {
+					add_dynamic_modifier = {
+						modifier = LMN_fort
+						scope = LMN
+					}
+				}
+				685 = {
+					add_dynamic_modifier = {
+						modifier = LMN_fort
+						scope = LMN
+					}
+				}
+			}
+			
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	#东控岛链
+	USF_control_the_islands = {
+		available = {
+			OR = {
+				TEB = {
+					exists = yes
+					OR = {
+						is_subject = no
+						is_subject_of = USF
+					}
+					NOT = {has_war_with = USF}
+				}
+				TPP = {
+					exists = yes
+					OR = {
+						is_subject = no
+						is_subject_of = USF
+					}
+					NOT = {has_war_with = USF}
+				}
+				SHR = {
+					exists = yes
+					OR = {
+						is_subject = no
+						is_subject_of = USF
+					}
+					NOT = {has_war_with = USF}
+				}
+				ESI = {
+					exists = yes
+					OR = {
+						is_subject = no
+						is_subject_of = USF
+					}
+					NOT = {has_war_with = USF}
+				}
+			}
+		}
+		visible = {
+			has_completed_focus = USF_eastern_plans
+		}
+		cost = 20
+		fire_only_once = yes
+		days_remove = 30
+		remove_effect = {
+			every_country = {
+				limit = {
+					OR = {
+						tag = TEB
+						tag = TPP
+						tag = SHR
+						tag = ESI
+					}
+					exists = yes
+					OR = {
+						is_subject = no
+						is_subject_of = USF
+					}
+				}
+				add_ideas = USF_base
+				give_military_access = USF
+				diplomatic_relation = {
+					country = USF
+					relation = docking_rights
+					active = yes
+				}
+				USF = {
+					give_guarantee = PREV
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	#进发早樱
+	USF_send_the_black_ship = {
+		available = {
+			SKR = {
+				exists = yes
+				is_subject = no
+			}
+			NOT = {
+				has_war_with = SKR
+			}
+		}
+		visible = {
+			has_completed_focus = USF_eastern_plans
+		}
+		cost = 20
+		fire_only_once = yes
+		days_remove = 30
+		remove_effect = {
+			#TODO
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+
+	#整合博林克尼亚
+	USF_integrate_BRG = {
+		available = {
+			OR = {
+				BRG = {
+					exists = yes
+					is_subject_of = USF
+				}
+				AND = {
+					controls_state = 226
+					controls_state = 825
+				}
+			}
+
+		}
+		visible = {
+			has_completed_focus = USF_western_plans
+		}
+		cost = 50
+		days_remove = 70
+		fire_only_once = yes
+		remove_effect = {
+			#TODO
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	#干涉大洋选举
+	USF_interfere_OCF_election = {
+		available = {
+			#TODO
+		}
+		visible = {
+			has_completed_focus = USF_western_plans
+			country_exists = OCF
+		}
+		cost = 50
+		days_remove = 70
+		fire_only_once = yes
+		remove_effect = {
+			#TODO
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	#东美乐蒂桥头堡
+	USF_control_eastern_Melody = {
+		available = {
+			#TODO
+		}
+		visible = {
+			has_completed_focus = USF_western_plans
+		}
+		cost = 50
+		days_remove = 70
+		fire_only_once = yes
+		remove_effect = {
+			#TODO
+		}
+		ai_will_do = {
+			factor = 0
 		}
 	}
 }
@@ -1679,6 +2114,11 @@ USF_market_thawing_category = {
 	}
 }
 USF_debug = {
+	USF_has_louise = {
+		available = {
+			has_character = USF_Louise
+		}
+	}
 	USF_load_focus_debug = {
 		complete_effect = {
 			set_country_flag = USF_focus_debug
