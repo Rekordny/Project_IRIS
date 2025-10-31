@@ -112,6 +112,246 @@ NAC_liberate_old_world = {
             factor = 1000
         }
     }
+    #重建革命军
+    NAC_release_RVA = {
+        available = {
+            any_owned_state = {
+                is_core_of = RVA
+            }
+        }
+        visible = {
+            RVA = {
+                exists = no
+            }
+            has_completed_focus = NAC_dip_12
+        }
+        days_remove = 7
+        remove_effect = {
+            every_owned_state = {
+                limit = {
+                    is_core_of = RVA
+                    NOT = {
+                        is_core_of = ROOT
+                    }
+                }
+                transfer_state_to = RVA
+            }
+            RVA = {
+                set_country_flag = RVA_restablished_by_NAC
+                set_politics = {
+                    ruling_party = communism
+                }
+                add_manpower = 50000
+                add_ideas = extensive_conscription
+                add_offsite_building = {
+                    type = arms_factory level = 6
+                }
+                add_equipment_to_stockpile = {
+                    type = infantry_equipment
+                    amount = 10000
+                    producer = NAC
+                }
+                division_template = {
+                    name = "精锐红军"
+                    priority = 2
+                    is_locked = yes
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                        infantry = { x = 2 y = 0 }
+                        infantry = { x = 2 y = 1 }
+                        infantry = { x = 2 y = 2 }
+                        artillery_brigade = {x = 3 y = 0}
+                        artillery_brigade = {x = 3 y = 1}
+                        artillery_brigade = {x = 3 y = 2}
+                    }
+                    support = {
+                        artillery = {x = 0 y = 0}
+                        engineer = {x = 0 y = 1}
+                    }
+                }
+                division_template = {
+                    name = "红军"
+                    priority = 2
+                    is_locked = yes
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                        infantry = { x = 2 y = 0 }
+                        infantry = { x = 2 y = 1 }
+                        infantry = { x = 2 y = 2 }
+                    }
+                    support = {
+                        engineer = {x = 0 y = 1}
+                    }
+                }
+                capital_scope = {
+                    for_loop_effect = {
+                        start = 0
+                        end = 12
+                        create_unit = {
+                            division = "name = \"精锐红军\" division_template = \"精锐红军\" start_experience_factor = 0.3"
+                            owner = RVA
+                        }
+                    }
+                    for_loop_effect = {
+                        start = 0
+                        end = 24
+                        create_unit = {
+                            division = "name = \"红军\" division_template = \"红军\" start_experience_factor = 0.3"
+                            owner = RVA
+                        }
+                    }
+                }
+                add_ai_strategy = {
+                    type = build_army
+                    value = 1000
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    NAC_arms_RVA = {
+        available = {
+            RVA = {
+                exists = yes
+                has_government = communism
+            }
+            has_equipment = {
+                infantry_equipment > 2999
+            }
+        }
+        visible = {
+            has_completed_focus = NAC_dip_12
+        }
+        cost = 30
+        days_remove = 30
+        days_re_enable = 60
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+				amount = 3000
+				target = RVA
+            }
+            RVA = {
+                capital_scope = {
+                    for_loop_effect = {
+                        start = 0
+                        end = 1
+                        create_unit = {
+                            division = "name = \"精锐红军\" division_template = \"精锐红军\" start_experience_factor = 0.3"
+                            owner = RVA
+                        }
+                    }
+                    for_loop_effect = {
+                        start = 0
+                        end = 4
+                        create_unit = {
+                            division = "name = \"红军\" division_template = \"红军\" start_experience_factor = 0.3"
+                            owner = RVA
+                        }
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #完成赛莲斯革命
+    NAC_RVA_complete_the_revolution = {
+        available = {
+            RVA = {
+                exists = yes
+                has_government = communism
+                has_army_manpower = {
+                    size > 299999
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = NAC_dip_12
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            every_country = {
+                limit = {
+                    is_small_Lotus_tag = yes
+                    NOT = {
+                        tag = LMN
+                    }
+                    NOT = {
+                        tag = RVA
+                    }
+                }
+                RVA = {
+                    declare_war_on = {
+                        target = PREV
+                        type = annex_everything
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    #封锁西伊斯塔布
+    NAC_block_west_istabul = {
+        available = {
+            USF = {
+                NOT = {has_idea = IKR_treaty_of_west_Istabul}
+            }
+            823 = {
+                owner = {
+                    OR = {
+                        tag = USF
+                        is_subject_of = USF
+                    }
+                }
+            }
+            269 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            839 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+        }
+        cost = 20
+        fire_only_once = yes
+        remove_effect = {
+            823 = {
+                add_dynamic_modifier = {
+                    modifier = blocked_by_NAC
+                }
+            }
+            add_named_threat = {
+                threat = 5
+                name = NAC_blocked_west_istabul
+            }
+            set_global_flag = PASHA_STRAIT_CRISIS
+            USF = {
+                country_event = {id = USF.31 days = 3}
+            }
+            hidden_effect = {
+                news_event = {id = USF_news.5 days = 2}
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
     #与OCF签订贸易协定
     NAC_trade_with_OCF = {
         available = {
@@ -684,6 +924,29 @@ NAC_liberate_old_world = {
                         owner = FROM
                     }
                 }
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    NAC_expand_faction = {
+        visible = {
+            is_in_faction = yes
+        }
+        target_root_trigger = {
+            is_in_faction = yes
+        }
+        target_array = NAC.faction_member_potential
+        target_trigger = {
+            FROM = {
+                is_in_faction = no
+            }
+        }
+        days_remove = 7
+        remove_effect = {
+            FROM = {
+                country_event = {id = NAC.996}
             }
         }
         ai_will_do = {

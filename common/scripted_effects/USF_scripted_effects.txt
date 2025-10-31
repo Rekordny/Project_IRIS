@@ -1144,3 +1144,490 @@ USF_combine_ideas_effect = {
         show_ideas_tooltip = USF_solid_logistics
     }
 }
+
+
+#农民党筹码
+USF_change_ADP_power = {
+    custom_effect_tooltip = USF_change_ADP_power_desc
+    hidden_effect = {
+        add_to_variable = {USF_ADP_power = USF_ADP_power_temp}
+        clamp_variable = {
+            var = USF_ADP_power
+            max = 100
+            min = 0
+        }
+
+        USF_kay_var_check = yes
+    }
+}
+#魔女派警觉
+USF_change_AF_alert = {
+    custom_effect_tooltip = USF_change_AF_alert_desc
+    hidden_effect = {
+        add_to_variable = {USF_AF_alert = USF_AF_alert_temp}
+        clamp_variable = {
+            var = USF_AF_alert
+            max = 100
+            min = 0
+        }
+
+        USF_kay_var_check = yes
+    }
+}
+#检测结局
+USF_kay_var_check = {
+    #均达到80导致内战
+    if = {
+        limit = {
+            check_variable = {USF_ADP_power > 79}
+            check_variable = {USF_AF_alert > 79}
+        }
+        set_variable = {USF_civ_war_var = 1}
+        USF_kay_civ_war_setup = yes
+    }
+    #魔女派警觉度达到100导致内战
+    else_if = {
+        limit = {
+            check_variable = {USF_AF_alert > 99}
+        }
+        set_variable = {USF_civ_war_var = 2}
+        USF_kay_civ_war_setup = yes
+    }
+    #农民党筹码达到100且魔女派警觉度达到50导致内战
+    else_if = {
+        limit = {
+            check_variable = {USF_ADP_power > 99}
+            check_variable = {USF_AF_alert > 49}
+        }
+        set_variable = {USF_civ_war_var = 3}
+        USF_kay_civ_war_setup = yes
+    }
+    #农民党筹码达到100但魔女派警觉度低于50，触发政变失败结局
+    else_if = {
+        limit = {
+            check_variable = {USF_ADP_power > 99}
+            check_variable = {USF_AF_alert < 50}
+        }
+        
+    }
+}
+#内战初始化
+USF_kay_civ_war_setup = {
+    #补一个事件
+    USF = {
+        set_global_flag = USF_CIV_WAR_STARTED
+        end_puppet = LUA
+        every_owned_state = {
+            limit = {
+                OR = {
+                    region = 24
+                    region = 25
+                    region = 30
+                }
+                is_coastal = no
+            }
+            transfer_state_to = UAS
+            add_core_of = UAS
+        }
+        delete_unit_template_and_units = {
+            division_template = "机械化航空魔导团"
+        }
+        delete_unit_template_and_units = {
+            division_template = "空降旅"
+        }
+        delete_unit_template_and_units = {
+            division_template = "空军野战团"
+        }
+        every_character = {
+            limit = {
+                has_character_flag = USF_adp_member
+            }
+            set_nationality = UAS
+        }
+        transfer_units_fraction= {
+            target = UAS
+            size = 0
+            stockpile_ratio = 0.4
+            army_ratio = 0
+            navy_ratio = 0
+            air_ratio = 0.9
+            keep_unit_leaders_trigger = {
+                always = yes
+            }
+        }
+        division_template = {
+            name = "征召民兵"
+            is_locked = yes
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                militia = { x = 0 y = 1 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+            }
+        }
+        add_manpower = 100000
+        every_core_state = {
+            create_unit = {
+                division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                owner = USF
+            }
+            create_unit = {
+                division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                owner = USF
+            }
+        }
+    }
+    LUA = {
+        country_event = {id = USF_civ_war.1 days = 3}
+    }
+    UAS = {
+        inherit_technology = USF
+        set_politics = {
+            ruling_party = neutrality
+        }
+        promote_character = {
+            character = USF_Charlotte
+            ideology = sub_National_Conservatism
+        }
+        division_template = {
+            name = "机械化航空魔导团"
+            priority = 2
+            is_locked = yes
+            force_allow_recruiting = yes
+            regiments = {
+                Witches_Camp = { x = 0 y = 0 }
+                Witches_Camp = { x = 0 y = 1 }
+                Witches_Camp = { x = 0 y = 2 }
+                Witches_Camp = { x = 1 y = 0 }
+                Witches_Camp = { x = 1 y = 1 }
+                Witches_Camp = { x = 1 y = 2 }
+            }
+            support = {
+                Witches = { x = 0 y = 0 }
+            }
+        }
+        division_template = {
+            name = "空降旅"
+            regiments = {
+                paratrooper = { x = 0 y = 0 }
+                paratrooper = { x = 0 y = 1 }
+                paratrooper = { x = 0 y = 2 }
+                paratrooper = { x = 1 y = 0 }
+                paratrooper = { x = 1 y = 1 }
+                paratrooper = { x = 1 y = 2 }
+            }
+            support = {
+                recon = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "空军野战团"
+            template_counter = 37
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                motorized = { x = 2 y = 0 }
+                motorized = { x = 2 y = 1 }
+                motorized = { x = 2 y = 2 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "步兵旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 0 y = 3 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                infantry = { x = 1 y = 3 }
+                artillery_brigade = { x = 2 y = 0}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "炮兵旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                artillery_brigade = { x = 2 y = 0}
+                artillery_brigade = { x = 2 y = 1}
+                artillery_brigade = { x = 2 y = 2}
+                artillery_brigade = { x = 2 y = 3}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+                signal_company = {x = 0 y = 2}
+            }
+        }
+        division_template = {
+            name = "摩托化步兵旅"
+            regiments = {
+                motorized = { x = 0 y = 0 }
+                motorized = { x = 0 y = 1 }
+                motorized = { x = 0 y = 2 }
+                motorized = { x = 1 y = 0 }
+                motorized = { x = 1 y = 1 }
+                motorized = { x = 1 y = 2 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "摩托化炮兵旅"
+            regiments = {
+                motorized = { x = 0 y = 0 }
+                motorized = { x = 0 y = 1 }
+                motorized = { x = 1 y = 0 }
+                motorized = { x = 1 y = 1 }
+                mot_artillery_brigade = {x = 2 y = 0}
+                mot_artillery_brigade = {x = 2 y = 1}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+                signal_company = {x = 0 y = 2}
+            }
+        }
+        division_template = {
+            name = "征召民兵"
+            is_locked = yes
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                militia = { x = 0 y = 1 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+            }
+        }
+        capital_scope = {
+            create_unit = {
+                division = "name = \"441机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.6"
+                owner = UAS
+            }
+            create_unit = {
+                division = "name = \"442机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.6"
+                owner = UAS
+            }
+            create_unit = {
+                division = "name = \"第一空降旅\" division_template = \"空降旅\" start_experience_factor = 0.3"
+                owner = UAS
+            }
+            create_unit = {
+                division = "name = \"第二空降旅\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.3"
+                owner = UAS
+            }
+            create_unit = {
+                division = "name = \"空军野战A团\" division_template = \"空军野战团\" start_experience_factor = 0.6"
+                owner = UAS
+            }
+            create_unit = {
+                division = "name = \"空军野战B团\" division_template = \"空军野战团\" start_experience_factor = 0.6"
+                owner = UAS
+            }
+            for_loop_effect = {
+                start = 0
+                end = 8
+
+                create_unit = {
+                    division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.3"
+                    owner = UAS
+                }
+                
+            }
+            for_loop_effect = {
+                start = 0
+                end = 2
+
+                create_unit = {
+                    division = "name = \"摩托化步兵旅\" division_template = \"摩托化步兵旅\" start_experience_factor = 0.3"
+                    owner = UAS
+                }
+                
+            }
+            for_loop_effect = {
+                start = 0
+                end = 24
+
+                create_unit = {
+                    division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                    owner = UAS
+                }
+                
+            }
+        }
+        if = {
+            limit = {
+                check_variable = {USF.USF_civ_war_var = 1}
+            }
+            add_political_power = 200
+            add_manpower = 75000
+            add_stability = 0.15
+            add_war_support = 0.15
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 10000
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 1000
+            }
+            #准备充分
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"443预备机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.3"
+                    owner = UAS
+                }
+                create_unit = {
+                    division = "name = \"444预备机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.3"
+                    owner = UAS
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 6
+
+                    create_unit = {
+                        division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.3"
+                        owner = UAS
+                    }
+        
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 6
+
+                    create_unit = {
+                        division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                        owner = UAS
+                    }
+                    
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {USF.USF_civ_war_var = 2}
+            }
+            set_country_leader_ideology = sub_Junta
+            set_cosmetic_tag = UAS_1
+            add_political_power = 50
+            add_manpower = 100000
+            add_war_support = 0.15
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 10000
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 1000
+            }
+            #空军独走
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"443预备机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.3"
+                    owner = UAS
+                }
+                create_unit = {
+                    division = "name = \"444预备机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.3"
+                    owner = UAS
+                }
+                create_unit = {
+                    division = "name = \"445预备机械化航空魔导团\" division_template = \"机械化航空魔导团\" start_experience_factor = 0.2"
+                    owner = UAS
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 4
+
+                    create_unit = {
+                        division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.2"
+                        owner = UAS
+                    }
+                    
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 4
+
+                    create_unit = {
+                        division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                        owner = UAS
+                    }
+                    
+                }
+            }
+        }
+        else_if = {
+            limit = {
+                check_variable = {USF.USF_civ_war_var = 3}
+            }
+            add_political_power = 50
+            add_manpower = 50000
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 5000
+            }
+            add_equipment_to_stockpile = {
+                type = artillery_equipment
+                amount = 500
+            }
+            
+            capital_scope = {
+                #仓促发动的内战
+                for_loop_effect = {
+                    start = 0
+                    end = 4
+
+                    create_unit = {
+                        division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.1"
+                        owner = UAS
+                    }
+                    
+                }
+                for_loop_effect = {
+                    start = 0
+                    end = 4
+
+                    create_unit = {
+                        division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                        owner = UAS
+                    }
+                    
+                }
+            }
+
+        }
+    }
+}
+
+USF_kay_civ_war_test_1 = {
+    set_variable = {USF_civ_war_var = 1}
+    USF_kay_civ_war_setup = yes
+}
+USF_kay_civ_war_test_2 = {
+    set_variable = {USF_civ_war_var = 2}
+    USF_kay_civ_war_setup = yes
+}
+USF_kay_civ_war_test_3 = {
+    set_variable = {USF_civ_war_var = 3}
+    USF_kay_civ_war_setup = yes
+}

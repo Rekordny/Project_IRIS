@@ -12,7 +12,8 @@ on_actions = {
 
 				if = {
 					limit = {
-						always = no #没做完捏
+						#always = no #没做完捏
+						always = yes
 					}
 					activate_mission = USF_cut_naval_budget_decision
 					activate_mission = USF_impose_excess_profits_tax_decision
@@ -29,14 +30,19 @@ on_actions = {
 				USF_test_line = yes
 				USF_pandemic_setup = yes
 
-
-				#骨架事件
-				country_event = {id = USF_temp.1 days = 365}
-				country_event = {id = USF_temp.2 days = 680}
-				country_event = {id = USF_temp.3 days = 400}
-				country_event = {id = USF_temp.4 days = 700}
-				country_event = {id = USF_temp.5 days = 1000}
-				country_event = {id = USF_temp.6 days = 1500}
+				if = {
+					limit = {
+						always = no
+					}
+					#骨架事件
+					country_event = {id = USF_temp.1 days = 365}
+					country_event = {id = USF_temp.2 days = 680}
+					country_event = {id = USF_temp.3 days = 400}
+					country_event = {id = USF_temp.4 days = 700}
+					country_event = {id = USF_temp.5 days = 1000}
+					country_event = {id = USF_temp.6 days = 1500}
+				}
+				
 
 			}
 			NSJ = {
@@ -183,4 +189,188 @@ on_actions = {
 			}
 		}
 	}
+	on_capitulation = {
+        effect = {
+            if = {
+                limit = {
+					has_global_flag = USF_SAS_CAMPAIGN
+                    FROM = {
+                        OR = {
+							tag = USF
+							is_subject_of = USF
+							is_in_faction_with = USF
+						}
+                    }
+                    ROOT = {
+                        is_IRIS_SAS_sub_country = yes
+                    }
+                }
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_won
+				FROM = {
+					save_global_event_target_as = winning_country
+				}
+				ROOT = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
+
+
+				USF = {
+					annex_country = {
+						target = ROOT
+						transfer_troops = no
+					}
+				}
+				
+            }
+			if = {
+				limit = {
+					has_global_flag = USF_CIV_WAR_STARTED
+					ROOT = {
+						tag = UAS
+					}
+					FROM = {
+						OR = {
+							tag = USF
+							is_in_faction_with = USF
+							is_subject_of = USF
+						}
+					}
+				}
+
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_won
+				USF = {
+					save_global_event_target_as = winning_country
+				}
+				ROOT = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
+
+				set_global_flag = USF_CIV_WAR_ENDED
+				UAS = {
+					transfer_navy = {
+						target = USF
+					}
+				}
+				USF = {
+					annex_country = {
+						target = UAS
+					}
+					country_event = {id = USF_civ_war.4 days = 3}
+				}
+				every_state = {
+					limit = {
+						is_core_of = UAS
+					}
+					remove_core_of = UAS
+				}
+			}
+			if = {
+				limit = {
+					has_global_flag = USF_CIV_WAR_STARTED
+					ROOT = {
+						tag = USF
+					}
+					FROM = {
+						OR = {
+							tag = UAS
+							is_in_faction_with = UAS
+							is_subject_of = UAS
+						}
+					}
+				}
+
+				set_global_flag = show_peace_popup_alert
+				set_global_flag = war_won
+				UAS = {
+					save_global_event_target_as = winning_country
+				}
+				ROOT = {
+					save_global_event_target_as = losing_country
+				}
+				IRIS_peace_popup_determine_allies = yes
+				add_to_variable = { global.peace_popup_dirty = 1 }
+
+				set_global_flag = USF_CIV_WAR_ENDED
+				USF = {
+					transfer_navy = {
+						target = UAS
+					}
+				}
+				UAS = {
+					
+					if = {
+						limit = {
+							LUA = {
+								exists = yes
+							}
+						}
+						set_autonomy = {
+							target = LUA
+							autonomous_state = USF_homeland_state
+						}
+						LUA = {
+							clr_country_flag = has_Anarchy_flag
+							every_owned_state = {
+								set_demilitarized_zone = no
+							}
+						}
+					}
+					if = {
+						limit = {
+							USN = {
+								exists = yes
+								is_subject_of = USF
+							}
+						}
+						white_peace = USN
+						set_autonomy = {
+							target = USN
+							autonomous_state = USF_homeland_state
+						}
+					}
+					if = {
+						limit = {
+							RUM = {
+								exists = yes
+								is_subject_of = USF
+							}
+						}
+						white_peace = RUM
+						set_autonomy = {
+							target = RUM
+							autonomous_state = autonomy_dominion
+						}
+					}
+					if = {
+						limit = {
+							NSJ = {
+								exists = yes
+								is_subject_of = USF
+							}
+						}
+						white_peace = NSJ
+						set_autonomy = {
+							target = NSJ
+							autonomous_state = naval_command
+						}
+					}
+					annex_country = {
+						target = USF
+					}
+				}
+				every_state = {
+					limit = {
+						is_core_of = USF
+					}
+					add_core_of = UAS
+				}
+			}
+        }
+    }
 }
