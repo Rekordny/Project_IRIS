@@ -22,13 +22,24 @@ on_actions = {
 					activate_mission = USF_election_result
 				}
 
+				if = {
+					limit = {
+						is_ai = yes
+					}
+					add_political_power = 250
+					country_event = {id = USF_temp.3 days = 400}
+					country_event = {id = USF_temp.4 days = 700}
+					country_event = {id = USF_temp.5 days = 1000}
+				}
+
 				country_event = {id = USF.2 days = 3}
 				country_event = {id = USF_flavor.1 days = 42}
 				country_event = {id = USF.8 days = 14}
-				country_event = {id = USF.14 days = 60}
+				country_event = {id = USF.14 days = 90}
 				country_event = {id = NSJ.1 days = 1000}
 				USF_test_line = yes
 				USF_pandemic_setup = yes
+				USF_update_leverage_republic = yes
 
 				if = {
 					limit = {
@@ -98,7 +109,20 @@ on_actions = {
 		effect = {
 			USF = {
 				USF_refresh_congress = yes
-				USF_calculate_pandemic_mtth = yes
+				if = {
+					limit = {
+						check_variable = {USF_econ_sphere_available_points > 0}
+					}
+					set_temp_variable = { alert_id = token:alert_USF_available_points }
+					add_IRIS_alert_unless_exists = yes
+				}
+				if = {
+					limit = {
+						check_variable = {USF_econ_sphere_available_points < 1}
+					}
+					set_temp_variable = { alert_id = token:alert_USF_available_points }
+					del_IRIS_alert = yes
+				}
 				if = {
 					limit = {
 						has_country_flag = USF_encourage_investment
@@ -135,6 +159,12 @@ on_actions = {
 	on_monthly_USF = {
 		effect = {
 			USF = {
+				if = {
+					limit = {
+						has_country_flag = USF_econ_sphere_enabled
+					}
+					USF_econ_sphere_available_points_monthly_update = yes
+				}
 				USF_monthly_inflation_change = yes
 				if = {
 					limit = {
