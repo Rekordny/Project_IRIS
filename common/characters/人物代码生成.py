@@ -37,13 +37,14 @@ def generate_all_codes(country_key, character_key):
     # 3. 生成GFX注册代码
     gfx_code = f"""SpriteType = {{
     name = "GFX_{full_key}"
-    texturefile = "gfx/leaders/{country_key}/{full_key}.png"
+    texturefile = "gfx/leaders/{country_key}/{full_key}.dds"
     legacy_lazy_load = no
 }}
 
+
 SpriteType = {{
     name = "GFX_idea_{full_key}"
-    texturefile = "gfx/interface/ideas/{country_key}/{full_key}.png"
+    texturefile = "gfx/interface/ideas/{country_key}/{full_key}.dds"
 }}"""
     
     return character_code, localization_code, gfx_code
