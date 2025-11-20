@@ -1,0 +1,555 @@
+SKR_crisis_decision = {
+    SKR_refresh_power_projection_monthly_mission = {
+        icon = mission_icon
+        is_good = no
+		days_mission_timeout = 30
+        available = {
+            always = no
+        }
+		activation = {
+			always = no
+		}
+		cancel_trigger = {
+			has_global_flag = SKR_CRISIS_ENDED_FLAG
+		}
+		complete_effect = {
+
+		}
+        timeout_effect = {
+            SKR_refresh_power_projection_monthly = yes
+            activate_mission = SKR_refresh_power_projection_monthly_mission
+        }
+    }
+
+    SKR_send_fleet = {
+        custom_cost_trigger = {
+			command_power > 9
+		}
+        custom_cost_text = decision_cost_CP_10
+        days_remove = 60
+        days_re_enable = 30
+        complete_effect = {
+            set_country_flag = SKR_crisis_in_patrol_flag
+        }
+        modifier = {
+            naval_accidents_chance = 0.15
+        }
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 4}
+            SKR_change_power_projection_effect = yes
+            clr_country_flag = SKR_crisis_in_patrol_flag
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_send_weapons = {
+        available = {
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                has_equipment = {
+                    infantry_equipment > 999
+                }
+            }
+		}
+        days_remove = 14
+        days_re_enable = 50
+        complete_effect = {
+            set_country_flag = SKR_crisis_in_sending_weapons
+        }
+        remove_effect = {
+            clr_country_flag = SKR_crisis_in_sending_weapons
+            set_temp_variable = {power_projection_temp = 3}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 3}
+            SKR_change_tension_effect = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_send_military_advisor = {
+        cost = 15
+        days_remove = 60
+        days_re_enable = 50
+        modifier = {
+            experience_gain_army = 0.1
+            experience_gain_navy = 0.1
+        }
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 3}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 3}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_boarding_rights = {
+        cost = 15
+        visible = {
+            check_variable = {ZTZ.SKR_tension_level > 0}
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            custom_effect_tooltip = SKR_boarding_rights_t
+            set_country_flag = SKR_boarding_rights_flag
+            set_temp_variable = {power_projection_temp = 10}
+            SKR_change_power_projection_effect = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_fire_at_will = {
+        cost = 25
+        visible = {
+            check_variable = {ZTZ.SKR_tension_level > 1}
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            custom_effect_tooltip = SKR_fire_at_will_t
+            set_country_flag = SKR_fire_at_will_flag
+            set_temp_variable = {power_projection_temp = 10}
+            SKR_change_power_projection_effect = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+
+    #USF
+
+    SKR_deploy_our_fleet = {
+        available = {
+            393 = {
+                controller = {
+                    NOT = {
+                        tag = SKR
+                        is_subject_of = SKR
+                    }
+                }
+            }
+        }
+        visible = {
+            tag = USF
+            has_country_flag = USF_econ_sphere_chess_6_visible_flag
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            custom_effect_tooltip = SKR_deploy_our_fleet_t
+            add_to_variable = {USF_city_06_p = 25}
+            custom_effect_tooltip = SKR_power_projection_monthly_bonus_2
+            add_to_variable = {power_projection_m = 2}
+            hidden_effect = {
+                USF_refresh_total_propersity = yes
+            }
+            393 = {
+                add_building_construction = {
+                    type = naval_base
+                    level = 2
+                    province = 12059
+                    instant_build = yes
+                }
+            }
+            set_temp_variable = {power_projection_temp = 10}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 10}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_send_shbb = {
+        available = {
+            has_navy_size = {
+                size > 0
+                archetype = ship_hull_super_heavy_1
+            }
+        }
+        visible = {
+            tag = USF
+            has_completed_focus = USF_bb_focus
+        }
+        days_remove = 25
+        days_re_enable = 50
+        remove_effect = {
+            navy_experience = 10
+            set_temp_variable = {power_projection_temp = 3}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 3}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_shbb_exercise = {
+        available = {
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                ships_in_area = { area = 136 size > 14 } 
+            }
+        }
+        visible = {
+            tag = USF
+            has_completed_focus = USF_bb_focus
+        }
+        days_remove = 10
+        days_re_enable = 90
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 5}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 5}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_send_cv = {
+        available = {
+            has_navy_size = {
+                size > 1
+                archetype = ship_hull_carrier
+            }
+        }
+        visible = {
+            tag = USF
+            has_completed_focus = USF_cv_focus
+        }
+        days_remove = 25
+        days_re_enable = 50
+        remove_effect = {
+            navy_experience = 5
+            air_experience = 5
+            set_temp_variable = {power_projection_temp = 5}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 5}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_cv_exercise = {
+        available = {
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                ships_in_area = { area = 136 size > 14 } 
+            }
+        }
+        visible = {
+            tag = USF
+            has_completed_focus = USF_cv_focus
+        }
+        days_remove = 7
+        days_re_enable = 90
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 5}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 5}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_ask_AKL_for_docking_right = {
+        cost = 50
+        visible = {
+            tag = USF
+            has_idea = USF_treaty_of_kiritani
+        }
+        days_remove = 14
+        fire_only_once = yes
+        remove_effect = {
+            AKL = {
+                diplomatic_relation = {
+                    country = USF
+                    relation = docking_rights
+                    active = yes
+                }
+            }
+            custom_effect_tooltip = SKR_power_projection_monthly_bonus_2
+            add_to_variable = {power_projection_m = 2}
+            set_temp_variable = {SKR_tention_temp = 5}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+
+
+    #SLL
+
+    SKR_mobalise_our_fleet = {
+        visible = {
+            tag = SLL
+            check_variable = {ZTZ.SKR_tension_level > 1}
+        }
+        fire_only_once = yes
+        days_remove = 70
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 8}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 3}
+            SKR_change_tension_effect = yes 
+
+            create_equipment_variant = {
+                name = "一般通过老旧驱逐舰"
+                type = ship_hull_light_1
+                parent_version = 0
+                allow_without_tech = yes
+                modules = {
+                    fixed_ship_battery_slot = ship_light_battery_1
+                    fixed_ship_anti_air_slot = empty
+                    fixed_ship_fire_control_system_slot = ship_fire_control_system_0
+                    fixed_ship_radar_slot = ship_sonar_1
+                    fixed_ship_engine_slot = light_ship_engine_2
+                    fixed_ship_torpedo_slot = ship_torpedo_1
+                    mid_1_custom_slot = ship_torpedo_1
+                    rear_1_custom_slot = ship_depth_charge_1
+                }
+                obsolete = yes
+            }
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+            add_equipment_production = {
+				equipment = {
+					type = ship_hull_light_1
+					creator = "SLL"
+					version_name = "一般通过老旧驱逐舰"
+				}
+				requested_factories = 1
+				progress = 0.99
+				amount = 1
+			}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_send_carrier = {
+        available = {
+            has_navy_size = {
+                size > 1
+                archetype = ship_hull_carrier
+            }
+        }
+        visible = {
+            tag = SLL
+            check_variable = {ZTZ.SKR_tension_level > 0}
+        }
+        days_remove = 20
+        days_re_enable = 50
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 3}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 3}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_mass_exercise = {
+        visible = {
+            tag = SLL
+            check_variable = {ZTZ.SKR_tension_level > 1}
+        }
+        days_remove = 7
+        days_re_enable = 50
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 7}
+            SKR_change_power_projection_effect = yes
+            set_temp_variable = {SKR_tention_temp = 4}
+            SKR_change_tension_effect = yes 
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_send_troops = {
+        visible = {
+            tag = SLL
+            check_variable = {ZTZ.SKR_tension_level > 1}
+        }
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            set_temp_variable = {power_projection_temp = 10}
+            SKR_change_power_projection_effect = yes
+            add_relation_modifier = {
+				target = SKR
+				modifier = SLL_send_volunteers_tension
+			}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_mass_patrol = {
+        visible = {
+            tag = SLL
+            check_variable = {ZTZ.SKR_tension_level > 1}
+        }
+        cost = 50
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            set_temp_variable = {SKR_tention_temp = 5}
+            SKR_change_tension_effect = yes 
+            add_to_variable = {power_projection_m = 4}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_ask_rossiya = {
+        available = {
+            OR = {
+                AND = {
+                    country_exists = NAC
+                    NOT = {country_exists = BLA}
+                    NOT = {country_exists = OPA}
+                }
+                AND = {
+                    country_exists = BLA
+                    NOT = {country_exists = NAC}
+                    NOT = {country_exists = OPA}
+                }
+                AND = {
+                    country_exists = OPA
+                    NOT = {country_exists = BLA}
+                    NOT = {country_exists = NAC}
+                }
+            }
+        }
+        visible = {
+            tag = SLL
+            check_variable = {ZTZ.SKR_tension_level > 1}
+        }
+        cost = 50
+        days_remove = 7
+        fire_only_once = yes
+        remove_effect = {
+            set_temp_variable = {SKR_tention_temp = 5}
+            SKR_change_tension_effect = yes 
+            add_to_variable = {power_projection_m = 2}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+}
