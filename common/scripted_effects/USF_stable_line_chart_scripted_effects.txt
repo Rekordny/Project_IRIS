@@ -135,14 +135,11 @@ player_slot_machine_numbers_button_debug = {
     }
 
     if = {
-        limit = { check_variable = { ROOT.player_hand_array^num < 7 } }
+        limit = { check_variable = { ROOT.player_hand_array^num < 8 } }
         # if = {
         #     limit = { check_variable = { player_hand_button_1_update = 0 } }
         #     set_variable = { player_hand_button_1_update = 1 }
         # }
-
-
-        add_to_array = { ROOT.player_hand_array = 1 }
         add_to_array = { ROOT.player_hand_array_animation = 801000 }
         add_to_array = { ROOT.player_hand_array_x = 300 }
 
@@ -259,6 +256,18 @@ player_slot_machine_numbers_button_debug = {
     else = {
         set_variable = { USF_player_public_opinion_progress_bar_g_random = 50080 }
     }
+
+
+
+    #测试 删除所有出牌
+    clear_array = ROOT.player_play_area_array
+    clear_array = ROOT.player_play_area_array_animation
+    clear_array = ROOT.player_play_area_hole_array
+    clear_array = ROOT.player_play_area_hole_array_animation
+
+    #增加手牌次数
+    set_variable = { player_exposed_small_hand = 1 }
+    set_variable = { player_unfaced_small_hand = 1 }
 }
 
 
@@ -297,19 +306,152 @@ USF_update_player_hand_position_after_animation = {
     #     set_variable = { player_hand_button_1_update = 0 }
     # }
 
-    remove_from_array = {
-        array = ROOT.player_hand_array
-        index = frame_temp
+    if = {
+        limit = {
+            check_variable = { ROOT.player_hand_array^frame_temp = 1 }
+            check_variable = { ROOT.player_exposed_small_hand > 0 }
+        }
+        USF_player_play_area_card_issuing = yes
+
+        remove_from_array = {
+            array = ROOT.player_hand_array
+            index = frame_temp
+        }
+        remove_from_array = {
+            array = ROOT.player_hand_array_animation
+            index = frame_temp
+        }
+        remove_from_array = {
+            array = ROOT.player_hand_array_x
+            index = frame_temp
+        }
     }
-    remove_from_array = {
-        array = ROOT.player_hand_array_animation
-        index = frame_temp
+    else_if = {
+        limit = {
+            check_variable = { ROOT.player_unfaced_small_hand > 0 }
+            OR = {
+                check_variable = { ROOT.player_hand_array^frame_temp = 2 }
+                check_variable = { ROOT.player_hand_array^frame_temp = 3 }
+                check_variable = { ROOT.player_hand_array^frame_temp = 4 }
+                check_variable = { ROOT.player_hand_array^frame_temp = 5 }
+            }
+        }
+        USF_player_play_area_card_issuing_hole = yes
+
+        remove_from_array = {
+            array = ROOT.player_hand_array
+            index = frame_temp
+        }
+        remove_from_array = {
+            array = ROOT.player_hand_array_animation
+            index = frame_temp
+        }
+        remove_from_array = {
+            array = ROOT.player_hand_array_x
+            index = frame_temp
+        }
     }
-    remove_from_array = {
-        array = ROOT.player_hand_array_x
-        index = frame_temp
+    else = {
+        #清除所有手牌移动动画
+        for_loop_effect = {
+            end = ROOT.player_hand_array^num
+            value = var
+            set_variable = { ROOT.player_hand_array_animation^var = 0 }
+        }
     }
 
     set_variable = { player_hand_array_output = frame_temp }
     log = "卡牌动画启用数值=[?player_hand_button_1_update]"
+}
+
+
+#打出卡牌
+USF_player_play_area_card_issuing = {
+    add_to_variable = { player_exposed_small_hand = -1 }
+    add_to_variable = { ROOT.player_play_area_icon_update = 1 }
+    if = {
+        limit = {
+            check_variable = { ROOT.player_play_area_icon_update = 2 }
+        }
+        set_variable = { ROOT.player_play_area_icon_update = 0 }
+    }
+
+    #清空动画
+    for_loop_effect = {
+        end = ROOT.player_play_area_array_animation^num
+        value = var
+        set_variable = { ROOT.player_play_area_array_animation^var = 0 }
+    }
+    for_loop_effect = {
+        end = ROOT.player_play_area_hole_array_animation^num
+        value = var
+        set_variable = { ROOT.player_play_area_hole_array_animation^var = 0 }
+    }
+
+    #存入卡组
+    add_to_array = { ROOT.player_play_area_array = ROOT.player_hand_array^frame_temp }
+
+    #播放出牌动画######################
+    #判定出牌位置 如果第一张牌 出卡槽一 输入2 如果是1，则不播放
+    # set_temp_variable = { card_slot_insertion_point = ROOT.player_play_area_array^num }
+    if = {
+        limit = { check_variable = { ROOT.player_play_area_array^num = 1 } }
+        set_temp_variable = { card_slot_insertion_point_animation_temp = frame_temp }
+        add_to_temp_variable = { card_slot_insertion_point_animation_temp = 2 }
+        add_to_array = { ROOT.player_play_area_array_animation = card_slot_insertion_point_animation_temp }
+    }
+    else_if = {
+        limit = { check_variable = { ROOT.player_play_area_array^num = 2 } }
+        set_temp_variable = { card_slot_insertion_point_animation_temp = frame_temp }
+        add_to_temp_variable = { card_slot_insertion_point_animation_temp = 9 }
+        add_to_array = { ROOT.player_play_area_array_animation = card_slot_insertion_point_animation_temp }
+    }
+    else_if = {
+        limit = { check_variable = { ROOT.player_play_area_array^num = 3 } }
+        set_temp_variable = { card_slot_insertion_point_animation_temp = frame_temp }
+        add_to_temp_variable = { card_slot_insertion_point_animation_temp = 16 }
+        add_to_array = { ROOT.player_play_area_array_animation = card_slot_insertion_point_animation_temp }
+    }
+}
+
+#打出卡牌 暗牌
+USF_player_play_area_card_issuing_hole = {
+    add_to_variable = { player_unfaced_small_hand = -1 }
+    add_to_variable = { ROOT.player_play_area_icon_update = 1 }
+    if = {
+        limit = {
+            check_variable = { ROOT.player_play_area_icon_update = 2 }
+        }
+        set_variable = { ROOT.player_play_area_icon_update = 0 }
+    }
+
+    #清空动画
+    for_loop_effect = {
+        end = ROOT.player_play_area_array_animation^num
+        value = var
+        set_variable = { ROOT.player_play_area_array_animation^var = 0 }
+    }
+    for_loop_effect = {
+        end = ROOT.player_play_area_hole_array_animation^num
+        value = var
+        set_variable = { ROOT.player_play_area_hole_array_animation^var = 0 }
+    }
+
+    #存入卡组
+    add_to_array = { ROOT.player_play_area_hole_array = ROOT.player_hand_array^frame_temp }
+
+    #播放出牌动画######################
+    #判定出牌位置 如果第一张牌 出卡槽一 输入2 如果是1，则不播放
+    if = {
+        limit = { check_variable = { ROOT.player_play_area_hole_array^num = 1 } }
+        set_temp_variable = { card_slot_insertion_point_animation_temp = frame_temp }
+        add_to_temp_variable = { card_slot_insertion_point_animation_temp = 23 }
+        add_to_array = { ROOT.player_play_area_hole_array_animation = card_slot_insertion_point_animation_temp }
+    }
+    else_if = {
+        limit = { check_variable = { ROOT.player_play_area_hole_array^num = 2 } }
+        set_temp_variable = { card_slot_insertion_point_animation_temp = frame_temp }
+        add_to_temp_variable = { card_slot_insertion_point_animation_temp = 30 }
+        add_to_array = { ROOT.player_play_area_hole_array_animation = card_slot_insertion_point_animation_temp }
+    }
 }
