@@ -31,23 +31,27 @@ def generate_all_codes(country_key, character_key):
     }}
 }}"""
     
-    # 2. 生成本地化代码
+    # 2. 生成本地化/招募代码
     localization_code = f' {full_key}: ""'
     
     # 3. 生成GFX注册代码
-    gfx_code = f"""SpriteType = {{
-    name = "GFX_{full_key}"
-    texturefile = "gfx/leaders/{country_key}/{full_key}.dds"
-    legacy_lazy_load = no
-}}
+    gfx_code = f"""
+    SpriteType = {{
+        name = "GFX_{full_key}"
+        texturefile = "gfx/leaders/{country_key}/{full_key}.dds"
+        legacy_lazy_load = no
+    }}
 
 
-SpriteType = {{
-    name = "GFX_idea_{full_key}"
-    texturefile = "gfx/interface/ideas/{country_key}/{full_key}.dds"
-}}"""
+    SpriteType = {{
+        name = "GFX_idea_{full_key}"
+        texturefile = "gfx/interface/ideas/{country_key}/{full_key}.dds"
+    }}"""
+
+    # 4. 生成招募代码
+    recruit_code = f' recruit_character = {full_key}'
     
-    return character_code, localization_code, gfx_code
+    return character_code, localization_code, gfx_code, recruit_code
 
 def save_to_file(content, filename, folder="output"):
     """保存内容到文件"""
@@ -88,7 +92,7 @@ def single_mode():
         print(f"\n正在为 {country_key}_{character_key} 生成所有代码...")
         
         # 生成所有代码
-        character_code, localization_code, gfx_code = generate_all_codes(country_key, character_key)
+        character_code, localization_code, gfx_code, recruit_code = generate_all_codes(country_key, character_key)
         
         # 显示所有生成的代码
         print("\n" + "="*60)
@@ -118,6 +122,9 @@ def single_mode():
         # 保存GFX代码
         save_to_file(gfx_code, f"{country_key}_{character_key}_gfx.txt")
         print("✓ GFX代码已保存")
+
+        save_to_file(recruit_code, f"{country_key}_{character_key}_gfx.txt")
+        print("✓ 招募代码已保存")
         
         # 保存合并文件
         combined_content = f"""=== HOI4人物全代码 ===
@@ -183,21 +190,24 @@ def batch_mode():
     all_character_codes = []
     all_localization_codes = []
     all_gfx_codes = []
+    all_recruit_codes = []
     
     # 为每个人物生成代码
     for i, (country_key, character_key) in enumerate(characters, 1):
         print(f"正在生成第 {i}/{len(characters)} 个人物: {country_key}_{character_key}")
         
-        character_code, localization_code, gfx_code = generate_all_codes(country_key, character_key)
+        character_code, localization_code, gfx_code, recruit_code = generate_all_codes(country_key, character_key)
         
         all_character_codes.append(character_code)
         all_localization_codes.append(localization_code)
         all_gfx_codes.append(gfx_code)
+        all_recruit_codes.append(recruit_code)
         
         # 为每个人物保存单独文件
         save_to_file(character_code, f"{country_key}_{character_key}_character.txt")
         save_to_file(localization_code, f"{country_key}_{character_key}_localization.txt")
         save_to_file(gfx_code, f"{country_key}_{character_key}_gfx.txt")
+        save_to_file(recruit_code, f"{country_key}_{character_key}_gfx.txt")
         
         # 保存合并文件
         combined_content = f"""=== HOI4人物全代码 ===
@@ -238,6 +248,12 @@ def batch_mode():
     batch_gfx_file = f"batch_gfx_{timestamp}.txt"
     save_to_file(batch_gfx_content, batch_gfx_file)
     print(f"✓ 批量GFX代码: {batch_gfx_file}")
+
+    batch_recruit_content = "\n\n".join(all_recruit_codes)
+    batch_recruit_file = f"batch_recruit_{timestamp}.txt"
+    save_to_file(batch_recruit_content, batch_recruit_file)
+    print(f"✓ 批量GFX代码: {batch_recruit_file}")
+    
     
     # 4. 生成报告文件
     report_content = f"""HOI4人物代码批量生成报告
