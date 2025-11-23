@@ -1,0 +1,120 @@
+scripted_gui = {
+	IRIS_energy_transition_window = {
+		context_type = player_context
+		parent_window_token = trade_tab
+		window_name = "IRIS_energy_transition_window"
+		visible = {
+		}
+		properties = {
+			automatic_processing_energy_conversion_checkbox = {
+				frame = automatic_processing_energy_conversion_checkbox_frame
+			}
+		}
+
+		triggers = {
+			conversion_efficiency_visible = {
+				#转换效率
+				set_temp_variable = { IRIS_conversion_efficiency = 1 }
+				add_to_temp_variable = { IRIS_conversion_efficiency = this.modifier@energy_conversion_efficiency_percentage }
+			}
+			background_coal_conversion_prompt_icon_visible = {
+				IRIS_perform_energy_conversion_trigger = no
+			}
+			background_coal_conversion_prompt_tt_visible = {
+				IRIS_perform_energy_conversion_trigger = no
+			}
+		}
+
+		effects = {
+			transformation_up_button_click = {
+				add_to_variable = { this.consuming_mana = 1 }
+				IRIS_manually_calculate_energy_conversion = yes
+			}
+
+			transformation_down_button_click = {
+				add_to_variable = { this.consuming_mana = -1 }
+				IRIS_manually_calculate_energy_conversion = yes
+			}
+
+			transformation_up_button_control_click = {
+				add_to_variable = { this.consuming_mana = 5 }
+				IRIS_manually_calculate_energy_conversion = yes
+			}
+
+			transformation_down_button_control_click = {
+				add_to_variable = { this.consuming_mana = -5 }
+				IRIS_manually_calculate_energy_conversion = yes
+			}
+
+			transformation_up_shift_click = {
+				add_to_variable = { this.consuming_mana = 10 }
+				IRIS_manually_calculate_energy_conversion = yes
+			}
+
+			transformation_down_shift_click = {
+				add_to_variable = { this.consuming_mana = -10 }
+				IRIS_manually_calculate_energy_conversion = yes
+			}
+
+			automatic_processing_energy_conversion_checkbox_click = {
+				if = {
+					limit = { check_variable = { automatic_processing_energy_conversion_checkbox_frame = 2 } }
+					set_variable = { automatic_processing_energy_conversion_checkbox_frame = 1 }
+				}
+				else = {
+					set_variable = { automatic_processing_energy_conversion_checkbox_frame = 2 }
+					IRIS_automatic_calculation_energy_conversion = yes
+				}
+			}
+		}
+
+		ai_enabled = {
+			always = yes
+		}
+		ai_test_interval = 10
+		ai_test_Variance = 0
+		ai_check = {
+		}
+		ai_check_scope = {
+		}
+		ai_weights = {
+			transformation_up_button_click = {
+				ai_will_do = {
+					base = 0
+					modifier = {
+						add = 1
+						AND = {
+							OR = {
+								check_variable = { resource_imported@coal > 0 }
+								check_variable = { resource@coal < 0 }
+							}
+							check_variable = { resource@raw_mana > 1 }
+
+							OR = {
+								NOT = { has_idea = industrial_priority }
+								has_tech = heavy_pressure_mana_experiment3_1
+							}
+						}
+					}
+				}
+			}
+			transformation_down_button_click = {
+				ai_will_do = {
+					base = 0
+					modifier = {
+						add = 1
+						AND = {
+							check_variable = { resource@coal > 8 }
+							check_variable = { this.consuming_mana > 0 }
+
+							OR = {
+								NOT = { has_idea = industrial_priority }
+								has_tech = heavy_pressure_mana_experiment3_1
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
