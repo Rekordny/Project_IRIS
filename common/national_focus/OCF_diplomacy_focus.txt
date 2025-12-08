@@ -2,6 +2,7 @@
 #航线以外
 shared_focus = {
 	id = OCF_diplomacy_1
+	overlay = GFX_focus_fast_overlay_generic_clock
 	icon = {
 		trigger = {
 			has_government = communism
@@ -17,7 +18,7 @@ shared_focus = {
 	# relative_position_id = OCF_politics_1
 	x = 29
 	y = 7
-	cost = 5
+	cost = 15
 	allow_branch = {
 		OR = {
 			has_completed_focus = OCF_zhengzhi_1
@@ -98,7 +99,8 @@ shared_focus = {
 	# complete_tooltip = {
 	# }
 	completion_reward = {
-		create_faction = Atlantic_Treaty_Organization_Camp
+		# create_faction = Atlantic_Treaty_Organization_Camp
+		create_faction_from_template = faction_template_atoc_faction
 		add_ideas = OCF_idea_neo_liebertism
 		add_stability = -0.05
 	}
@@ -289,13 +291,17 @@ shared_focus = {
 	# complete_tooltip = {
 	# }
 	completion_reward = {
+		reduce_focus_completion_cost = {
+			focus = OCF_diplomacy_18
+			cost = 35
+		}
 		OCF_Randomly_give_military_industry = yes
 		OCF_Randomly_give_military_industry = yes
 		OCF_Randomly_give_military_industry = yes
 		OCF_Randomly_give_military_industry = yes
 		OCF_Randomly_give_military_industry = yes
 	}
-	search_filters = { FOCUS_FILTER_INDUSTRY }
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_ACCELERATE }
 }
 
 #恢复独裁官制度
@@ -645,6 +651,10 @@ shared_focus = {
 	# complete_tooltip = {
 	# }
 	completion_reward = {
+		reduce_focus_completion_cost = {
+			focus = OCF_diplomacy_18
+			cost = 35
+		}
 		every_state = {
 			limit = {
 				OR = {
@@ -655,7 +665,7 @@ shared_focus = {
 			add_extra_state_shared_building_slots = 2
 		}
 	}
-	search_filters = { FOCUS_FILTER_INDUSTRY }
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_ACCELERATE }
 }
 
 #夺回博林克尼亚
@@ -1011,6 +1021,10 @@ shared_focus = {
 	# complete_tooltip = {
 	# }
 	completion_reward = {
+		reduce_focus_completion_cost = {
+			focus = OCF_diplomacy_18
+			cost = 35
+		}
 		add_stability = 0.1
 		add_war_support = 0.1
 		CID = {
@@ -1040,26 +1054,23 @@ shared_focus = {
 			show_modifiers = yes
 		}
 	}
-	search_filters = { FOCUS_FILTER_ANNEXATION }
+	search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_ACCELERATE }
 }
 
 #环彼岸洋势力圈
 shared_focus = {
 	id = OCF_diplomacy_18
+	overlay = GFX_focus_fast_overlay_generic_clock
 	icon = GFX_OCF_diplomacy_18
 	relative_position_id = OCF_diplomacy_2
 	x = 0
 	y = 5
-	cost = 5
+	cost = 20
 	mutually_exclusive = {
 	}
 	prerequisite = {
 		focus = OCF_diplomacy_6
-	}
-	prerequisite = {
 		focus = OCF_diplomacy_13
-	}
-	prerequisite = {
 		focus = OCF_diplomacy_17
 	}
 	ai_will_do = {
@@ -1068,13 +1079,101 @@ shared_focus = {
 	available = {
 		is_subject = no
 		is_faction_leader = yes
+		has_completed_focus = OCF_diplomacy_30
+		num_of_factories > 280
 	}
 	cancel_if_invalid = yes
 	continue_if_invalid = no
 	available_if_capitulated = no
 	# complete_tooltip = {
 	# }
+	select_effect = {
+		hidden_effect = {
+			every_country = {
+				limit = {
+					any_owned_state = {
+						OR = {
+							region = 67
+							region = 66
+							region = 65
+							AND = {
+								region = 64
+								NOT = { state = 81 }
+								NOT = { state = 80 }
+							}
+							state = 97
+							state = 105
+							state = 140
+							region = 70
+							region = 121
+							region = 126
+							region = 122
+							region = 145
+							region = 141
+							region = 124
+							region = 129
+							region = 123
+							region = 95
+						}
+					}
+					NOT = { is_ally_with = ROOT }
+				}
+				set_temp_variable = { temp_tag = ROOT }
+				set_temp_variable = { temp_tag2 = THIS }
+				IRIS_warning_imminent_declaration_war = yes
+			}
+			every_country = {
+				limit = {
+					OR = {
+						original_tag = OHR
+						original_tag = OWL
+						original_tag = DOC
+						original_tag = PLP
+						original_tag = AED
+						original_tag = YMD
+					}
+					is_ally_with = ROOT
+				}
+				set_temp_variable = { temp_tag = ROOT }
+				set_temp_variable = { temp_tag2 = THIS }
+				IRIS_warning_imminent_declaration_war = yes
+			}
+		}
+	}
 	completion_reward = {
+		every_country = {
+			limit = {
+				any_owned_state = {
+					OR = {
+						region = 67
+						region = 66
+						region = 65
+						AND = {
+							region = 64
+							NOT = { state = 81 }
+							NOT = { state = 80 }
+						}
+						state = 97
+						state = 105
+						state = 140
+						region = 70
+						region = 121
+						region = 126
+						region = 122
+						region = 145
+						region = 141
+						region = 124
+						region = 129
+						region = 123
+						region = 95
+					}
+				}
+				NOT = { is_ally_with = ROOT }
+			}
+			ROOT = { create_wargoal = { target = PREV type = annex_everything } }
+			custom_effect_tooltip = OCF_diplomacy_18_tooltip
+		}
+		custom_effect_tooltip = tooltip_white_line
 		every_country = {
 			limit = {
 				OR = {
@@ -1102,6 +1201,7 @@ shared_focus = {
 			show_effect_tooltip = yes
 			show_modifiers = yes
 		}
+		custom_effect_tooltip = tooltip_white_line
 		OCF_strengthening_artificial_intelligence = yes
 		OCF_strengthening_artificial_intelligence = yes
 		OCF_strengthening_artificial_intelligence = yes
@@ -1636,6 +1736,10 @@ shared_focus = {
 	# complete_tooltip = {
 	# }
 	completion_reward = {
+		reduce_focus_completion_cost = {
+			focus = OCF_diplomacy_33
+			cost = 35
+		}
 		ELN = {
 			add_equipment_to_stockpile = {
 				type = infantry_equipment
@@ -1667,7 +1771,7 @@ shared_focus = {
 			country_exists = ELN
 		}
 	}
-	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ANNEXATION FOCUS_FILTER_FUND }
+	search_filters = { FOCUS_FILTER_POLITICAL FOCUS_FILTER_ANNEXATION FOCUS_FILTER_FUND FOCUS_FILTER_ACCELERATE }
 }
 
 #维持两岸稳定
@@ -1818,6 +1922,10 @@ shared_focus = {
 	# complete_tooltip = {
 	# }
 	completion_reward = {
+		reduce_focus_completion_cost = {
+			focus = OCF_diplomacy_33
+			cost = 35
+		}
 		custom_effect_tooltip = OCE_Kradas_Industrial_Base.TXT
 		if = {
 			limit = {
@@ -1842,7 +1950,7 @@ shared_focus = {
 		set_temp_variable = { temp_bill = -25 }
 		OCF_spending_funds_other = yes
 	}
-	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_FUND }
+	search_filters = { FOCUS_FILTER_INDUSTRY FOCUS_FILTER_FUND FOCUS_FILTER_ACCELERATE }
 }
 
 #百世之仇，今夕可报
@@ -2087,6 +2195,11 @@ shared_focus = {
 	will_lead_to_war_with = OWL
 	will_lead_to_war_with = OHR
 	completion_reward = {
+		reduce_focus_completion_cost = {
+			focus = OCF_diplomacy_33
+			cost = 35
+		}
+		add_ideas = OHR_ides_prosperous_blue_birline_3
 		create_wargoal = { target = OWL type = take_state_focus }
 		every_state = {
 			limit = { is_core_of = OWL }
@@ -2118,17 +2231,18 @@ shared_focus = {
 			value = 150
 		}
 	}
-	search_filters = { FOCUS_FILTER_ANNEXATION }
+	search_filters = { FOCUS_FILTER_ANNEXATION FOCUS_FILTER_ACCELERATE }
 }
 
 #大西洋壁垒
 shared_focus = {
 	id = OCF_diplomacy_33
 	icon = GFX_OCF_diplomacy_33
+	overlay = GFX_focus_fast_overlay_generic_clock
 	relative_position_id = OCF_diplomacy_20
 	x = 0
 	y = 4
-	cost = 5
+	cost = 15
 	mutually_exclusive = {
 
 	}
@@ -3142,10 +3256,11 @@ shared_focus = {
 shared_focus = {
 	id = OCF_diplomacy_48
 	icon = GFX_OCF_diplomacy_48
+	overlay = GFX_focus_fast_overlay_generic_clock
 	relative_position_id = OCF_diplomacy_1
 	x = -1
 	y = 2
-	cost = 5
+	cost = 10
 	mutually_exclusive = {
 
 	}
@@ -3177,10 +3292,11 @@ shared_focus = {
 shared_focus = {
 	id = OCF_diplomacy_49
 	icon = GFX_OCF_diplomacy_49
+	overlay = GFX_focus_fast_overlay_generic_clock
 	relative_position_id = OCF_diplomacy_1
 	x = 1
 	y = 2
-	cost = 5
+	cost = 10
 	mutually_exclusive = {
 
 	}

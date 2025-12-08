@@ -224,7 +224,7 @@ country_event = {#撞击事故
     }
 }
 
-country_event = {#擦枪走火
+country_event = {#又一次例行检查
     id = SKR_crisis.7
     title = SKR_crisis.7.t
     desc = SKR_crisis.7.desc
@@ -428,16 +428,20 @@ country_event = {#又一次例行检查
     }
 }
 
-country_event = {#
+country_event = {#武器运抵
     id = SKR_crisis.9
     title = SKR_crisis.9.t
     desc = SKR_crisis.9.desc
     #picture = GFX_event_SKR_crisis_9
     is_triggered_only = yes
-    fire_only_once = yes
 
     option = {
         name = SKR_crisis.9.a
+
+        add_equipment_to_stockpile = {
+            type = infantry_equipment
+            amount = 1000
+        }
 
         ai_chance = {
             base = 10
@@ -445,16 +449,47 @@ country_event = {#
     }
 }
 
-country_event = {#
+country_event = {#武器遭到拦截
     id = SKR_crisis.10
     title = SKR_crisis.10.t
     desc = SKR_crisis.10.desc
     #picture = GFX_event_SKR_crisis_10
-    is_triggered_only = yes
-    fire_only_once = yes
+    trigger = {
+        has_global_flag = SKR_CRISIS_FLAG
+        NOT = {
+            has_global_flag = SKR_CRISIS_ENDED_FLAG
+        }
+        OR = {
+            tag = USF
+            tag = SLL
+        }
+        has_country_flag = SKR_crisis_is_sending_weapons
+        if = {
+            limit = {
+                tag = USF
+            }
+            SLL = {
+                has_country_flag = SKR_crisis_in_patrol_flag
+            }
+        }
+        else_if = {
+            limit = {
+                tag = SLL
+            }
+            USF = {
+                has_country_flag = SKR_crisis_in_patrol_flag
+            }
+        }
+    }
+
+    mean_time_to_happen = {
+        days = 400
+    }
 
     option = {
         name = SKR_crisis.10.a
+
+        set_country_flag = {flag = SKR_send_weapons_fails days = 30 value = 1}
 
         ai_chance = {
             base = 10

@@ -21,10 +21,12 @@ on_actions = {
                 every_country = {
                     limit = {
                         is_subject_of = SKR
+                        NOT = {tag = HKD}
                     }
                     division_template = {
                         name = "步兵队"
-
+                        is_locked = yes
+                        force_allow_recruiting = yes
                         regiments = {
                             infantry = { x = 0 y = 0 }
                             infantry = { x = 0 y = 1 }
@@ -48,6 +50,194 @@ on_actions = {
                         }
                     }
                 }
+
+
+
+
+                country_event = {id = SKR_temp.1 days = 268}
+                country_event = {id = SKR_temp.2 days = 500}
+            }
+        }
+    }
+
+    on_capitulation = {
+        effect = {
+            if = {
+                limit = {
+                    FROM = {
+                        OR = {
+                            is_SKR_tag = yes
+                            tag = UTR
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            is_SKR_tag = yes
+                            tag = UTR
+                        }
+                    }
+                }
+                set_global_flag = show_peace_popup_alert
+                set_global_flag = war_won
+                FROM = {
+                    save_global_event_target_as = winning_country
+                }
+                ROOT = {
+                    save_global_event_target_as = losing_country
+                }
+                IRIS_peace_popup_determine_allies = yes
+                add_to_variable = { global.peace_popup_dirty = 1 }
+
+                FROM = {
+                    annex_country = {
+                        target = ROOT
+                    }
+                }
+
+                if = {
+                    limit = {
+                        ROOT = {
+                            tag = UTR
+                        }
+                    }
+                    SKR = {
+                        country_event = {id = SKR_temp.4 days = 3}
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_global_flag = SKR_CRISIS_FLAG
+                    NOT = {
+                        has_global_flag = SKR_CRISIS_ENDED_FLAG
+                    }
+                    FROM = {
+                        is_SKR_tag = yes
+                    }
+                    ROOT = {
+                        is_SKR_tag = yes
+                        NOT = {
+                            tag = SKR
+                        }
+                    }
+                }
+                set_global_flag = show_peace_popup_alert
+                set_global_flag = war_won
+                FROM = {
+                    save_global_event_target_as = winning_country
+                }
+                ROOT = {
+                    save_global_event_target_as = losing_country
+                }
+                IRIS_peace_popup_determine_allies = yes
+                add_to_variable = { global.peace_popup_dirty = 1 }
+
+                if = {
+                    limit = {
+                        ROOT = {
+                            OR = {
+                                tag = NIS
+                                tag = KUD
+                                tag = UEH
+                                tag = SBY
+                            }
+                        }
+                    }
+                    BDA = {
+                        set_autonomy = {
+                            target = ROOT
+                            autonomous_state = SKR_daimyo
+                            end_wars = yes
+                        }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        ROOT = {
+                            OR = {
+                                tag = BDA
+                                tag = SMD
+                                tag = KNK
+                                tag = SWO
+                            }
+                        }
+                    }
+                    SKR = {
+                        set_autonomy = {
+                            target = ROOT
+                            autonomous_state = SKR_daimyo
+                            end_wars = yes
+                        }
+                    }
+                    if = {
+                        limit = {
+                            ROOT = {
+                                tag = BDA
+                            }
+                        }
+                        SKR = {
+                            country_event = {id = SKR_temp.15}
+                        }
+                    }
+                    if = {
+                        limit = {
+                            ROOT = {
+                                tag = SMD
+                            }
+                        }
+                        940 = {
+                            transfer_state_to = SKR
+                        }
+                    }
+                }
+            }
+
+            if = {
+                limit = {
+                    has_global_flag = SKR_CRISIS_ENDED_FLAG
+                    FROM = {
+                        is_SKR_tag = yes
+                    }
+                    ROOT = {
+                        is_SKR_tag = yes
+                    }
+                }
+
+                set_global_flag = show_peace_popup_alert
+                set_global_flag = war_won
+                FROM = {
+                    save_global_event_target_as = winning_country
+                }
+                ROOT = {
+                    save_global_event_target_as = losing_country
+                }
+                IRIS_peace_popup_determine_allies = yes
+                add_to_variable = { global.peace_popup_dirty = 1 }
+
+                if = {
+                    limit = {
+                        FROM = {
+                            OR = {
+                                tag = BDA
+                                is_ally_with = BDA
+                            }
+                        }
+                        ROOT = {
+                            tag = SKR
+                        }
+                    }
+                    BDA = {
+                        country_event = {id = SKR_temp.14 days = 7}
+                    }
+                }
+
+                FROM = {
+                    annex_country = {
+                        target = ROOT
+                    }
+                }
+
+                
             }
         }
     }
