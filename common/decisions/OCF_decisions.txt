@@ -3578,6 +3578,142 @@ OCF_Federal_Parliament = {
 			clr_country_flag = OCF_voting_motions_flag
 		}
 	}
+	#通过《动漫行业制作法规》法案
+	OCF_policy_review_act_d = {
+		cost = 30
+		fire_only_once = yes
+		visible = {
+			has_country_flag = OCF_policy_review_act_visible_flag
+			NOT = {
+				has_country_flag = OCF_policy_review_act_too_flag
+			}
+			NOT = {
+				# has_global_flag = OCF_policy_review_act_flag
+			}
+		}
+		available = {
+			NOT = {
+				has_country_flag = OCF_voting_motions_flag
+			}
+			NOT = {
+				has_country_flag = OCF_adjournment_caused_protests_flag
+			}
+			NOT = {
+				has_country_flag = OCF_adjournment_caused_protests_2_flag
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				activate_mission = OCF_policy_review_act_d_time
+				OCF_proposal_can_passed_del = yes
+			}
+			set_country_flag = OCF_policy_review_act_d_time_flag
+			set_country_flag = OCF_voting_motions_flag
+		}
+	}
+	OCF_policy_review_act_too = {
+		cost = 50
+		visible = {
+			has_country_flag = OCF_policy_review_act_visible_flag
+			has_country_flag = OCF_policy_review_act_too_flag
+			NOT = {
+				# has_global_flag = OCF_policy_review_act_flag
+			}
+		}
+		available = {
+			NOT = {
+				has_country_flag = OCF_voting_motions_flag
+			}
+			NOT = {
+				has_country_flag = OCF_adjournment_caused_protests_flag
+			}
+			NOT = {
+				has_country_flag = OCF_adjournment_caused_protests_2_flag
+			}
+		}
+		complete_effect = {
+			hidden_effect = {
+				activate_mission = OCF_policy_review_act_d_time
+				OCF_proposal_can_passed_del = yes
+			}
+			set_country_flag = OCF_policy_review_act_d_time_flag
+			set_country_flag = OCF_voting_motions_flag
+		}
+	}
+	OCF_policy_review_act_d_time = {
+		visible = {
+			has_country_flag = OCF_policy_review_act_visible_flag
+		}
+		activation = {
+			always = no
+		}
+		is_good = NO
+		available = {
+			always = no
+		}
+		days_mission_timeout = 10
+		timeout_effect = {
+			if = {
+				limit = {
+					OCF_passed_senate_triggers = yes
+				}
+				set_global_flag = OCF_policy_review_act_flag
+				clr_country_flag = OCF_policy_review_act_too_flag
+				country_event = {
+					id = OCF.16
+				}
+				set_temp_variable = {
+					result_temp = 1
+				}
+			}
+			else = {
+				set_country_flag = OCF_policy_review_act_too_flag
+				country_event = {
+					id = OCF.10
+				}
+				set_temp_variable = {
+					result_temp = 2
+				}
+			}
+			meta_effect = {
+				text = {
+					custom_effect_tooltip = {
+						localization_key = OCF_MAJOR_BILL_RECORDS
+						INDENTATION = ""
+						BILL = "OCF_introduce_[NUMBER]"
+						RESULT = "OCF_pass_through_[RESULT]"
+						FACTIONS = "OCF_parties_[FACTIONS]"
+						NAME = "[NAME]"
+					}
+					add_to_array = {
+						global.OCF_record_bills_passed_parliament_array = token:[NAME]
+						index = 0
+					}
+					add_to_array = {
+						OCF_promote_factional_promotion_array = [FACTIONS]
+						index = 0
+					}
+					add_to_array = {
+						OCF_promote_did_it_pass_array = [RESULT]
+						index = 0
+					}
+					add_to_array = {
+						OCF_introduce_array = [NUMBER]
+						index = 0
+					}
+					add_to_array = {
+						global.OCF_record_bills_passed_parliament_list_dates = global.date
+						index = 0
+					}
+				}
+				NUMBER = "10"				#法案编号
+				RESULT = "[?result_temp]"				#是否通过 1通过 2未通过
+				FACTIONS = "0"				#派系编号
+				NAME = "OCF_Executive_Committee_House_Representatives"				#人物
+			}
+			clr_country_flag = OCF_voting_motions_flag
+		}
+	}
 	OCF_declare_war_FNC = {
 		visible = {
 			has_country_flag = OCF_negotiation_breakdown_flag
@@ -9506,6 +9642,637 @@ OCF_unification_eastern_europe_decisions = {
 	}
 }
 
+USF_intervention_in_trans_oceanic_region_category = {
+	#民间组织备案审查
+	OCF_civil_organization_filing_review = {
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 50
+		days_remove = 25
+		# days_re_enable = 30
+		complete_effect = {
+			OCF = {
+				every_state = {
+					limit = {
+						state = ROOT.OCF_select_region_variable
+					}
+					custom_effect_tooltip = OCF_civil_organization_filing_review_2_tt
+					add_to_variable = { THIS.OCF_regional_support_rate^2 = -20 }
+					custom_effect_tooltip = OCF_civil_organization_filing_review_4_tt
+					add_to_variable = { THIS.OCF_regional_support_rate^4 = -20 }
+				}
+			}
+			var:OCF_select_region_variable = {
+				USF_OCF_refresh_regional_support_rate = yes
+			}
+			OCF_refresh_pie_chart_percentage_coordinates = yes
+
+			set_temp_variable = { POC_ppi_temp = -10 }
+			POC_penetration_parliament_increased = yes
+			set_temp_variable = { POC_ima_temp = 10 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_OCF_3 = yes
+		}
+	}
+
+	#地区级选举安全管控
+	OCF_regional_level_election_security_control = {
+		fire_only_once = no
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = 115
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 30
+		days_remove = 15
+		# days_re_enable = 30
+		remove_effect = {
+			OCF = {
+				every_state = {
+					limit = {
+						state = 115
+					}
+					custom_effect_tooltip = OCF_civil_organization_filing_review_2_tt
+					add_to_variable = { THIS.OCF_regional_support_rate^2 = -20 }
+					custom_effect_tooltip = OCF_civil_organization_filing_review_4_tt
+					add_to_variable = { THIS.OCF_regional_support_rate^4 = -20 }
+				}
+			}
+			var:OCF_select_region_variable = {
+				USF_OCF_refresh_regional_support_rate = yes
+			}
+			OCF_refresh_pie_chart_percentage_coordinates = yes
+
+			set_temp_variable = { POC_ppi_temp = -10 }
+			POC_penetration_parliament_increased = yes
+			POC_reduce_influence_USF_1 = yes
+			POC_reduce_influence_EIA_1 = yes
+		}
+	}
+
+	#媒体舆论引导
+	OCF_media_public_opinion_guidance = {
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 30
+		# days_remove = 25
+		days_re_enable = 20
+		complete_effect = {
+			set_temp_variable = { POC_ima_temp = 5 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_OCF_2 = yes
+		}
+		remove_effect = {
+
+		}
+	}
+
+	#反间谍网络排查
+	OCF_anti_spy_network_investigation = {
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+			is_major = yes
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 15
+		days_remove = 25
+		days_re_enable = 30
+		# complete_effect = {
+
+		# }
+		remove_effect = {
+			set_temp_variable = { POC_ppi_temp = -5 }
+			POC_penetration_parliament_increased = yes
+			set_temp_variable = { POC_ima_temp = 5 }
+			POC_increase_military_alertness = yes
+			POC_reduce_influence_EIA_2 = yes
+			POC_reduce_influence_USF_2 = yes
+		}
+	}
+
+	#军队内部整肃
+	OCF_internal_rectification_military = {
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 30
+		days_remove = 18
+		days_re_enable = 45
+		# complete_effect = {
+
+		# }
+		remove_effect = {
+			set_temp_variable = { POC_ppi_temp = -5 }
+			POC_penetration_parliament_increased = yes
+			set_temp_variable = { POC_ima_temp = -8 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_OCF_3 = yes
+		}
+	}
+
+	#全国安全动员令
+	OCF_national_security_mobilization_order = {
+		ai_will_do = {
+			factor = 50
+		}
+		fire_only_once = yes
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+			set_temp_variable = { temp_alert_detection = 70 }
+			USF_alert_detection_greater_than_trigger = yes
+			set_temp_variable = { temp_parliamentary_mastery = 30 }
+			USF_parliamentary_mastery_less_than_trigger = yes
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 30
+		days_remove = 30
+		# days_re_enable = 45
+		complete_effect = {
+			set_temp_variable = { POC_ppi_temp = -15 }
+			POC_penetration_parliament_increased = yes
+			set_temp_variable = { POC_ima_temp = 20 }
+			POC_increase_military_alertness = yes
+		}
+		remove_effect = {
+			
+		}
+		modifier = {
+			production_speed_buildings_factor = -0.1
+			industrial_capacity_factory = 0.15
+			mobilization_speed = 0.1
+		}
+	}
+
+	#反外部干涉民众游行
+	OCF_anti_external_interference_public_protests = {
+		ai_will_do = {
+			factor = 50
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+			POC_usf_internal_inclination_government = yes
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 20
+		days_remove = 5
+		days_re_enable = 30
+		complete_effect = {
+			set_temp_variable = { POC_ima_temp = 5 }
+			POC_increase_military_alertness = yes
+			POC_reduce_influence_USF_3 = yes
+		}
+		modifier = {
+			industrial_capacity_factory = -0.05
+		}
+	}
+
+	#解决政府的外部影响
+	OCF_guiding_government_towards_OCF = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+			set_temp_variable = { temp_parliamentary_mastery = 50 }
+			USF_parliamentary_mastery_greater_than_trigger = yes
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 20
+		# days_remove = 5
+		days_re_enable = 20
+		complete_effect = {
+			POC_increase_influence_OCF_2 = yes
+		}
+	}
+
+	#引导政府倾向
+	OCF_guiding_government_towards_EIA = {
+		ai_will_do = {
+			factor = 0
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 15
+		# days_remove = 5
+		days_re_enable = 20
+		complete_effect = {
+			set_temp_variable = { POC_ima_temp = 5 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_EIA_2 = yes
+		}
+	}
+
+	OCF_guiding_government_towards_USF = {
+		ai_will_do = {
+			factor = 0
+		}
+		available = {
+			# has_global_flag = OCF_policy_review_act_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = USF
+							original_tag = USF
+						}
+					}
+				}
+			}
+
+			NOT = { has_war_with = USF }
+			NOT = { is_ally_with = USF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = OCF
+		}
+		cost = 15
+		# days_remove = 5
+		days_re_enable = 20
+		complete_effect = {
+			set_temp_variable = { POC_ima_temp = 5 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_USF_2 = yes
+		}
+	}
+}
 
 IRIS_debug_decisions_OCF = {
 	OCF_detection_vessel_model = {
@@ -10802,6 +11569,49 @@ IRIS_debug_decisions_OCF = {
 			}
 			add_to_array = {
 				IRIS_Historical_leaders_2_Array = token:OCF_Makise_Kurisu				#牧濑红莉栖
+			}
+			add_to_array = {
+				IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_proportion^4
+			}
+			add_to_array = {
+				GetNameIRISHistoricalDate = global.year
+			}
+		}
+	}
+	#我要看看比屋定真帆
+	OCF_set_Hiyajo_Maho = {
+		visible = {
+			is_testing = yes
+		}
+		fire_only_once = no
+		complete_effect = {
+			set_cosmetic_tag = OCF_third
+			promote_character = {
+				character = OCF_Hiyajo_Maho
+				ideology = sub_Techno_Bureaucracy
+			}
+			set_party_name = {
+				ideology = democratic
+				long_name = OCF_parties_4_long
+				name = OCF_parties_4
+			}
+			set_politics = {
+				ruling_party = democratic
+				elections_allowed = yes
+				election_frequency = 36
+			}
+			OCF_eliminate_current_ruling_party = yes
+			set_country_flag = OCF_control_government_flag_4
+			OCF_Insert_Party_Position = yes
+			hidden_effect = {
+				add_ideas = OCF_idea_parliament
+				add_ideas = OCF_idea_Shiina_Mayuri
+			}
+			add_to_array = {
+				IRIS_Historical_leaders_Array = token:OCF_Hiyajo_Maho
+			}
+			add_to_array = {
+				IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament
 			}
 			add_to_array = {
 				IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_proportion^4
