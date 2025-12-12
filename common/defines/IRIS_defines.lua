@@ -13,6 +13,9 @@ NDefines.NSupply.RIVER_RAILWAY_LEVEL = 3                            -- 水路=3�
 
 NDefines.NGame.MAX_SCRIPTED_LOC_RECURSION = 1001				-- max recursion for scripted localizations 最大递归
 
+NDefines.NMilitary.UNIT_EXP_LEVELS = { 0.15, 0.3, 0.45, 0.6, 0.75, 0.9}
+NDefines.NMilitary.EXPERIENCE_COMBAT_FACTOR = 0.15
+
 --------------------------------------------------------------------------------------------------------------
 -- DESIGNS
 --------------------------------------------------------------------------------------------------------------
