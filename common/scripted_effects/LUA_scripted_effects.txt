@@ -1,0 +1,72 @@
+LUA_reduce_pandemic_effect = {
+    if = {
+        limit = {
+            has_dynamic_modifier = {modifier = LUA_pandemic_3}
+        }
+        remove_dynamic_modifier = {modifier = LUA_pandemic_3}
+        add_dynamic_modifier = {modifier = LUA_pandemic_2}
+    }
+    else_if = {
+        limit = {
+            has_dynamic_modifier = {modifier = LUA_pandemic_2}
+        }
+        remove_dynamic_modifier = {modifier = LUA_pandemic_2}
+        add_dynamic_modifier = {modifier = LUA_pandemic_1}
+    }
+    else_if = {
+        limit = {
+            has_dynamic_modifier = {modifier = LUA_pandemic_1}
+        }
+        remove_dynamic_modifier = {modifier = LUA_pandemic_1}
+    }
+}
+LUA_mission_setup = {
+    LUA = {
+        set_variable = {22_success = 25}
+        set_variable = {23_success = 25}
+        set_variable = {24_success = 25}
+        set_variable = {26_success = 25}
+        set_variable = {27_success = 25}
+        set_variable = {29_success = 25}
+    }
+}
+LUA_mission_check = {
+    meta_effect = {
+        text = {
+            set_variable = {[REGION_TEMP]_fail = 100}
+            subtract_from_variable = {[REGION_TEMP]_fail = [REGION_TEMP]_success}
+            random_list = {
+                [REGION_TEMP]_success = {
+                    every_state = {
+                        limit = {
+                            region = [REGION_TEMP]
+                            OR = {
+                                has_dynamic_modifier = {modifier = LUA_pandemic_1}
+                                has_dynamic_modifier = {modifier = LUA_pandemic_2}
+                                has_dynamic_modifier = {modifier = LUA_pandemic_3}
+                            }
+                        }
+                        LUA_reduce_pandemic_effect = yes
+                        set_variable = {[REGION_TEMP]_success = 25}
+                    }
+                }
+                [REGION_TEMP]_fail = {
+                    add_to_variable = {[REGION_TEMP]_success = 15}
+                    clamp_variable = {
+                        var = [REGION_TEMP]_success
+                        max = 100
+                    }
+                }
+            }
+        }
+        REGION_TEMP = "[?LUA_region_temp]"
+    }
+}
+
+LUA_clean_the_pandemic_effect = {
+    every_state = {
+        remove_dynamic_modifier = {modifier = LUA_pandemic_1}
+        remove_dynamic_modifier = {modifier = LUA_pandemic_2}
+        remove_dynamic_modifier = {modifier = LUA_pandemic_3}
+    }
+}
