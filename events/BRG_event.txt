@@ -242,7 +242,14 @@ country_event = {
 		}
 		activate_mission = BRG_in_diplomatic_mediation
 		# clr_global_flag = global_macarthur_is_a_bit_busy_flag
-		country_event = { id = brgnews.1 days = 0 }
+		if = {
+			limit = { has_global_flag = BRG_macarthur_returned_home_country_flag }
+			country_event = { id = brgnews.8 days = 0 }
+		}
+		else = {
+			country_event = { id = brgnews.1 days = 0 }
+		}
+
 		add_political_power = -50
 		add_war_support = 0.1
 
@@ -308,9 +315,26 @@ country_event = {
 			# 	}
 			# }
 			BRG = {
-				set_nationality = {
-					target_country = PREV
-					character = USF_General_Douglas_MacArthur
+				if = {
+					limit = { has_character = USF_General_Douglas_MacArthur }
+					set_nationality = {
+						target_country = PREV
+						character = USF_General_Douglas_MacArthur
+					}
+				}
+				if = {
+					limit = { has_character = USF_Clifford_Ishaumer }
+					set_nationality = {
+						target_country = PREV
+						character = USF_Clifford_Ishaumer
+					}
+				}
+				if = {
+					limit = { has_character = USF_Kyumin_Harman }
+					set_nationality = {
+						target_country = PREV
+						character = USF_Kyumin_Harman
+					}
 				}
 			}
 			hidden_effect = {
@@ -338,6 +362,62 @@ country_event = {
 						}
 						promote_character = {
 							character = USF_General_Douglas_MacArthur
+							ideology = sub_Junta
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_character = USF_Clifford_Ishaumer
+					}
+					if = {
+						limit = {
+							USF_Clifford_Ishaumer = { has_ideology_group = neutrality }
+						}
+						set_politics = {
+							ruling_party =  neutrality elections_allowed = no
+						}
+						set_popularities = {
+							neutrality = 33
+							democratic = 67
+							fascism = 0
+							communism = 0
+							reactionism = 0
+						}
+						promote_character = {
+							character = USF_Clifford_Ishaumer
+							ideology = sub_Industrial_Conservatism
+						}
+						promote_character = {
+							character = USF_Clifford_Ishaumer
+							ideology = sub_Junta
+						}
+					}
+				}
+				else_if = {
+					limit = {
+						has_character = USF_Kyumin_Harman
+					}
+					if = {
+						limit = {
+							USF_Kyumin_Harman = { has_ideology_group = neutrality }
+						}
+						set_politics = {
+							ruling_party =  neutrality elections_allowed = no
+						}
+						set_popularities = {
+							neutrality = 51
+							democratic = 44
+							fascism = 0
+							communism = 5
+							reactionism = 0
+						}
+						promote_character = {
+							character = USF_Kyumin_Harman
+							ideology = sub_Commission_System
+						}
+						promote_character = {
+							character = USF_Kyumin_Harman
 							ideology = sub_Junta
 						}
 					}
@@ -515,9 +595,26 @@ country_event = {
 		add_war_support = -0.05
 		custom_effect_tooltip = tooltip_white_line
 		BRG = {
-			USF_General_Douglas_MacArthur = { set_nationality = ROOT }
+			USF_General_Douglas_MacArthur = {
+				set_nationality = ROOT
+				if = {
+					limit = { has_trait = disgruntled }
+					remove_unit_leader_trait = disgruntled
+				}
+			}
+			USF_Clifford_Ishaumer = {
+				set_nationality = ROOT
+				if = {
+					limit = { has_trait = disgruntled }
+					remove_unit_leader_trait = disgruntled
+				}
+			}
+			USF_Kyumin_Harman = { set_nationality = ROOT }
 			custom_effect_tooltip = available_chief_of_army
 			show_ideas_tooltip = USF_General_Douglas_MacArthur
+			show_ideas_tooltip = USF_Clifford_Ishaumer
+			custom_effect_tooltip = available_chief_of_navy
+			show_ideas_tooltip = USF_Kyumin_Harman
 		}
 	}
 }
@@ -706,7 +803,13 @@ country_event = {
 			add_political_power = temp_political_power
 		}
 		add_war_support = 0.05
-		country_event = { id = brgnews.2 days = 0 }
+		if = {
+			limit = { has_global_flag = BRG_macarthur_returned_home_country_flag }
+			country_event = { id = brgnews.9 days = 0 }
+		}
+		else = {
+			country_event = { id = brgnews.2 days = 0 }
+		}
 		set_temp_variable = { tag_temp = OCF }
 		IRIS_closing_world_conflicts = yes
 		end_puppet = BR1
@@ -756,9 +859,26 @@ country_event = {
 		effect_tooltip = {
 			custom_effect_tooltip = tooltip_white_line
 			BRG = {
-				USF_General_Douglas_MacArthur = { set_nationality = ROOT }
+				USF_General_Douglas_MacArthur = {
+					set_nationality = ROOT
+					if = {
+						limit = { has_trait = disgruntled }
+						remove_unit_leader_trait = disgruntled
+					}
+				}
+				USF_Clifford_Ishaumer = {
+					set_nationality = ROOT
+					if = {
+						limit = { has_trait = disgruntled }
+						remove_unit_leader_trait = disgruntled
+					}
+				}
+				USF_Kyumin_Harman = { set_nationality = ROOT }
 				custom_effect_tooltip = available_chief_of_army
 				show_ideas_tooltip = USF_General_Douglas_MacArthur
+				show_ideas_tooltip = USF_Clifford_Ishaumer
+				custom_effect_tooltip = available_chief_of_navy
+				show_ideas_tooltip = USF_Kyumin_Harman
 			}
 		}
 		clr_global_flag = global_macarthur_is_a_bit_busy_flag
@@ -804,12 +924,34 @@ country_event = {
 			transfer_navy = {
 				target = BRG
 			}
-			set_nationality = {
-				target_country = USF
-				character = USF_General_Douglas_MacArthur
+			USF_General_Douglas_MacArthur = {
+				set_nationality = USF
+				if = {
+					limit = { has_trait = disgruntled }
+					remove_unit_leader_trait = disgruntled
+				}
 			}
+			USF_Clifford_Ishaumer = {
+				set_nationality = USF
+				if = {
+					limit = { has_trait = disgruntled }
+					remove_unit_leader_trait = disgruntled
+				}
+			}
+			USF_Kyumin_Harman = { set_nationality = USF }
+			custom_effect_tooltip = available_chief_of_army
+			show_ideas_tooltip = USF_General_Douglas_MacArthur
+			show_ideas_tooltip = USF_Clifford_Ishaumer
+			custom_effect_tooltip = available_chief_of_navy
+			show_ideas_tooltip = USF_Kyumin_Harman
 		}
-		country_event = { id = brgnews.5 days = 1 }
+		if = {
+			limit = { has_global_flag = BRG_macarthur_returned_home_country_flag }
+			country_event = { id = brgnews.11 days = 1 }
+		}
+		else = {
+			country_event = { id = brgnews.5 days = 1 }
+		}
 	}
 }
 
@@ -1241,7 +1383,13 @@ country_event = {
 			}
 			clr_country_flag = BRG_conflict_crisis_flag
 		}
-		country_event = { id = brgnews.6 days = 1 }
+		if = {
+			limit = { has_global_flag = BRG_macarthur_returned_home_country_flag }
+			country_event = { id = brgnews.12 days = 1 }
+		}
+		else = {
+			country_event = { id = brgnews.6 days = 1 }
+		}
 	}
 }
 
