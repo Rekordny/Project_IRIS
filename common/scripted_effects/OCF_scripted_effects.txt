@@ -886,7 +886,13 @@ OCF_brgnews_6_scripted_effects = {
 			limit = {
 				original_tag = OCF
 			}
-			country_event = { id = brgnews.6 days = 1 }
+			if = {
+				limit = { has_global_flag = BRG_macarthur_returned_home_country_flag }
+				country_event = { id = brgnews.12 days = 1 }
+			}
+			else = {
+				country_event = { id = brgnews.6 days = 1 }
+			}
 			hidden_effect = {
 				# USF = {
 				# 	end_puppet = BRG
@@ -1197,6 +1203,26 @@ OCF_Randomly_give_military_industry = {
 		add_extra_state_shared_building_slots = 1
 		add_building_construction = {
 			type = arms_factory
+			level = 1
+			instant_build = yes
+		}
+	}
+}
+
+#船坞
+OCF_Randomly_give_dockyard = {
+	random_owned_controlled_state = {
+		limit = {
+			is_coastal = yes
+			free_building_slots = {
+				building = dockyard
+				size > 0
+				include_locked = yes
+			}
+		}
+		add_extra_state_shared_building_slots = 1
+		add_building_construction = {
+			type = dockyard
 			level = 1
 			instant_build = yes
 		}
@@ -3127,6 +3153,21 @@ enable_ocf_improved_logistics = {
 		}
 		set_technology = {
 			ocf_improved_logistics = 1
+			popup = no
+		}
+	}
+}
+
+#空降部队改革
+enable_ocf_reform_airborne_troops= {
+	custom_override_tooltip = {
+		tooltip = {
+			localization_key = IRIS_tooltip_enable_hidden_tech
+			TECH = country_culture|ocf_reform_airborne_troopss
+			EFFECT = tech_effect|ocf_reform_airborne_troopss
+		}
+		set_technology = {
+			ocf_reform_airborne_troopss = 1
 			popup = no
 		}
 	}
@@ -8423,6 +8464,42 @@ OCF_Layoffs_automatic = {
 	}
 }
 
+#指定删除 众议院
+#temp_layoffs
+OCF_Layoffs_specify_deletion = {
+	custom_effect_tooltip = OCF_Layoffs_specify_deletion_tt
+	for_loop_effect = {
+		end = temp_layoffs
+		OCF_Layoffs = yes
+	}
+}
+
+
+
+#指定删除 参议院
+#temp_layoffs_senate
+OCF_Layoffs_specify_senate_deletion = {
+	custom_effect_tooltip = OCF_Layoffs_specify_senate_deletion_tt
+	for_loop_effect = {
+		end = temp_layoffs_senate
+		OCF_Layoffs_specify = yes
+	}
+}
+
+#参议院
+OCF_Layoffs_specify = {
+	random_list = {
+		OCF_gridbox_seat_array_original_senate^1 = {
+			add_to_variable = { OCF_gridbox_seat_array_original_senate^1 = -1 }
+		}
+		OCF_gridbox_seat_array_original_senate^2 = {
+			OCF_gridbox_seat_array_senate_no_del = yes
+			add_to_variable = { OCF_gridbox_seat_array_original_senate^2 = -1 }
+		}
+	}
+	OCF_Insert_Party_Position = yes
+}
+
 #随机减少两个议员
 OCF_randomly_reduce_senator_2 = {
 	custom_effect_tooltip = OCF_randomly_reduce_senator_2_tt
@@ -10121,7 +10198,7 @@ OCF_calculate_winning_usage = {
 		OCF.OCF_election_results_max = OCF.OCF_election_results_1
 	}
 	set_variable = {
-		OCF.OCF_election_results_winning = 1
+		ROOT.OCF_election_results_winning = 1
 	}
 	if = {
 		limit = {
@@ -10130,7 +10207,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 2
+			ROOT.OCF_election_results_winning = 2
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_2
@@ -10143,7 +10220,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 3
+			ROOT.OCF_election_results_winning = 3
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_3
@@ -10156,7 +10233,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 4
+			ROOT.OCF_election_results_winning = 4
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_4
@@ -10169,7 +10246,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 5
+			ROOT.OCF_election_results_winning = 5
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_5
@@ -10182,7 +10259,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 6
+			ROOT.OCF_election_results_winning = 6
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_6
@@ -10195,7 +10272,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 7
+			ROOT.OCF_election_results_winning = 7
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_7
@@ -10208,7 +10285,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 8
+			ROOT.OCF_election_results_winning = 8
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_8
@@ -11530,6 +11607,9 @@ OCF_show_all_party_leaders_4 = {
 	add_to_array = {
 		OCF_Party_SubGUI_2_lists_array = token:OCF_Shiina_Mayuri
 	}
+	add_to_array = {
+		OCF_Party_SubGUI_2_lists_array = token:OCF_Hiyajo_Maho
+	}
 }
 
 OCF_show_all_party_leaders_5 = {
@@ -12004,7 +12084,7 @@ OCF_reset_ruling_party = {
 	if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 1
+				ROOT.OCF_election_results_winning = 1
 			}
 		}
 		set_country_flag = OCF_control_government_flag_1
@@ -12013,7 +12093,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 2
+				ROOT.OCF_election_results_winning = 2
 			}
 		}
 		set_country_flag = OCF_control_government_flag_2
@@ -12022,7 +12102,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 3
+				ROOT.OCF_election_results_winning = 3
 			}
 		}
 		set_country_flag = OCF_control_government_flag_3
@@ -12031,7 +12111,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 4
+				ROOT.OCF_election_results_winning = 4
 			}
 		}
 		set_country_flag = OCF_control_government_flag_4
@@ -12040,7 +12120,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 5
+				ROOT.OCF_election_results_winning = 5
 			}
 		}
 		set_country_flag = OCF_control_government_flag_5
@@ -12049,7 +12129,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 6
+				ROOT.OCF_election_results_winning = 6
 			}
 		}
 		set_country_flag = OCF_control_government_flag_6
@@ -12058,7 +12138,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 7
+				ROOT.OCF_election_results_winning = 7
 			}
 		}
 		set_country_flag = OCF_control_government_flag_7
@@ -12067,7 +12147,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 8
+				ROOT.OCF_election_results_winning = 8
 			}
 		}
 		set_country_flag = OCF_control_government_flag_8
@@ -12106,6 +12186,44 @@ OCF_elected_faction_4 = {
 		ideology = democratic
 		long_name = OCF_parties_4_long
 		name = OCF_parties_4
+	}
+}
+
+#合众国干涉
+OCF_usf_elected_faction_4 = {
+	set_cosmetic_tag = OCF_third
+	promote_character = {
+		character = OCF_Hiyajo_Maho
+		ideology = sub_Techno_Bureaucracy
+	}
+	set_party_name = {
+		ideology = democratic
+		long_name = OCF_parties_4_long
+		name = OCF_parties_4
+	}
+	set_politics = {
+		ruling_party = democratic
+		elections_allowed = yes
+		election_frequency = 36
+	}
+	OCF_eliminate_current_ruling_party = yes
+	set_country_flag = OCF_control_government_flag_4
+	OCF_Insert_Party_Position = yes
+	hidden_effect = {
+		add_ideas = OCF_idea_parliament
+		add_ideas = OCF_idea_Shiina_Mayuri
+	}
+	add_to_array = {
+		IRIS_Historical_leaders_Array = token:OCF_Hiyajo_Maho
+	}
+	add_to_array = {
+		IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament
+	}
+	add_to_array = {
+		IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_proportion^4
+	}
+	add_to_array = {
+		GetNameIRISHistoricalDate = global.year
 	}
 }
 
