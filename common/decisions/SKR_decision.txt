@@ -1,0 +1,861 @@
+SKR_debug = {
+    SKR_bakufu_debug = {
+        complete_effect = {
+            set_country_flag = SKR_bakufu_enabled
+        }
+    }
+    SKR_kyoshu_conference_debug = {
+        complete_effect = {
+            set_country_flag = SKR_Kyoshu_Conference_debug
+        }
+    }
+    SKR_northen_warfare_debug = {
+        complete_effect = {
+            set_country_flag = SKR_northen_warfare_debug
+        }
+    }
+    SKR_focus_debug = {
+        complete_effect = {
+            set_country_flag = SKR_focus_debug
+            mark_focus_tree_layout_dirty = yes
+        }
+    }
+}
+SKR_bakufu_category = {
+    SKR_kakushin_influence_debug = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_kakushin_influence_temp = 0.2}
+            SKR_kakushin_influence_effect = yes
+        }
+    }
+    SKR_kakushin_influence_debug_2 = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_kakushin_influence_temp = -0.2}
+            SKR_kakushin_influence_effect = yes
+        }
+    }
+    SKR_chukan_influence_debug = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_chukan_influence_temp = 0.2}
+            SKR_chukan_influence_effect = yes
+        }
+    }
+    SKR_chukan_influence_debug_2 = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_chukan_influence_temp = -0.2}
+            SKR_chukan_influence_effect = yes
+        }
+    }
+    SKR_shinsengumi_influence_debug = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_shinsengumi_influence_temp = 0.2}
+            SKR_shinsengumi_influence_effect = yes
+        }
+    }
+    SKR_shinsengumi_influence_debug_2 = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_shinsengumi_influence_temp = -0.2}
+            SKR_shinsengumi_influence_effect = yes
+        }
+    }
+    SKR_houshu_influence_debug = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_houshu_influence_temp = 0.2}
+            SKR_houshu_influence_effect = yes
+        }
+    }
+    SKR_houshu_influence_debug_2 = {
+        visible = {
+            is_debug = yes
+        }
+        complete_effect = {
+            set_temp_variable = {SKR_houshu_influence_temp = -0.2}
+            SKR_houshu_influence_effect = yes
+        }
+    }
+}
+SKR_HKD_war_category = {
+    SKR_join_the_war = {
+        icon = mission_icon
+		is_good = no
+		days_mission_timeout = 105
+		available = {
+			always = no
+        }
+		activation = {
+			always = no
+		}
+		cancel_trigger = {
+			UTR = {
+                exists = no
+            }
+		}
+		timeout_effect = {
+            country_event = {id = SKR.15}
+			if = {
+                limit = {
+                    country_exists = HKD
+                }
+                set_autonomy = {
+                    target = HKD
+                    autonomous_state = SKR_chinjyufu
+                }
+            }
+
+            declare_war_on = {
+                target = UTR
+                type = annex_everything
+            }
+            every_country = {
+                limit = {
+                    is_subject_of = SKR
+                }
+                declare_war_on = {
+                    target = UTR
+                    type = annex_everything
+                }
+            }
+		}
+    }
+    SKR_send_weapon_to_HKD = {
+        available = {
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                has_equipment = {
+                    infantry_equipment > 299
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_northen_warfare
+        }
+        days_remove = 7
+        days_re_enable = 7
+        remove_effect = {
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 300
+                target = HKD
+            }
+        }
+        cancel_trigger = {
+            has_global_flag = HKD_WAR_ENDED
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_send_navy_to_HKD = {
+        available = {
+            HKD = {
+                NOT = {
+                    has_idea = SKR_supply
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_northen_warfare
+        }
+        days_remove = 7
+        days_re_enable = 14
+        modifier = {
+            political_power_cost = 1
+        }
+        remove_effect = {
+            HKD = {
+                add_timed_idea = {idea = SKR_supply days = 30}
+            }
+        }
+        cancel_trigger = {
+            has_global_flag = HKD_WAR_ENDED
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_ask_UEH_for_help = {
+        available = {
+            UEH = {
+                is_subject_of = SKR
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_northen_warfare
+        }
+        cost = 30
+        fire_only_once = yes
+        days_remove = 30
+        remove_effect = {
+            UEH = {
+                add_ideas = youxianganshe
+                add_relation_modifier = {
+                    target = HKD
+                    modifier = UEH_send_volunteers_tension
+                }
+                add_ai_strategy = {
+                    type = send_volunteers_desire
+                    id = HKD
+                    value = 1000
+                }
+            }
+        }
+        cancel_trigger = {
+            has_global_flag = HKD_WAR_ENDED
+        }
+        cancel_effect = {
+            add_political_power = 20
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+}
+#果皇的衣柜
+SKR_Honoka_portrait_category = {
+    SKR_Honoka_portrait_1 = {
+        visible = {
+            NOT = {
+                check_variable = {SKR_Honoka_portrait_var = 1}
+            }
+        }
+        complete_effect = {
+            set_variable = {SKR_Honoka_portrait_var = 1}
+            custom_effect_tooltip = SKR_Honoka_portrait_1_effect
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = SKR_Kousaka_Honoka
+                        }
+                    }
+                    set_country_leader_portrait = {
+                        portrait = GFX_SKR_Kousaka_Honoka
+                    }
+                }
+            }
+        }
+    }
+    SKR_Honoka_portrait_2 = {
+        visible = {
+            NOT = {
+                check_variable = {SKR_Honoka_portrait_var = 2}
+            }
+        }
+        complete_effect = {
+            set_variable = {SKR_Honoka_portrait_var = 2}
+            custom_effect_tooltip = SKR_Honoka_portrait_2_effect
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = SKR_Kousaka_Honoka
+                        }
+                    }
+                    set_country_leader_portrait = {
+                        portrait = GFX_SKR_Kousaka_Honoka_2
+                    }
+                }
+            }
+        }
+    }
+    SKR_Honoka_portrait_3 = {
+        visible = {
+            NOT = {
+                check_variable = {SKR_Honoka_portrait_var = 3}
+            }
+        }
+        complete_effect = {
+            set_variable = {SKR_Honoka_portrait_var = 3}
+            custom_effect_tooltip = SKR_Honoka_portrait_3_effect
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = SKR_Kousaka_Honoka
+                        }
+                    }
+                    set_country_leader_portrait = {
+                        portrait = GFX_SKR_Kousaka_Honoka_Emperor
+                    }
+                }
+            }
+        }
+    }
+}
+
+SKR_Kyoshu_Conference_category = {
+    SKR_ask_USF_for_help = {
+        available = {
+            country_exists = USF
+            NOT = {has_war_with = USF}
+        }
+        visible = {
+            country_exists = USF
+            has_completed_focus = SKR_seek_for_support
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            set_temp_variable = {SKR_taisei_hokan_point_temp = 1}
+			SKR_taisei_hokan_point_effect = yes
+        }
+        ai_will_do = {
+            factor = 1
+        }
+    }
+    SKR_ask_BLA_for_help = {
+        available = {
+            country_exists = BLA
+            NOT = {has_war_with = BLA}
+        }
+        visible = {
+            country_exists = BLA
+            has_completed_focus = SKR_seek_for_support
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            set_temp_variable = {SKR_yoshinobu_point_temp = 1}
+			SKR_yoshinobu_hokan_point_effect = yes
+            set_country_flag = SKR_ask_BLA_for_help_flag
+            remove_state_claim = 950
+            950 = {
+                if = {
+                    limit = {
+                        is_owned_by = BLA
+                    }
+                    add_compliance = 20
+                }
+            }
+        }
+    }
+    SKR_ask_SLL_for_help = {
+        available = {
+            country_exists = SLL
+            NOT = {has_war_with = SLL}
+        }
+        visible = {
+            country_exists = SLL
+            has_completed_focus = SKR_seek_for_support
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            SLL = {
+                country_event = {id = SKR.106 days = 5}
+            }
+        }
+        ai_will_do = {
+            factor = 1
+        }
+    }
+}
+
+SKR_northen_warfare_category = {
+    #倒计时
+    SKR_northen_warfare_ends = {
+        icon = mission_icon
+		is_good = no
+		days_mission_timeout = 90
+		available = {
+			always = no
+        }
+		activation = {
+			always = no
+		}
+		timeout_effect = {
+            set_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                custom_effect_tooltip = SKR_northen_warfare_ends_t
+            }
+            if = {
+                limit = {
+                    tag = NIS
+                }
+                custom_effect_tooltip = SKR_northen_warfare_ends_t_2
+            }
+            if = {
+                limit = {
+                    check_variable = {SKR.SKR_morale > 20}
+                    SKR = {
+                        controls_state = 316
+                    }
+                }
+                set_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+                every_country = {
+                    limit = {
+                        is_SKR_tag = yes
+                        has_war_with = SKR
+                    }
+                    white_peace = SKR
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {SKR.SKR_morale < 20}
+                }
+                every_country = {
+                    limit = {
+                        is_SKR_tag = yes
+                        has_war_with = SKR
+                    }
+                    white_peace = SKR
+                }
+                SKR_LL_victory_effect = yes
+                SKR_shinsengumi_fail_effect = yes
+            }
+            else = {
+
+            }
+		}
+    }
+    #拉拉
+    SKR_love_live = {
+        available = {
+            has_war_with = SKR
+        }
+        visible = {
+            OR = {
+                tag = NIS
+                tag = KUD
+                tag = UEH
+                tag = SBY
+            }
+        }
+        days_remove = 35
+        cost = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    NOT = {
+                        has_template = "拉拉众"
+                    }
+                }
+                division_template = {
+                    name = "拉拉众"
+                    regiments = {
+                        militia = {x = 0 y = 0}
+                        militia = {x = 0 y = 1}
+                        militia = {x = 0 y = 2}
+                    }
+                }
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"拉拉众\" division_template = \"拉拉众\" start_experience_factor = 0.15 "
+                    owner = ROOT
+                }
+                create_unit = {
+                    division = "name = \"拉拉众\" division_template = \"拉拉众\" start_experience_factor = 0.15 "
+                    owner = ROOT
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_speach_of_honoka = {
+        visible = {
+            OR = {
+                tag = NIS
+                tag = KUD
+                tag = UEH
+                tag = SBY
+            }
+            has_character = SKR_Kousaka_Honoka
+        }
+        fire_only_once = yes
+        cost = 50
+        remove_effect = {
+            SKR = {
+                country_event = {id = SKR.109}
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_frontline_live = {
+        available = {
+            NOT = {
+                has_global_flag = SKR_LIVE_FLAG
+            }
+        }
+        visible = {
+            OR = {
+                tag = NIS
+                tag = KUD
+                tag = UEH
+                tag = SBY
+            }
+        }
+        days_remove = 30
+        days_re_enable = 30
+        modifier = {
+            political_power_cost = 1
+        }
+        complete_effect = {
+            set_global_flag = SKR_LIVE_FLAG
+        }
+        remove_effect = {
+            SKR = {
+                set_temp_variable = {SKR_morale_temp = -10}
+                SKR_update_morale_effect = yes
+            }
+            clr_global_flag = SKR_LIVE_FLAG
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_gain_support_from_south = {
+        visible = {
+            OR = {
+                tag = NIS
+                tag = KUD
+                tag = UEH
+                tag = SBY
+            }
+        }
+        days_remove = 20
+        days_re_enable = 30
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 750
+                producer = BDA
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    #幕府
+    SKR_collect_from_company = {
+        visible = {
+            tag = SKR
+            has_country_flag = SKR_save_the_company_flag
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_8
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_industrial_capacity_factory = 0.1}
+			}
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_enlist_the_rounin = {
+        visible = {
+            tag = SKR
+            has_country_flag = SKR_save_the_rounin_flag
+        }
+        fire_only_once = yes
+        days_remove = 7
+        remove_effect = {
+            add_stability = -0.025
+            division_template = {
+                name = "浪人"
+                regiments = {
+                    infantry = {x = 0 y = 0}
+                    infantry = {x = 0 y = 1}
+                    infantry = {x = 0 y = 2}
+                }
+            }
+            capital_scope = {
+                create_unit = {
+                    division = "name = \"浪人\" division_template = \"浪人\" start_experience_factor = 0.35 "
+                    owner = ROOT
+                }
+                create_unit = {
+                    division = "name = \"浪人\" division_template = \"浪人\" start_experience_factor = 0.35 "
+                    owner = ROOT
+                }
+                create_unit = {
+                    division = "name = \"浪人\" division_template = \"浪人\" start_experience_factor = 0.35 "
+                    owner = ROOT
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_increse_our_morale = {
+        visible = {
+            tag = SKR
+        }
+        cost = 30
+        days_remove = 30
+        remove_effect = {
+            set_temp_variable = {SKR_morale_temp = 10}
+            SKR_update_morale_effect = yes
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    SKR_operation_1 = {
+        visible = {
+            has_completed_focus = SKR_no_time_to_waste
+            has_completed_focus = SKR_make_a_plan
+        }
+        cost = 50
+        fire_only_once = yes
+        days_remove = 20
+        modifier = {
+            army_speed_factor = 0.1
+        }
+        targeted_modifier = {
+            tag = NIS
+            attack_bonus_against = 0.05
+            breakthrough_bonus_against = 0.15
+        }
+        targeted_modifier = {
+            tag = UEH
+            attack_bonus_against = 0.05
+            breakthrough_bonus_against = 0.15
+        }
+        targeted_modifier = {
+            tag = KUD
+            attack_bonus_against = 0.05
+            breakthrough_bonus_against = 0.15
+        }
+        targeted_modifier = {
+            tag = SBY
+            attack_bonus_against = 0.05
+            breakthrough_bonus_against = 0.15
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_operation_2 = {
+        available = {
+            OR = {
+                has_war_with = UEH
+                has_war_with = SBY
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_a_steady_pace
+            has_completed_focus = SKR_make_a_plan
+        }
+        cost = 30
+        fire_only_once = yes
+        days_remove = 30
+        modifier = {
+            army_morale_factor = 0.05
+        }
+        targeted_modifier = {
+            tag = UEH
+            attack_bonus_against = 0.1
+            defense_bonus_against = 0.1
+        }
+        targeted_modifier = {
+            tag = SBY
+            attack_bonus_against = 0.1
+            defense_bonus_against = 0.1
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_operation_3 = {
+        available = {
+            OR = {
+                has_war_with = NIS
+                has_war_with = KUD
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_a_steady_pace
+            has_completed_focus = SKR_make_a_plan
+        }
+        cost = 30
+        fire_only_once = yes
+        days_remove = 30
+        modifier = {
+            army_morale_factor = 0.05
+        }
+        targeted_modifier = {
+            tag = NIS
+            attack_bonus_against = 0.1
+            defense_bonus_against = 0.1
+        }
+        targeted_modifier = {
+            tag = KUD
+            attack_bonus_against = 0.1
+            defense_bonus_against = 0.1
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+
+
+    SKR_SLL_weapon = {
+        visible = {
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                NOT = {
+                    has_country_flag = SKR_support_LL_flag
+                }
+            }
+            if = {
+                limit = {
+                    OR = {
+                        tag = NIS
+                        tag = KUD
+                        tag = UEH
+                        tag = SBY
+                    }
+                }
+                SKR = {
+                    has_country_flag = SKR_support_LL_flag
+                }
+            }
+        }
+        cost = 20
+        days_re_enable = 10
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 1000
+                producer = SLL
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_SLL_advisor = {
+        visible = {
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                NOT = {
+                    has_country_flag = SKR_support_LL_flag
+                }
+            }
+            if = {
+                limit = {
+                    OR = {
+                        tag = NIS
+                        tag = KUD
+                        tag = UEH
+                        tag = SBY
+                    }
+                }
+                SKR = {
+                    has_country_flag = SKR_support_LL_flag
+                }
+            }
+        }
+        fire_only_once = yes
+        days_remove = 15
+        remove_effect = {
+            add_ideas = SKR_SLL_advisor_idea
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_BLA_weapon = {
+        visible = {
+            tag = SKR
+            has_country_flag = SKR_ask_BLA_for_help_flag
+        }
+        fire_only_once = yes
+        days_remove = 15
+        remove_effect = {
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 1000
+                producer = BLA
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_BLA_advisor = {
+        visible = {
+            tag = SKR
+            has_country_flag = SKR_ask_BLA_for_help_flag
+        }
+        fire_only_once = yes
+        days_remove = 15
+        remove_effect = {
+            add_ideas = SKR_BLA_advisor_idea
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    
+    SKR_BLA_volunteer = {
+        visible = {
+            tag = SKR
+            has_country_flag = SKR_ask_BLA_for_help_flag
+        }
+        fire_only_once = yes
+        days_remove = 25
+        remove_effect = {
+            BLA = {
+                add_relation_modifier = {
+                    target = SKR
+                    modifier = SKR_BLA_send_volunteers_tension
+                }
+                add_ai_strategy = {
+                    type = send_volunteers_desire
+                    id = SKR
+                    value = 1000
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+}

@@ -1,11 +1,11 @@
 focus_tree = {
-	id = SKR_focus_tree_early_politics
+	id = SKR
 	country = {
 		factor = 0
-		# modifier = {
-		# 	TAG = SKR
-		# 	add = 10
-		# }
+		modifier = {
+		 	tag = SKR
+		 	add = 10
+		}
 	}
 	default = no
 	continuous_focus_position = {
@@ -13,25 +13,1344 @@ focus_tree = {
 		y = 2000
 	}
 
-	#余震持续
+	#新年伊始
 	focus = {
-		id = SKR_focus_aftershock_continue
-		#icon =
+		id = SKR_a_new_year_comes
+		icon = GFX_focus_a_new_year_comes
 		x = 0
 		y = 0
-		cost = 4
+		cost = 2
+		ai_will_do = {
+			base = 10
+		} 
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				NOT = {
+					has_country_flag = SKR_nobunaga_dead
+				}
+			}
+		}
+		completion_reward = {
+			unlock_decision_category_tooltip = SKR_bakufu_category
+			set_country_flag = SKR_bakufu_enabled
+			add_dynamic_modifier = {modifier = SKR_bakufu_dynamic_modifier}
+		}
+	}
+	#筹备神皇选举
+	focus = {
+		id = SKR_prepare_for_the_election
+		icon = GFX_focus_prepare_for_the_election
+		x = 0
+		y = 1
+		relative_position_id = SKR_a_new_year_comes
+		prerequisite = {
+			focus = SKR_a_new_year_comes
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				AND = {
+					has_country_flag = SKR_new_emperor_flag
+					NOT = {
+						has_country_flag = SKR_nobunaga_dead
+					}
+				}
+			}
+		}
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		completion_reward = {
+			custom_effect_tooltip = SKR_prepare_for_the_election_tt
+		}
+	}
+	#加强演舞场安保
+	focus = {
+		id = SKR_strengthen_security
+		icon = GFX_focus_SKR_strengthen_security
+		x = 0
+		y = 1
+		relative_position_id = SKR_prepare_for_the_election
+		prerequisite = {
+			focus = SKR_prepare_for_the_election
+		}
+		cost = 5
 		ai_will_do = {
 			base = 10
 		} 
 		available = {
-			
+			hidden_trigger = {
+				always = no
+			}
 		}
-		bypass = {
-
-		}
-		available_if_capitulated = no
-		cancel_if_invalid = yes
 		completion_reward = {
+			custom_effect_tooltip = SKR_strengthen_security_tt
+		}
+	}
+	#大结界的决选
+	focus = {
+		id = SKR_the_final_election
+		icon = GFX_focus_SKR_the_final_election
+		x = 0
+		y = 1
+		relative_position_id = SKR_strengthen_security
+		prerequisite = {
+			focus = SKR_strengthen_security
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			hidden_trigger = {
+				always = no
+			}
+		}
+		completion_reward = {
+			custom_effect_tooltip = SKR_the_final_election_tt
+		}
+	}
+	#新皇登基
+	focus = {
+		id = SKR_honoka_banzai
+		icon = GFX_focus_SKR_honoka_banzai
+		x = 0
+		y = 1
+		relative_position_id = SKR_the_final_election
+		prerequisite = {
+			focus = SKR_the_final_election
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			has_country_flag = SKR_election_ended_flag
+		}
+		completion_reward = {
+			add_stability = 0.15
+			custom_effect_tooltip = SKR_honoka_banzai_t
+			hidden_effect = {
+				every_possible_country = {
+					limit = {
+						has_character = SKR_Kousaka_Honoka
+					}
+					SKR_Kousaka_Honoka = {
+						set_nationality = SKR
+					}
+				}
+				news_event = {id = SKR_news.1 days = 2}
+				add_ideas = SKR_Honoka_leader
+			}
+		}
+	}
+
+	#年度军备预算
+	focus = {
+		id = SKR_army_affairs
+		icon = GFX_focus_SKR_army_affairs
+		x = -4
+		y = 1
+		relative_position_id = SKR_a_new_year_comes
+		prerequisite = {
+			focus = SKR_a_new_year_comes
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+		}
+		completion_reward = {
+			country_event = {id = SKR.4}
+		}
+		
+	}
+	#大鸟的方案
+	focus = {
+		id = SKR_plan_of_ootori
+		icon = GFX_focus_SKR_plan_of_ootori
+		x = -1
+		y = 1
+		relative_position_id = SKR_army_affairs
+		prerequisite = {
+			focus = SKR_army_affairs
+		}
+		mutually_exclusive = {
+			focus = SKR_plan_of_hijikata
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			has_country_flag = SKR_plan_of_ootori_flag
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				category = artillery
+				bonus = 1.0
+				uses = 1
+			}
+			set_temp_variable = {SKR_kakushin_influence_temp = 0.05}
+			SKR_kakushin_influence_effect = yes
+		}
+	}
+	#扶持平泽炮兵厂
+	focus = {
+		id = SKR_support_hirazawa_arsrenal
+		icon = GFX_focus_SKR_support_hirazawa_arsrenal
+		x = 0
+		y = 1
+		relative_position_id = SKR_plan_of_ootori
+		prerequisite = {
+			focus = SKR_plan_of_ootori
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			943 = {
+				is_owned_and_controlled_by = ROOT
+			}
+		}
+		completion_reward = {
+			943 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			mio:SKR_hirazawa_aresenal_organization = {
+				add_mio_funds = 1000
+			}
+		}
+	}
+	#土方的方案
+	focus = {
+		id = SKR_plan_of_hijikata
+		icon = GFX_focus_SKR_plan_of_hijikata
+		x = 1
+		y = 1
+		relative_position_id = SKR_army_affairs
+		prerequisite = {
+			focus = SKR_army_affairs
+		}
+		mutually_exclusive = {
+			focus = SKR_plan_of_ootori
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			has_country_flag = SKR_plan_of_hijikata_flag
+		}
+		completion_reward = {
+			add_tech_bonus = {
+				category = infantry_weapons
+				bonus = 1.0
+				uses = 1
+			}
+			set_temp_variable = {SKR_shinsengumi_influence_temp = 0.05}
+			SKR_shinsengumi_influence_effect = yes
+		}
+	}
+	#扩建京州陆军工厂
+	focus = {
+		id = SKR_expand_land_aresenal
+		icon = GFX_focus_SKR_support_hirazawa_arsrenal
+		x = 0
+		y = 1
+		relative_position_id = SKR_plan_of_hijikata
+		prerequisite = {
+			focus = SKR_plan_of_hijikata
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			316 = {
+				is_owned_and_controlled_by = ROOT
+			}
+		}
+		completion_reward = {
+			316 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = arms_factory
+					level = 2
+					instant_build = yes
+				}
+			}
+			mio:SKR_kyoushuu_aresenal_organization = {
+				add_mio_funds = 1000
+			}
+		}
+	}
+
+	#继续处理黑沫夜
+	focus = {
+		id = SKR_deal_with_crisis
+		icon = GFX_focus_SKR_deal_with_crisis
+		x = 4
+		y = 1
+		relative_position_id = SKR_a_new_year_comes
+		prerequisite = {
+			focus = SKR_a_new_year_comes
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+		}
+		completion_reward = {
+			add_political_power = 35
+			country_event = {id = SKR.5 days = 3}
+		}
+		
+	}
+	#优先救助企业
+	focus = {
+		id = SKR_save_the_company
+		icon = GFX_focus_SKR_save_the_company
+		x = -1
+		y = 1
+		relative_position_id = SKR_deal_with_crisis
+		prerequisite = {
+			focus = SKR_deal_with_crisis
+		}
+		mutually_exclusive = {
+			focus = SKR_save_the_rounin
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+		}
+		completion_reward = {
+			add_stability = -0.05
+			set_temp_variable = {SKR_chukan_influence_temp = 0.05}
+			SKR_chukan_influence_effect = yes
+			random_owned_controlled_state = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_black_foaming_night_dummy
+					add_idea = SKR_black_foaming_night_1
+				}
+			}
+			set_country_flag = SKR_save_the_company_flag
+			hidden_effect = {
+				add_to_variable = {SKR_black_foaming_night_consumer_goods_factor = -0.05}
+			}
+		}
+		
+	}
+	#安抚失业浪人
+	focus = {
+		id = SKR_save_the_rounin
+		icon = GFX_focus_SKR_save_the_rounin
+		x = 1
+		y = 1
+		relative_position_id = SKR_deal_with_crisis
+		prerequisite = {
+			focus = SKR_deal_with_crisis
+		}
+		mutually_exclusive = {
+			focus = SKR_save_the_company
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+		}
+		completion_reward = {
+			army_experience = 10
+			set_temp_variable = {SKR_shinsengumi_influence_temp = 0.05}
+			SKR_shinsengumi_influence_effect = yes
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_black_foaming_night_dummy
+					add_idea = SKR_black_foaming_night_2
+				}
+			}
+			set_country_flag = SKR_save_the_rounin_flag
+			hidden_effect = {
+				add_to_variable = {SKR_black_foaming_night_stability_factor = 0.05}
+			}
+		}
+		
+	}
+	#重启关税谈判
+	focus = {
+		id = SKR_restart_the_negotiation
+		icon = GFX_focus_SKR_restart_the_negotiation
+		x = 1
+		y = 1
+		relative_position_id = SKR_save_the_company
+		prerequisite = {
+			focus = SKR_save_the_company
+			focus = SKR_save_the_rounin
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+		}
+		completion_reward = {
+			USF = {
+				country_event = {id = SKR.100 days = 14}
+			}
+			SLL = {
+				country_event = {id = SKR.103 days = 7}
+			}
+		}
+		
+	}
+
+	#北海战事
+	focus = {
+		id = SKR_northen_warfare
+		icon = GFX_focus_SKR_northen_warfare
+		x = 0
+		y = 2
+		relative_position_id = SKR_honoka_banzai
+		
+		allow_branch = {
+			OR = {
+				AND = {
+					has_global_flag = HKD_WAR_STARTED
+					NOT = {
+						has_country_flag = SKR_nobunaga_dead
+					}
+				}
+				has_country_flag = SKR_focus_debug
+			}
+		}
+		cost = 1
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+		}
+		completion_reward = {
+			unlock_decision_tooltip = SKR_send_weapon_to_HKD
+			unlock_decision_tooltip = SKR_send_navy_to_HKD
+			unlock_decision_tooltip = SKR_ask_UEH_for_help
+		}
+	}
+	#北海之旅
+	focus = {
+		id = SKR_trip_to_HKD
+		icon = GFX_focus_SKR_trip_to_HKD
+		x = 0
+		y = 1
+		relative_position_id = SKR_northen_warfare
+		prerequisite = {
+			focus = SKR_northen_warfare
+		}
+		cost = 5
+		ai_will_do = {
+			base = 10
+		} 
+		available = {
+			UTR = {
+				exists = no
+			}
+		}
+		completion_reward = {
+			country_event = {id = SKR.17 days = 3}
+		}
+	}
+#二阶段
+	#现在怎么办？
+	focus = {
+		id = SKR_what_shall_we_do
+		icon = GFX_focus_SKR_what_shall_we_do
+		x = 0
+		y = 0
+		offset = {
+			x = 10
+			trigger = {
+				has_country_flag = SKR_focus_debug
+			}
+		}
+		cost = 1
+		ai_will_do = {
+			base = 10
+		} 
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				has_country_flag = SKR_nobunaga_dead
+			}
+		}
+		completion_reward = {
+			country_event = {id = SKR.19 days = 3}
+		}
+	}
+	#庆喜政权
+	focus = {
+		id = SKR_Yoshinobu_regime
+		icon = GFX_focus_SKR_Yoshinobu_regime
+		x = 0
+		y = 1
+		relative_position_id = SKR_what_shall_we_do
+		cost = 1
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				has_country_flag = SKR_Yoshinobu_regime_flag
+			}
+		}
+		prerequisite = {
+			focus = SKR_what_shall_we_do
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			set_politics = {
+				ruling_party = neutrality
+			}
+			promote_character = {
+				character = SKR_Hitotsubashi_Yoshinobu
+				ideology = sub_Junta
+			}
+			set_temp_variable = {SKR_kakushin_relation_temp = -50}
+			SKR_kakushin_relation_effect = yes
+			set_temp_variable = {SKR_chukan_relation_temp = 50}
+			SKR_chukan_relation_effect = yes
+			set_temp_variable = {SKR_shinsengumi_relation_temp = -60}
+			SKR_shinsengumi_relation_effect = yes
+			set_temp_variable = {SKR_houshu_relation_temp = 30}
+			SKR_houshu_relation_effect = yes
+			hidden_effect = {
+				add_ideas = SKR_Honoka_leader
+				set_party_name = {ideology = democratic long_name = SKR_democratic_party_temp name = SKR_democratic_party_temp}
+				set_party_name = {ideology = communism long_name = SKR_communism_party_temp name = SKR_communism_party_temp}
+				set_party_name = {ideology = neutrality long_name = SKR_neutrality_party_temp name = SKR_neutrality_party_temp}
+				set_party_name = {ideology = fascism long_name = SKR_fascism_party_temp name = SKR_fascism_party_temp}
+				set_party_name = {ideology = reactionism long_name = SKR_reactionism_party_temp name = SKR_reactionism_party_temp}
+			}
+		}
+	}
+	#京州会议
+	focus = {
+		id = SKR_Kyoshu_Conference
+		icon = GFX_focus_SKR_Kyoshu_Conference
+		x = 0
+		y = 1
+		relative_position_id = SKR_Yoshinobu_regime
+		cost = 1
+		prerequisite = {
+			focus = SKR_Yoshinobu_regime
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			country_event = {id = SKR.20 days = 3}
+			set_country_flag = SKR_Kyoshu_Conference_flag
+			unlock_decision_category_tooltip = SKR_Kyoshu_Conference_category
+		}
+	}
+	#寻求列强支持
+	focus = {
+		id = SKR_seek_for_support
+		icon = GFX_focus_SKR_seek_for_support
+		x = 0
+		y = 1
+		relative_position_id = SKR_Kyoshu_Conference
+		cost = 2
+		available = {
+			NOT = {
+				has_country_flag = SKR_Kyoshu_Conference_ended
+			}
+		}
+		prerequisite = {
+			focus = SKR_Kyoshu_Conference
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			unlock_decision_tooltip = SKR_ask_BLA_for_help
+			unlock_decision_tooltip = SKR_ask_SLL_for_help
+			unlock_decision_tooltip = SKR_ask_USF_for_help
+		}
+	}
+	#顺应维新浪潮
+	focus = {
+		id = SKR_conform_to_the_trend
+		icon = GFX_focus_SKR_conform_to_the_trend
+		x = -1
+		y = 2
+		relative_position_id = SKR_Kyoshu_Conference
+		cost = 2
+		prerequisite = {
+			focus = SKR_Kyoshu_Conference
+		}
+		mutually_exclusive = {
+			focus = SKR_do_a_treat
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			add_political_power = 30
+			set_temp_variable = {SKR_taisei_hokan_point_temp = 1}
+			SKR_taisei_hokan_point_effect = yes
+		}
+	}
+	#幕后交易
+	focus = {
+		id = SKR_do_a_treat
+		icon = GFX_focus_SKR_do_a_treat
+		x = 1
+		y = 2
+		relative_position_id = SKR_Kyoshu_Conference
+		cost = 2
+		prerequisite = {
+			focus = SKR_Kyoshu_Conference
+		}
+		mutually_exclusive = {
+			focus = SKR_conform_to_the_trend
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			set_temp_variable = {SKR_yoshinobu_point_temp = 1}
+			SKR_yoshinobu_point_effect = yes
+		}
+	}
+	#圣断
+	focus = {
+		id = SKR_honokas_decision
+		icon = GFX_focus_SKR_honokas_decision
+		x = 1
+		y = 1
+		relative_position_id = SKR_conform_to_the_trend
+		cost = 1
+		prerequisite = {
+			focus = SKR_conform_to_the_trend
+			focus = SKR_do_a_treat
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			country_event = {id = SKR.24 days = 3}
+		}
+	}
+	#讨价还价
+	focus = {
+		id = SKR_a_nice_price
+		icon = GFX_focus_SKR_a_nice_price
+		x = -1
+		y = 1
+		relative_position_id = SKR_honokas_decision
+		cost = 2
+		mutually_exclusive = {
+			focus = SKR_a_unique_way
+		}
+		prerequisite = {
+			focus = SKR_honokas_decision
+		}
+		ai_will_do = {
+			base = 10
+		}
+		completion_reward = {
+			custom_effect_tooltip = SKR_a_nice_price_t
+			hidden_effect = {
+				country_event = {id = SKR.25 days = 4}
+			}
+		}
+	}
+	#非常之策
+	focus = {
+		id = SKR_a_unique_way
+		icon = GFX_focus_SKR_a_unique_way
+		x = 1
+		y = 1
+		relative_position_id = SKR_honokas_decision
+		cost = 2
+		mutually_exclusive = {
+			focus = SKR_a_nice_price
+		}
+		prerequisite = {
+			focus = SKR_honokas_decision
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			custom_effect_tooltip = SKR_a_unique_way_t
+			set_temp_variable = {SKR_kakushin_relation_temp = -10}
+			SKR_kakushin_relation_effect = yes
+			set_temp_variable = {SKR_chukan_relation_temp = -5}
+			SKR_chukan_relation_effect = yes
+			set_temp_variable = {SKR_shinsengumi_relation_temp = -10}
+			SKR_shinsengumi_relation_effect = yes
+			set_temp_variable = {SKR_houshu_relation_temp = -10}
+			SKR_houshu_relation_effect = yes
+			hidden_effect = {
+				country_event = {id = SKR.25 days = 4}
+			}
+		}
+	}
+	#血色将至
+	focus = {
+		id = SKR_a_bloody_day
+		icon = GFX_focus_SKR_a_bloody_day
+		x = 1
+		y = 1
+		relative_position_id = SKR_a_nice_price
+		cost = 1
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				AND = {
+					has_country_flag = SKR_souji_regime_flag
+				}
+			}
+		}
+		prerequisite = {
+			focus = SKR_a_nice_price
+			focus = SKR_a_unique_way
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			country_event = {id = SKR.27 days = 3}
+			hidden_effect = {
+				IRIS_unlock_a_new_branch = yes
+			}
+		}
+	}
+#新选组
+	#冲田总司政权
+	focus = {
+		id = SKR_souji_regime
+		icon = GFX_focus_SKR_souji_regime
+		x = 0
+		y = 2
+		relative_position_id = SKR_a_bloody_day
+		cost = 1
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				has_completed_focus = SKR_a_bloody_day
+			}
+		}
+		
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			custom_effect_tooltip = SKR_Kyoshu_Conference_ended_t
+			set_country_flag = SKR_Kyoshu_Conference_ended_flag
+			remove_ideas = SKR_bakufu_in_chaos
+			custom_effect_tooltip = SKR_souji_regime_t
+			hidden_effect = {
+				delete_unit_template_and_units = {
+					division_template = "新选组"
+				}
+				load_oob = "SKR_SOUJI"
+				capital_scope = {
+					create_unit = {
+						division = "name = \"新选组五番队\" division_template = \"新选组\" start_experience_factor = 0.5 "
+						owner = SKR
+						id = 5
+					}
+					create_unit = {
+						division = "name = \"新选组八番队\" division_template = \"新选组\" start_experience_factor = 0.5 "
+						owner = SKR
+						id = 8
+					}
+					create_unit = {
+						division = "name = \"新选组九番队\" division_template = \"新选组\" start_experience_factor = 0.5 "
+						owner = SKR
+						id = 9
+					}
+				}
+				every_country = {
+					limit = {
+						is_SKR_tag = yes
+						is_subject_of = SKR
+					}
+					SKR = {
+						end_puppet = PREV
+					}
+				}
+				every_country = {
+					limit = {
+						OR = {
+							tag = NIS
+							tag = KUD
+							tag = UEH
+							tag = SBY
+						}
+					}
+					division_template = {
+						name = "国人众"
+						regiments = {
+							infantry = {x = 0 y = 0}
+							infantry = {x = 0 y = 1}
+							infantry = {x = 0 y = 2}
+							infantry = {x = 0 y = 3}
+						}
+					}
+					every_owned_state = {
+						create_unit = {
+							division = "name = \"国人众\" division_template = \"国人众\" start_experience_factor = 0.2"
+    						owner = PREV
+						}
+						create_unit = {
+							division = "name = \"国人众\" division_template = \"国人众\" start_experience_factor = 0.2"
+    						owner = PREV
+						}
+						create_unit = {
+							division = "name = \"国人众\" division_template = \"国人众\" start_experience_factor = 0.2"
+    						owner = PREV
+						}
+					}
+				}
+				NIS = {
+					give_military_access = KUD
+					give_military_access = SBY
+					give_military_access = UEH
+				}
+				KUD = {
+					give_military_access = NIS
+					give_military_access = SBY
+					give_military_access = UEH
+				}
+				UEH = {
+					give_military_access = KUD
+					give_military_access = SBY
+					give_military_access = NIS
+				}
+				SBY = {
+					give_military_access = KUD
+					give_military_access = NIS
+					give_military_access = UEH
+				}
+			}
+		}
+	}
+	#朝见天子
+	focus = {
+		id = SKR_present_to_court
+		icon = GFX_focus_SKR_present_to_court
+		x = -1
+		y = 1
+		relative_position_id = SKR_souji_regime
+		cost = 1
+		prerequisite = {
+			focus = SKR_souji_regime
+		}
+		
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			country_event = {id = SKR.28 days = 3}
+		}
+	}
+	#刷新政治
+	focus = {
+		id = SKR_new_policy
+		icon = GFX_focus_SKR_new_policy
+		x = 1
+		y = 1
+		relative_position_id = SKR_souji_regime
+		cost = 1
+		prerequisite = {
+			focus = SKR_souji_regime
+		}
+		
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			add_timed_idea = {idea = SKR_new_bakufu days = 180}
+			set_temp_variable = {SKR_kakushin_relation_temp = 40}
+			SKR_kakushin_relation_effect = yes
+			set_temp_variable = {SKR_chukan_relation_temp = -50}
+			SKR_chukan_relation_effect = yes
+			set_temp_variable = {SKR_shinsengumi_relation_temp = 80}
+			SKR_shinsengumi_relation_effect = yes
+			set_temp_variable = {SKR_houshu_relation_temp = -50}
+			SKR_houshu_relation_effect = yes
+		}
+	}
+	#戒严令
+	focus = {
+		id = SKR_martial_law
+		icon = GFX_focus_SKR_martial_law
+		x = 1
+		y = 1
+		relative_position_id = SKR_present_to_court
+		cost = 2
+		prerequisite = {
+			focus = SKR_present_to_court
+		}
+		prerequisite = {
+			focus = SKR_new_policy
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		cancelable = no
+		completion_reward = {
+			add_ideas = SKR_martial_law_idea
+			hidden_effect = {
+				country_event = {id = SKR.29 days = 7}
+			}
+		}
+	}
+#北陆战争
+	#京州防线
+	focus = {
+		id = SKR_Kyoushuu_defense_line
+		icon = GFX_focus_SKR_Kyoushuu_defense_line
+		x = 0
+		y = 1
+		relative_position_id = SKR_martial_law
+		cost = 1
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+			}
+		}
+		prerequisite = {
+			focus = SKR_martial_law
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			316 = {
+				add_building_construction = {
+					type = bunker
+					province = 3820
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = bunker
+					province = 7601
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = bunker
+					province = 16748
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = bunker
+					province = 16750
+					level = 2
+					instant_build = yes
+				}
+			}
+		}
+	}
+	#速战速决
+	focus = {
+		id = SKR_no_time_to_waste
+		icon = GFX_focus_SKR_no_time_to_waste
+		x = -3
+		y = 1
+		relative_position_id = SKR_Kyoushuu_defense_line
+		cost = 2
+		mutually_exclusive = {
+			focus = SKR_a_steady_pace
+		}
+		prerequisite = {
+			focus = SKR_Kyoushuu_defense_line
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_1
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_breakthrough_factor = 0.075}
+				add_to_variable = {SKR_northen_warfare_army_speed_factor = 0.05}
+			}
+		}
+	}
+	#放任芹泽鸭
+	focus = {
+		id = SKR_trust_Serizawa_Kamo
+		icon = GFX_focus_SKR_trust_Serizawa_Kamo
+		x = -1
+		y = 1
+		relative_position_id = SKR_no_time_to_waste
+		cost = 2
+		prerequisite = {
+			focus = SKR_no_time_to_waste
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_2
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_army_infantry_attack_factor = 0.1}
+				add_to_variable = {SKR_northen_warfare_resistance_growth = 0.15}
+			}
+		}
+	}
+	#乘胜追击
+	focus = {
+		id = SKR_march_forward
+		icon = GFX_focus_SKR_march_forward
+		x = 1
+		y = 1
+		relative_position_id = SKR_no_time_to_waste
+		cost = 2
+		prerequisite = {
+			focus = SKR_no_time_to_waste
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			army_experience = 10
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_3
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_army_org_factor = 0.05}
+			}
+		}
+	}
+	#摧毁神像
+	focus = {
+		id = SKR_no_more_worship
+		icon = GFX_focus_SKR_no_more_worship
+		x = 1
+		y = 1
+		relative_position_id = SKR_trust_Serizawa_Kamo
+		cost = 5
+		prerequisite = {
+			focus = SKR_trust_Serizawa_Kamo
+		}
+		prerequisite = {
+			focus = SKR_march_forward
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			add_stability = -0.05
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_4
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_army_attack_factor = 0.05}
+				add_to_variable = {SKR_northen_warfare_army_infantry_attack_factor = 0.15}
+				add_to_variable = {SKR_northen_warfare_army_defence_factor = -0.05}
+			}
+		}
+	}
+
+	#稳扎稳打
+	focus = {
+		id = SKR_a_steady_pace
+		icon = GFX_focus_SKR_a_steady_pace
+		x = 3
+		y = 1
+		relative_position_id = SKR_Kyoushuu_defense_line
+		cost = 2
+		mutually_exclusive = {
+			focus = SKR_no_time_to_waste
+		}
+		prerequisite = {
+			focus = SKR_Kyoushuu_defense_line
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_5
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_max_planning = 0.075}
+				add_to_variable = {SKR_northen_warfare_army_defence_factor = 0.1}
+			}
+		}
+	}
+	#骄兵必败
+	focus = {
+		id = SKR_be_careful
+		icon = GFX_focus_SKR_be_careful
+		x = -1
+		y = 1
+		relative_position_id = SKR_a_steady_pace
+		cost = 2
+		prerequisite = {
+			focus = SKR_a_steady_pace
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_6
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_planning_speed = 0.05}
+				add_to_variable = {SKR_northen_warfare_recon_factor = 0.1}
+			}
+		}
+	}
+	#仁义之师
+	focus = {
+		id = SKR_be_mercy
+		icon = GFX_focus_SKR_be_mercy
+		x = 1
+		y = 1
+		relative_position_id = SKR_a_steady_pace
+		cost = 2
+		prerequisite = {
+			focus = SKR_a_steady_pace
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			add_stability = 0.05
+			add_war_support = 0.1
+		}
+	}
+	#铁之法度
+	focus = {
+		id = SKR_we_are_the_law
+		icon = GFX_focus_SKR_we_are_the_law
+		x = -1
+		y = 1
+		relative_position_id = SKR_be_mercy
+		cost = 5
+		prerequisite = {
+			focus = SKR_be_careful
+		}
+		prerequisite = {
+			focus = SKR_be_mercy
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		bypass = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		}
+		completion_reward = {
+			effect_tooltip = {
+				swap_ideas = {
+					remove_idea = SKR_northen_warfare_dummy
+					add_idea = SKR_northen_warfare_7
+				}
+			}
+			hidden_effect = {
+				add_to_variable = {SKR_northen_warfare_army_attack_factor = 0.05}
+				add_to_variable = {SKR_northen_warfare_max_planning = 0.1}
+				add_to_variable = {SKR_northen_warfare_land_reinforce_rate = 0.05}
+				add_to_variable = {SKR_northen_warfare_army_morale_factor = 0.1}
+			}
+		}
+	}
+
+	#指定作战计划
+	focus = {
+		id = SKR_make_a_plan
+		icon = GFX_focus_SKR_make_a_plan
+		x = 0
+		y = 2
+		relative_position_id = SKR_Kyoushuu_defense_line
+		cost = 1
+		prerequisite = {
+			focus = SKR_Kyoushuu_defense_line
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			custom_effect_tooltip = SKR_make_a_plan_t_1
+			unlock_decision_tooltip = SKR_operation_1
+			custom_effect_tooltip = SKR_make_a_plan_t_2
+			unlock_decision_tooltip = SKR_operation_2
+			unlock_decision_tooltip = SKR_operation_3
+		}
+	}
+	#实战中的经验
+	focus = {
+		id = SKR_learn_from_war
+		icon = GFX_focus_SKR_learn_from_war
+		x = 0
+		y = 1
+		relative_position_id = SKR_make_a_plan
+		cost = 2
+		prerequisite = {
+			focus = SKR_make_a_plan
+		}
+		ai_will_do = {
+			base = 10
+		} 
+		completion_reward = {
+			army_experience = 20
+			add_doctrine_cost_reduction = {
+				cost_reduction = 0.50
+                uses = 1
+                category = land_doctrine
+			}
+		}
+	}
+
+	#浴火重生
+	focus = {
+		id = SKR_the_bakufu_reborn
+		icon = GFX_focus_SKR_the_bakufu_reborn
+		x = 0
+		y = 1
+		relative_position_id = SKR_learn_from_war
+		cost = 5
+		prerequisite = {
+			focus = SKR_learn_from_war
+		}
+		prerequisite = {
+			focus = SKR_no_more_worship
+			focus = SKR_we_are_the_law
+		}
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
+		} 
+		completion_reward = {
+			every_country = {
+				limit = {
+					OR = {
+						tag = SBY
+						tag = UEH
+						tag = NIS
+						tag = KUD
+					}
+				}
+				SKR = {
+					set_autonomy = {
+						target = PREV
+						autonomous_state = SKR_daimyo
+					}
+				}
+			}
+			set_autonomy = {
+				target = HKD
+				autonomous_state = SKR_chinjyufu
+			}
+			SKR_Kousaka_Honoka = {
+				set_nationality = SKR
+			}
+			add_ideas = SKR_Honoka_leader
+			custom_effect_tooltip = SKR_the_bakufu_reborn_t
+			hidden_effect = {
+				remove_ideas = SKR_morale_1
+				remove_ideas = SKR_morale_2
+				remove_ideas = SKR_morale_3
+				remove_ideas = SKR_morale_4
+				remove_ideas = SKR_morale_5
+				remove_dynamic_modifier = {modifier = SKR_northen_warfare_dynamic_modifier}
+				remove_ideas = SKR_martial_law_idea
+				every_country = {
+					limit = {
+						has_idea = SKR_SLL_advisor_idea
+					}
+					remove_ideas = SKR_SLL_advisor_idea
+				}
+				every_country = {
+					limit = {
+						has_idea = SKR_BLA_advisor_idea
+					}
+					remove_ideas = SKR_BLA_advisor_idea
+				}
+			}
 		}
 	}
 }
