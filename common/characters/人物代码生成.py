@@ -20,15 +20,6 @@ def generate_all_codes(country_key, character_key):
             small=GFX_idea_{full_key}
         }}
     }}
-    corps_commander = {{
-        traits = {{}}
-        skill=1
-        attack_skill=1
-        defense_skill=1
-        planning_skill=1
-        logistics_skill=1
-        legacy_id=-1
-    }}
 }}"""
     
     # 2. 生成本地化/招募代码
@@ -45,7 +36,7 @@ def generate_all_codes(country_key, character_key):
 
     SpriteType = {{
         name = "GFX_idea_{full_key}"
-        texturefile = "gfx/interface/ideas/{country_key}/{full_key}.dds"
+        texturefile = "gfx/interface/ideas/{country_key}/idea_{full_key}.dds"
     }}"""
 
     # 4. 生成招募代码

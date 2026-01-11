@@ -1,0 +1,142 @@
+SKR_crisis_setup = {
+    hidden_effect = {
+        ZTZ = {
+            set_variable = {SKR_tension = 0}
+            set_variable = {SKR_tension_level = 0}
+        }
+        USF = {
+            set_variable = {power_projection = 50}
+            set_variable = {power_projection_navy = deployed_navy_manpower_k}
+            add_to_variable = {power_projection = power_projection_navy}
+            set_variable = {power_projection_extra = USF_city_06_p}
+            multiply_variable = {power_projection_extra = 0.25}
+            add_to_variable = {power_projection = power_projection_extra}
+        }
+        SLL = {
+            set_variable = {power_projection = 60}
+            set_variable = {power_projection_navy = deployed_navy_manpower_k}
+            multiply_variable = {power_projection_navy = 0.8}
+            add_to_variable = {power_projection = power_projection_navy}
+        }
+
+        SKR_refresh_power_projection = yes
+    }
+}
+SKR_refresh_power_projection = {
+    hidden_effect = {
+        ZTZ = {
+            set_variable = {power_projection_total = 0}
+            add_to_variable = {power_projection_total = USF.power_projection}
+            add_to_variable = {power_projection_total = SLL.power_projection}
+            set_variable = {USF_power_projection_share = USF.power_projection}
+            divide_variable = {USF_power_projection_share = power_projection_total}
+            set_variable = {SLL_power_projection_share = SLL.power_projection}
+            divide_variable = {SLL_power_projection_share = power_projection_total}
+            SKR_update_dynamic_modifier = yes
+        }
+    }
+}
+SKR_refresh_power_projection_monthly = {
+    custom_effect_tooltip = SKR_refresh_power_projection_monthly_desc
+    hidden_effect = {
+        set_variable_to_random = {
+            var = power_projection_r
+            max = 3
+            min = -3
+            integer = yes
+        }
+        add_to_variable = {power_projection = power_projection_r}
+        add_to_variable = {power_projection = power_projection_m}
+
+        SKR_refresh_power_projection = yes
+    }
+}
+
+SKR_change_power_projection_effect = {
+    custom_effect_tooltip = SKR_change_power_projection_effect_desc
+    hidden_effect = {
+
+        add_to_variable = {power_projection = power_projection_temp}
+        SKR_refresh_power_projection = yes
+        
+    }
+}
+
+#这个效果放在ztz作用域里头
+SKR_change_tension_effect = {
+    custom_effect_tooltip = SKR_change_tension_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_tension = SKR_tension_temp}
+        ZTZ = {
+            set_variable = {SKR_tension = 0}
+            add_to_variable = {SKR_tension = USF.SKR_tension}
+            add_to_variable = {SKR_tension = SLL.SKR_tension}
+
+            if = {
+                limit = {
+                    check_variable = {SKR_tension_level < 1}
+                    check_variable = {SKR_tension > 30}
+                }
+                add_to_variable = {SKR_tension_level = 1}
+
+                USF = {
+                    country_event = {id = SKR_crisis.1}
+                }
+                SLL = {
+                    country_event = {id = SKR_crisis.1}
+                }
+            }
+            else_if = {
+                limit = {
+                    check_variable = {SKR_tension_level < 2}
+                    check_variable = {SKR_tension > 60}
+                }
+                add_to_variable = {SKR_tension_level = 1}
+                USF = {
+                    country_event = {id = SKR_crisis.2}
+                }
+                SLL = {
+                    country_event = {id = SKR_crisis.2}
+                }
+            }
+        }
+        
+    }
+}
+
+SKR_update_dynamic_modifier = {
+    hidden_effect = {
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+                NOT = {tag = HKD}
+            }
+
+            set_variable = {SKR_chess_army_attack_factor_b = 0.2}
+            set_variable = {SKR_chess_army_defence_factor_b = 0.2}
+            set_variable = {SKR_chess_breakthrough_factor_b = 0.2}
+            set_variable = {SKR_chess_army_morale_factor_b = 0.2}
+
+            set_variable = {SKR_chess_army_attack_factor = SKR_chess_army_attack_factor_b}
+            set_variable = {SKR_chess_army_defence_factor = SKR_chess_army_defence_factor_b}
+            set_variable = {SKR_chess_breakthrough_factor = SKR_chess_breakthrough_factor_b}
+            set_variable = {SKR_chess_army_morale_factor = SKR_chess_army_morale_factor_b}
+
+            if = {
+                limit = {
+                    is_subject_of = SKR
+                }
+                multiply_variable = {SKR_chess_army_attack_factor = ZTZ.SLL_power_projection_share}
+                multiply_variable = {SKR_chess_army_defence_factor = ZTZ.SLL_power_projection_share}
+                multiply_variable = {SKR_chess_breakthrough_factor = ZTZ.SLL_power_projection_share}
+                multiply_variable = {SKR_chess_army_morale_factor = ZTZ.SLL_power_projection_share}
+            }
+            else = {
+                multiply_variable = {SKR_chess_army_attack_factor = ZTZ.USF_power_projection_share}
+                multiply_variable = {SKR_chess_army_defence_factor = ZTZ.USF_power_projection_share}
+                multiply_variable = {SKR_chess_breakthrough_factor = ZTZ.USF_power_projection_share}
+                multiply_variable = {SKR_chess_army_morale_factor = ZTZ.USF_power_projection_share}
+            }
+        }
+    }
+}
