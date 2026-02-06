@@ -1517,23 +1517,12 @@ focus_tree = {
 					set_value = 0.1
 				}
 			}
-			else_if = {
-				limit = {
-					has_country_flag = SKR_a_steady_pace_flag
-				}
-				set_power_balance = {
-					id = SKR_shinsengumi_bop
-					left_side = SKR_shieikan
-					right_side = SKR_shouyoukei
-					set_value = -0.2
-				}
-			}
 			else = {
 				set_power_balance = {
 					id = SKR_shinsengumi_bop
 					left_side = SKR_shieikan
 					right_side = SKR_shouyoukei
-					set_default = yes
+					set_value = -0.2
 				}
 			}
 			
@@ -1568,11 +1557,11 @@ focus_tree = {
 			
 		}
 	}
-	#幕政改革
+	#一山不容二虎
 	focus = {
-		id = SKR_reform_the_bakufu
-		icon = GFX_focus_SKR_internal_affairs
-		x = -4
+		id = SKR_the_only_winner
+		icon = GFX_focus_SKR_the_only_winner
+		x = 0
 		y = 1
 		relative_position_id = SKR_internal_affairs
 		cost = 5
@@ -1583,7 +1572,48 @@ focus_tree = {
 			focus = SKR_internal_affairs
 		}
 		completion_reward = {
-			add_political_power = 250
+			
+		}
+	}
+	#重组御庭番
+	focus = {
+		id = SKR_rebuild_agency
+		icon = GFX_focus_SKR_rebuild_agency
+		x = 0
+		y = 1
+		relative_position_id = SKR_the_only_winner
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_the_only_winner
+		}
+		completion_reward = {
+			create_intelligence_agency = {
+                name = "御庭番"
+            }
+			gain_random_agency_upgrade = yes
+			gain_random_agency_upgrade = yes
+			custom_effect_tooltip = SKR_allow_hattori_konami_without_relation
+		}
+	}
+	#幕政改革
+	focus = {
+		id = SKR_reform_the_bakufu
+		icon = GFX_focus_SKR_internal_affairs
+		x = -4
+		y = 1
+		relative_position_id = SKR_the_only_winner
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_the_only_winner
+		}
+		completion_reward = {
+			add_political_power = 150
 		}
 	}
 	#议题草案
@@ -1803,16 +1833,22 @@ focus_tree = {
 		icon = GFX_focus_SKR_prepare_for_unification
 		x = 4
 		y = 1
-		relative_position_id = SKR_internal_affairs
+		relative_position_id = SKR_the_only_winner
 		cost = 5
 		ai_will_do = {
 			base = 10
 		}
 		prerequisite = {
-			focus = SKR_internal_affairs
+			focus = SKR_the_only_winner
+		}
+		available = {
+			NOT = {
+				has_dynamic_modifier = {modifier = SKR_black_foaming_night_modifier}
+			}
 		}
 		completion_reward = {
-			
+			add_stability = 0.15
+			add_war_support = 0.2
 		}
 	}
 	#争取佐嘉
@@ -2095,7 +2131,11 @@ focus_tree = {
 			focus = SKR_rebuild_the_economy
 		}
 		completion_reward = {
-			
+			unlock_decision_tooltip = SKR_railways_project_south
+			unlock_decision_tooltip = SKR_railways_project_north
+			unlock_decision_tooltip = SKR_railways_project_HKD
+			unlock_decision_tooltip = SKR_railways_project_west_south
+			unlock_decision_tooltip = SKR_railways_project_west_north
 		}
 	}
 	#劳工保障制度
@@ -2112,8 +2152,14 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_prelong_the_railways
 		}
+		bypass = {
+			has_idea = shuishoudengji_3
+		}
 		completion_reward = {
-			
+			swap_ideas = {
+				remove_idea = shuishoudengji_4
+				add_idea = shuishoudengji_3
+			}
 		}
 	}
 	#开采资源
@@ -2131,7 +2177,12 @@ focus_tree = {
 			focus = SKR_rebuild_the_economy
 		}
 		completion_reward = {
-			
+			unlock_decision_tooltip = SKR_956_industry_development
+			unlock_decision_tooltip = SKR_956_aluminium_development
+			unlock_decision_tooltip = SKR_HKD_oil
+			unlock_decision_tooltip = SKR_943_development
+			unlock_decision_tooltip = SKR_935_development
+			unlock_decision_tooltip = SKR_951_development
 		}
 	}
 	#偶像经济
@@ -2149,7 +2200,7 @@ focus_tree = {
 			focus = SKR_excavate_the_resources
 		}
 		completion_reward = {
-			
+			add_ideas = SKR_idol_economy
 		}
 	}
 	#结束危机
@@ -2170,6 +2221,7 @@ focus_tree = {
 			focus = SKR_idol_economics
 		}
 		completion_reward = {
+			add_stability = 0.1
 			remove_dynamic_modifier = {modifier = SKR_black_foaming_night_modifier}
 		}
 	}
@@ -2287,8 +2339,18 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = SKR_sustain_agricultural_system
 		}
+		available = {
+			if = {
+				limit  = {
+					has_country_flag = SKR_knee_to_SLL
+				}
+				always = no
+			}
+		}
 		completion_reward = {
+			custom_effect_tooltip = SKR_SLL_WILL_BE_ANGRY
 			add_ideas = in_transition
+			activate_mission = SKR_industralization_end
 			set_country_flag = SKR_industralization_flag
 			unlock_decision_category_tooltip = SKR_industralization_category
 			set_temp_variable = {SKR_kakushin_relation_temp = 10}
@@ -2318,9 +2380,12 @@ focus_tree = {
 		mutually_exclusive = {
 			focus = SKR_encourage_competition
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
 			add_ideas = SKR_zaibatsu_idea_1
-			set_temp_variable = {SKR_industralization_point_temp = 10}
+			set_temp_variable = {SKR_industralization_point_temp = 8}
             SKR_industralization_effect = yes
 		}
 	}
@@ -2338,10 +2403,38 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_allow_monopoly
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
+			custom_effect_tooltip = SKR_unlock_zaibatsu_investment_tt
 			swap_ideas = {
 				remove_idea = SKR_zaibatsu_idea_1
 				add_idea = SKR_zaibatsu_idea_2
+			}
+			hidden_effect = {
+				every_state = {
+					limit = {
+						OR = {
+							is_core_of = SKR
+							is_core_of = NIS
+							is_core_of = KUD
+							is_core_of = UEH
+							is_core_of = SBY
+							is_core_of = SMD
+							is_core_of = KNK
+							is_core_of = SWO
+							is_core_of = BDA
+							is_core_of = HKD
+							is_core_of = REG
+							is_core_of = ASK
+						}
+					}
+					add_to_array = {
+                        array = SKR.zaibatsu_states
+                        value = THIS.id
+                    }
+				}
 			}
 		}
 	}
@@ -2358,6 +2451,9 @@ focus_tree = {
 		}
 		prerequisite = {
 			focus = SKR_zaibatsu_contribution
+		}
+		available = {
+			has_country_flag = SKR_industralization_flag
 		}
 		completion_reward = {
 			set_temp_variable = {SKR_industralization_point_temp = 5}
@@ -2390,8 +2486,14 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_zaibatsu_contribution
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
-			
+			swap_ideas = {
+				remove_idea = SKR_zaibatsu_idea_2
+				add_idea = SKR_zaibatsu_idea_3
+			}
 		}
 	}
 	#阿西娅代工厂
@@ -2416,9 +2518,12 @@ focus_tree = {
 				tooltip = SKR_industralization_point_50_tt
 				check_variable = {SKR_industralization_point > 49}
 			}
+			has_country_flag = SKR_industralization_flag
 		}
 		completion_reward = {
-			
+			set_temp_variable = {SKR_industralization_point_temp = 7}
+            SKR_industralization_effect = yes
+			custom_effect_tooltip = SKR_unlock_foundry_tt
 		}
 	}
 	#京州都市圈
@@ -2439,6 +2544,8 @@ focus_tree = {
 		completion_reward = {
 			unlock_decision_tooltip = SKR_kyoushuu_railways
 			unlock_decision_tooltip = SKR_kyoushuu_city
+			unlock_decision_tooltip = SKR_attract_immigrants
+			unlock_decision_tooltip = SKR_urbanization
 		}
 	}
 	#鼓励竞争
@@ -2454,6 +2561,9 @@ focus_tree = {
 		}
 		prerequisite = {
 			focus = SKR_road_to_industralization
+		}
+		available = {
+			has_country_flag = SKR_industralization_flag
 		}
 		mutually_exclusive = {
 			focus = SKR_allow_monopoly
@@ -2476,7 +2586,11 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_encourage_competition
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
+			unlock_decision_tooltip = SKR_subsidze_small_companies
 			swap_ideas = {
 				remove_idea = SKR_encourage_competition_idea_1
 				add_idea = SKR_encourage_competition_idea_2
@@ -2497,8 +2611,14 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_support_small_companies
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
-			
+			swap_ideas = {
+				remove_idea = SKR_encourage_competition_idea_2
+				add_idea = SKR_encourage_competition_idea_3
+			}
 		}
 	}
 	#资助文化产业
@@ -2515,8 +2635,22 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_support_small_companies
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
-			
+			if = {
+				limit = {
+					has_idea = SKR_idol_economy
+				}
+				swap_ideas = {
+					remove_idea = SKR_idol_economy
+					add_idea = SKR_idol_economy_2
+				}
+			}
+			else = {
+				add_offsite_building = { type = industrial_complex level = 3 }
+			}
 		}
 	}
 	#早樱制造
@@ -2541,9 +2675,19 @@ focus_tree = {
 				tooltip = SKR_industralization_point_50_tt
 				check_variable = {SKR_industralization_point > 49}
 			}
+			has_country_flag = SKR_industralization_flag
 		}
 		completion_reward = {
-			
+			custom_effect_tooltip = SKR_unlock_export_tt
+			custom_effect_tooltip = SKR_add_export_value_tt
+			hidden_effect = {
+				set_variable = {SKR_export_cost_USF = 30}
+				set_variable = {SKR_export_cost_USR = 30}
+				set_variable = {SKR_export_cost_AKL = 30}
+				set_variable = {SKR_export_cost_BA = 30}
+				set_variable = {SKR_export_cost_rossiya = 30}
+				set_variable = {SKR_export_cost_UNG = 30}
+			}
 		}
 	}
 	#秋叶原电器街
@@ -2560,6 +2704,9 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_receive_low_end_industry
 			focus = SKR_new_companies
+		}
+		available = {
+			has_country_flag = SKR_industralization_flag
 		}
 		completion_reward = {
 			set_province_name = {id = 16850 name = VICTORY_POINTS_16850_new}
@@ -2587,8 +2734,30 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_akihabara
 		}
+		available = {
+			has_country_flag = SKR_industralization_flag
+		}
 		completion_reward = {
-			
+			add_political_power = 100
+			add_stability = 0.1
+			if = {
+				limit = {
+					has_completed_focus = SKR_allow_monopoly
+				}
+				swap_ideas = {
+					remove_idea = SKR_zaibatsu_idea_3
+					add_idea = SKR_zaibatsu_idea_4
+				}
+			}
+			else_if = {
+				limit = {
+					has_completed_focus = SKR_encourage_competition
+				}
+				swap_ideas = {
+					remove_idea = SKR_encourage_competition_idea_3
+					add_idea = SKR_encourage_competition_idea_4
+				}
+			}
 		}
 	}
 #军事
@@ -2636,7 +2805,7 @@ focus_tree = {
 			focus = SKR_strengthen_our_army
 		}
 		completion_reward = {
-			
+			unlock_decision_category_tooltip = SKR_army_reform_category
 		}
 	}
 	#扩建兵工厂
@@ -2731,7 +2900,11 @@ focus_tree = {
 			}
 		}
 		completion_reward = {
-			
+			add_doctrine_cost_reduction = {
+                cost_reduction = 0.50
+                uses = 1
+                category = land_doctrine
+            }
 		}
 	}
 	#统一指挥架构
@@ -2901,7 +3074,11 @@ focus_tree = {
 			focus = SKR_extreme_training
 		}
 		completion_reward = {
-			
+			add_tech_bonus = {
+				category = mana_tech
+				bonus = 1.0
+				uses = 2
+			}
 		}
 	}
 	#意志动员
@@ -3312,7 +3489,12 @@ focus_tree = {
 			focus = SKR_on_our_own
 		}
 		available = {
-
+			if = {
+				limit  = {
+					has_country_flag = SKR_knee_to_SLL
+				}
+				always = no
+			}
 		}
 		completion_reward = {
 			
@@ -3339,7 +3521,12 @@ focus_tree = {
 			focus = SKR_maintain_balance
 		}
 		available = {
-
+			if = {
+				limit  = {
+					has_country_flag = SKR_knee_to_SLL
+				}
+				always = no
+			}
 		}
 		completion_reward = {
 			
@@ -3363,7 +3550,8 @@ focus_tree = {
 
 		}
 		completion_reward = {
-			
+			custom_effect_tooltip = SKR_ciallo_tt
+			unlock_decision_tooltip = SKR_export_to_AKL
 		}
 	}
 	#反对帝国主义
@@ -3387,7 +3575,8 @@ focus_tree = {
 
 		}
 		completion_reward = {
-			
+			custom_effect_tooltip = SKR_gain_bonus_when_war_with_SLL_or_USF_tt
+			show_ideas_tooltip = SKR_defend_our_home
 		}
 	}
 	#改订新约运动
