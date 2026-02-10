@@ -254,7 +254,7 @@ OCF_national_politics_decision_cat = {
 OCF_first_invasion_decision_cat = {
 	#守卫克拉达斯
 	OCF_control_115 = {
-		icon = GFX_decision_shield
+		icon = GFX_decision_generic_protection
 		allowed = {
 			OR = {
 				original_tag = OCF
@@ -281,10 +281,10 @@ OCF_first_invasion_decision_cat = {
 		days_mission_timeout = 25
 		timeout_effect = {
 			set_temp_variable = { temp = 10 }
-			OCF_calculate_first_war_feeling = yes
+			OCF_modify_first_war_feeling = yes
 
-			custom_effect_tooltip = china_league_war_mission_loop
-			hidden_effect = { activate_mission = china_control_nanjing }
+			custom_effect_tooltip = IRIS_mission_loop
+			hidden_effect = { activate_mission = OCF_control_115 }
 
 			add_equipment_to_stockpile = {
 				type = infantry_equipment_0
@@ -294,7 +294,7 @@ OCF_first_invasion_decision_cat = {
 		}
 		complete_effect = {
 			set_temp_variable = { temp = -50 }
-			OCF_calculate_first_war_feeling = yes
+			OCF_modify_first_war_feeling = yes
 			activate_mission = OCF_take_115
 		}
 		fixed_random_seed = no
@@ -348,15 +348,190 @@ OCF_first_invasion_decision_cat = {
 					}
 				}
 				set_temp_variable = { temp = -8 }
-				OCF_calculate_first_war_feeling = yes
+				OCF_modify_first_war_feeling = yes
 			}
-			activate_mission = OCF_take_115
+			custom_effect_tooltip = IRIS_mission_loop
+			hidden_effect = { activate_mission = OCF_take_115 }
 		}
 		complete_effect = {
 			set_temp_variable = { temp = 50 }
-			OCF_calculate_first_war_feeling = yes
+			OCF_modify_first_war_feeling = yes
 
 			activate_mission = OCF_control_115
+		}
+		fixed_random_seed = no
+	}
+
+	#搜刮补给
+	OCF_first_invasion_scavenge_supplies = {
+		icon = generic_prepare_civil_war
+		fire_only_once = yes
+		custom_cost_text = OCF_spend_enthusiasm_battle_5
+		custom_cost_trigger = {
+			set_temp_variable = { temp = 5 }
+			OCF_detect_war_frenzy = yes
+		}
+		ai_will_do = {
+			factor = 10000
+			modifier = {
+				factor = 0
+				set_temp_variable = { temp = 65 }
+				OCF_detect_war_frenzy = no
+			}
+		}
+		allowed = {
+			OR = {
+				original_tag = OCF
+				original_tag = OCE
+				original_tag = OMS
+				original_tag = INP
+				original_tag = EIA
+				original_tag = CKR
+			}
+		}
+		visible = {
+			controls_state = FROM
+			FROM = {
+				OR = {
+					state = 773
+					state = 88
+					state = 108
+					state = 826
+					state = 115
+					state = 774
+					state = 137
+					state = 142
+					state = 135
+					state = 768
+					state = 767
+					state = 129
+					state = 772
+					state = 771
+					state = 116
+					state = 156
+					state = 91
+					state = 71
+				}
+			}
+		}
+		available = {
+			controls_state = FROM
+			if = {
+				limit = { FROM = { state = 88 } }
+				controls_state = 766
+			}
+			if = {
+				limit = { FROM = { state = 767 } }
+				controls_state = 165
+			}
+			if = {
+				limit = { FROM = { state = 115 } }
+				controls_state = 841
+				controls_state = 842
+				controls_state = 843
+				controls_state = 844
+			}
+		}
+		days_remove = 15
+		state_target = yes
+		# target_array = controlled_states
+		complete_effect = {
+			hidden_effect = {
+				set_temp_variable = { temp = -5 }
+				OCF_modify_first_war_feeling = yes
+			}
+			if = {
+				limit = {
+					set_temp_variable = { temp = 30 }
+					OCF_detect_war_frenzy = no
+				}
+				custom_effect_tooltip = OCF_morale_sink_danger
+			}
+		}
+		remove_effect = {
+			if = {
+				limit = {
+					FROM = {
+						OR = {
+							state = 88
+							state = 108
+							state = 135
+							state = 768
+							state = 767
+							state = 115
+						}
+					}
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_0
+					amount = 400
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 50
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 50
+					producer = OCE
+				}
+			}
+			else_if = {
+				limit = {
+					FROM = {
+						OR = {
+							state = 773
+							state = 137
+							state = 774
+							state = 772
+						}
+					}
+				}
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_0
+					amount = 100
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = mana_infantry_weapons
+					amount = 100
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = refined_mana
+					amount = 10
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 10
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 10
+					producer = OCE
+				}
+			}
+			else = {
+				add_equipment_to_stockpile = {
+					type = infantry_equipment_0
+					amount = 200
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = support_equipment
+					amount = 25
+					producer = OCE
+				}
+				add_equipment_to_stockpile = {
+					type = artillery_equipment
+					amount = 25
+					producer = OCE
+				}
+			}
 		}
 		fixed_random_seed = no
 	}
@@ -389,6 +564,7 @@ OCF_first_invasion_decision_cat = {
 			}
 		}
 		visible = {
+			controls_state = FROM
 			FROM = {
 				OR = {
 					state = 773
@@ -436,7 +612,7 @@ OCF_first_invasion_decision_cat = {
 		complete_effect = {
 			hidden_effect = {
 				set_temp_variable = { temp = -10 }
-				OCF_calculate_first_war_feeling = yes
+				OCF_modify_first_war_feeling = yes
 			}
 			if = {
 				limit = {
@@ -447,20 +623,73 @@ OCF_first_invasion_decision_cat = {
 			}
 		}
 		remove_effect = {
-			OCF_detect_war_frenzy = yes
+			OCF_create_militia_template = yes
 			FROM = {
-				custom_override_tooltip = {
-					tooltip = {
-						localization_key = tooltip_spawn_units
-						COUNT = 3
-						TYPE = "内战民兵"
+				if = {
+					limit = {
+						FROM = {
+							OR = {
+								state = 88
+								state = 108
+								state = 135
+								state = 768
+								state = 767
+								state = 115
+							}
+						}
 					}
-					create_unit = {
-						division = "division_template = \"内战民兵\" start_experience_factor = 0.2"
-						owner = ROOT
-						count = 3
+					custom_override_tooltip = {
+						tooltip = {
+							localization_key = IRIS_tooltip_spawn_units
+							COUNT = 3
+							TYPE = "内战作战师"
+						}
+						create_unit = {
+							division = "division_template = \"内战作战师\" start_experience_factor = 0.2"
+							owner = ROOT
+							count = 3
+						}
 					}
 				}
+				else_if = {
+					limit = {
+						FROM = {
+							OR = {
+								state = 773
+								state = 137
+								state = 774
+								state = 772
+							}
+						}
+					}
+					custom_override_tooltip = {
+						tooltip = {
+							localization_key = IRIS_tooltip_spawn_units
+							COUNT = 3
+							TYPE = "内战玛纳作战师"
+						}
+						create_unit = {
+							division = "division_template = \"内战玛纳作战师\" start_experience_factor = 0.2"
+							owner = ROOT
+							count = 3
+						}
+					}
+				}
+				else = {
+					custom_override_tooltip = {
+						tooltip = {
+							localization_key = IRIS_tooltip_spawn_units
+							COUNT = 3
+							TYPE = "内战民兵"
+						}
+						create_unit = {
+							division = "division_template = \"内战民兵\" start_experience_factor = 0.2"
+							owner = ROOT
+							count = 3
+						}
+					}
+				}
+
 			}
 		}
 		fixed_random_seed = no
