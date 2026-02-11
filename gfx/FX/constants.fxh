@@ -90,7 +90,7 @@ static const float 	ICE_NOISE_TILING  			= 0.1f; //0.068f;
 static const float WATER_COLOR_LIGHTNESS = 0.5;
 static const float WATER_RIPPLE_EFFECT = 0.0025;
 
-static const float COLORMAP_OVERLAY_STRENGTH 	= 0.75f; //0.7f;
+static const float COLORMAP_OVERLAY_STRENGTH 	= 0.75f;
 static const float COLORMAP_MUD_OVERLAY_STRENGTH = 0.5f;
 
 static const float3 FAKE_CUBEMAP_COLOR 			= float3(0.0f, 0.0f, 0.0f);
@@ -204,8 +204,8 @@ static const float GB_OPACITY_FAR = 0.85f;  // Transparency when camera is far
 static const float BORDER_NIGHT_DESATURATION_MAX = 0.2f; // how much border colors can get desaturated at night. 1.0f is full grey
 static const float BORDER_FOW_REMOVAL_FACTOR = .8f; // How much of the FOW that is removed from the borders. 1.0f is no FOW
 static const float BORDER_LIGHT_REMOVAL_FACTOR = 0.8f; // How much of the light calculations that are removed from the borders. 1.0f is no light
-static const float GB_STRENGTH_CH1 = 0.8; // Opacity of bottom layer
-static const float GB_STRENGTH_CH2 = 0.5; // Opacity of top layer
+static const float GB_STRENGTH_CH1 = 1.0; // Opacity of bottom layer
+static const float GB_STRENGTH_CH2 = 1.0; // Opacity of top layer
 static const float GB_FIRST_LAYER_PRIORITY = 0.4; // Priority for first/second layer when both are active at the same pixel
 static const float BORDER_MAP_TILE = 18000.0f;
 
