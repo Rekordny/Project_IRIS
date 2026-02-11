@@ -725,11 +725,21 @@ country_event = {#“闹剧收场”"
     #picture = GFX_event_SKR_26
     is_triggered_only = yes
     fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			set_party_name = {ideology = democratic long_name = SKR_democratic_party_souji name = SKR_democratic_party_souji}
+			set_party_name = {ideology = communism long_name = SKR_communism_party_souji name = SKR_communism_party_souji}
+			set_party_name = {ideology = neutrality long_name = SKR_neutrality_party_souji name = SKR_neutrality_party_souji}
+			set_party_name = {ideology = fascism long_name = SKR_fascism_party_souji name = SKR_fascism_party_souji}
+			set_party_name = {ideology = reactionism long_name = SKR_reactionism_party_souji name = SKR_reactionism_party_souji}
+		}
+	}
 
     option = {
         name = SKR.26.a
 
 		set_country_flag = SKR_yoshinobu_out_flag
+		custom_effect_tooltip = SKR_yoshinobu_out_tt
 		set_politics = {
 			ruling_party = neutrality
 		}
@@ -743,11 +753,16 @@ country_event = {#“闹剧收场”"
 			news_event = {id = SKR_news.3 days = 1}
 			drop_cosmetic_tag = yes
 			set_cosmetic_tag = SKR_SOUJI
-			set_party_name = {ideology = democratic long_name = SKR_democratic_party_souji name = SKR_democratic_party_souji}
-			set_party_name = {ideology = communism long_name = SKR_communism_party_souji name = SKR_communism_party_souji}
-			set_party_name = {ideology = neutrality long_name = SKR_neutrality_party_souji name = SKR_neutrality_party_souji}
-			set_party_name = {ideology = fascism long_name = SKR_fascism_party_souji name = SKR_fascism_party_souji}
-			set_party_name = {ideology = reactionism long_name = SKR_reactionism_party_souji name = SKR_reactionism_party_souji}
+			set_portraits = {
+				character = SKR_Hitotsubashi_Yoshinobu
+				civilian = { small = GFX_idea_SKR_Hitotsubashi_Yoshinobu_jailed }
+			}
+			SKR_Hitotsubashi_Yoshinobu = {
+				remove_trait = {
+                    slot = political_advisor
+                    trait = TRAIT_SKR_Hitotsubashi_Yoshinobu
+                }
+			}
 		}
         ai_chance = {
             base = 10
@@ -1546,7 +1561,16 @@ country_event = {#同意
 			remove_dynamic_modifier = {modifier = SKR_zaibatsu_dynamic_modifier}
 		}
 		custom_effect_tooltip = SKR_disable_most_HKD_decisions_tt
+		custom_effect_tooltip = SKR_convert_HKD_tt
 		set_country_flag = SKR_HKD_decison_disabled
+		hidden_effect = {
+			every_state = {
+				limit = {
+					is_core_of = HKD
+				}
+				set_state_flag = SKR_HKD_CONVETED_FLAG
+			}
+		}
 
         ai_chance = {
             base = 10
@@ -1894,7 +1918,7 @@ country_event = {#会议闭幕
     }
 }
 
-country_event = {#
+country_event = {#是否拉拢秀吉
     id = SKR.45
     title = SKR.45.t
     desc = SKR.45.desc
@@ -1904,7 +1928,70 @@ country_event = {#
 
     option = {
         name = SKR.45.a
+		country_lock_all_division_template = no
+		add_political_power = -50
+		set_temp_variable = {SKR_kakushin_influence_temp = 0.15}
+		SKR_kakushin_influence_effect = yes
+		remove_ideas = SKR_Hitotsubashi_Yoshinobu_advisor
+		add_ideas = SKR_Kinoshita_Hiyoko_advisor
+		set_country_flag = SKR_Kinoshita_Hiyoko_gain_power_flag
+		set_country_flag = SKR_yoshinobu_advisor_invisible_flag
+		SKR_Kinoshita_Hiyoko = {
+			set_can_be_fired_in_advisor_role = {
+				slot = political_advisor
+				value = no
+			}
+		}
+		custom_effect_tooltip = SKR_gain_boroshuu_tt
+		hidden_effect = {
+			delete_unit_template_and_units = {
+				division_template = "步兵队"
+				disband = no
+			}
+			delete_unit_template_and_units = {
+				division_template = "骑兵队"
+				disband = no
+			}
+			delete_unit_template_and_units = {
+				division_template = "术士队"
+				disband = no
+			}
+			country_event = {id = SKR.29 days = 4}
+		}
 
+
+        ai_chance = {
+            base = 10
+        }
+    }
+	option = {
+        name = SKR.45.b
+		country_lock_all_division_template = no
+		set_temp_variable = {SKR_shinsengumi_relation_temp = 10}
+		SKR_shinsengumi_relation_effect = yes
+		set_temp_variable = {SKR_shinsengumi_influence_temp = 0.1}
+		SKR_shinsengumi_influence_effect = yes
+		custom_effect_tooltip = SKR_shinsengumi_only_tt
+		set_country_flag = SKR_shinsengumi_only_flag
+		hidden_effect = {
+			delete_unit_template_and_units = {
+				division_template = "母衣众"
+				disband = no
+			}
+			delete_unit_template_and_units = {
+				division_template = "步兵队"
+				disband = no
+			}
+			delete_unit_template_and_units = {
+				division_template = "骑兵队"
+				disband = no
+			}
+			delete_unit_template_and_units = {
+				division_template = "术士队"
+				disband = no
+			}
+			country_event = {id = SKR.29 days = 4}
+		}
         ai_chance = {
             base = 10
         }
@@ -2755,10 +2842,508 @@ country_event = {#
 }
 
 
+####################################支线事件############################################
 
 
+country_event = {#相遇
+    id = SKR_flavor.1
+    title = SKR_flavor.1.t
+    desc = SKR_flavor.1.desc
+    #picture = GFX_event_SKR_flavor_1
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.1.a
+
+		add_political_power = 10
 
 
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#实验
+    id = SKR_flavor.2
+    title = SKR_flavor.2.t
+    desc = SKR_flavor.2.desc
+    #picture = GFX_event_SKR_flavor_2
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.2.a
+
+		add_political_power = 15
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#电饭煲
+    id = SKR_flavor.3
+    title = SKR_flavor.3.t
+    desc = SKR_flavor.3.desc
+    #picture = GFX_event_SKR_flavor_3
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.3.a
+
+		add_tech_bonus = {
+			category = mana_tech
+			bonus = 0.1
+			uses = 1
+		}
+
+		country_event = {id = SKR_flavor.4 days = 90}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#上山下乡
+    id = SKR_flavor.4
+    title = SKR_flavor.4.t
+    desc = SKR_flavor.4.desc
+    #picture = GFX_event_SKR_flavor_4
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.4.a
+
+		add_political_power = 10
+		add_stability = 0.01
+
+		country_event = {id = SKR_flavor.5 days = 90}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#拜访玛娜术士
+    id = SKR_flavor.5
+    title = SKR_flavor.5.t
+    desc = SKR_flavor.5.desc
+    #picture = GFX_event_SKR_flavor_5
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.5.a
+
+		add_political_power = -5
+		add_tech_bonus = {
+			category = mana_tech
+			bonus = 0.25
+			uses = 1
+		}
+
+		country_event = {id = SKR_flavor.6 days = 90}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#最后的实验
+    id = SKR_flavor.6
+    title = SKR_flavor.6.t
+    desc = SKR_flavor.6.desc
+    #picture = GFX_event_SKR_flavor_6
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.6.a
+
+		add_war_support = 0.02
+
+		country_event = {id = SKR_flavor.7 days = 60}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#魔导炊饭机
+    id = SKR_flavor.7
+    title = SKR_flavor.7.t
+    desc = SKR_flavor.7.desc
+    #picture = GFX_event_SKR_flavor_7
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.7.a
+
+		set_temp_variable = {SKR_kakushin_relation_temp = 10}
+		SKR_kakushin_relation_effect = yes
+		set_temp_variable = {SKR_chukan_relation_temp = 10}
+		SKR_chukan_relation_effect = yes
+		set_temp_variable = {SKR_shinsengumi_relation_temp = 10}
+		SKR_shinsengumi_relation_effect = yes
+		set_temp_variable = {SKR_houshu_relation_temp = 10}
+		SKR_houshu_relation_effect = yes
+
+		add_ideas = SKR_magic_rice_cooker
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#音乐革命
+    id = SKR_flavor.8
+    title = SKR_flavor.8.t
+    desc = SKR_flavor.8.desc
+    #picture = GFX_event_SKR_flavor_8
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.8.a
+		#country_event = {id = SKR_flavor.9 days = 90}
+
+		add_political_power = 15
+		set_country_flag = SKR_flavor_8_triggered
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#无尽的研究
+    id = SKR_flavor.9
+    title = SKR_flavor.9.t
+    desc = SKR_flavor.9.desc
+    #picture = GFX_event_SKR_flavor_9
+    trigger = {
+		tag = SKR
+		has_completed_focus = SKR_road_to_industralization
+		NOT = {
+			has_country_flag = SKR_knee_to_SLL
+		}
+		has_country_flag = {
+			flag = SKR_flavor_8_triggered
+			days > 60
+		}
+	}
+	mean_time_to_happen = {
+		days = 30
+	}
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.9.a
+		#country_event = {id = SKR_flavor.10 days = 90}
+
+		add_tech_bonus = {
+			category = industry
+			bonus = 0.3
+			uses = 1
+		}
+
+		set_country_flag = SKR_flavor_9_triggered
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#替代的原料
+    id = SKR_flavor.10
+    title = SKR_flavor.10.t
+    desc = SKR_flavor.10.desc
+    #picture = GFX_event_SKR_flavor_10
+    trigger = {
+		tag = SKR
+		has_completed_focus = SKR_road_to_industralization
+		NOT = {
+			has_country_flag = SKR_knee_to_SLL
+		}
+		has_country_flag = {
+			flag = SKR_flavor_9_triggered
+			days > 60
+		}
+	}
+	mean_time_to_happen = {
+		days = 30
+	}
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.10.a
+		#country_event = {id = SKR_flavor.11 days = 90}
+
+		add_political_power = 10
+		set_country_flag = SKR_flavor_10_triggered
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#大功告成
+    id = SKR_flavor.11
+    title = SKR_flavor.11.t
+    desc = SKR_flavor.11.desc
+    #picture = GFX_event_SKR_flavor_11
+    trigger = {
+		tag = SKR
+		has_completed_focus = SKR_road_to_industralization
+		OR = {
+			has_completed_focus = SKR_allow_monopoly
+			has_completed_focus = SKR_encourage_competition
+		}
+		NOT = {
+			has_country_flag = SKR_knee_to_SLL
+		}
+		has_country_flag = {
+			flag = SKR_flavor_10_triggered
+			days > 90
+		}
+	}
+	mean_time_to_happen = {
+		days = 30
+	}
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.11.a
+
+		add_war_support = 0.03
+		add_political_power = 5
+
+		hidden_effect = {
+			if = {
+				limit = {
+					NOT = {
+						has_country_flag = SKR_knee_to_SLL
+					}
+				}
+				if = {
+					limit = {
+						has_completed_focus = SKR_allow_monopoly
+					}
+					country_event = {id = SKR_flavor.12 days = 30}
+				}
+				else_if = {
+					limit = {
+						has_completed_focus = SKR_encourage_competition
+					}
+					country_event = {id = SKR_flavor.13 days = 30}
+				}
+			}
+		}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#梦醒时分
+    id = SKR_flavor.12
+    title = SKR_flavor.12.t
+    desc = SKR_flavor.12.desc
+    #picture = GFX_event_SKR_flavor_12
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.12.a
+		add_political_power = 200
+		set_temp_variable = {SKR_industralization_point_temp = 5}
+		SKR_industralization_effect = yes
+		set_temp_variable = {SKR_chukan_relation_temp = 15}
+		SKR_chukan_relation_effect = yes
+		effect_tooltip = {
+			swap_ideas = {
+				remove_idea = SKR_zaibatsu_modifier_dummy
+				add_idea = SKR_zaibatsu_modifier_5
+			}
+		}
+		add_to_variable = {SKR_economy_research_speed_factor = -0.05}
+		add_to_variable = {SKR_economy_production_speed_buildings_factor = 0.075}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#向上攀登
+    id = SKR_flavor.13
+    title = SKR_flavor.13.t
+    desc = SKR_flavor.13.desc
+    #picture = GFX_event_SKR_flavor_13
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.13.a
+		country_event = {id = SKR_flavor.14 days = 7}
+		effect_tooltip = {
+			swap_ideas = {
+				remove_idea = SKR_encourage_competition_dummy
+				add_idea = SKR_encourage_competition_modifier_4
+			}
+		}
+		add_to_variable = {SKR_economy_research_speed_factor = 0.075}
+
+		set_temp_variable = {SKR_industralization_point_temp = 10}
+		SKR_industralization_effect = yes
+		set_temp_variable = {SKR_kakushin_relation_temp = 10}
+		SKR_kakushin_relation_effect = yes
+		add_tech_bonus = {
+			category = electronics
+			bonus = 1.0
+			uses = 1
+			ahead_reduction = 1
+		}
+		custom_effect_tooltip = SKR_add_export_value_2_tt
+		set_country_flag = SKR_dream_came_true
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#公司叫啥名
+    id = SKR_flavor.14
+    title = SKR_flavor.14.t
+    desc = SKR_flavor.14.desc
+    #picture = GFX_event_SKR_flavor_14
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_flavor.14.a#索尼
+		custom_effect_tooltip = available_industrial_concern
+		show_ideas_tooltip = SKR_SONY
+		set_country_flag = SKR_SONY_flag
+
+        ai_chance = {
+            base = 10
+        }
+    }
+	option = {
+        name = SKR_flavor.14.b#京州通信
+		custom_effect_tooltip = available_industrial_concern
+		show_ideas_tooltip = SKR_kyoushu_communication
+		set_country_flag = SKR_kyoushu_communication_flag
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+#联动
+country_event = {#天京致天领（上）
+    id = SKR_flavor.15
+    title = SKR_flavor.15.t
+    desc = SKR_flavor.15.desc
+    #picture = GFX_event_SKR_flavor_15
+    trigger = {
+		tag = SKR
+		has_country_flag = SKR_souji_regime_flag
+		AKL = {
+			has_country_leader = {
+				character = AKL_Akari
+			}
+		}
+		date  > 3090.1.1
+		NOT = {
+			has_country_flag = SKR_flavor_15_triggered
+		}
+	}
+	mean_time_to_happen = {
+		days = 30
+	}
+	immediate = {
+		hidden_effect = {
+			set_country_flag = SKR_flavor_15_triggered
+			if = {
+				limit = {
+					tag = SKR
+				}
+				AKL = {
+					country_event = {id = SKR_flavor.15}
+				}
+			}
+		}
+	}
+
+    option = {
+        name = SKR_flavor.15.a
+		add_political_power = 25
+		if = {
+			limit = {
+				tag = SKR
+			}
+			add_equipment_to_stockpile = {
+				type = jyusoutou_equipment
+				amount = 1
+				producer = AKL
+			}
+
+			hidden_effect = {
+				country_event = {id = SKR_flavor.16 days = 25}
+			}
+		}
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+
+country_event = {#天领致天京（下）
+    id = SKR_flavor.16
+    title = SKR_flavor.16.t
+    desc = SKR_flavor.16.desc
+    #picture = GFX_event_SKR_flavor_16
+    is_triggered_only = yes
+    fire_only_once = yes
+	immediate = {
+		hidden_effect = {
+			if = {
+				limit = {
+					tag = SKR
+				}
+				AKL = {
+					country_event = {id = SKR_flavor.16}
+				}
+			}
+		}
+	}
+
+    option = {
+        name = SKR_flavor.16.a
+
+		add_stability = 0.02
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
 
 
 
