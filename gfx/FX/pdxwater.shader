@@ -137,6 +137,15 @@ PixelShader =
 			MipFilter = "Linear"
 			AddressU = "Clamp"
 			AddressV = "Clamp"
+		}		
+		GradientBorderChannel3 =
+		{
+			Index = 14
+			MagFilter = "Point"
+			MinFilter = "Point"
+			MipFilter = "Point"
+			AddressU = "Clamp"
+			AddressV = "Clamp"
 		}
 		ShadowMap =
 		{
@@ -170,7 +179,7 @@ VertexStruct VS_OUTPUT_WATER
 };
 
 
-ConstantBuffer( 2, 48 )
+ConstantBuffer( 3, 48 )
 {
 	float3 vTime_HalfPixelOffset;
 };
@@ -233,7 +242,7 @@ PixelShader =
 			float vOpacity = 1 - cam_distance( ICE_CAM_MIN, ICE_CAM_MAX );
 			vIceFade *= vOpacity;
 
-			// Code below will remove CID from certain parts of the world
+			// Code below will remove ice from certain parts of the world
 			float vMapLimitFade = saturate( saturate( (vPos.y/MAP_SIZE_Y) - 0.74f )*800.0f );
 			vIceFade *= vMapLimitFade;
 			
@@ -346,6 +355,9 @@ PixelShader =
 				GradientBorderChannel1, GradientBorderChannel2, 0.0f, 
 				vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,
 				vGBCamDistOverride_GBOutlineCutoff.xy, vBloomAlpha );
+			
+
+			
 			secondary_color_mask( refractiveColor, normal, 
 				Input.uv - vRefractionDistortion * 0.001, 
 				ProvinceSecondaryColorMap, 
@@ -386,7 +398,12 @@ PixelShader =
 		#endif
 
 			vOut = DayNightWithBlend( vOut, CalcGlobeNormal( Input.pos.xz ), lerp(BORDER_NIGHT_DESATURATION_MAX, 1.0f, vBloomAlpha) );
-		
+			
+			dominance_fx_apply(vOut, normal, 
+				Input.uv, 
+				GradientBorderChannel1,GradientBorderChannel2,GradientBorderChannel3,
+				vGBCamDistOverride_GBOutlineCutoff.zw * GB_OUTLINE_CUTOFF_SEA,vGBCamDistOverride_GBOutlineCutoff.xy, 0.0f);
+				
 		#ifdef LOW_END_GFX
 			DebugReturn(vOut, lightingProperties, 0.0f);
 		#else
