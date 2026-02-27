@@ -1,139 +1,1115 @@
-SKR_crisis_setup = {
-    hidden_effect = {
-        ZTZ = {
-            set_variable = {SKR_tension = 0}
-            set_variable = {SKR_tension_level = 0}
-        }
-        USF = {
-            set_variable = {power_projection = 50}
-            set_variable = {power_projection_navy = deployed_navy_manpower_k}
-            add_to_variable = {power_projection = power_projection_navy}
-            set_variable = {power_projection_extra = USF_city_06_p}
-            multiply_variable = {power_projection_extra = 0.25}
-            add_to_variable = {power_projection = power_projection_extra}
-        }
-        SLL = {
-            set_variable = {power_projection = 60}
-            set_variable = {power_projection_navy = deployed_navy_manpower_k}
-            multiply_variable = {power_projection_navy = 0.8}
-            add_to_variable = {power_projection = power_projection_navy}
-        }
+SKR_bakufu_setup = {
+    SKR = {
+        #革新
+        set_variable = {SKR_kakushin_influence = 0.3}
+        set_variable = {SKR_kakushin_relation = 100}
+        #中间
+        set_variable = {SKR_chukan_influence = 0.45}
+        set_variable = {SKR_chukan_relation = 45}
+        #新选组
+        set_variable = {SKR_shinsengumi_influence = 0.15}
+        set_variable = {SKR_shinsengumi_relation = 85}
+        #保守派
+        set_variable = {SKR_houshu_influence = 0.1}
+        set_variable = {SKR_houshu_relation = 10}
 
-        SKR_refresh_power_projection = yes
-    }
+        SKR_normalize_influence = yes
+        SKR_refresh_bakufu_modifier = yes
+    }    
 }
-SKR_refresh_power_projection = {
-    hidden_effect = {
-        ZTZ = {
-            set_variable = {power_projection_total = 0}
-            add_to_variable = {power_projection_total = USF.power_projection}
-            add_to_variable = {power_projection_total = SLL.power_projection}
-            set_variable = {USF_power_projection_share = USF.power_projection}
-            divide_variable = {USF_power_projection_share = power_projection_total}
-            set_variable = {SLL_power_projection_share = SLL.power_projection}
-            divide_variable = {SLL_power_projection_share = power_projection_total}
-            SKR_update_dynamic_modifier = yes
-        }
-    }
-}
-SKR_refresh_power_projection_monthly = {
-    custom_effect_tooltip = SKR_refresh_power_projection_monthly_desc
-    hidden_effect = {
-        set_variable_to_random = {
-            var = power_projection_r
-            max = 3
-            min = -3
-            integer = yes
-        }
-        add_to_variable = {power_projection = power_projection_r}
-        add_to_variable = {power_projection = power_projection_m}
-
-        SKR_refresh_power_projection = yes
-    }
-}
-
-SKR_change_power_projection_effect = {
-    custom_effect_tooltip = SKR_change_power_projection_effect_desc
-    hidden_effect = {
-
-        add_to_variable = {power_projection = power_projection_temp}
-        SKR_refresh_power_projection = yes
+# 标准化所有影响力，确保总和为1
+SKR_normalize_influence = {
+    SKR = {
+        # 计算总和
+        set_temp_variable = { total_influence = SKR_kakushin_influence }
+        add_to_temp_variable = { total_influence = SKR_chukan_influence }
+        add_to_temp_variable = { total_influence = SKR_shinsengumi_influence }
+        add_to_temp_variable = { total_influence = SKR_houshu_influence }
         
+        # 如果总和为0，平均分配
+        if = {
+            limit = { check_variable = { total_influence = 0 } }
+            set_variable = { SKR_kakushin_influence = 0.25 }
+            set_variable = { SKR_chukan_influence = 0.25 }
+            set_variable = { SKR_shinsengumi_influence = 0.25 }
+            set_variable = { SKR_houshu_influence = 0.25 }
+        }
+        else = {
+            # 按比例归一化
+            divide_variable = { SKR_kakushin_influence = total_influence }
+            divide_variable = { SKR_chukan_influence = total_influence }
+            divide_variable = { SKR_shinsengumi_influence = total_influence }
+            divide_variable = { SKR_houshu_influence = total_influence }
+        }
+        
+        # 确保在0-1范围内
+        SKR_clamp_all_influence = yes
+        SKR_refresh_bakufu_modifier = yes
     }
 }
 
-#这个效果放在ztz作用域里头
-SKR_change_tension_effect = {
-    custom_effect_tooltip = SKR_change_tension_effect_desc
-    hidden_effect = {
-        ZTZ = {
-            add_to_variable = {SKR_tention = SKR_tention_temp}
+# 限制所有影响力在0-1之间
+SKR_clamp_all_influence = {
+    SKR = {
+        clamp_variable = { var = SKR_kakushin_influence max = 1 min = 0 }
+        clamp_variable = { var = SKR_chukan_influence max = 1 min = 0 }
+        clamp_variable = { var = SKR_shinsengumi_influence max = 1 min = 0 }
+        clamp_variable = { var = SKR_houshu_influence max = 1 min = 0 }
+    }
+}
 
+#影响力变化计算 变化量应该在其余派系中按照占剩余影响力的比重分配获得 先设置一个temp变量
+SKR_kakushin_influence_effect = {
+    custom_effect_tooltip = SKR_kakushin_influence_effect_desc
+    hidden_effect = {
+        SKR = {
+            # 1. 获取变化量
+            set_temp_variable = { delta = SKR_kakushin_influence_temp }
+            
+            # 2. 边界检查：减少时不能低于0
             if = {
                 limit = {
-                    check_variable = {SKR_tension_level < 1}
-                    check_variable = {SKR_tention > 30}
+                    check_variable = { delta < 0 }
+                    check_variable = { 
+                        var = SKR_kakushin_influence 
+                        value = 0
+                        compare = less_than_or_equals 
+                    }
                 }
-                add_to_variable = {SKR_tension_level = 1}
+                # 已经是0，无法再减少 - 什么都不做
+            }
+            else = {
+                # 3. 边界检查：增加时不能超过1
+                if = {
+                    limit = { check_variable = { delta > 0 } }
+                    set_temp_variable = { max_increase = 1 }
+                    subtract_from_temp_variable = { max_increase = SKR_kakushin_influence }
+                    if = {
+                        limit = { check_variable = { delta > max_increase } }
+                        set_temp_variable = { delta = max_increase }
+                    }
+                }
+                
+                # 4. 边界检查：减少时不能低于0
+                if = {
+                    limit = { check_variable = { delta < 0 } }
+                    # 最大减少量 = 当前值（减到0）
+                    if = {
+                        limit = { 
+                            check_variable = { 
+                                var = SKR_kakushin_influence 
+                                value = 0
+                                compare = less_than_or_equals 
+                            }
+                        }
+                        # 已经是0或负数，不应该到这里，但安全处理
+                    }
+                    else = {
+                        # 检查是否减少太多
+                        set_temp_variable = { max_decrease = SKR_kakushin_influence }
+                        multiply_temp_variable = { max_decrease = -1 }  # 转为负数
+                        
+                        if = {
+                            limit = { check_variable = { delta < max_decrease } }
+                            set_temp_variable = { delta = max_decrease }
+                        }
+                    }
+                }
+                
+                # 5. 如果变化量为0，什么都不做
+                if = {
+                    limit = { check_variable = { delta = 0 } }
+                    # 什么都不做
+                }
+                else = {
+                    # ====== 核心逻辑开始 ======
+                    
+                    # 6. 计算其他派系的当前总和（变化前）
+                    set_temp_variable = { others_total = SKR_chukan_influence }
+                    add_to_temp_variable = { others_total = SKR_shinsengumi_influence }
+                    add_to_temp_variable = { others_total = SKR_houshu_influence }
+                    
+                    # 7. 特殊情况：其他派系总和为0
+                    if = {
+                        limit = { check_variable = { others_total = 0 } }
+                        # 只有当减少时才需要分配
+                        if = {
+                            limit = { check_variable = { delta < 0 } }
+                            # 将减少的量平均分给其他三个派系
+                            set_temp_variable = { distribute_amount = delta }
+                            multiply_temp_variable = { distribute_amount = -1 }  # 转为正数
+                            divide_temp_variable = { distribute_amount = 3 }
+                            
+                            # 应用主派系变化
+                            add_to_variable = { SKR_kakushin_influence = delta }
+                            
+                            # 分配其他派系
+                            set_variable = { SKR_chukan_influence = distribute_amount }
+                            set_variable = { SKR_shinsengumi_influence = distribute_amount }
+                            set_variable = { SKR_houshu_influence = distribute_amount }
+                        }
+                        else_if = {
+                            limit = { check_variable = { delta > 0 } }
+                            # 增加时，其他派系为0，直接应用到主派系（但受边界检查限制）
+                            add_to_variable = { SKR_kakushin_influence = delta }
+                        }
+                    }
+                    else = {
+                        # 8. 正常情况：按比例分配
+                        
+                        # 计算各派系权重（使用当前值）
+                        set_temp_variable = { weight_chukan = SKR_chukan_influence }
+                        set_temp_variable = { weight_shinsengumi = SKR_shinsengumi_influence }
+                        set_temp_variable = { weight_houshu = SKR_houshu_influence }
+                        
+                        # 归一化权重（除以总和）
+                        divide_temp_variable = { weight_chukan = others_total }
+                        divide_temp_variable = { weight_shinsengumi = others_total }
+                        divide_temp_variable = { weight_houshu = others_total }
+                        
+                        # 其他派系需要分担的总量 = -delta
+                        set_temp_variable = { total_to_distribute = delta }
+                        multiply_temp_variable = { total_to_distribute = -1 }
+                        
+                        # 计算每个派系的变化量
+                        multiply_temp_variable = { weight_chukan = total_to_distribute }
+                        multiply_temp_variable = { weight_shinsengumi = total_to_distribute }
+                        multiply_temp_variable = { weight_houshu = total_to_distribute }
+                        
+                        # 9. 应用所有变化
+                        # 先应用主派系
+                        add_to_variable = { SKR_kakushin_influence = delta }
+                        
+                        # 再应用其他派系
+                        add_to_variable = { SKR_chukan_influence = weight_chukan }
+                        add_to_variable = { SKR_shinsengumi_influence = weight_shinsengumi }
+                        add_to_variable = { SKR_houshu_influence = weight_houshu }
+                    }
+                    
+                    # 10. 后处理
+                    SKR_clamp_all_influence = yes
+                    SKR_normalize_influence = yes
+                }
+            }
+        }
+    }
+}
+# ==============================
+# 中间派影响力调整
+# ==============================
+SKR_chukan_influence_effect = {
+    custom_effect_tooltip = SKR_chukan_influence_effect_desc
+    hidden_effect = {
+        SKR = {
+            # 1. 获取变化量
+            set_temp_variable = { delta = SKR_chukan_influence_temp }
+            
+            # 2. 边界检查：已经是0且要减少
+            if = {
+                limit = {
+                    check_variable = { delta < 0 }
+                    check_variable = { 
+                        var = SKR_chukan_influence 
+                        value = 0
+                        compare = less_than_or_equals 
+                    }
+                }
+                # 已经是0或负数，无法再减少 - 什么都不做
+            }
+            else = {
+                # 3. 边界检查：增加时不能超过1
+                if = {
+                    limit = { check_variable = { delta > 0 } }
+                    set_temp_variable = { max_increase = 1 }
+                    subtract_from_temp_variable = { max_increase = SKR_chukan_influence }
+                    if = {
+                        limit = { check_variable = { delta > max_increase } }
+                        set_temp_variable = { delta = max_increase }
+                    }
+                }
+                
+                # 4. 边界检查：减少时不能低于0
+                if = {
+                    limit = { check_variable = { delta < 0 } }
+                    # 计算最大减少量（当前值，转为负数）
+                    set_temp_variable = { max_decrease = SKR_chukan_influence }
+                    multiply_temp_variable = { max_decrease = -1 }
+                    
+                    # 如果delta < max_decrease（即减少太多），则限制
+                    if = {
+                        limit = { check_variable = { delta < max_decrease } }
+                        set_temp_variable = { delta = max_decrease }
+                    }
+                }
+                
+                # 5. 如果变化量为0，什么都不做
+                if = {
+                    limit = { check_variable = { delta = 0 } }
+                    # 什么都不做
+                }
+                else = {
+                    # ====== 核心逻辑开始 ======
+                    
+                    # 6. 计算其他派系的当前总和（变化前）
+                    set_temp_variable = { others_total = SKR_kakushin_influence }
+                    add_to_temp_variable = { others_total = SKR_shinsengumi_influence }
+                    add_to_temp_variable = { others_total = SKR_houshu_influence }
+                    
+                    # 7. 特殊情况：其他派系总和为0
+                    if = {
+                        limit = { check_variable = { others_total = 0 } }
+                        # 只有当减少时才需要分配
+                        if = {
+                            limit = { check_variable = { delta < 0 } }
+                            # 将减少的量平均分给其他三个派系
+                            set_temp_variable = { distribute_amount = delta }
+                            multiply_temp_variable = { distribute_amount = -1 }  # 转为正数
+                            divide_temp_variable = { distribute_amount = 3 }
+                            
+                            # 应用主派系变化
+                            add_to_variable = { SKR_chukan_influence = delta }
+                            
+                            # 分配其他派系
+                            set_variable = { SKR_kakushin_influence = distribute_amount }
+                            set_variable = { SKR_shinsengumi_influence = distribute_amount }
+                            set_variable = { SKR_houshu_influence = distribute_amount }
+                        }
+                        else_if = {
+                            limit = { check_variable = { delta > 0 } }
+                            # 增加时，其他派系为0，直接应用到主派系
+                            add_to_variable = { SKR_chukan_influence = delta }
+                        }
+                    }
+                    else = {
+                        # 8. 正常情况：按比例分配
+                        
+                        # 计算各派系权重（使用当前值）
+                        set_temp_variable = { weight_kakushin = SKR_kakushin_influence }
+                        set_temp_variable = { weight_shinsengumi = SKR_shinsengumi_influence }
+                        set_temp_variable = { weight_houshu = SKR_houshu_influence }
+                        
+                        # 归一化权重（除以总和）
+                        divide_temp_variable = { weight_kakushin = others_total }
+                        divide_temp_variable = { weight_shinsengumi = others_total }
+                        divide_temp_variable = { weight_houshu = others_total }
+                        
+                        # 其他派系需要分担的总量 = -delta
+                        set_temp_variable = { total_to_distribute = delta }
+                        multiply_temp_variable = { total_to_distribute = -1 }
+                        
+                        # 计算每个派系的变化量
+                        multiply_temp_variable = { weight_kakushin = total_to_distribute }
+                        multiply_temp_variable = { weight_shinsengumi = total_to_distribute }
+                        multiply_temp_variable = { weight_houshu = total_to_distribute }
+                        
+                        # 9. 应用所有变化
+                        # 先应用主派系
+                        add_to_variable = { SKR_chukan_influence = delta }
+                        
+                        # 再应用其他派系
+                        add_to_variable = { SKR_kakushin_influence = weight_kakushin }
+                        add_to_variable = { SKR_shinsengumi_influence = weight_shinsengumi }
+                        add_to_variable = { SKR_houshu_influence = weight_houshu }
+                    }
+                    
+                    # 10. 后处理
+                    SKR_clamp_all_influence = yes
+                    SKR_normalize_influence = yes
+                }
+            }
+        }
+    }
+}
 
-                USF = {
-                    country_event = {id = SKR_crisis.1}
+# ==============================
+# 新选组影响力调整
+# ==============================
+SKR_shinsengumi_influence_effect = {
+    custom_effect_tooltip = SKR_shinsengumi_influence_effect_desc
+    hidden_effect = {
+        SKR = {
+            # 1. 获取变化量
+            set_temp_variable = { delta = SKR_shinsengumi_influence_temp }
+            
+            # 2. 边界检查：已经是0且要减少
+            if = {
+                limit = {
+                    check_variable = { delta < 0 }
+                    check_variable = { 
+                        var = SKR_shinsengumi_influence 
+                        value = 0
+                        compare = less_than_or_equals 
+                    }
                 }
-                SLL = {
-                    country_event = {id = SKR_crisis.1}
+                # 已经是0或负数，无法再减少 - 什么都不做
+            }
+            else = {
+                # 3. 边界检查：增加时不能超过1
+                if = {
+                    limit = { check_variable = { delta > 0 } }
+                    set_temp_variable = { max_increase = 1 }
+                    subtract_from_temp_variable = { max_increase = SKR_shinsengumi_influence }
+                    if = {
+                        limit = { check_variable = { delta > max_increase } }
+                        set_temp_variable = { delta = max_increase }
+                    }
                 }
+                
+                # 4. 边界检查：减少时不能低于0
+                if = {
+                    limit = { check_variable = { delta < 0 } }
+                    # 计算最大减少量（当前值，转为负数）
+                    set_temp_variable = { max_decrease = SKR_shinsengumi_influence }
+                    multiply_temp_variable = { max_decrease = -1 }
+                    
+                    # 如果delta < max_decrease（即减少太多），则限制
+                    if = {
+                        limit = { check_variable = { delta < max_decrease } }
+                        set_temp_variable = { delta = max_decrease }
+                    }
+                }
+                
+                # 5. 如果变化量为0，什么都不做
+                if = {
+                    limit = { check_variable = { delta = 0 } }
+                    # 什么都不做
+                }
+                else = {
+                    # ====== 核心逻辑开始 ======
+                    
+                    # 6. 计算其他派系的当前总和（变化前）
+                    set_temp_variable = { others_total = SKR_kakushin_influence }
+                    add_to_temp_variable = { others_total = SKR_chukan_influence }
+                    add_to_temp_variable = { others_total = SKR_houshu_influence }
+                    
+                    # 7. 特殊情况：其他派系总和为0
+                    if = {
+                        limit = { check_variable = { others_total = 0 } }
+                        # 只有当减少时才需要分配
+                        if = {
+                            limit = { check_variable = { delta < 0 } }
+                            # 将减少的量平均分给其他三个派系
+                            set_temp_variable = { distribute_amount = delta }
+                            multiply_temp_variable = { distribute_amount = -1 }  # 转为正数
+                            divide_temp_variable = { distribute_amount = 3 }
+                            
+                            # 应用主派系变化
+                            add_to_variable = { SKR_shinsengumi_influence = delta }
+                            
+                            # 分配其他派系
+                            set_variable = { SKR_kakushin_influence = distribute_amount }
+                            set_variable = { SKR_chukan_influence = distribute_amount }
+                            set_variable = { SKR_houshu_influence = distribute_amount }
+                        }
+                        else_if = {
+                            limit = { check_variable = { delta > 0 } }
+                            # 增加时，其他派系为0，直接应用到主派系
+                            add_to_variable = { SKR_shinsengumi_influence = delta }
+                        }
+                    }
+                    else = {
+                        # 8. 正常情况：按比例分配
+                        
+                        # 计算各派系权重（使用当前值）
+                        set_temp_variable = { weight_kakushin = SKR_kakushin_influence }
+                        set_temp_variable = { weight_chukan = SKR_chukan_influence }
+                        set_temp_variable = { weight_houshu = SKR_houshu_influence }
+                        
+                        # 归一化权重（除以总和）
+                        divide_temp_variable = { weight_kakushin = others_total }
+                        divide_temp_variable = { weight_chukan = others_total }
+                        divide_temp_variable = { weight_houshu = others_total }
+                        
+                        # 其他派系需要分担的总量 = -delta
+                        set_temp_variable = { total_to_distribute = delta }
+                        multiply_temp_variable = { total_to_distribute = -1 }
+                        
+                        # 计算每个派系的变化量
+                        multiply_temp_variable = { weight_kakushin = total_to_distribute }
+                        multiply_temp_variable = { weight_chukan = total_to_distribute }
+                        multiply_temp_variable = { weight_houshu = total_to_distribute }
+                        
+                        # 9. 应用所有变化
+                        # 先应用主派系
+                        add_to_variable = { SKR_shinsengumi_influence = delta }
+                        
+                        # 再应用其他派系
+                        add_to_variable = { SKR_kakushin_influence = weight_kakushin }
+                        add_to_variable = { SKR_chukan_influence = weight_chukan }
+                        add_to_variable = { SKR_houshu_influence = weight_houshu }
+                    }
+                    
+                    # 10. 后处理
+                    SKR_clamp_all_influence = yes
+                    SKR_normalize_influence = yes
+                }
+            }
+        }
+    }
+}
+
+# ==============================
+# 保守派影响力调整
+# ==============================
+SKR_houshu_influence_effect = {
+    custom_effect_tooltip = SKR_houshu_influence_effect_desc
+    hidden_effect = {
+        SKR = {
+            # 1. 获取变化量
+            set_temp_variable = { delta = SKR_houshu_influence_temp }
+            
+            # 2. 边界检查：已经是0且要减少
+            if = {
+                limit = {
+                    check_variable = { delta < 0 }
+                    check_variable = { 
+                        var = SKR_houshu_influence 
+                        value = 0
+                        compare = less_than_or_equals 
+                    }
+                }
+                # 已经是0或负数，无法再减少 - 什么都不做
+            }
+            else = {
+                # 3. 边界检查：增加时不能超过1
+                if = {
+                    limit = { check_variable = { delta > 0 } }
+                    set_temp_variable = { max_increase = 1 }
+                    subtract_from_temp_variable = { max_increase = SKR_houshu_influence }
+                    if = {
+                        limit = { check_variable = { delta > max_increase } }
+                        set_temp_variable = { delta = max_increase }
+                    }
+                }
+                
+                # 4. 边界检查：减少时不能低于0
+                if = {
+                    limit = { check_variable = { delta < 0 } }
+                    # 计算最大减少量（当前值，转为负数）
+                    set_temp_variable = { max_decrease = SKR_houshu_influence }
+                    multiply_temp_variable = { max_decrease = -1 }
+                    
+                    # 如果delta < max_decrease（即减少太多），则限制
+                    if = {
+                        limit = { check_variable = { delta < max_decrease } }
+                        set_temp_variable = { delta = max_decrease }
+                    }
+                }
+                
+                # 5. 如果变化量为0，什么都不做
+                if = {
+                    limit = { check_variable = { delta = 0 } }
+                    # 什么都不做
+                }
+                else = {
+                    # ====== 核心逻辑开始 ======
+                    
+                    # 6. 计算其他派系的当前总和（变化前）
+                    set_temp_variable = { others_total = SKR_kakushin_influence }
+                    add_to_temp_variable = { others_total = SKR_chukan_influence }
+                    add_to_temp_variable = { others_total = SKR_shinsengumi_influence }
+                    
+                    # 7. 特殊情况：其他派系总和为0
+                    if = {
+                        limit = { check_variable = { others_total = 0 } }
+                        # 只有当减少时才需要分配
+                        if = {
+                            limit = { check_variable = { delta < 0 } }
+                            # 将减少的量平均分给其他三个派系
+                            set_temp_variable = { distribute_amount = delta }
+                            multiply_temp_variable = { distribute_amount = -1 }  # 转为正数
+                            divide_temp_variable = { distribute_amount = 3 }
+                            
+                            # 应用主派系变化
+                            add_to_variable = { SKR_houshu_influence = delta }
+                            
+                            # 分配其他派系
+                            set_variable = { SKR_kakushin_influence = distribute_amount }
+                            set_variable = { SKR_chukan_influence = distribute_amount }
+                            set_variable = { SKR_shinsengumi_influence = distribute_amount }
+                        }
+                        else_if = {
+                            limit = { check_variable = { delta > 0 } }
+                            # 增加时，其他派系为0，直接应用到主派系
+                            add_to_variable = { SKR_houshu_influence = delta }
+                        }
+                    }
+                    else = {
+                        # 8. 正常情况：按比例分配
+                        
+                        # 计算各派系权重（使用当前值）
+                        set_temp_variable = { weight_kakushin = SKR_kakushin_influence }
+                        set_temp_variable = { weight_chukan = SKR_chukan_influence }
+                        set_temp_variable = { weight_shinsengumi = SKR_shinsengumi_influence }
+                        
+                        # 归一化权重（除以总和）
+                        divide_temp_variable = { weight_kakushin = others_total }
+                        divide_temp_variable = { weight_chukan = others_total }
+                        divide_temp_variable = { weight_shinsengumi = others_total }
+                        
+                        # 其他派系需要分担的总量 = -delta
+                        set_temp_variable = { total_to_distribute = delta }
+                        multiply_temp_variable = { total_to_distribute = -1 }
+                        
+                        # 计算每个派系的变化量
+                        multiply_temp_variable = { weight_kakushin = total_to_distribute }
+                        multiply_temp_variable = { weight_chukan = total_to_distribute }
+                        multiply_temp_variable = { weight_shinsengumi = total_to_distribute }
+                        
+                        # 9. 应用所有变化
+                        # 先应用主派系
+                        add_to_variable = { SKR_houshu_influence = delta }
+                        
+                        # 再应用其他派系
+                        add_to_variable = { SKR_kakushin_influence = weight_kakushin }
+                        add_to_variable = { SKR_chukan_influence = weight_chukan }
+                        add_to_variable = { SKR_shinsengumi_influence = weight_shinsengumi }
+                    }
+                    
+                    # 10. 后处理
+                    SKR_clamp_all_influence = yes
+                    SKR_normalize_influence = yes
+                }
+            }
+        }
+    }
+}
+SKR_refresh_bakufu_modifier = {
+    SKR = {
+        set_variable = {SKR_bakufu_production_speed_buildings_factor_b = 0.006}
+        set_variable = {SKR_bakufu_industrial_capacity_factory_b = 0.006}
+        set_variable = {SKR_bakufu_industrial_capacity_dockyard_b = 0.006}  
+        set_variable = {SKR_bakufu_political_power_factor_b = 0.006}       
+        set_variable = {SKR_bakufu_stability_factor_b = 0.006}             
+        set_variable = {SKR_bakufu_army_org_factor_b = 0.006}              
+        set_variable = {SKR_bakufu_breakthrough_factor_b = 0.006}          
+        set_variable = {SKR_bakufu_research_speed_factor_b = 0.006}        
+        set_variable = {SKR_bakufu_conscription_factor_b = 0.006}
+        set_variable = {SKR_bakufu_production_speed_buildings_factor = SKR_bakufu_production_speed_buildings_factor_b}
+        set_variable = {SKR_bakufu_industrial_capacity_factory = SKR_bakufu_industrial_capacity_factory_b}
+        set_variable = {SKR_bakufu_industrial_capacity_dockyard = SKR_bakufu_industrial_capacity_dockyard_b}
+        set_variable = {SKR_bakufu_political_power_factor = SKR_bakufu_political_power_factor_b}
+        set_variable = {SKR_bakufu_stability_factor = SKR_bakufu_stability_factor_b}
+        set_variable = {SKR_bakufu_army_org_factor = SKR_bakufu_army_org_factor_b}
+        set_variable = {SKR_bakufu_breakthrough_factor = SKR_bakufu_breakthrough_factor_b}
+        set_variable = {SKR_bakufu_research_speed_factor = SKR_bakufu_research_speed_factor_b}
+        set_variable = {SKR_bakufu_conscription_factor = SKR_bakufu_conscription_factor_b}
+        
+        set_variable = {SKR_kakushin_relation_M = SKR_kakushin_relation}
+        add_to_variable = {SKR_kakushin_relation_M = -50}
+        multiply_variable = {SKR_bakufu_production_speed_buildings_factor = SKR_kakushin_relation_M}
+        multiply_variable = {SKR_bakufu_production_speed_buildings_factor = SKR_kakushin_influence}
+        multiply_variable = {SKR_bakufu_industrial_capacity_factory = SKR_kakushin_relation_M}
+        multiply_variable = {SKR_bakufu_industrial_capacity_factory = SKR_kakushin_influence}
+        multiply_variable = {SKR_bakufu_industrial_capacity_dockyard = SKR_kakushin_relation_M}
+        multiply_variable = {SKR_bakufu_industrial_capacity_dockyard = SKR_kakushin_influence}
+
+        set_variable = {SKR_chukan_relation_M = SKR_chukan_relation}
+        add_to_variable = {SKR_chukan_relation_M = -50}
+        multiply_variable = {SKR_bakufu_political_power_factor = SKR_chukan_relation_M}
+        multiply_variable = {SKR_bakufu_political_power_factor = SKR_chukan_influence}
+        multiply_variable = {SKR_bakufu_stability_factor = SKR_chukan_relation_M}
+        multiply_variable = {SKR_bakufu_stability_factor = SKR_chukan_influence}
+
+        set_variable = {SKR_shinsengumi_relation_M = SKR_shinsengumi_relation}
+        add_to_variable = {SKR_shinsengumi_relation_M = -50}
+        multiply_variable = {SKR_bakufu_army_org_factor = SKR_shinsengumi_relation_M}
+        multiply_variable = {SKR_bakufu_army_org_factor = SKR_shinsengumi_influence}
+        multiply_variable = {SKR_bakufu_breakthrough_factor = SKR_shinsengumi_relation_M}
+        multiply_variable = {SKR_bakufu_breakthrough_factor = SKR_shinsengumi_influence}
+
+        set_variable = {SKR_houshu_relation_M = SKR_houshu_relation}
+        add_to_variable = {SKR_houshu_relation_M = -50}
+        multiply_variable = {SKR_bakufu_conscription_factor = SKR_houshu_relation_M}
+        multiply_variable = {SKR_bakufu_conscription_factor = SKR_houshu_influence}
+        if = {
+            limit = {
+                check_variable = {SKR_houshu_relation_M < 0}
+            }
+            multiply_variable = {SKR_bakufu_research_speed_factor = SKR_houshu_relation_M}
+            multiply_variable = {SKR_bakufu_research_speed_factor = SKR_houshu_influence}
+        }
+        else = {
+            set_variable = {SKR_bakufu_research_speed_factor = 0}
+        }
+    }
+}
+SKR_kakushin_relation_effect = {
+    custom_effect_tooltip = SKR_kakushin_relation_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_kakushin_relation = SKR_kakushin_relation_temp}
+        clamp_variable = {
+            var = SKR_kakushin_relation
+            max = 100
+            min = 0
+        }
+        SKR_refresh_bakufu_modifier = yes
+    }
+}
+SKR_chukan_relation_effect = {
+    custom_effect_tooltip = SKR_chukan_relation_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_chukan_relation = SKR_chukan_relation_temp}
+        clamp_variable = {
+            var = SKR_chukan_relation
+            max = 100
+            min = 0
+        }
+        SKR_refresh_bakufu_modifier = yes
+    }
+}
+SKR_shinsengumi_relation_effect = {
+    custom_effect_tooltip = SKR_shinsengumi_relation_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_shinsengumi_relation = SKR_shinsengumi_relation_temp}
+        clamp_variable = {
+            var = SKR_shinsengumi_relation
+            max = 100
+            min = 0
+        }
+        SKR_refresh_bakufu_modifier = yes
+    }
+}
+SKR_houshu_relation_effect = {
+    custom_effect_tooltip = SKR_houshu_relation_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_houshu_relation = SKR_houshu_relation_temp}
+        clamp_variable = {
+            var = SKR_houshu_relation
+            max = 100
+            min = 0
+        }
+        SKR_refresh_bakufu_modifier = yes
+    }
+}
+
+SKR_advisor_kakushin_influence_effect_add = {
+    set_temp_variable = {SKR_kakushin_influence_temp = 0.05}
+    SKR_kakushin_influence_effect = yes
+}
+SKR_advisor_kakushin_influence_effect_remove = {
+    set_temp_variable = {SKR_kakushin_influence_temp = -0.05}
+    SKR_kakushin_influence_effect = yes
+    add_political_power = 50
+}
+SKR_advisor_chukan_influence_effect_add = {
+    set_temp_variable = {SKR_chukan_influence_temp = 0.05}
+    SKR_chukan_influence_effect = yes
+}
+SKR_advisor_chukan_influence_effect_remove = {
+    set_temp_variable = {SKR_chukan_influence_temp = -0.05}
+    SKR_chukan_influence_effect = yes
+    add_political_power = 50
+}
+SKR_advisor_shinsengumi_influence_effect_add = {
+    set_temp_variable = {SKR_shinsengumi_influence_temp = 0.05}
+    SKR_shinsengumi_influence_effect = yes
+}
+SKR_advisor_shinsengumi_influence_effect_remove = {
+    set_temp_variable = {SKR_shinsengumi_influence_temp = -0.05}
+    SKR_shinsengumi_influence_effect = yes
+    add_political_power = 50
+}
+SKR_advisor_houshu_influence_effect_add = {
+    set_temp_variable = {SKR_houshu_influence_temp = 0.05}
+    SKR_houshu_influence_effect = yes
+}
+SKR_advisor_houshu_influence_effect_remove = {
+    set_temp_variable = {SKR_houshu_influence_temp = -0.05}
+    SKR_houshu_influence_effect = yes
+    add_political_power = 50
+}
+
+
+SKR_yoshinobu_point_effect = {
+    custom_effect_tooltip = SKR_yoshinobu_point_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_yoshinobu_point = SKR_yoshinobu_point_temp}
+
+        clamp_variable = {
+            var = SKR_yoshinobu_point
+            max = 10
+        }
+    }
+}
+
+SKR_taisei_hokan_point_effect = {
+    custom_effect_tooltip = SKR_taisei_hokan_point_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_taisei_hokan_point = SKR_taisei_hokan_point_temp}
+
+        clamp_variable = {
+            var = SKR_taisei_hokan_point
+            max = 10
+        }
+    }
+}
+
+SKR_update_morale_effect = {
+    custom_effect_tooltip = SKR_update_morale_effect_desc
+    hidden_effect = {
+        SKR = {
+            add_to_variable = {SKR_morale = SKR_morale_temp}
+            if = {
+                limit = {
+                    check_variable = {var = SKR_morale value = 20 compare = less_than_or_equals}
+                }
+                add_ideas = SKR_morale_1
+                remove_ideas = SKR_morale_2
+                remove_ideas = SKR_morale_3
+                remove_ideas = SKR_morale_4
+                remove_ideas = SKR_morale_5
             }
             else_if = {
                 limit = {
-                    check_variable = {SKR_tension_level < 2}
-                    check_variable = {SKR_tention > 60}
+                    check_variable = {SKR_morale > 20}
+                    check_variable = {var = SKR_morale value = 40 compare = less_than_or_equals}
                 }
-                add_to_variable = {SKR_tension_level = 1}
-                USF = {
-                    country_event = {id = SKR_crisis.2}
+                add_ideas = SKR_morale_2
+                remove_ideas = SKR_morale_1
+                remove_ideas = SKR_morale_3
+                remove_ideas = SKR_morale_4
+                remove_ideas = SKR_morale_5
+            }
+            else_if = {
+                limit = {
+                    check_variable = {SKR_morale > 40}
+                    check_variable = {var = SKR_morale value = 60 compare = less_than_or_equals}
                 }
-                SLL = {
-                    country_event = {id = SKR_crisis.2}
+                add_ideas = SKR_morale_3
+                remove_ideas = SKR_morale_2
+                remove_ideas = SKR_morale_1
+                remove_ideas = SKR_morale_4
+                remove_ideas = SKR_morale_5
+            }
+            else_if = {
+                limit = {
+                    check_variable = {SKR_morale > 60}
+                    check_variable = {var = SKR_morale value = 80 compare = less_than_or_equals}
                 }
+                add_ideas = SKR_morale_4
+                remove_ideas = SKR_morale_2
+                remove_ideas = SKR_morale_3
+                remove_ideas = SKR_morale_1
+                remove_ideas = SKR_morale_5
+            }
+            else_if = {
+                limit = {
+                    check_variable = {SKR_morale > 80}
+                }
+                add_ideas = SKR_morale_5
+                remove_ideas = SKR_morale_2
+                remove_ideas = SKR_morale_3
+                remove_ideas = SKR_morale_4
+                remove_ideas = SKR_morale_1
             }
         }
-        
     }
 }
 
-SKR_update_dynamic_modifier = {
+#京州一群伙伴，结庐北海山
+SKR_shinsengumi_fail_effect = {
+    hidden_effect = {
+        set_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_FAILED_FLAG
+        SKR = {
+            remove_ideas = SKR_shinsengumi_idea
+            delete_unit_template_and_units = {
+                division_template = "新选组"
+            }
+            SKR_Okita_Souji = {
+                set_nationality = SHI
+            }
+            SKR_Nagakura_Shinbachi = {
+                set_nationality = SHI
+            }
+            SKR_Saito_Hajime = {
+                set_nationality = SHI
+            }
+            SKR_Matsubara_Chuji = {
+                set_nationality = SHI
+            }
+            SKR_Inoue_Gensaburo = {
+                set_nationality = SHI
+            }
+            SKR_Oishi_Kuwajiro = {
+                set_nationality = SHI
+            }
+            SKR_Harada_Sanosuke = {
+                set_nationality = SHI
+            }
+            SKR_Hijikata_Toshizo = {
+                set_nationality = SHI
+            }
+            SKR_Sasaki_Tadasaburo = {
+                set_nationality = SHI
+            }
+            SKR_Kondo_Isami = {
+                set_nationality = SHI
+            }
+            SKR_Enomoto_Takeaki = {
+                set_nationality = SHI
+            }
+            SKR_Ootori_Keisuke = {
+                set_nationality = SHI
+            }
+            SKR_Kaiyoumaru = {
+                set_nationality = SHI
+            }
+            transfer_navy = {
+                target = SHI
+            }
+        }
+        951 = {
+            transfer_state_to = SHI
+            add_core_of = SHI
+        }
+        SHI = {
+            inherit_technology = SKR
+            add_ideas = SKR_shinsengumi_idea
+            set_politics = {
+                ruling_party = neutrality
+            }
+            promote_character = {
+                character = SKR_Okita_Souji
+                ideology = sub_Junta
+            }
+            division_template = {
+                name = "新选组"
+                priority = 2
+                is_locked = yes
+                regiments = {
+                    Arcane_Knights_Camp = {x = 0 y = 0}
+                }
+            }
+            division_template = {
+                name = "步兵队"
+                regiments = {
+                    infantry = { x = 0 y = 0 }
+                    infantry = { x = 0 y = 1 }
+                    infantry = { x = 0 y = 2 }
+                    infantry = { x = 1 y = 0 }
+                    infantry = { x = 1 y = 1 }
+                    infantry = { x = 1 y = 2 }
+                }
+                support = {
+                    artillery = { x = 0 y = 0 }
+                }
+            }
+
+            951 = {
+                create_unit = {
+                    division = "name = \"新选组一番队\" division_template = \"新选组\" start_experience_factor = 0.4"
+                    owner = SHI
+                }
+                create_unit = {
+                    division = "name = \"新选组二番队\" division_template = \"新选组\" start_experience_factor = 0.4"
+                    owner = SHI
+                }
+                create_unit = {
+                    division = "name = \"新选组四番队\" division_template = \"新选组\" start_experience_factor = 0.4"
+                    owner = SHI
+                }
+                create_unit = {
+                    division = "name = \"新选组七番队\" division_template = \"新选组\" start_experience_factor = 0.4"
+                    owner = SHI
+                }
+                create_unit = {
+                    division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.3"
+                    owner = SHI
+                }
+                create_unit = {
+                    division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.3"
+                    owner = SHI
+                }
+            }
+        }
+    }
+}
+
+#拉拉众赢得北陆战争
+SKR_LL_victory_effect = {
     hidden_effect = {
         every_country = {
             limit = {
-                is_SKR_tag = yes
-                NOT = {tag = HKD}
-            }
-
-            set_variable = {SKR_chess_army_attack_factor_b = 0.002}
-            set_variable = {SKR_chess_army_defence_factor_b = 0.002}
-            set_variable = {SKR_chess_breakthrough_factor_b = 0.002}
-            set_variable = {SKR_chess_army_morale_factor_b = 0.002}
-
-            set_variable = {SKR_chess_army_attack_factor = SKR_chess_army_attack_factor_b}
-            set_variable = {SKR_chess_army_defence_factor = SKR_chess_army_defence_factor_b}
-            set_variable = {SKR_chess_breakthrough_factor = SKR_chess_breakthrough_factor_b}
-            set_variable = {SKR_chess_army_morale_factor = SKR_chess_army_morale_factor_b}
-
-            if = {
-                limit = {
-                    is_subject_of = SKR
+                OR = {
+                    tag = SBY
+                    tag = UEH
+                    tag = NIS
+                    tag = KUD
                 }
-                multiply_variable = {SKR_chess_army_attack_factor = ZTZ.SLL_power_projection_share}
-                multiply_variable = {SKR_chess_army_defence_factor = ZTZ.SLL_power_projection_share}
-                multiply_variable = {SKR_chess_breakthrough_factor = ZTZ.SLL_power_projection_share}
-                multiply_variable = {SKR_chess_army_morale_factor = ZTZ.SLL_power_projection_share}
             }
-            else = {
-                multiply_variable = {SKR_chess_army_attack_factor = ZTZ.USF_power_projection_share}
-                multiply_variable = {SKR_chess_army_defence_factor = ZTZ.USF_power_projection_share}
-                multiply_variable = {SKR_chess_breakthrough_factor = ZTZ.USF_power_projection_share}
-                multiply_variable = {SKR_chess_army_morale_factor = ZTZ.USF_power_projection_share}
+            SKR = {
+                set_autonomy = {
+                    target = PREV
+                    autonomous_state = SKR_daimyo
+                }
             }
         }
+        every_possible_country = {
+            limit = {
+                has_character = SKR_Kousaka_Honoka
+            }
+            SKR_Kousaka_Honoka = {
+                set_nationality = SKR
+            }
+        }
+        every_possible_country = {
+            limit = {
+                has_character = SKR_Ito_Kashitaro
+            }
+            SKR_Ito_Kashitaro = {
+                set_nationality = SKR
+            }
+        }
+        every_possible_country = {
+            limit = {
+                has_character = SKR_Toudo_Heisuke
+            }
+            SKR_Toudo_Heisuke = {
+                set_nationality = SKR
+            }
+        }
+        SKR = {
+            
+            retire_character = SKR_Serizawa_Kamo
+            promote_character = {
+                character = SKR_Kousaka_Honoka
+                ideology = sub_enlightened_despotism
+            }
+
+            set_country_leader_name = {
+                ideology = neutrality
+                name = SKR_Kousaka_Honoka_Emperor
+            }
+            set_country_leader_portrait = {
+                ideology = neutrality
+                portrait = GFX_SKR_Kousaka_Honoka_Emperor
+            }
+            remove_ideas = SKR_Honoka_leader
+            drop_cosmetic_tag = yes
+            set_cosmetic_tag = SKR_HONOKA
+            set_party_name = {ideology = democratic long_name = SKR_democratic_party_empty name = SKR_democratic_party_empty}
+            set_party_name = {ideology = communism long_name = SKR_communism_party_empty name = SKR_communism_party_empty}
+            set_party_name = {ideology = neutrality long_name = SKR_neutrality_party_empty name = SKR_neutrality_party_empty}
+            set_party_name = {ideology = fascism long_name = SKR_fascism_party_empty name = SKR_fascism_party_empty}
+            set_party_name = {ideology = reactionism long_name = SKR_reactionism_party_empty name = SKR_reactionism_party_empty}
+            change_tag_from = ROOT
+        }
+    }
+}
+
+#工业化进度
+SKR_industralization_effect = {
+    if = {
+        limit = {
+            has_country_flag = SKR_industralization_flag
+        }
+        custom_effect_tooltip = SKR_industralization_effect_desc
+        hidden_effect = {
+            add_to_variable = {SKR_industralization_point = SKR_industralization_point_temp}
+        }
+    }
+}
+SKR_export_effect = {
+    if = {
+        limit = {
+            has_completed_focus = SKR_music_industry
+            NOT = {
+                has_country_flag = SKR_dream_came_true
+            }
+        }
+        set_temp_variable = {SKR_industralization_point_temp = 2}
+    }
+    else_if = {
+        limit = {
+            has_completed_focus = SKR_music_industry
+            has_country_flag = SKR_dream_came_true
+        }
+        set_temp_variable = {SKR_industralization_point_temp = 3}
+    }
+    else = {
+        set_temp_variable = {SKR_industralization_point_temp = 1}
+    }
+    SKR_industralization_effect = yes
+}
+SKR_export_UNG_effect = {
+    if = {
+        limit = {
+            has_completed_focus = SKR_music_industry
+            NOT = {
+                has_country_flag = SKR_dream_came_true
+            }
+        }
+        set_temp_variable = {SKR_industralization_point_temp = 2}
+    }
+    else_if = {
+        limit = {
+            has_completed_focus = SKR_music_industry
+            has_country_flag = SKR_dream_came_true
+        }
+        set_temp_variable = {SKR_industralization_point_temp = 3}
+    }
+    else = {
+        set_temp_variable = {SKR_industralization_point_temp = 1}
+    }
+
+    if = {
+        limit = {
+            has_country_flag = SKR_accepted_UNG_friendship
+        }
+        add_to_temp_variable = {SKR_industralization_point_temp = 0.5}
+    }
+    SKR_industralization_effect = yes
+}
+
+#给圣铃兰跪了
+SKR_remove_all_industralization_effect = {
+    custom_effect_tooltip = SKR_remove_all_industralization_effect_desc
+    hidden_effect = {
+        add_ideas = mana_priority
+        remove_ideas = SKR_zaibatsu_idea_1
+        remove_ideas = SKR_zaibatsu_idea_2
+        remove_ideas = SKR_zaibatsu_idea_3
+        remove_ideas = SKR_zaibatsu_idea_4
+        remove_ideas = SKR_encourage_competition_idea_1
+        remove_ideas = SKR_encourage_competition_idea_2
+        remove_ideas = SKR_encourage_competition_idea_3
+        remove_ideas = SKR_encourage_competition_idea_4
+        clr_country_flag = SKR_industralization_flag
+        uncomplete_national_focus = {
+            focus = SKR_road_to_industralization
+            uncomplete_children = yes
+            refund_political_power = no
+        }
+        uncomplete_national_focus = {
+            focus = SKR_maintain_balance
+            uncomplete_children = yes
+            refund_political_power = no
+        }
+        uncomplete_national_focus = {
+            focus = SKR_on_our_own
+            uncomplete_children = yes
+            refund_political_power = no
+        }
+    }
+}
+
+#
+SKR_increase_SLL_opinion_2 = {
+    custom_effect_tooltip = SKR_increase_SLL_opinion_2_desc
+    hidden_effect = {
+        add_to_variable = {SKR_SLL_opinion = 2}
+    }
+}
+SKR_increase_SLL_opinion_1 = {
+    custom_effect_tooltip = SKR_increase_SLL_opinion_1_desc
+    hidden_effect = {
+        add_to_variable = {SKR_SLL_opinion = 1}
+    }
+}
+SKR_decrease_SLL_opinion_1 = {
+    custom_effect_tooltip = SKR_decrease_SLL_opinion_1_desc
+    hidden_effect = {
+        add_to_variable = {SKR_SLL_opinion = -1}
     }
 }

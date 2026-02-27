@@ -69,6 +69,24 @@ USF_temp = {
 }
 
 USF_congress = {
+	USF_close_alert = {
+		visible = {
+			NOT = {
+				has_country_flag = USF_disable_congress_alert
+			}
+		}
+		complete_effect = {
+			set_country_flag = USF_disable_congress_alert
+		}
+	}
+	USF_open_alert = {
+		visible = {
+			has_country_flag = USF_disable_congress_alert
+		}
+		complete_effect = {
+			clr_country_flag = USF_disable_congress_alert
+		}
+	}
 	#大选后立法保护
 	USF_after_election_bonus = {
 		visible = {
@@ -119,13 +137,13 @@ USF_congress = {
 			}
 			481 = {
 				add_building_construction = {
-                    type = land_facility
-                    level = 1
-                    instant_build = yes
-                    province = {
-                        id = 12720
-                    }
-                }
+					type = land_facility
+					level = 1
+					instant_build = yes
+					province = {
+						id = 12720
+					}
+				}
 			}
 		}
 		ai_will_do = {
@@ -135,11 +153,11 @@ USF_congress = {
 	#自动任务
 	USF_cut_naval_budget_decision = {
 		icon = mission_icon
-        is_good = no
+		is_good = no
 		days_mission_timeout = 45
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
@@ -160,11 +178,11 @@ USF_congress = {
 	}
 	USF_impose_excess_profits_tax_decision = {
 		icon = mission_icon
-        is_good = no
+		is_good = no
 		days_mission_timeout = 87
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
@@ -240,7 +258,7 @@ USF_congress = {
 			country_event = {id = USF_act.3}
 			custom_effect_tooltip = USF_act_passed_display
 			effect_tooltip = {
-				add_ideas = USF_abolish_rights_of_ELN_commissioner_idea 
+				add_ideas = USF_abolish_rights_of_ELN_commissioner_idea
 				set_temp_variable = {USF_adp_support_temp = -15}
 				USF_adp_support_effect = yes
 			}
@@ -459,10 +477,10 @@ USF_congress = {
 	USF_mana_plant_adjustment_act_decision = {
 		allowed = { always = no }
 		available = {
-			custom_trigger_tooltip = {
-				tooltip = USF_adp_approval_rate_35_t
-				check_variable = {USF_adp_approval_rate > 0.35}
-			}
+			# custom_trigger_tooltip = {
+			# 	tooltip = USF_adp_approval_rate_35_t
+			# 	check_variable = {USF_adp_approval_rate > 0.35}
+			# }
 		}
 		visible = {
 			NOT = {
@@ -476,12 +494,20 @@ USF_congress = {
 		}
 		remove_effect = {
 			country_event = {id = USF_act.10}
-			custom_effect_tooltip = USF_act_passed_display
+			if = {
+				limit = {
+					has_government = democratic
+				}
+				custom_effect_tooltip = USF_act_passed_display_special
+			}
+			else = {
+				custom_effect_tooltip = USF_act_passed_display
+			}
 			effect_tooltip = {
 				set_temp_variable = {USF_inflation_temp = 1.5}
 				USF_change_inflation_effect = yes
-				unlock_decision_tooltip = USF_deal_with_pandemic
-				set_country_flag = USF_allow_deal_with_pandemic
+				set_temp_variable = {USF_unemployment_temp = -2}
+				USF_change_unemployment_effect = yes
 			}
 		}
 		ai_will_do = {
@@ -496,7 +522,7 @@ USF_congress = {
 				check_variable = {USF_adp_approval_rate > 0.2}
 			}
 		}
-		visible = {	
+		visible = {
 			has_completed_focus = USF_adjust_planting_quota
 			has_dynamic_modifier = {modifier = USF_black_foaming_night}
 		}
@@ -534,7 +560,7 @@ USF_congress = {
 		allowed = {
 			always = no
 		}
-		visible = {	
+		visible = {
 			NOT = {has_country_flag = USF_federal_insurance_company_decision_passed}
 		}
 		#cost = 30
@@ -557,7 +583,7 @@ USF_congress = {
 		allowed = {
 			always = no
 		}
-		visible = {	
+		visible = {
 			NOT = {has_country_flag = USF_stock_exchange_act_decision_passed}
 		}
 		#cost = 30
@@ -588,7 +614,7 @@ USF_congress = {
 				check_variable = {USF_ilp_approval_rate > 0.8}
 			}
 		}
-		visible = {	
+		visible = {
 			NOT = {has_country_flag = USF_industrial_recovery_act_decision_passed}
 		}
 		#cost = 30
@@ -626,7 +652,7 @@ USF_congress = {
 				NOT = {
 					has_idea = USF_subject_trade_priority
 				}
-            }
+			}
 		}
 		available = {
 			any_country = {
@@ -634,7 +660,7 @@ USF_congress = {
 				NOT = {
 					has_idea = USF_subject_trade_priority
 				}
-            }
+			}
 		}
 		#cost = 30
 		days_remove = var:USF_minor_act_time
@@ -642,10 +668,15 @@ USF_congress = {
 			add_political_power = -30
 		}
 		remove_effect = {
-			country_event = {id = USF.15}
+			country_event = {id = USF_act.15}
 			custom_effect_tooltip = USF_act_passed_display
 			effect_tooltip = {
 				random_subject_country = {
+					limit = {
+						NOT = {
+							has_idea = USF_subject_trade_priority
+						}
+					}
 					add_ideas = USF_subject_trade_priority
 				}
 			}
@@ -653,27 +684,45 @@ USF_congress = {
 	}
 	USF_decrease_subject_autonomy_decision = {
 		visible = {
-			has_completed_focus = USF_control_south_pole
+			has_completed_focus = USF_puppet_agreement
 			any_country = {
 				is_subject_of = USF
 				NOT = {
-                        has_autonomy_state = autonomy_integrated_puppet
+					has_autonomy_state = autonomy_integrated_puppet
 				}
 				NOT = {
 					has_autonomy_state = autonomy_dominion
 				}
-            }
+				NOT = {
+					has_autonomy_state = USF_homeland_state
+				}
+				NOT = {
+					has_autonomy_state = USF_territory
+				}
+				NOT = {
+					has_autonomy_state = naval_command
+				}
+			}
 		}
 		available = {
 			any_country = {
 				is_subject_of = USF
 				NOT = {
-                        has_autonomy_state = autonomy_integrated_puppet
+					has_autonomy_state = autonomy_integrated_puppet
 				}
 				NOT = {
 					has_autonomy_state = autonomy_dominion
 				}
-            }
+				NOT = {
+					has_autonomy_state = USF_homeland_state
+				}
+				NOT = {
+					has_autonomy_state = USF_territory
+				}
+				NOT = {
+					has_autonomy_state = naval_command
+				}
+			}
 		}
 		#cost = 30
 		days_remove = var:USF_sub_act_time
@@ -752,12 +801,6 @@ USF_congress = {
 		allowed = {
 			always = no
 		}
-		available = {
-			custom_trigger_tooltip = {
-				tooltip = USF_has_80_approval_rate
-				check_variable = {USF_total_approval_rate > 0.79}
-			}
-		}
 		visible = {
 			NOT = {has_country_flag = USF_industrial_nationalization_decision_passed}
 		}
@@ -784,12 +827,6 @@ USF_congress = {
 	USF_mana_nationalization_decision = {
 		allowed = {
 			always = no
-		}
-		available = {
-			custom_trigger_tooltip = {
-				tooltip = USF_has_80_approval_rate
-				check_variable = {USF_total_approval_rate > 0.79}
-			}
 		}
 		visible = {
 			NOT = {has_country_flag = USF_mana_nationalization_decision_passed}
@@ -912,11 +949,11 @@ USF_congress = {
 	}
 	USF_cut_defense_cost_decision = {
 		icon = mission_icon
-        is_good = no
+		is_good = no
 		days_mission_timeout = 300
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
@@ -938,11 +975,11 @@ USF_congress = {
 	}
 	USF_destory_extra_products_decision = {
 		icon = mission_icon
-        is_good = no
+		is_good = no
 		days_mission_timeout = 150
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
@@ -964,11 +1001,11 @@ USF_congress = {
 	}
 	USF_protective_tariff_decision = {
 		icon = mission_icon
-        is_good = no
+		is_good = no
 		days_mission_timeout = var:USF_sub_act_time
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
@@ -1090,7 +1127,7 @@ USF_congress = {
 			}
 		}
 		cost = var:USF_bribe_adp_cost
-		days_remove = 70
+		days_remove = 120
 		complete_effect = {
 			set_temp_variable = {USF_bribe_temp = token:USF_adp}
 			USF_bribe_effect = yes
@@ -1116,7 +1153,7 @@ USF_congress = {
 			}
 		}
 		cost = var:USF_bribe_ilp_cost
-		days_remove = 70
+		days_remove = 120
 		complete_effect = {
 			set_temp_variable = {USF_bribe_temp = token:USF_ilp}
 			USF_bribe_effect = yes
@@ -1142,7 +1179,7 @@ USF_congress = {
 			}
 		}
 		cost = var:USF_bribe_unf_cost
-		days_remove = 70
+		days_remove = 120
 		complete_effect = {
 			set_temp_variable = {USF_bribe_temp = token:USF_unf}
 			USF_bribe_effect = yes
@@ -1168,7 +1205,7 @@ USF_congress = {
 			}
 		}
 		cost = var:USF_bribe_icp_cost
-		days_remove = 70
+		days_remove = 120
 		complete_effect = {
 			set_temp_variable = {USF_bribe_temp = token:USF_icp}
 			USF_bribe_effect = yes
@@ -1194,7 +1231,7 @@ USF_congress = {
 			}
 		}
 		cost = var:USF_bribe_slo_cost
-		days_remove = 70
+		days_remove = 120
 		complete_effect = {
 			set_temp_variable = {USF_bribe_temp = token:USF_slo}
 			USF_bribe_effect = yes
@@ -1213,11 +1250,11 @@ USF_congress = {
 USF_election = {
 	USF_election_result = {
 		icon = mission_icon
-        is_good = yes
+		is_good = yes
 		days_mission_timeout = 365
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
@@ -1236,25 +1273,62 @@ USF_election = {
 USF_deal_with_black_foaming_night = {
 	USF_black_foaming_night_end = {
 		icon = mission_icon
-        is_good = yes
+		is_good = yes
 		days_mission_timeout = 180
-        available = {
-            tag = USF
-			has_dynamic_modifier = {modifier = USF_black_foaming_night}
-        }
+		available = {
+			always = no
+		}
 		activation = {
-			USF_can_end_black_foaming_night_trigger = yes
+			always = no
 		}
 		cancel_trigger = {
-			USF_can_end_black_foaming_night_trigger = no
+			NOT = {
+				has_dynamic_modifier = {modifier = USF_black_foaming_night}
+			}
 		}
 		timeout_effect = {
 			remove_dynamic_modifier = {modifier = USF_black_foaming_night}
+			if = {
+				limit = {
+					has_idea = USF_laissez_faire
+					NOT = {
+						has_country_leader = {
+							character = USF_Herbert
+						}
+					}
+				}
+				add_ideas = civilian_economy
+			}
+		}
+	}
+	USF_reduce_inflation = {
+		available = {
+			political_power_daily > 0.3
+			custom_trigger_tooltip = {
+				tooltip = USF_inflation_2
+				check_variable = {USF_inflation > 2}
+			}
+		}
+		#cost = 40
+		days_remove = 40
+		modifier = {
+			political_power_cost = 0.15
+		}
+		remove_effect = {
+			set_temp_variable = {USF_inflation_temp = -0.2}
+			USF_change_inflation_effect = yes
+		}
+		ai_will_do = {
+			factor = 0
+			modifier = {
+				add = 100
+				check_variable = {USF_inflation > 2}
+			}
 		}
 	}
 	USF_invest_infrastructure = {
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.2
 			custom_trigger_tooltip = {
 				tooltip = USF_unemployment_15_t
 				check_variable = {USF_unemployment > 0.15}
@@ -1265,8 +1339,8 @@ USF_deal_with_black_foaming_night = {
 		days_remove = var:USF_invest_infrastructure_time?100
 		modifier = {
 			political_power_cost = 0.45
-            civilian_factory_use = 1
-        }
+			civilian_factory_use = 1
+		}
 		remove_effect = {
 			random_core_state = {
 				add_extra_state_shared_building_slots = 1
@@ -1280,7 +1354,7 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_grant_relief_funds = {
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.3
 			custom_trigger_tooltip = {
 				tooltip = USF_inflation_7_t
 				check_variable = {USF_inflation < 7}
@@ -1302,7 +1376,7 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_purchase_mana_properties = {
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.5
 			custom_trigger_tooltip = {
 				tooltip = USF_unemployment_15_t
 				check_variable = {USF_unemployment > 0.15}
@@ -1333,7 +1407,7 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_improve_supply_efficiency = {
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.1
 		}
 		visible = {
 			has_country_flag = USF_stock_exchange_act_decision_passed
@@ -1354,7 +1428,7 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_encourage_investment = {
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.1
 		}
 		visible = {
 			has_country_flag = USF_stock_exchange_act_decision_passed
@@ -1381,10 +1455,241 @@ USF_deal_with_black_foaming_night = {
 			factor = 100
 		}
 	}
-
-	USF_approve_the_herbert_dam = {
+	USF_agricultural_subsidy = {
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.1
+		}
+		visible = {
+			has_completed_focus = USF_reconsider_our_policy
+			check_variable = {USF_agricultural_subsidy < 5}
+		}
+		days_remove = 100
+		modifier = {
+			political_power_cost = 0.2
+		}
+		remove_effect = {
+			set_temp_variable = {USF_unemployment_temp = -0.5}
+			USF_change_unemployment_effect = yes
+			set_temp_variable = {USF_inflation_temp = -0.2}
+			USF_change_inflation_effect = yes
+			set_temp_variable = {USF_adp_support_temp = 2}
+			USF_adp_support_effect = yes
+			add_to_variable = {USF_agricultural_subsidy = 1}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_public_investment_civ = {
+		available = {
+			political_power_daily > 0.15
+		}
+		visible = {
+			check_variable = {USF_public_investment_civ < 5}
+			has_completed_focus = USF_reconsider_our_policy
+		}
+		modifier = {
+			political_power_cost = 0.3
+		}
+		days_remove = 100
+		remove_effect = {
+			set_temp_variable = {USF_unemployment_temp = -0.5}
+			USF_change_unemployment_effect = yes
+			random_core_state = {
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 1
+					instant_build = yes
+				}
+			}
+			add_to_variable = {USF_public_investment_civ = 1}
+		}
+	}
+	USF_issue_layoff_restriction_act = {
+		cost = 25
+		visible = {
+			has_completed_focus = USF_strengthen_labor_rights
+			NOT = {has_country_flag = USF_layoff_restriction_act_cancelled}
+		}
+		fire_only_once = yes
+		days_remove = 60
+		complete_effect = {
+			hidden_effect = {
+				country_event = {id = USF.51 days = 30}
+			}
+		}
+		cancel_trigger = {
+			hidden_trigger = {
+				has_country_flag = USF_layoff_restriction_act_cancelled
+			}
+		}
+		remove_effect = {
+			set_temp_variable = {USF_unemployment_temp = -2}
+			USF_change_unemployment_effect = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_close_bankrupted_banks = {
+		visible = {
+			has_country_flag = USF_banking_act_decision_passed
+		}
+		days_remove = 60
+		fire_only_once = yes
+		modifier = {
+			stability_weekly = -0.005
+		}
+		remove_effect = {
+			add_political_power = 150
+			set_temp_variable = {USF_inflation_temp = -1}
+			USF_change_unemployment_effect = yes
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_bank_reform = {
+		available = {
+			political_power_daily > 0.25
+		}
+		visible = {
+			has_country_flag = USF_banking_act_decision_passed
+		}
+		days_remove = 120
+		fire_only_once = yes
+		modifier = {
+			political_power_cost = 0.5
+		}
+		remove_effect = {
+			set_temp_variable = {USF_inflation_temp = -1}
+			USF_change_unemployment_effect = yes
+			custom_effect_tooltip = USF_bank_reform_t
+			set_country_flag = USF_bank_reform_passed
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+
+
+
+	USF_expanisonary_policy = {
+		available = {
+			political_power_daily > 0.1
+		}
+		visible = {
+			has_completed_focus = USF_crush_the_crisis
+		}
+		days_remove = 365
+		modifier = {
+			political_power_cost = 0.33
+			USF_monthly_inflation_modifier = 0.05
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	USF_export_subsidy = {
+		available = {
+			political_power_daily > 0.1
+		}
+		visible = {
+			has_completed_focus = USF_crush_the_crisis
+		}
+		days_remove = 180
+		days_re_enable = 90
+		modifier = {
+			political_power_cost = 0.25
+			USF_monthly_inflation_modifier = 0.03
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+	USF_reorganize_bankrupted_firms = {
+		available = {
+			political_power_daily > 0.3
+		}
+		visible = {
+			has_completed_focus = USF_crush_the_crisis
+		}
+		days_remove = 100
+		fire_only_once = yes
+		modifier = {
+			political_power_cost = 0.6
+		}
+		remove_effect = {
+			add_stability = 0.05
+			set_temp_variable = {USF_unemployment_temp = -3}
+			USF_change_unemployment_effect = yes
+			set_temp_variable = {USF_inflation_temp = 1}
+			USF_change_inflation_effect = yes
+		}
+		ai_will_do = {
+			factor = 10
+		}
+	}
+}
+USF_huge_project_category = {
+	USF_407_mining_complex = {
+		icon = generic_construction
+		highlight_states = {
+			highlight_state_targets = {
+				state = 407
+			}
+		}
+		available = {
+			political_power_daily > 0.25
+			controls_state = 407
+		}
+		visible = {
+			has_completed_focus = USF_public_investment
+		}
+		days_remove = 200
+		fire_only_once = yes
+		modifier = {
+			political_power_cost = 0.5
+			civilian_factory_use = 4
+		}
+		remove_effect = {
+			set_temp_variable = {USF_unemployment_temp = -1.5}
+			USF_change_unemployment_effect = yes
+			407 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+				add_resource = {
+					type = steel
+					amount = 12
+				}
+				add_resource = {
+					type = coal
+					amount = 15
+				}
+				add_resource = {
+					type = tungsten
+					amount = 8
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 100
+		}
+	}
+	USF_approve_the_herbert_dam = {
+		icon = generic_construction
+		highlight_states = {
+			highlight_state_targets = {
+				state = 375
+			}
+		}
+		available = {
+			political_power_daily > 0.25
 			controls_state = 375
 		}
 		visible = {
@@ -1397,7 +1702,7 @@ USF_deal_with_black_foaming_night = {
 			civilian_factory_use = 4
 		}
 		remove_effect = {
-			set_temp_variable = {USF_unemployment_temp = -2}
+			set_temp_variable = {USF_unemployment_temp = -1.5}
 			USF_change_unemployment_effect = yes
 			375 = {
 				add_extra_state_shared_building_slots = 2
@@ -1421,8 +1726,14 @@ USF_deal_with_black_foaming_night = {
 		}
 	}
 	USF_improve_inner_lands_infrastructure = {
+		icon = generic_construction
+		highlight_states = {
+			highlight_state_targets = {
+				state = 411
+			}
+		}
 		available = {
-			political_power_daily > 0
+			political_power_daily > 0.25
 		}
 		visible = {
 			has_completed_focus = USF_reconsider_our_policy
@@ -1433,7 +1744,7 @@ USF_deal_with_black_foaming_night = {
 		}
 		days_remove = 170
 		remove_effect = {
-			set_temp_variable = {USF_unemployment_temp = -3}
+			set_temp_variable = {USF_unemployment_temp = -2}
 			USF_change_unemployment_effect = yes
 			411 = {
 				add_extra_state_shared_building_slots = 1
@@ -1477,222 +1788,19 @@ USF_deal_with_black_foaming_night = {
 			}
 		}
 	}
-	USF_integrate_RUM = {
-		available = {
-			RUM = {
-				is_subject_of = USF
-			}
-		}
-		visible = {
-			has_completed_focus = USF_reconsider_our_policy
-		}
-		fire_only_once = yes
-		modifier = {
-			political_power_cost = 0.15
-		}
-		days_remove = 200
-		remove_effect = {
-			set_temp_variable = {USF_inflation_temp = -1}
-			USF_change_inflation_effect = yes
-			set_autonomy = {
-				target = RUM
-				autonomous_state = USF_territory
-			}
-			RUM = {
-				give_resource_rights = {
-					receiver = USF
-					state = 294
-				}
-				give_resource_rights = {
-					receiver = USF
-					state = 827
-				}
-				give_resource_rights = {
-					receiver = USF
-					state = 828
-				}
-			}
-		}
-	}
-	USF_agricultural_subsidy = {
-		available = {
-			political_power_daily > 0
-		}
-		visible = {
-			has_completed_focus = USF_reconsider_our_policy
-			check_variable = {USF_agricultural_subsidy < 5}
-		}
-		days_remove = 100
-		modifier = {
-			political_power_cost = 0.2
-		}
-		remove_effect = {
-			set_temp_variable = {USF_unemployment_temp = -0.5}
-			USF_change_unemployment_effect = yes
-			set_temp_variable = {USF_inflation_temp = -0.2}
-			USF_change_inflation_effect = yes
-			set_temp_variable = {USF_adp_support_temp = 2}
-			USF_adp_support_effect = yes
-			add_to_variable = {USF_agricultural_subsidy = 1}
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	USF_public_investment_civ = {
-		available = {
-			political_power_daily > 0
-		}
-		visible = {
-			check_variable = {USF_public_investment_civ < 5}
-			has_completed_focus = USF_reconsider_our_policy
-		}
-		days_remove = 100
-		remove_effect = {
-			set_temp_variable = {USF_unemployment_temp = -0.5}
-			USF_change_unemployment_effect = yes
-			random_core_state = {
-				add_extra_state_shared_building_slots = 1
-				add_building_construction = {
-					type = industrial_complex
-					level = 1
-					instant_build = yes
-				}
-			}
-			add_to_variable = {USF_public_investment_civ = 1}
-		}
-	}
-	USF_issue_layoff_restriction_act = {
-		cost = 25
-		visible = {
-			has_completed_focus = USF_strengthen_labor_rights
-			NOT = {has_country_flag = USF_layoff_restriction_act_cancelled}
-		}
-		fire_only_once = yes
-		days_remove = 60
-		complete_effect = {
-			hidden_effect = {
-				country_event = {id = USF.51 days = 30}
-			}
-		}
-		cancel_trigger = {
-			hidden_trigger = {
-				has_country_flag = USF_layoff_restriction_act_cancelled
-			}
-		}
-		remove_effect = {
-			set_temp_variable = {USF_unemployment_temp = -3}
-			USF_change_unemployment_effect = yes
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	USF_close_bankrupted_banks = {
-		visible = {
-			has_country_flag = USF_banking_act_decision_passed
-		}
-		days_remove = 60
-		fire_only_once = yes
-		modifier = {
-			stability_weekly = -0.005
-		}
-		remove_effect = {
-			add_political_power = 150
-			set_temp_variable = {USF_inflation_temp = -1}
-			USF_change_unemployment_effect = yes
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-	USF_bank_reform = {
-		available = {
-			political_power_daily > 0
-		}
-		visible = {
-			has_country_flag = USF_banking_act_decision_passed
-		}
-		days_remove = 120
-		fire_only_once = yes
-		modifier = {
-			political_power_cost = 0.5
-		}
-		remove_effect = {
-			set_temp_variable = {USF_inflation_temp = -1}
-			USF_change_unemployment_effect = yes
-			custom_effect_tooltip = USF_bank_reform_t
-			set_country_flag = USF_bank_reform_passed
-		}
-		ai_will_do = {
-			factor = 100
-		}
-	}
-
-
-
-	USF_expanisonary_policy = {
-		available = {
-			political_power_daily > 0
-		}
-		visible = {
-			has_completed_focus = USF_crush_the_crisis
-		}
-		days_remove = 365
-		modifier = {
-			political_power_cost = 0.33
-			USF_monthly_inflation_modifier = 0.05
-		}
-		ai_will_do = {
-			factor = 10
-		}
-	}
-	USF_export_subsidy = {
-		available = {
-			political_power_daily > 0
-		}
-		visible = {
-			has_completed_focus = USF_crush_the_crisis
-		}
-		days_remove = 180
-		days_re_enable = 90
-		modifier = {
-			political_power_cost = 0.25
-			USF_monthly_inflation_modifier = 0.03
-		}
-		ai_will_do = {
-			factor = 10
-		}
-	}
-	USF_reorganize_bankrupted_firms = {
-		available = {
-			political_power_daily > 0
-		}
-		visible = {
-			has_completed_focus = USF_crush_the_crisis
-		}
-		days_remove = 100
-		fire_only_once = yes
-		modifier = {
-			political_power_cost = 0.6
-		}
-		remove_effect = {
-			add_stability = 0.05
-			set_temp_variable = {USF_unemployment_temp = -3}
-			USF_change_unemployment_effect = yes
-			set_temp_variable = {USF_inflation_temp = 1}
-			USF_change_inflation_effect = yes
-		}
-		ai_will_do = {
-			factor = 10
-		}
-	}
 	USF_start_expressway_1 = {
+		available = {
+			political_power_daily > 0.4
+		}
 		visible = {
 			has_completed_focus = USF_expressways
 		}
+		modifier = {
+			political_power_cost = 1
+		}
 		fire_only_once = yes
-		complete_effect = {
+		days_remove = 30
+		remove_effect = {
 			activate_mission = USF_expressway_1
 		}
 		ai_will_do = {
@@ -1700,11 +1808,17 @@ USF_deal_with_black_foaming_night = {
 		}
 	}
 	USF_start_expressway_2 = {
+		available = {
+			political_power_daily > 0.4
+		}
 		visible = {
 			has_completed_focus = USF_expressways
 		}
+		modifier = {
+			political_power_cost = 1
+		}
 		fire_only_once = yes
-		complete_effect = {
+		remove_effect = {
 			activate_mission = USF_expressway_2
 		}
 		ai_will_do = {
@@ -1712,11 +1826,17 @@ USF_deal_with_black_foaming_night = {
 		}
 	}
 	USF_start_expressway_3 = {
+		available = {
+			political_power_daily > 0.4
+		}
 		visible = {
 			has_completed_focus = USF_expressways
 		}
+		modifier = {
+			political_power_cost = 1
+		}
 		fire_only_once = yes
-		complete_effect = {
+		remove_effect = {
 			activate_mission = USF_expressway_3
 		}
 		ai_will_do = {
@@ -1724,11 +1844,17 @@ USF_deal_with_black_foaming_night = {
 		}
 	}
 	USF_start_expressway_4 = {
+		available = {
+			political_power_daily > 0.4
+		}
 		visible = {
 			has_completed_focus = USF_expressways
 		}
+		modifier = {
+			political_power_cost = 1
+		}
 		fire_only_once = yes
-		complete_effect = {
+		remove_effect = {
 			activate_mission = USF_expressway_4
 		}
 		ai_will_do = {
@@ -1737,19 +1863,16 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_expressway_1 = {
 		icon = mission_icon
-        is_good = yes
+		is_good = yes
 		days_mission_timeout = 180
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
-		modifier = {
-			political_power_cost = 0.3
-		}
 		timeout_effect = {
-			set_temp_variable = {USF_inflation_temp = -2}
+			set_temp_variable = {USF_unemployment_temp = -2}
 			USF_change_unemployment_effect = yes
 			412 = {
 				add_building_construction = {
@@ -1779,19 +1902,16 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_expressway_2 = {
 		icon = mission_icon
-        is_good = yes
+		is_good = yes
 		days_mission_timeout = 200
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
-		modifier = {
-			political_power_cost = 0.3
-		}
 		timeout_effect = {
-			set_temp_variable = {USF_inflation_temp = -2}
+			set_temp_variable = {USF_unemployment_temp = -2}
 			USF_change_unemployment_effect = yes
 			406 = {
 				add_building_construction = {
@@ -1829,19 +1949,16 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_expressway_3 = {
 		icon = mission_icon
-        is_good = yes
+		is_good = yes
 		days_mission_timeout = 200
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
-		modifier = {
-			political_power_cost = 0.3
-		}
 		timeout_effect = {
-			set_temp_variable = {USF_inflation_temp = -2}
+			set_temp_variable = {USF_unemployment_temp = -2}
 			USF_change_unemployment_effect = yes
 			301= {
 				add_building_construction = {
@@ -1879,19 +1996,16 @@ USF_deal_with_black_foaming_night = {
 	}
 	USF_expressway_4 = {
 		icon = mission_icon
-        is_good = yes
+		is_good = yes
 		days_mission_timeout = 180
-        available = {
-            always = no
-        }
+		available = {
+			always = no
+		}
 		activation = {
 			always = no
 		}
-		modifier = {
-			political_power_cost = 0.3
-		}
 		timeout_effect = {
-			set_temp_variable = {USF_inflation_temp = -2}
+			set_temp_variable = {USF_unemployment_temp = -2}
 			USF_change_unemployment_effect = yes
 			356 = {
 				add_building_construction = {
@@ -1921,8 +2035,831 @@ USF_deal_with_black_foaming_night = {
 	}
 }
 
+#干涉彼岸花洋地区
+USF_intervention_in_trans_oceanic_region_category = {
+	#联系自由党
+	USF_contact_liberal_party = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			if = {
+				limit = { is_ai = no }
+				network_strength = {
+					target = OCF
+					value > 25
+				}
+			}
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = USF
+			NOT = { has_global_flag = USF_contact_liberal_party_flag }
+		}
+		cost = 25
+		days_remove = 15
+		remove_effect = {
+			if = {
+				limit = {
+					network_strength = {
+						target = OCF
+						value < 50
+					}
+				}
+				random_list = {
+					25 = { country_event = { id = USF_OCF_intervention.1 } }
+					75 = { country_event = { id = USF_OCF_intervention.2 } }
+				}
+			}
+			else_if = {
+				limit = {
+					network_strength = {
+						target = OCF
+						value < 75
+					}
+				}
+				random_list = {
+					50 = { country_event = { id = USF_OCF_intervention.1 } }
+					50 = { country_event = { id = USF_OCF_intervention.2 } }
+				}
+			}
+			else_if = {
+				limit = {
+					network_strength = {
+						target = OCF
+						value < 100
+					}
+				}
+				random_list = {
+					75 = { country_event = { id = USF_OCF_intervention.1 } }
+					50 = { country_event = { id = USF_OCF_intervention.2 } }
+				}
+			}
+			else = {
+				country_event = { id = USF_OCF_intervention.1 }
+			}
+		}
+	}
+
+
+	#总得有点筹码
+	USF_we_have_have_some_chips = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_contact_liberal_party_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+			}
+		}
+		visible = {
+			original_tag = USF
+			has_global_flag = USF_contact_liberal_party_flag
+			NOT = { has_global_flag = USF_we_have_have_some_chips_flag }
+		}
+		cost = 10
+		days_remove = 15
+		remove_effect = {
+			country_event = { id = USF_OCF_intervention.3 }
+		}
+	}
+
+	#花钱解决问题
+	USF_spending_money_solve_problems = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+		}
+		visible = {
+			original_tag = USF
+		}
+		cost = 50
+		# days_remove = 15
+		days_re_enable = 30
+		remove_effect = {
+
+		}
+		complete_effect = {
+			OCF = {
+				every_state = {
+					limit = {
+						state = ROOT.OCF_select_region_variable
+					}
+					custom_effect_tooltip = OCF_Party_TT_5_2_4_tt
+					add_to_variable = {
+						THIS.OCF_regional_support_rate^4 = 20
+					}
+				}
+			}
+			var:OCF_select_region_variable = {
+				USF_OCF_refresh_regional_support_rate = yes
+			}
+			OCF_refresh_pie_chart_percentage_coordinates = yes
+
+			set_temp_variable = { POC_ppi_temp = 5 }
+			POC_penetration_parliament_increased = yes
+			set_temp_variable = { POC_ima_temp = -10 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_USF_2 = yes
+		}
+	}
+
+	#助力当地选举
+	USF_assist_local_elections = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+		}
+		visible = {
+			original_tag = USF
+
+		}
+		cost = 25
+		# days_remove = 15
+		days_re_enable = 15
+		remove_effect = {
+
+		}
+		complete_effect = {
+			OCF = {
+				every_state = {
+					limit = {
+						state = ROOT.OCF_select_region_variable
+					}
+					custom_effect_tooltip = USF_assist_local_elections_tt
+					add_to_variable = {
+						THIS.OCF_regional_support_rate^4 = 15
+					}
+				}
+			}
+			var:OCF_select_region_variable = {
+				USF_OCF_refresh_regional_support_rate = yes
+			}
+			OCF_refresh_pie_chart_percentage_coordinates = yes
+
+			set_temp_variable = { POC_ima_temp = 3 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_USF_1 = yes
+		}
+	}
+
+	#非政府组织定向援助
+	USF_targeted_assistance_from_non_governmental_organizations = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+			set_temp_variable = { temp_alert_detection = 60 }
+			USF_alert_detection_greater_than_trigger = yes
+		}
+		visible = {
+			original_tag = USF
+
+		}
+		cost = 25
+		# days_remove = 15
+		days_re_enable = 15
+		remove_effect = {
+
+		}
+		complete_effect = {
+			OCF_refresh_pie_chart_percentage_coordinates = yes
+
+			set_temp_variable = { POC_ima_temp = -8 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_USF_1 = yes
+		}
+	}
+
+	#学术 / 文化交流合作
+	USF_academic_cultural_exchange_cooperation = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+
+			set_temp_variable = { temp_alert_detection = 50 }
+			USF_alert_detection_less_than_trigger = yes
+		}
+		visible = {
+			original_tag = USF
+
+		}
+		cost = 25
+		days_remove = 30
+		days_re_enable = 45
+		remove_effect = {
+			OCF_refresh_pie_chart_percentage_coordinates = yes
+
+			set_temp_variable = { POC_ima_temp = 2 }
+			POC_increase_military_alertness = yes
+			POC_increase_influence_USF_2 = yes
+		}
+		complete_effect = {
+
+		}
+	}
+
+
+	#军官专业交流计划
+	USF_officer_professional_exchange_program = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			network_strength = {
+				target = OCF
+				value > 40
+			}
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+
+			set_temp_variable = { temp_alert_detection = 50 }
+			USF_alert_detection_greater_than_trigger = yes
+		}
+		visible = {
+			original_tag = USF
+
+		}
+		cost = 15
+		days_remove = 15
+		days_re_enable = 25
+		remove_effect = {
+			random_list = {
+				85 = { country_event = { id = USF_OCF_intervention.4 } }
+				15 = { country_event = { id = USF_OCF_intervention.5 } }
+			}
+		}
+		complete_effect = {
+
+		}
+	}
+
+	#媒体爆料
+	USF_media_exposure = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			network_strength = {
+				target = OCF
+				value > 40
+			}
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+
+			set_temp_variable = { temp_parliamentary_mastery = 80 }
+			USF_parliamentary_mastery_less_than_trigger = yes
+		}
+		visible = {
+			original_tag = USF
+
+		}
+		cost = 10
+		# days_remove = 15
+		days_re_enable = 25
+		remove_effect = {
+
+		}
+		complete_effect = {
+			POC_reduce_influence_OCF_3 = yes
+			set_temp_variable = { POC_ima_temp = 5 }
+			set_temp_variable = { POC_ppi_temp = 5 }
+			POC_penetration_parliament_increased = yes
+			POC_increase_military_alertness = yes
+		}
+	}
+
+	#媒体爆料
+	USF_media_exposure = {
+		ai_will_do = {
+			factor = 100
+		}
+		available = {
+			has_global_flag = USF_we_have_have_some_chips_flag
+			network_strength = {
+				target = OCF
+				value > 40
+			}
+			OR = {
+				226 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				825 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+				934 = {
+					controller = {
+						OR = {
+							is_ally_with = ROOT
+							original_tag = ROOT
+						}
+					}
+				}
+			}
+			is_major = yes
+			NOT = { has_war_with = OCF }
+			NOT = { is_ally_with = OCF }
+			OCF = {
+				NOT = { has_country_flag = OCF_control_government_flag_1 }
+				NOT = { has_country_flag = OCF_control_government_flag_2 }
+				NOT = { has_country_flag = OCF_control_government_flag_4 }
+				NOT = { has_country_flag = OCF_abolition_parliament_tt_3_flag }
+				controls_state = ROOT.OCF_select_region_variable
+			}
+
+			set_temp_variable = { temp_parliamentary_mastery = 80 }
+			USF_parliamentary_mastery_less_than_trigger = yes
+		}
+		visible = {
+			original_tag = USF
+
+		}
+		cost = 10
+		# days_remove = 15
+		days_re_enable = 25
+		remove_effect = {
+
+		}
+		complete_effect = {
+			POC_reduce_influence_OCF_3 = yes
+			set_temp_variable = { POC_ima_temp = 5 }
+			set_temp_variable = { POC_ppi_temp = 5 }
+			POC_penetration_parliament_increased = yes
+			POC_increase_military_alertness = yes
+		}
+	}
+}
+
 #对外政策
 USF_foreign_policy_category = {
+	USF_final_war_with_SLL = {
+		available = {
+			country_exists = SLL
+			NOT = {
+				is_ally_with = SLL
+				has_war_with = SLL
+				has_government = neutrality
+				has_government = reactionism
+			}
+			date > 3097.1.1
+		}
+		visible = {
+			has_completed_focus = USF_MOH
+			NOT = {
+				has_government = neutrality
+				has_government = reactionism
+			}
+		}
+		fire_only_once = yes
+		days_remove = 30
+		war_with_on_remove = SLL
+		remove_effect = {
+			declare_war_on = {
+				target = SLL
+				type = annex_everything
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
+	USF_integrate_RUM = {
+		available = {
+			RUM = {
+				is_subject_of = USF
+			}
+		}
+		visible = {
+			has_completed_focus = USF_reconsider_our_policy
+		}
+		fire_only_once = yes
+		modifier = {
+			political_power_cost = 0.15
+		}
+		days_remove = 200
+		remove_effect = {
+			set_temp_variable = {USF_inflation_temp = -1}
+			USF_change_inflation_effect = yes
+			set_autonomy = {
+				target = RUM
+				autonomous_state = USF_territory
+			}
+			RUM = {
+				give_resource_rights = {
+					receiver = USF
+					state = 294
+				}
+				give_resource_rights = {
+					receiver = USF
+					state = 827
+				}
+				give_resource_rights = {
+					receiver = USF
+					state = 828
+				}
+			}
+		}
+	}
+	USF_support_USR = {
+		available = {
+			country_exists = USR
+			USR = {
+				any_enemy_country = {
+					OR = {
+						tag = SLL
+						AND = {
+							has_idea = mana_priority
+							is_major = yes
+						}
+					}
+				}
+			}
+			NOT = {
+				has_war_with = USR
+			}
+			NOT = {
+				has_government = neutrality
+			}
+			NOT = {
+				has_government = reactionism
+			}
+		}
+		visible = {
+			has_completed_focus = USF_MOH
+			NOT = {
+				has_government = neutrality
+			}
+			NOT = {
+				has_government = reactionism
+			}
+		}
+		fire_only_once = yes
+		cost = 30
+		days_remove = 30
+		remove_effect = {
+			add_cic = 5000
+			USR = {
+				country_event = {id = USF.54}
+			}
+			add_relation_modifier = {
+				target = USR
+				modifier = USF_send_volunteers_tension
+			}
+			add_ai_strategy = {
+				type = send_volunteers_desire
+				id = USR
+				value = 1000
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+
+	}
+	USF_USR_anti_SLL_pact = {
+		available = {
+			country_exists = USR
+			OR = {
+				date > 3096.1.1
+				threat > 0.74
+			}
+			NOT = {
+				is_ally_with = SLL
+			}
+			USR = {
+				NOT = {
+					is_ally_with = SLL
+				}
+			}
+			NOT = {
+				has_war_with = USR
+			}
+			NOT = {
+				has_government = neutrality
+			}
+			NOT = {
+				has_government = reactionism
+			}
+		}
+		visible = {
+			has_completed_focus = USF_MOH
+			NOT = {
+				has_government = neutrality
+			}
+			NOT = {
+				has_government = reactionism
+			}
+		}
+		fire_only_once = yes
+		cost = 30
+		days_remove = 30
+		remove_effect = {
+			USR = {
+				country_event = {id = USF.55}
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
 	#召回麦克阿瑟
 	USF_recall_macarthur = {
 		icon = generic_army_support
@@ -1933,11 +2870,16 @@ USF_foreign_policy_category = {
 		# 	}
 		# }
 		visible = {
-			NOT = { has_character = USF_General_Douglas_MacArthur }
+			OR = {
+				NOT = { has_character = USF_General_Douglas_MacArthur }
+				NOT = { has_character = USF_Clifford_Ishaumer }
+				NOT = { has_character = USF_Kyumin_Harman }
+			}
 			# BRG = { has_character = USF_General_Douglas_MacArthur }
+			# NOT = { has_global_flag = global_macArthur_was_assassinated_flag }
 		}
 		available = {
-			NOT = { has_character = USF_General_Douglas_MacArthur }
+			# NOT = { has_character = USF_General_Douglas_MacArthur }
 			# NOT = { country_exists = BRG }
 			all_country_with_original_tag = {
 				original_tag_to_check = BRG
@@ -1947,43 +2889,82 @@ USF_foreign_policy_category = {
 		}
 		complete_effect = {
 			BRG = {
-				USF_General_Douglas_MacArthur = { set_nationality = ROOT }
-				custom_effect_tooltip = available_chief_of_army
-				show_ideas_tooltip = USF_General_Douglas_MacArthur
+				set_global_flag = BRG_macarthur_returned_home_country_flag
+				if = {
+					limit = { ROOT = { NOT = { has_character = USF_General_Douglas_MacArthur } } }
+					USF_General_Douglas_MacArthur = {
+						set_nationality = ROOT
+						if = {
+							limit = { has_trait = disgruntled }
+							remove_unit_leader_trait = disgruntled
+						}
+					}
+				}
+
+				if = {
+					limit = { ROOT = { NOT = { has_character = USF_Clifford_Ishaumer } } }
+					USF_Clifford_Ishaumer = {
+						set_nationality = ROOT
+						if = {
+							limit = { has_trait = disgruntled }
+							remove_unit_leader_trait = disgruntled
+						}
+					}
+				}
+				if = {
+					limit = { ROOT = { NOT = { has_character = USF_Kyumin_Harman } } }
+					USF_Kyumin_Harman = { set_nationality = ROOT }
+				}
+
+				if = {
+					limit = { ROOT = { NOT = { has_character = USF_General_Douglas_MacArthur } } }
+					custom_effect_tooltip = available_chief_of_army
+					show_ideas_tooltip = USF_General_Douglas_MacArthur
+				}
+				if = {
+					limit = { ROOT = { NOT = { has_character = USF_Clifford_Ishaumer } } }
+					custom_effect_tooltip = available_chief_of_army
+					show_ideas_tooltip = USF_Clifford_Ishaumer
+				}
+				if = {
+					limit = { ROOT = { NOT = { has_character = USF_Kyumin_Harman } } }
+					custom_effect_tooltip = available_chief_of_navy
+					show_ideas_tooltip = USF_Kyumin_Harman
+				}
 			}
 		}
 		ai_will_do = {
-            base = 100
-        }
+			base = 100
+		}
 	}
 	#跟你爆了
-    USF_break_treaty_of_kinitani = {
-        available = {
-            has_idea = USF_treaty_of_kiritani
+	USF_break_treaty_of_kinitani = {
+		available = {
+			has_idea = USF_treaty_of_kiritani
 			NOT = {has_country_flag = recently_signed_treaty_of_kinitani}
-        }
+		}
 		visible = {
 			has_idea = USF_treaty_of_kiritani
 		}
-        cost = 150
-        days_remove = 15
-        remove_effect = {
-            remove_ideas = USF_treaty_of_kiritani
-            add_named_threat = {
-                threat = 10
-                name = USF_treaty_of_kiritani_broken
-            }
-            custom_effect_tooltip = AKL_will_cause_problem
-            hidden_effect = {
-                USF = {
-                    country_event = {id = AKL.36 days = 3}
-                }
-            }
-        }
-        ai_will_do = {
-            factor = 0
-        }
-    }
+		cost = 150
+		days_remove = 15
+		remove_effect = {
+			remove_ideas = USF_treaty_of_kiritani
+			add_named_threat = {
+				threat = 10
+				name = USF_treaty_of_kiritani_broken
+			}
+			custom_effect_tooltip = AKL_will_cause_problem
+			hidden_effect = {
+				USF = {
+					country_event = {id = AKL.36 days = 3}
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 0
+		}
+	}
 	#维持南方平衡
 	USF_SAS_affair = {
 		available = {
@@ -2046,7 +3027,7 @@ USF_foreign_policy_category = {
 				add_manpower = 1000
 				USF = {
 					send_equipment = {
-                    	equipment = infantry_equipment
+						equipment = infantry_equipment
 						amount = 2000
 						target = PREV
 					}
@@ -2140,6 +3121,11 @@ USF_foreign_policy_category = {
 				OR = {
 					has_capitulated = yes
 					exists = no
+				}
+			}
+			NAC = {
+				NOT = {
+					has_idea = IKR_treaty_of_west_Istabul
 				}
 			}
 		}
@@ -2308,7 +3294,7 @@ USF_foreign_policy_category = {
 					}
 				}
 			}
-			
+
 		}
 		ai_will_do = {
 			factor = 10
@@ -2392,12 +3378,12 @@ USF_foreign_policy_category = {
 	#进发早樱
 	USF_send_the_black_ship = {
 		available = {
-			SKR = {
-				exists = yes
-				is_subject = no
-			}
-			NOT = {
-				has_war_with = SKR
+			393 = {
+				owner = {
+					NOT = {
+						has_war_with = USF
+					}
+				}
 			}
 		}
 		visible = {
@@ -2427,6 +3413,7 @@ USF_foreign_policy_category = {
 				AND = {
 					controls_state = 226
 					controls_state = 825
+					controls_state = 934
 				}
 			}
 
@@ -2438,31 +3425,49 @@ USF_foreign_policy_category = {
 		days_remove = 70
 		fire_only_once = yes
 		remove_effect = {
-			#TODO
+			add_state_core = 226
+			add_state_core = 825
+			add_state_core = 934
+			every_country = {
+				limit = {
+					original_tag = BRG
+					is_subject_of = USF
+				}
+				root = {
+					annex_country = { target = PREV transfer_troops = yes }
+				}
+				transfer_navy = {
+					target = root
+				}
+				send_equipment_fraction = {
+					value = 1
+					target = root
+				}
+			}
 		}
 		ai_will_do = {
-			factor = 0
+			factor = 1
 		}
 	}
 	#干涉大洋选举
-	USF_interfere_OCF_election = {
-		available = {
-			#TODO
-		}
-		visible = {
-			has_completed_focus = USF_western_plans
-			country_exists = OCF
-		}
-		cost = 50
-		days_remove = 70
-		fire_only_once = yes
-		remove_effect = {
-			#TODO
-		}
-		ai_will_do = {
-			factor = 0
-		}
-	}
+	# USF_interfere_OCF_election = {
+	# 	available = {
+	# 		#TODO
+	# 	}
+	# 	visible = {
+	# 		has_completed_focus = USF_western_plans
+	# 		country_exists = OCF
+	# 	}
+	# 	cost = 50
+	# 	days_remove = 70
+	# 	fire_only_once = yes
+	# 	remove_effect = {
+	# 		#TODO
+	# 	}
+	# 	ai_will_do = {
+	# 		factor = 0
+	# 	}
+	# }
 	#东美乐蒂桥头堡
 	USF_control_eastern_Melody = {
 		available = {
@@ -2479,41 +3484,41 @@ USF_foreign_policy_category = {
 			set_country_flag = USF_econ_sphere_chess_9_visible_flag
 		}
 		ai_will_do = {
-			factor = 0
+			factor = 1
 		}
 	}
 }
 
 USF_deal_with_pandemic_category = {
 	USF_deal_with_pandemic = {
-        state_target = yes
-        target_root_trigger = {
-            has_country_flag = USF_allow_deal_with_pandemic
-        }
-        highlight_state_targets = {
-            state = FROM
-        }
-        target_array = USF.pandemic_states
-        target_trigger = {
-            FROM = {
-                is_owned_by = ROOT
-                has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
-            }
-        }
-        cost = 30
-        days_remove = 60
-        remove_effect = {
-            FROM = {
-                remove_dynamic_modifier = {modifier = USF_pandemic scope = USF}
-            }
-            set_temp_variable = {USF_unemployment_temp = -0.3}
+		state_target = yes
+		target_root_trigger = {
+			has_country_flag = USF_allow_deal_with_pandemic
+		}
+		highlight_state_targets = {
+			state = FROM
+		}
+		target_array = USF.pandemic_states
+		target_trigger = {
+			FROM = {
+				is_owned_by = ROOT
+				has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+			}
+		}
+		cost = 30
+		days_remove = 60
+		remove_effect = {
+			FROM = {
+				remove_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+			}
+			set_temp_variable = {USF_unemployment_temp = -0.3}
 			USF_change_unemployment_effect = yes
 			add_to_variable = {USF.USF_pandemic_count = -1}
-        }
-        ai_will_do = {
-            base = 1
-        }
-    }
+		}
+		ai_will_do = {
+			base = 1
+		}
+	}
 }
 USF_rnd_category = {
 	USF_rnd_industrial_bonus = {
@@ -2663,7 +3668,7 @@ USF_market_thawing_category = {
 	USF_market_thawing_mission = {
 		icon = mission_icon
 		on_map_mode = decision_view_only
-        is_good = no
+		is_good = no
 		days_mission_timeout = 365
 		highlight_states = {
 			highlight_states_trigger = {
@@ -2672,11 +3677,11 @@ USF_market_thawing_category = {
 				infrastructure < 5
 			}
 		}
-        available = {
-            all_core_state = {
+		available = {
+			all_core_state = {
 				infrastructure > 4
 			}
-        }
+		}
 		activation = {
 			always = no
 		}
@@ -2744,11 +3749,51 @@ USF_kays_ambition_category = {
 		}
 	}
 }
+USF_USR_anti_SLL_pact_category = {
+	Anti_SLL_pact_summon_ally = {
+		available = {
+			has_war_with = SLL
+			any_country = {
+				has_idea = USF_USR_anti_SLL_pact_idea
+				NOT = {
+					has_war_with = SLL
+				}
+			}
+		}
+		visible = {
+			has_war_with = SLL
+			any_country = {
+				has_idea = USF_USR_anti_SLL_pact_idea
+				NOT = {
+					has_war_with = SLL
+				}
+			}
+		}
+		complete_effect = {
+			every_country = {
+				limit = {
+					has_idea = USF_USR_anti_SLL_pact_idea
+					NOT = {
+						has_war_with = SLL
+					}
+				}
+				add_to_war = {
+					targeted_alliance = ROOT
+					enemy = SLL
+					hostility_reason = asked_to_join
+				}
+			}
+		}
+		ai_will_do = {
+			factor = 1000
+		}
+	}
+}
 USF_debug = {
 	SKR_crisis_debug = {
 		complete_effect = {
 			set_country_flag = SKR_crisis_debug
-		}	
+		}
 	}
 	USF_annex_LUA_and_USN = {
 		complete_effect = {
@@ -2802,7 +3847,7 @@ USF_debug = {
 			has_country_flag = USF_city_03_action_4_flag
 		}
 		complete_effect = {
-			
+
 		}
 	}
 	USF_econ_sphere_p_debug = {

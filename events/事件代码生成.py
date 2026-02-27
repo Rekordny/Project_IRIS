@@ -1,14 +1,14 @@
 def generate_hoi4_event_code(event_number):
     return f"""country_event = {{#
-    id = USF.{event_number}
-    title = USF.{event_number}.t
-    desc = USF.{event_number}.desc
-    #picture = GFX_event_USF_{event_number}
+    id = USF_parties.{event_number}
+    title = USF_parties.{event_number}.t
+    desc = USF_parties.{event_number}.desc
+    #picture = GFX_event_USF_parties_{event_number}
     is_triggered_only = yes
     fire_only_once = yes
 
     option = {{
-        name = USF.{event_number}.a
+        name = USF_parties.{event_number}.a
 
         ai_chance = {{
             base = 10
@@ -17,9 +17,9 @@ def generate_hoi4_event_code(event_number):
 }}"""
 #文本自己改
 def generate_localization(event_number):
-    return f""" USF.{event_number}.t: ""
- USF.{event_number}.desc: ""
- USF.{event_number}.a: ""
+    return f""" USF_parties.{event_number}.t: ""
+ USF_parties.{event_number}.desc: ""
+ USF_parties.{event_number}.a: ""
 """
 #文本自己改
 def generate_content(mode, min_event_num, max_event_num):
@@ -60,9 +60,9 @@ def main():
         return
     
     if mode == "1":
-        output_filename = f"USF_events_{min_event}_to_{max_event}.txt"
+        output_filename = f"USF_parties_events_{min_event}_to_{max_event}.txt"
     else:
-        output_filename = f"USF_localization_{min_event}_to_{max_event}.yml"
+        output_filename = f"USF_parties_localization_{min_event}_to_{max_event}.yml"
     
     with open(output_filename, "w", encoding="utf-8") as file:
         file.write(content)

@@ -140,31 +140,35 @@ USF_refresh_congress = {
 
             set_variable = {USF_nay = 314}#计算反对
             subtract_from_variable = {USF_nay = USF_yea}
-
+            #先算支持率再修正
             set_variable = {USF_adp_approval_rate = USF_adp_support}#计算党派支持率
+            divide_variable = {USF_adp_approval_rate = USF_adp_seat}
             set_variable = {USF_adp_approval_rate_m = 1}
             add_to_variable = {USF_adp_approval_rate_m = modifier@USF_adp_approval_rate_modifier}
             multiply_variable = {USF_adp_approval_rate = USF_adp_approval_rate_m}
             #round_variable = USF_adp_approval_rate
-            divide_variable = {USF_adp_approval_rate = USF_adp_seat}
+            
             set_variable = {USF_ilp_approval_rate = USF_ilp_support}#计算党派支持率
             divide_variable = {USF_ilp_approval_rate = USF_ilp_seat}
             set_variable = {USF_ilp_approval_rate_m = 1}
             add_to_variable = {USF_ilp_approval_rate_m = modifier@USF_ilp_approval_rate_modifier}
             multiply_variable = {USF_ilp_approval_rate = USF_ilp_approval_rate_m}
             #round_variable = USF_ilp_approval_rate
+
             set_variable = {USF_unf_approval_rate = USF_unf_support}#计算党派支持率
+            divide_variable = {USF_unf_approval_rate = USF_unf_seat}
             set_variable = {USF_unf_approval_rate_m = 1}
             add_to_variable = {USF_unf_approval_rate_m = modifier@USF_unf_approval_rate_modifier}
             multiply_variable = {USF_unf_approval_rate = USF_unf_approval_rate_m}
             #round_variable = USF_unf_approval_rate
-            divide_variable = {USF_unf_approval_rate = USF_unf_seat}
+            
             set_variable = {USF_icp_approval_rate = USF_icp_support}#计算党派支持率
             divide_variable = {USF_icp_approval_rate = USF_icp_seat}
             set_variable = {USF_icp_approval_rate_m = 1}
             add_to_variable = {USF_icp_approval_rate_m = modifier@USF_icp_approval_rate_modifier}
             multiply_variable = {USF_icp_approval_rate = USF_icp_approval_rate_m}
             #round_variable = USF_icp_approval_rate
+            
             set_variable = {USF_slo_approval_rate = USF_slo_support}#计算党派支持率
             divide_variable = {USF_slo_approval_rate = USF_slo_seat}
             set_variable = {USF_slo_approval_rate_m = 1}
@@ -627,6 +631,46 @@ USF_passing_cost_when_protection_is_valid = {
     }
     
 }
+
+USF_passing_cost_when_insufficient_support_imporant = {
+    if = {
+        limit = {
+            NOT = {
+                has_idea = USF_act_protection
+                has_idea = USF_truly_united_congress
+            }
+            check_variable = {USF_passing_rate < 0.5}
+        }
+        custom_effect_tooltip = USF_passing_cost_when_insufficient_support_desc
+        add_political_power = -90
+    }
+}
+USF_passing_cost_when_insufficient_support_sub = {
+    if = {
+        limit = {
+            NOT = {
+                has_idea = USF_act_protection
+                has_idea = USF_truly_united_congress
+            }
+            check_variable = {USF_passing_rate < 0.5}
+        }
+        custom_effect_tooltip = USF_passing_cost_when_insufficient_support_desc
+        add_political_power = -60
+    }
+}
+USF_passing_cost_when_insufficient_support_minor = {
+    if = {
+        limit = {
+            NOT = {
+                has_idea = USF_act_protection
+                has_idea = USF_truly_united_congress
+            }
+            check_variable = {USF_passing_rate < 0.5}
+        }
+        custom_effect_tooltip = USF_passing_cost_when_insufficient_support_desc
+        add_political_power = -30
+    }
+}
 #大选结果
 USF_election_effect = {
     custom_effect_tooltip = USF_election_effect_t
@@ -638,11 +682,12 @@ USF_election_effect = {
                 }
                 if = {
                     limit = {
-                        democratic > 0.5
-                        neutrality < 0.3
-                        communism < 0.3
-                        fascism < 0.3
-                        reactionism < 0.3
+                        always = yes
+                        #democratic > 0.5
+                        #neutrality < 0.3
+                        #communism < 0.3
+                        #fascism < 0.3
+                        #reactionism < 0.3
                     }
                     #连任
                     country_event = {id = USF_election.2}
@@ -792,25 +837,49 @@ USF_refresh_black_foaming_night_modifier = {
         divide_variable = {USF_unemployment_t = 100}
         set_variable = {USF_conscription_factor = USF_unemployment_t}
         set_variable = {USF_production_factory_max_efficiency_factor = USF_unemployment_t}
+
+        if = {
+            limit = {
+                USF_can_end_black_foaming_night_trigger = yes
+                NOT = {has_country_flag = USF_back_to_normal}
+            }
+            set_country_flag = USF_back_to_normal
+            country_event = {id = USF.999}
+        }
     }
 }
 
 USF_change_inflation_effect = {
-    custom_effect_tooltip = USF_change_inflation_desc
-    hidden_effect = {
-        USF = {
-            add_to_variable = {USF_inflation = USF_inflation_temp}
-            USF_refresh_black_foaming_night_modifier = yes
+    if = {
+        limit = {
+            has_dynamic_modifier = {modifier = USF_black_foaming_night}
+        }
+        custom_effect_tooltip = USF_change_inflation_desc
+        hidden_effect = {
+            USF = {
+                add_to_variable = {USF_inflation = USF_inflation_temp}
+                USF_refresh_black_foaming_night_modifier = yes
+            }
         }
     }
 }
 
 USF_change_unemployment_effect = {
-    custom_effect_tooltip = USF_change_unemployment_desc
-    hidden_effect = {
-        USF = {
-            add_to_variable = {USF_unemployment = USF_unemployment_temp}
-            USF_refresh_black_foaming_night_modifier = yes
+    if = {
+        limit = {
+            has_dynamic_modifier = {modifier = USF_black_foaming_night}
+        }
+        custom_effect_tooltip = USF_change_unemployment_desc
+        hidden_effect = {
+            USF = {
+                add_to_variable = {USF_unemployment = USF_unemployment_temp}
+                clamp_variable = {
+                    var = USF_unemployment
+                    max = 100
+                    min = 2
+                }
+                USF_refresh_black_foaming_night_modifier = yes
+            }
         }
     }
 }
@@ -898,6 +967,11 @@ USF_refresh_encourage_investment_result = {
     set_variable = {USF_constructed_civilian_factories_d = USF.total_constructed_civilian_factory}
     subtract_from_variable = {USF_constructed_civilian_factories_d = USF_constructed_civilian_factories_1}
     set_variable = {USF_investment_pp_gain_d = USF_constructed_civilian_factories_d}
+    clamp_variable = {
+        var = USF_investment_pp_gain_d
+        min = 0
+        max = 5
+    }
     multiply_variable = {USF_investment_pp_gain_d = 30}
     set_variable = {USF_investment_unemployment_gain_d = USF_constructed_civilian_factories_d}
     multiply_variable = {USF_investment_unemployment_gain_d = -0.5}
@@ -939,9 +1013,11 @@ USF_pandemic_spread = {
         if = {
             limit = {
                 any_core_state = {
+                    is_owned_and_controlled_by = USF
                     has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
                     any_neighbor_state = {
                         is_core_of = USF
+                        is_owned_and_controlled_by = USF
                         NOT = {has_state_category = wasteland}
                         NOT = {has_state_category = enclave}
                         NOT = {has_state_category = small_island}
@@ -953,10 +1029,21 @@ USF_pandemic_spread = {
             random_core_state = {
                 limit = {
                     has_dynamic_modifier = {modifier = USF_pandemic scope = USF}
+                    is_owned_and_controlled_by = USF
+                    any_neighbor_state = {
+                        is_core_of = USF
+                        is_owned_and_controlled_by = USF
+                        NOT = {has_state_category = wasteland}
+                        NOT = {has_state_category = enclave}
+                        NOT = {has_state_category = small_island}
+                        NOT = {has_state_category = tiny_island}
+                        NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
+                    }
                 }
                 random_neighbor_state = {
                     limit = {
                         is_core_of = USF
+                        is_owned_and_controlled_by = USF
                         NOT = {has_state_category = wasteland}
                         NOT = {has_state_category = enclave}
                         NOT = {has_state_category = small_island}
@@ -964,9 +1051,9 @@ USF_pandemic_spread = {
                         NOT = {has_dynamic_modifier = {modifier = USF_pandemic scope = USF}}
                     }
                     save_event_target_as = USF_pandemic_target
-                    log = "USF疫情扩散目标为：[USF_pandemic_target.GetName]"
                 }
             }
+            log = "USF疫情扩散目标为：[USF_pandemic_target.GetName]"
         }
     }   
 }
@@ -1213,8 +1300,23 @@ USF_kay_var_check = {
 }
 #内战初始化
 USF_kay_civ_war_setup = {
-    #补一个事件
     USF = {
+        country_event = {id = USF_civ_war.9 days = 3}
+        if = {
+            limit = {
+                has_idea = USF_laissez_faire
+            }
+            add_ideas = civilian_economy
+        }
+        if = {
+            limit = {
+                NOT = {
+                    has_completed_focus = USF_military_expansion
+                }
+            }
+            complete_national_focus = USF_military_expansion
+        }
+        country_lock_all_division_template = no
         set_global_flag = USF_CIV_WAR_STARTED
         end_puppet = LUA
         every_owned_state = {
@@ -1225,9 +1327,31 @@ USF_kay_civ_war_setup = {
                     region = 30
                 }
                 is_coastal = no
+                is_owned_and_controlled_by = USF
             }
             transfer_state_to = UAS
             add_core_of = UAS
+        }
+        #如果整合了路易斯安娜，则获得一部分路易斯安娜地块
+        for_loop_effect = {
+            start = 0
+            end = 4
+            if = {
+                limit = {
+                    any_state = {
+                        is_core_of = LUA
+                        is_owned_and_controlled_by = USF
+                    }
+                }
+                random_owned_controlled_state = {
+                    limit = {
+                        is_core_of = LUA
+                        is_coastal = no
+                    }
+                    transfer_state_to = UAS
+                    add_core_of = UAS
+                }
+            }
         }
         delete_unit_template_and_units = {
             division_template = "机械化航空魔导团"
@@ -1787,14 +1911,15 @@ USF_econ_sphere_button_2_click_effect = {
         add_to_variable = {USF_econ_sphere_available_points = -1}
         meta_effect = {
             text = {
-                set_variable = {USF_econ_sphere_pp_gain = [CITY]_p}
+                set_temp_variable = {USF_econ_sphere_pp_gain = [CITY]_p}
                 set_country_flag = {flag = [CITY]_action_2_flag value = 1 days = 90}
             }
             CITY = "[?USF_econ_sphere_target.GetTokenKey]"
         }
-        multiply_variable = {USF_econ_sphere_pp_gain = 0.3}
-        round_variable = USF_econ_sphere_pp_gain
+        
+        #round_variable = USF_econ_sphere_pp_gain
     }
+    multiply_temp_variable = {USF_econ_sphere_pp_gain = 0.3}
     add_political_power = USF_econ_sphere_pp_gain
 }
 
@@ -1969,6 +2094,12 @@ USF_econ_sphere_available_points_monthly_update = {
                 }
             }
             add_to_variable = {USF_econ_sphere_available_points = 1}#莲门奖励
+        }
+
+        clamp_variable = {
+            var = USF_econ_sphere_available_points
+            min = 0
+            max = USF_econ_sphere_available_points_limit
         }
     }
 }

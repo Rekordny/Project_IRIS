@@ -1,0 +1,1504 @@
+#丰矿的造船gui，每个级别都是一个数组，储存该级别舰船token；船只类型数组储存之前船只级别数组的token，这是一个伪数组套数组。具体方式就是先从一个数组里头抽数组token，然后从抽到token的数组里面抽船
+
+KNK_shipbuild_setup = {
+    set_variable = {KNK_fuel_limit = 3000}
+    set_variable = {KNK_ammo_limit = 3000}
+    set_variable = {KNK_steel_limit = 3000}
+    set_variable = {KNK_alum_limit = 3000}
+    set_variable = {KNK_tech_limit = 30} 
+    set_variable = {KNK_HQ_level_limit = 10}
+    KNK_array_setup = yes
+    KNK_pool_of_pools_setup = yes
+    KNK_time_setup = yes
+}
+
+KNK_test = {
+    KNK_shipbuild_setup = yes
+    set_variable = {KNK_fuel = 3000}
+    set_variable = {KNK_ammo = 3000}
+    set_variable = {KNK_steel = 3000}
+    set_variable = {KNK_alum = 3000}
+    set_variable = {KNK_tech = 100}
+    set_country_flag = KNK_dock3_available
+    set_country_flag = KNK_dock4_available
+}
+
+KNK_tip_effect = {
+    set_variable_to_random = {
+        var = KNK_tip_var
+        max = 10
+        min = 0
+        integer = yes
+    }
+}
+
+KNK_clamp_input = {
+    if = {
+        limit = {
+            check_variable = {var = KNK_fuel value = 999 compare = greater_than_or_equals}
+        }
+        clamp_variable = {
+            var = KNK_fuel_input
+            max = 999
+            min = 0
+        }
+    }
+    else = {
+        clamp_variable = {
+            var = KNK_fuel_input
+            max = KNK_fuel
+            min = 0
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {var = KNK_ammo value = 999 compare = greater_than_or_equals}
+        }
+        clamp_variable = {
+            var = KNK_ammo_input
+            max = 999
+            min = 0
+        }
+    }
+    else = {
+        clamp_variable = {
+            var = KNK_ammo_input
+            max = KNK_ammo
+            min = 0
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {var = KNK_steel value = 999 compare = greater_than_or_equals}
+        }
+        clamp_variable = {
+            var = KNK_steel_input
+            max = 999
+            min = 0
+        }
+    }
+    else = {
+        clamp_variable = {
+            var = KNK_steel_input
+            max = KNK_steel
+            min = 0
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {var = KNK_alum value = 999 compare = greater_than_or_equals}
+        }
+        clamp_variable = {
+            var = KNK_alum_input
+            max = 999
+            min = 0
+        }
+    }
+    else = {
+        clamp_variable = {
+            var = KNK_alum_input
+            max = KNK_alum
+            min = 0
+        }
+    }
+}
+
+KNK_update_shipbuild_progress = {
+    hidden_effect = {
+        meta_effect = {
+            text = {
+                set_variable = {KNK_dock[KNK_DOCK_VAR]_p_2 = KNK_dock[KNK_DOCK_VAR]_days}
+                set_variable = {KNK_dock[KNK_DOCK_VAR]_p_3 = KNK_dock[KNK_DOCK_VAR]_days}
+                set_variable = {KNK_dock[KNK_DOCK_VAR]_p_4 = KNK_dock[KNK_DOCK_VAR]_days}
+                multiply_variable = {KNK_dock[KNK_DOCK_VAR]_p_2 = 0.75}
+                round_variable = KNK_dock[KNK_DOCK_VAR]_p_2
+                multiply_variable = {KNK_dock[KNK_DOCK_VAR]_p_3 = 0.5}
+                round_variable = KNK_dock[KNK_DOCK_VAR]_p_3
+                multiply_variable = {KNK_dock[KNK_DOCK_VAR]_p_4 = 0.3}
+                round_variable = KNK_dock[KNK_DOCK_VAR]_p_4
+            }
+            KNK_DOCK_VAR = "[?KNK_dock_var]"
+        }
+    }
+}
+
+KNK_shipbuild_countdown = {
+    if = {
+        limit = {
+            check_variable = {KNK_dock1_days > 0}
+        }
+        add_to_variable = {KNK_dock1_days = -1}
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock1_days value = KNK_dock1_p_2 compare = less_than_or_equals}
+                check_variable = {KNK_dock1_p = 0}
+            }
+            add_to_variable = {KNK_dock1_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock1_days value = KNK_dock1_p_3 compare = less_than_or_equals}
+                check_variable = {KNK_dock1_p = 1}
+            }
+            add_to_variable = {KNK_dock1_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock1_days value = KNK_dock1_p_4 compare = less_than_or_equals}
+                check_variable = {KNK_dock1_p = 2}
+            }
+            add_to_variable = {KNK_dock1_p = 1}
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {KNK_dock2_days > 0}
+        }
+        add_to_variable = {KNK_dock2_days = -1}
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock2_days value = KNK_dock2_p_2 compare = less_than_or_equals}
+                check_variable = {KNK_dock2_p = 0}
+            }
+            add_to_variable = {KNK_dock2_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock2_days value = KNK_dock2_p_3 compare = less_than_or_equals}
+                check_variable = {KNK_dock2_p = 1}
+            }
+            add_to_variable = {KNK_dock2_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock2_days value = KNK_dock2_p_4 compare = less_than_or_equals}
+                check_variable = {KNK_dock2_p = 2}
+            }
+            add_to_variable = {KNK_dock2_p = 1}
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {KNK_dock3_days > 0}
+        }
+        add_to_variable = {KNK_dock3_days = -1}
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock3_days value = KNK_dock3_p_2 compare = less_than_or_equals}
+                check_variable = {KNK_dock3_p = 0}
+            }
+            add_to_variable = {KNK_dock3_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock3_days value = KNK_dock3_p_3 compare = less_than_or_equals}
+                check_variable = {KNK_dock3_p = 1}
+            }
+            add_to_variable = {KNK_dock3_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock3_days value = KNK_dock3_p_4 compare = less_than_or_equals}
+                check_variable = {KNK_dock3_p = 2}
+            }
+            add_to_variable = {KNK_dock3_p = 1}
+        }
+    }
+    if = {
+        limit = {
+            check_variable = {KNK_dock4_days > 0}
+        }
+        add_to_variable = {KNK_dock4_days = -1}
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock4_days value = KNK_dock4_p_2 compare = less_than_or_equals}
+                check_variable = {KNK_dock4_p = 0}
+            }
+            add_to_variable = {KNK_dock4_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock4_days value = KNK_dock4_p_3 compare = less_than_or_equals}
+                check_variable = {KNK_dock4_p = 1}
+            }
+            add_to_variable = {KNK_dock4_p = 1}
+        }
+        if = {
+            limit = {
+                check_variable = {var = KNK_dock4_days value = KNK_dock4_p_4 compare = less_than_or_equals}
+                check_variable = {KNK_dock4_p = 2}
+            }
+            add_to_variable = {KNK_dock4_p = 1}
+        }
+    }
+}
+
+
+KNK_gain_HQ_EXP_effect = {#需要先设一个经验temp
+    custom_effect_tooltip = KNK_gain_HQ_EXP_effect_desc
+    hidden_effect = {
+        if = {
+            limit = {
+                check_variable = {KNK_HQ_level < 10}
+            }
+            #检测当前所需升级经验
+            set_variable = {KNK_EXP_required = KNK_HQ_level}
+            multiply_variable = {KNK_EXP_required = 100}
+            add_to_variable {KNK_EXP_required = 100}# 当前等级*100+100
+
+            add_to_variable = {KNK_EXP = KNK_EXP_temp}
+            while_loop_effect = {
+                limit = {
+                    check_variable = {var = KNK_EXP value = KNK_EXP_required compare = greater_than_or_equals}
+                }
+                subtract_from_variable = {KNK_EXP = KNK_EXP_required}
+                add_to_variable = {KNK_HQ_level = 1}
+                add_to_variable = {KNK_fuel_limit = 500}
+                add_to_variable = {KNK_ammo_limit = 500}
+                add_to_variable = {KNK_steel_limit = 500}
+                add_to_variable = {KNK_alum_limit = 500}
+                add_to_variable = {KNK_tech_limit= 5}
+                clamp_variable = {
+                    var = KNK_HQ_level
+                    max = KNK_HQ_level_limit
+                }
+                set_variable = {KNK_EXP_required = KNK_HQ_level}
+                multiply_variable = {KNK_EXP_required = 100}
+                add_to_variable {KNK_EXP_required = 100}
+            }
+        }
+    }
+}
+
+#每周获得资源
+KNK_gain_resources_weekly = {
+    #燃料
+    set_variable = {KNK_fuel_gain = 0}
+    set_temp_variable = {KNK_fuel_temp = KNK.resource_produced@oil}
+    add_to_variable = {KNK_fuel_gain = KNK_fuel_temp}#等于石油数量
+    add_to_variable = {KNK_fuel_gain = 30}#保底
+    clamp_variable = {
+        var = KNK_fuel_gain
+        max = 300
+    }
+    add_to_variable = {KNK_fuel = KNK_fuel_gain}
+    clamp_variable = {
+        var = KNK_fuel
+        min = 0
+        max = KNK_fuel_limit
+    }
+
+    #弹药
+    set_variable = {KNK_ammo_gain = 0}
+    set_temp_variable = {KNK_ammo_temp = KNK.num_of_military_factories}
+    multiply_temp_variable = {KNK_ammo_temp = 0.5}
+    if =  {
+        limit = {
+            check_variable = {KNK.num_of_military_factories > 0}
+        }
+        clamp_temp_variable = {
+            var = KNK_ammo_temp
+            min = 1#保底一个，只要有军工
+        }
+    }
+    add_to_variable = {KNK_ammo_gain = KNK_ammo_temp}#等于军工数量一半
+    add_to_variable = {KNK_ammo_gain = 30}#保底
+    clamp_variable = {
+        var = KNK_ammo_gain
+        max = 300
+    }
+    add_to_variable = {KNK_ammo = KNK_ammo_gain}
+    clamp_variable = {
+        var = KNK_ammo
+        min = 0
+        max = KNK_ammo_limit
+    }
+
+    #钢铁
+    set_variable = {KNK_steel_gain = 0}
+    set_temp_variable = {KNK_steel_temp = KNK.resource_produced@steel}
+    multiply_temp_variable = {KNK_steel_temp = 0.5}
+    round_variable = KNK_steel_temp
+    add_to_variable = {KNK_steel_gain = KNK_steel_temp}#等于钢铁数量一半
+    add_to_variable = {KNK_steel_gain = 30}#保底
+    clamp_variable = {
+        var = KNK_steel_gain
+        max = 300
+    }
+    add_to_variable = {KNK_steel = KNK_steel_gain}
+    clamp_variable = {
+        var = KNK_steel
+        min = 0
+        max = KNK_steel_limit
+    }
+
+    #铝材
+    set_variable = {KNK_alum_gain = 0}
+    set_temp_variable = {KNK_alum_temp = KNK.resource_produced@aluminium}
+    multiply_temp_variable = {KNK_alum_temp = 0.5}
+    round_variable = KNK_alum_temp
+    add_to_variable = {KNK_alum_gain = KNK_alum_temp}#等于铝矿数量一半
+    add_to_variable = {KNK_alum_gain = 30}#保底
+    clamp_variable = {
+        var = KNK_alum_gain
+        max = 100
+    }
+    add_to_variable = {KNK_alum = KNK_alum_gain}
+    clamp_variable = {
+        var = KNK_alum
+        min = 0
+        max = KNK_alum_limit
+    }
+
+    #资材
+    set_variable = {KNK_tech_gain = 0}
+    set_temp_variable = {KNK_tech_gain_temp = KNK.amount_research_slots}
+    multiply_temp_variable = {KNK_tech_gain_temp = 0.1}
+    set_temp_variable = {KNK_tech_gain_temp_2 = KNK.total_constructed_naval_facility}
+    multiply_temp_variable = {KNK_tech_gain_temp_2 = 0.3}
+    add_to_variable = {KNK_tech_gain = KNK_tech_gain_temp}
+    add_to_variable = {KNK_tech_gain = KNK_tech_gain_temp_2}
+    add_to_variable = {KNK_tech_gain = KNK_tech_progress}
+    if = {
+        limit = {
+            check_variable = {var = KNK_tech_progress value = 2 compare = greater_than_or_equals}
+        }
+        add_to_variable = {KNK_tech = 3}
+        set_variable = {KNK_tech_progress = 0}
+    }
+    else_if = {
+        limit = {
+            check_variable = {var = KNK_tech_progress value = 1.5 compare = greater_than_or_equals}
+        }
+        add_to_variable = {KNK_tech = 2}
+        set_variable = {KNK_tech_progress = 0}
+    }
+    else_if = {
+        limit = {
+            check_variable = {var = KNK_tech_progress value = 1 compare = greater_than_or_equals}
+        }
+        add_to_variable = {KNK_tech = 1}
+        set_variable = {KNK_tech_progress = 0}
+    }
+    clamp_variable = {
+        var = KNK_tech
+        max = KNK_tech_limit
+    }
+}
+
+KNK_gain_fuel_effect = {
+    custom_effect_tooltip = KNK_gain_fuel_effect_desc
+    hidden_effect = {
+        add_to_variable = {KNK_fuel = KNK_gain_fuel_temp}
+        clamp_variable = {
+            var = KNK_fuel
+            max = KNK_fuel_limit
+        }
+    }
+}
+KNK_gain_ammo_effect = {
+    custom_effect_tooltip = KNK_gain_ammo_effect_desc
+    hidden_effect = {
+        add_to_variable = {KNK_ammo = KNK_gain_ammo_temp}
+        clamp_variable = {
+            var = KNK_ammo
+            max = KNK_ammo_limit
+        }
+    }
+}
+KNK_gain_steel_effect = {
+    custom_effect_tooltip = KNK_gain_steel_effect_desc
+    hidden_effect = {
+        add_to_variable = {KNK_steel = KNK_gain_steel_temp}
+        clamp_variable = {
+            var = KNK_steel
+            max = KNK_steel_limit
+        }
+    }
+}
+KNK_gain_alum_effect = {
+    custom_effect_tooltip = KNK_gain_alum_effect_desc
+    hidden_effect = {
+        add_to_variable = {KNK_alum = KNK_gain_alum_temp}
+        clamp_variable = {
+            var = KNK_alum
+            max = KNK_alum_limit
+        }
+    }
+}
+KNK_gain_tech_effect = {
+    custom_effect_tooltip = KNK_gain_tech_effect_desc
+    hidden_effect = {
+        add_to_variable = {KNK_tech = KNK_gain_tech_temp}
+        clamp_variable = {
+            var = KNK_tech
+            max = KNK_tech_limit
+        }
+    }
+}
+#检测资源投入选择大卡池
+KNK_pick_pool_effect = {
+    if = {#若燃料投入大于等于300，钢铁投入大于等于400，铝材投入大于等于300则为轻航、正航。（铝材越接近阈值，轻航与正航产出率越高，封顶为80%）
+        limit = {
+            check_variable = {KNK_fuel_input > 299}
+            check_variable = {KNK_steel_input > 399}
+            check_variable = {KNK_alum_input > 299}
+        }
+        random_list = {
+            20 = {
+                set_temp_variable = {KNK_array_temp = token:CV_pool}
+                KNK_pick_pool_from_pool_effect = yes
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 329}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 359}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 389}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 419}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 449}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 479}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 509}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 539}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 569}
+                }
+                modifier = {
+                    add = 6
+                    check_variable = {KNK_alum_input > 599}
+                }
+            }
+            40 = {
+                set_temp_variable = {KNK_array_temp = token:CL_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+            40 = {
+                set_temp_variable = {KNK_array_temp = token:CA_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+        }
+    }
+    else_if = {#若燃料投入大于等于400，钢铁投入大于等于600，则为重巡、战舰与稀有轻巡卡池。（资源越接近阈值，战舰产出率越高，封顶为80%）
+        limit = {
+            check_variable = {KNK_fuel_input > 399}
+            check_variable = {KNK_steel_input > 599}
+        }
+        random_list = {
+            40 = {
+                set_temp_variable = {KNK_array_temp = token:CA_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+            40 = {
+                set_temp_variable = {KNK_array_temp = token:BB_pool}
+                KNK_pick_pool_from_pool_effect = yes
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 500}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 600}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 700}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 800}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 700}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 750}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 800}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 900}
+                }
+            }
+            20 = {
+                set_temp_variable = {KNK_array_temp = token:CL_rare_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+        }
+    }
+    else_if = {#若燃料投入大于等于250少于400，钢铁投入大于等于200少于600，则为巡洋和稀有驱逐舰卡池。（资源越接近阈值，重巡洋舰产出率越高，封顶为80%）
+        limit = {
+            check_variable = {KNK_fuel_input > 249}
+            check_variable = {KNK_fuel_input < 400}
+            check_variable = {KNK_steel_input > 199}
+            check_variable = {KNK_steel_input < 600}
+        }
+        random_list = {
+            40 = {
+                set_temp_variable = {KNK_array_temp = token:CL_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+            40 = {
+                set_temp_variable = {KNK_array_temp = token:CA_pool}
+                KNK_pick_pool_from_pool_effect = yes
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 300}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 330}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 360}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 390}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 400}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 450}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 500}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 550}
+                }
+            }
+            20 = {
+                set_temp_variable = {KNK_array_temp = token:DD_rare_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+        }
+    }
+    else_if = {#若燃料投入少于250，钢铁投入少于200，则为驱逐和轻巡卡池。（资源越接近阈值，轻巡洋舰产出率越高，封顶为80%）
+        limit = {
+            check_variable = {KNK_fuel_input < 250}
+            check_variable = {KNK_steel_input < 200}
+        }
+        random_list = {
+            50 = {
+                set_temp_variable = {KNK_array_temp = token:DD_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+            50 = {
+                set_temp_variable = {KNK_array_temp = token:CL_pool}
+                KNK_pick_pool_from_pool_effect = yes
+                
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 150}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 175}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 200}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_fuel_input > 225}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 150}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 175}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 200}
+                }
+                modifier = {
+                    add = 3.75
+                    check_variable = {KNK_steel_input > 225}
+                }
+            }
+            
+        }
+    }
+    #最终保底免得弄出Bug
+    else = {
+        random_list = {
+            50 = {
+                set_temp_variable = {KNK_array_temp = token:DD_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+            50 = {
+                set_temp_variable = {KNK_array_temp = token:CL_pool}
+                KNK_pick_pool_from_pool_effect = yes
+            }
+        }
+    }
+}
+#先从大卡池里头抽小卡池
+KNK_pick_pool_from_pool_effect = {
+    meta_effect = {
+        text = {
+            set_variable = {KNK_dock[KNK_DOCK_VAR]_pool = KNK_array_temp}
+        }
+        KNK_DOCK_VAR = "[?KNK_dock_var]"
+    }
+    meta_effect = {
+        text = {
+            set_variable = {KNK_array_size = KNK.[KNK_ARRAY_TEMP]^num}
+            add_to_variable = {KNK_array_size = -1}
+            set_variable_to_random = {
+                var = KNK_pool_var
+                max = KNK_array_size
+                integer = yes
+            }
+            set_variable = {KNK_pool_selected_temp = KNK.[KNK_ARRAY_TEMP]^[KNK_POOL_VAR]}
+            KNK_pool_effect = yes
+        }
+        KNK_ARRAY_TEMP = "[?KNK_array_temp.GetTokenKey]" #目标数组
+        KNK_POOL_VAR = "[?KNK_pool_var]" #数组索引
+    }
+    log = "抽到了[?KNK_array_temp.GetTokenKey]"
+}
+#小卡池里头抽船
+KNK_pool_effect = {
+    meta_effect = {
+        text = {
+            set_variable = {KNK_array_size_2 = KNK.[KNK_ARRAY_2_TEMP]^num}
+            add_to_variable = {KNK_array_size_2 = -1}
+            set_variable_to_random = {
+                var = KNK_ship_var
+                max = KNK_array_size_2
+                integer = yes
+            }
+            set_variable = {KNK_result_[KNK_DOCK_VAR] = KNK.[KNK_ARRAY_2_TEMP]^[KNK_SHIP_VAR]}
+            set_variable = {KNK_dock[KNK_DOCK_VAR]_days = [KNK_ARRAY_2_TEMP]_days}
+            KNK_update_shipbuild_progress = yes
+            #set_country_flag = [KNK_result]_visible
+        }
+        KNK_ARRAY_2_TEMP = "[?KNK_pool_selected_temp.GetTokenKey]" #目标数组
+        KNK_result = "[?KNK_result.GetTokenKey]" #
+        KNK_SHIP_VAR = "[?KNK_ship_var]" #数组索引
+        KNK_DOCK_VAR = "[?KNK_dock_var]" #船台编号
+    }
+
+    log = "抽到了[?KNK_result_1.GetTokenKey] [?KNK_result_2.GetTokenKey] [?KNK_result_3.GetTokenKey] [?KNK_result_4.GetTokenKey]"
+}
+
+
+#获得舰娘
+KNK_get_ship_effect = {
+    meta_effect = {
+        text = {
+            set_variable = {KNK_result_to_display = KNK_result_[KNK_DOCK_VAR]}
+        }
+        KNK_DOCK_VAR = "[?KNK_dock_var]" #船台编号
+    }
+    meta_effect = {
+        text = {
+            add_to_variable = {[KNK_result_2] = 1}
+            set_variable = {KNK_new_ship_var = 1}
+            set_variable = {KNK_new_ship_portrait = [KNK_result]}
+            if = {
+                limit = {
+                    check_variable = {[KNK_result_2] = 1}
+                }
+                set_country_flag = [KNK_result_2]_visible #获得新舰娘，欧美跌多
+                scoped_sound_effect = "KNK_new_ship"
+                if = {
+                    limit = {
+                        check_variable = {KNK_dock[KNK_DOCK_VAR]_pool = token:DD_pool}
+                    }
+                    add_to_variable = {KNK_collected_DD = 1}
+                }
+                if = {
+                    limit = {
+                        check_variable = {KNK_dock[KNK_DOCK_VAR]_pool = token:CA_pool}
+                    }
+                    add_to_variable = {KNK_collected_CA = 1}
+                }
+                if = {
+                    limit = {
+                        check_variable = {KNK_dock[KNK_DOCK_VAR]_pool = token:CL_pool}
+                    }
+                    add_to_variable = {KNK_collected_CL = 1}
+                }
+                if = {
+                    limit = {
+                        check_variable = {KNK_dock[KNK_DOCK_VAR]_pool = token:BB_pool}
+                    }
+                    if = {
+                        limit = {
+                            OR = {
+                                check_variable = {KNK_result_to_display = token:SKR_Kongou}
+                                check_variable = {KNK_result_to_display = token:SKR_Hiei}
+                                check_variable = {KNK_result_to_display = token:SKR_Haruna}
+                                check_variable = {KNK_result_to_display = token:SKR_Kirishima}
+                            }
+                        }
+                        add_to_variable = {KNK_collected_BC = 1}
+                    }
+                    else = {
+                        add_to_variable = {KNK_collected_BB = 1}
+                    }
+                }
+                if = {
+                    limit = {
+                        check_variable = {KNK_dock[KNK_DOCK_VAR]_pool = token:CV_pool}
+                    }
+                    if = {
+                        limit = {
+                            OR = {
+                                check_variable = {KNK_result_to_display = token:SKR_Ryuujyou}
+                                check_variable = {KNK_result_to_display = token:SKR_Zuihou}
+                            }
+                        }
+                        add_to_variable = {KNK_collected_CVL = 1}
+                    }
+                    else = {
+                        add_to_variable = {KNK_collected_CV = 1}
+                    }
+                }
+                if = {
+                    limit = {
+                        check_variable = {KNK_dock[KNK_DOCK_VAR]_pool = token:SS_pool}
+                    }
+                    add_to_variable = {KNK_collected_SS = 1}
+                }
+            }
+            else = {
+                KNK = {
+                    [KNK_result_2] = {
+                        gain_xp = 1000 #喜+1，奖励XP
+                    }
+                }
+            }
+        }
+        KNK_result = "[?KNK_result_to_display]"
+        KNK_result_2 = "[?KNK_result_to_display.GetTokenKey]"
+        KNK_DOCK_VAR = "[?KNK_dock_var]"
+    }
+}
+
+# ============================================
+# 驱逐舰 - 按船型级别分数组 (DD)
+# ============================================
+
+# 1.0级 - 睦月型 (18天)
+KNK_DD_10_setup = {
+    KNK = {
+        clear_array = DD_10
+        add_to_array = {DD_10 = token:SKR_Mutsuki}
+    }
+}
+
+# 1.2级 - 特I型 (20天)
+KNK_DD_12_setup = {
+    KNK = {
+        clear_array = DD_12
+        add_to_array = {DD_12 = token:SKR_Fubuki}
+        add_to_array = {DD_12 = token:SKR_Murakumo}
+        add_to_array = {DD_12 = token:SKR_Uranami}
+    }
+}
+
+# 1.5级 - 特II型 (20天)
+KNK_DD_15_setup = {
+    KNK = {
+        clear_array = DD_15
+        add_to_array = {DD_15 = token:SKR_Ayanami}
+        add_to_array = {DD_15 = token:SKR_Amagiri}
+    }
+}
+
+# 1.7级 - 特III型 (20天)
+KNK_DD_17_setup = {
+    KNK = {
+        clear_array = DD_17
+        add_to_array = {DD_17 = token:SKR_Akatsuki}
+        add_to_array = {DD_17 = token:SKR_Hibiki}
+        add_to_array = {DD_17 = token:SKR_Ikazuchi}
+        add_to_array = {DD_17 = token:SKR_Inazuma}
+    }
+}
+
+# 2.0级 - 初春型 (20天)
+KNK_DD_20_setup = {
+    KNK = {
+        clear_array = DD_20
+        add_to_array = {DD_20 = token:SKR_Hatsuharu}
+        add_to_array = {DD_20 = token:SKR_Hatsushimo}
+    }
+}
+
+# 2.5级 - 白露型 (20天)
+KNK_DD_25_setup = {
+    KNK = {
+        clear_array = DD_25
+        add_to_array = {DD_25 = token:SKR_Shiratsuyu}
+        add_to_array = {DD_25 = token:SKR_Shigure}
+        add_to_array = {DD_25 = token:SKR_Yuudachi}
+        add_to_array = {DD_25 = token:SKR_Umikaze}
+        add_to_array = {DD_25 = token:SKR_Yamakaze}
+        add_to_array = {DD_25 = token:SKR_Kawakaze}
+    }
+}
+
+# 3.0级 - 朝潮型 (21天)
+KNK_DD_30_setup = {
+    KNK = {
+        clear_array = DD_30
+        add_to_array = {DD_30 = token:SKR_Asashio}
+        add_to_array = {DD_30 = token:SKR_Michishio}
+        add_to_array = {DD_30 = token:SKR_Arashio}
+        add_to_array = {DD_30 = token:SKR_Kasumi}
+    }
+}
+
+# 3.2级 - 阳炎型 (23天)
+KNK_DD_32_setup = {
+    KNK = {
+        clear_array = DD_32
+        add_to_array = {DD_32 = token:SKR_Kagerou}
+        add_to_array = {DD_32 = token:SKR_Shirarui}
+        add_to_array = {DD_32 = token:SKR_Kuroshio}
+        add_to_array = {DD_32 = token:SKR_Oyashio}
+        add_to_array = {DD_32 = token:SKR_Hayashio}
+        add_to_array = {DD_32 = token:SKR_Urakaze}
+        add_to_array = {DD_32 = token:SKR_Isokaze}
+        add_to_array = {DD_32 = token:SKR_Hamakaze}
+        add_to_array = {DD_32 = token:SKR_Tanikaze}
+        add_to_array = {DD_32 = token:SKR_Akigumo}
+    }
+}
+
+# ============================================
+# 稀有驱逐舰 - 按船型级别分数组 (DDR)
+# ============================================
+
+# 1.8级 - 神风型 (12天) - 稀有驱逐
+KNK_DDR_18_setup = {
+    KNK = {
+        clear_array = DDR_18
+        add_to_array = {DDR_18 = token:SKR_Kamikaze}
+    }
+}
+
+# 2.7级 - 白露型春雨 (20天) - 稀有驱逐
+KNK_DDR_27_setup = {
+    KNK = {
+        clear_array = DDR_27
+        add_to_array = {DDR_27 = token:SKR_Harusame}
+    }
+}
+
+# 3.5级 - 阳炎型雪风天津风 (23天) - 稀有驱逐
+KNK_DDR_35_setup = {
+    KNK = {
+        clear_array = DDR_35
+        add_to_array = {DDR_35 = token:SKR_Yukikaze}
+        add_to_array = {DDR_35 = token:SKR_Amatsukaze}
+    }
+}
+
+# 3.7级 - 夕云型 (24天) - 稀有驱逐
+KNK_DDR_37_setup = {
+    KNK = {
+        clear_array = DDR_37
+        add_to_array = {DDR_37 = token:SKR_Yuugumo}
+        add_to_array = {DDR_37 = token:SKR_Makigumo}
+        add_to_array = {DDR_37 = token:SKR_Kazagumo}
+        add_to_array = {DDR_37 = token:SKR_Naganami}
+        add_to_array = {DDR_37 = token:SKR_Fujinami}
+        add_to_array = {DDR_37 = token:SKR_Okinami}
+        add_to_array = {DDR_37 = token:SKR_Asashimo}
+        add_to_array = {DDR_37 = token:SKR_Hayashimo}
+        add_to_array = {DDR_37 = token:SKR_Kiyoshimo}
+    }
+}
+
+# 4.2级 - 岛风型 (30天) - 稀有驱逐
+KNK_DDR_42_setup = {
+    KNK = {
+        clear_array = DDR_42
+        add_to_array = {DDR_42 = token:SKR_Shimakaze}
+    }
+}
+
+# 4.0级 - 秋月型 (30天) - 稀有驱逐
+KNK_DDR_40_setup = {
+    KNK = {
+        clear_array = DDR_40
+        add_to_array = {DDR_40 = token:SKR_Akizuki}
+        add_to_array = {DDR_40 = token:SKR_Hatsuzuki}
+        add_to_array = {DDR_40 = token:SKR_Fuyutsuki}
+        add_to_array = {DDR_40 = token:SKR_Suzutsuki}
+    }
+}
+
+# ============================================
+# 轻巡洋舰 - 按船型级别分数组 (CL)
+# ============================================
+
+# 1.0级 - 天龙型 (30天)
+KNK_CL_10_setup = {
+    KNK = {
+        clear_array = CL_10
+        add_to_array = {CL_10 = token:SKR_Tenryuu}
+        add_to_array = {CL_10 = token:SKR_Tatsuta}
+    }
+}
+
+# 2.0级 - 球磨型 (30天)
+KNK_CL_20_setup = {
+    KNK = {
+        clear_array = CL_20
+        add_to_array = {CL_20 = token:SKR_Kitakami}
+        add_to_array = {CL_20 = token:SKR_Ooi}
+    }
+}
+
+# 2.2级 - 长良型 (30天)
+KNK_CL_22_setup = {
+    KNK = {
+        clear_array = CL_22
+        add_to_array = {CL_22 = token:SKR_Isuzu}
+        add_to_array = {CL_22 = token:SKR_Yura}
+    }
+}
+
+# 2.5级 - 川内型 (35天)
+KNK_CL_25_setup = {
+    KNK = {
+        clear_array = CL_25
+        add_to_array = {CL_25 = token:SKR_Sendai}
+        add_to_array = {CL_25 = token:SKR_Jintsuu}
+        add_to_array = {CL_25 = token:SKR_Naka}
+    }
+}
+
+# 2.8级 - 夕张型 (52天)
+KNK_CL_28_setup = {
+    KNK = {
+        clear_array = CL_28
+        add_to_array = {CL_28 = token:SKR_Yuubari}
+    }
+}
+
+# ============================================
+# 稀有轻巡洋舰 - 按船型级别分数组 (CLR)
+# ============================================
+
+# 2.9级 - 长良型阿武隈 (45天) - 稀有轻巡
+KNK_CLR_29_setup = {
+    KNK = {
+        clear_array = CLR_29
+        add_to_array = {CLR_29 = token:SKR_Abukuma}
+    }
+}
+
+# 3.0级 - 大淀 (45天) - 稀有轻巡
+KNK_CLR_30_setup = {
+    KNK = {
+        clear_array = CLR_30
+        add_to_array = {CLR_30 = token:SKR_Ooyodo}
+    }
+}
+
+# 3.0级 - 最上 (60天) - 稀有轻巡（带弹射器）
+KNK_CLR_30m_setup = {
+    KNK = {
+        clear_array = CLR_30m
+        add_to_array = {CLR_30m = token:SKR_Mogami}
+    }
+}
+
+# ============================================
+# 重巡洋舰 - 按船型级别分数组 (CA)
+# ============================================
+
+# 1.0级 - 古鹰型 (50天)
+KNK_CA_10_setup = {
+    KNK = {
+        clear_array = CA_10
+        add_to_array = {CA_10 = token:SKR_Furutaka}
+        add_to_array = {CA_10 = token:SKR_Kako}
+    }
+}
+
+# 1.3级 - 青叶型 (50天)
+KNK_CA_13_setup = {
+    KNK = {
+        clear_array = CA_13
+        add_to_array = {CA_13 = token:SKR_Aoba}
+        add_to_array = {CA_13 = token:SKR_Kinugasa}
+    }
+}
+
+# 2.0级 - 妙高型 (55天) - 本地化缺失
+KNK_CA_20_setup = {
+    KNK = {
+        clear_array = CA_20
+        add_to_array = {CA_20 = token:SKR_Myoko}
+        add_to_array = {CA_20 = token:SKR_Nachi}
+        add_to_array = {CA_20 = token:SKR_Ashigara}
+        add_to_array = {CA_20 = token:SKR_Haguro}
+    }
+}
+
+# 2.5级 - 高雄型 (60天) - 本地化缺失
+KNK_CA_25_setup = {
+    KNK = {
+        clear_array = CA_25
+        add_to_array = {CA_22 = token:SKR_Takao}
+        add_to_array = {CA_22 = token:SKR_Atago}
+        add_to_array = {CA_22 = token:SKR_Maya}
+        add_to_array = {CA_22 = token:SKR_Chokai}
+    }
+}
+
+# 3.2级 - 最上型 (60天)
+KNK_CA_32_setup = {
+    KNK = {
+        clear_array = CA_32
+        add_to_array = {CA_32 = token:SKR_Mikuma}
+        add_to_array = {CA_32 = token:SKR_Suzuya}
+        add_to_array = {CA_32 = token:SKR_Kumano}
+    }
+}
+
+# 4.0级 - 利根型 (70天)
+KNK_CA_40_setup = {
+    KNK = {
+        clear_array = CA_40
+        add_to_array = {CA_40 = token:SKR_Tone}
+        add_to_array = {CA_40 = token:SKR_Chikuma}
+    }
+}
+
+# ============================================
+# 战列舰 - 按船型级别分数组 (BB)
+# ============================================
+
+# 1.0级 - 扶桑型 (120天)
+KNK_BB_10_setup = {
+    KNK = {
+        clear_array = BB_10
+        add_to_array = {BB_10 = token:SKR_Fusou}
+        add_to_array = {BB_10 = token:SKR_Yamajiro}
+    }
+}
+
+# 2.0级 - 伊势型 (140天)
+KNK_BB_20_setup = {
+    KNK = {
+        clear_array = BB_20
+        add_to_array = {BB_20 = token:SKR_Ise}
+        add_to_array = {BB_20 = token:SKR_Hiuga}
+    }
+}
+
+# 1.8级 - 金刚型 (100天) - 战列巡洋舰
+KNK_BB_18_setup = {
+    KNK = {
+        clear_array = BB_18
+        add_to_array = {BB_18 = token:SKR_Kongou}
+        add_to_array = {BB_18 = token:SKR_Hiei}            # 金刚型：比睿
+        add_to_array = {BB_18 = token:SKR_Haruna}          # 金刚型：榛名
+        add_to_array = {BB_18 = token:SKR_Kirishima}       # 金刚型：雾岛
+    }
+}
+
+# 3.0级 - 长门型 (150天)
+KNK_BB_30_setup = {
+    KNK = {
+        clear_array = BB_30
+        add_to_array = {BB_30 = token:SKR_Nagato}
+        add_to_array = {BB_30 = token:SKR_Mutsu}
+    }
+}
+
+# ============================================
+# 航母卡池 - 按船型级别分数组 (CV)
+# ============================================
+
+# 1.0级 - 赤城型 (135天)
+KNK_CV_10_setup = {
+    KNK = {
+        clear_array = CV_10
+        add_to_array = {CV_10 = token:SKR_Akagi}
+    }
+}
+
+# 1.8级 - 加贺型 (130天)
+KNK_CV_18_setup = {
+    KNK = {
+        clear_array = CV_18
+        add_to_array = {CV_18 = token:SKR_Kaga}
+    }
+}
+
+# 2.0级 - 龙骧型 (85天)
+KNK_CV_20_setup = {
+    KNK = {
+        clear_array = CV_20
+        add_to_array = {CV_20 = token:SKR_Ryuujyou}
+    }
+}
+
+# 2.5级 - 飞鹰型 (90天)
+KNK_CV_25_setup = {
+    KNK = {
+        clear_array = CV_25
+        add_to_array = {CV_25 = token:SKR_Hiyo}
+        add_to_array = {CV_25 = token:SKR_Junyo}
+    }
+}
+
+# 2.9级 - 翔凤型 (80天)
+KNK_CV_29_setup = {
+    KNK = {
+        clear_array = CV_29
+        add_to_array = {CV_29 = token:SKR_Zuihou}
+    }
+}
+
+# 3.0级 - 苍龙型 (125天)
+KNK_CV_30_setup = {
+    KNK = {
+        clear_array = CV_30
+        add_to_array = {CV_30 = token:SKR_Souryu}
+    }
+}
+
+# 3.1级 - 飞龙型 (125天)
+KNK_CV_31_setup = {
+    KNK = {
+        clear_array = CV_31
+        add_to_array = {CV_31 = token:SKR_Hiryu}
+    }
+}
+
+# 3.5级 - 翔鹤型 (180天)
+KNK_CV_35_setup = {
+    KNK = {
+        clear_array = CV_35
+        add_to_array = {CV_35 = token:SKR_Syoukaku}
+        add_to_array = {CV_35 = token:SKR_Zuikaku}
+    }
+}
+
+# ============================================
+# 大建卡池 - 按船型级别分数组 (SP)
+# ============================================
+
+# 4.0级 - 阿贺野型矢矧 (60天) - 轻巡
+KNK_SP_40_setup = {
+    KNK = {
+        clear_array = SP_40
+        add_to_array = {SP_40 = token:SKR_Yahagi}
+    }
+}
+
+# 超重战 - 大和型 (360天)
+KNK_SP_99_setup = {
+    KNK = {
+        clear_array = SP_99
+        add_to_array = {SP_99 = token:SKR_Yamato}
+        add_to_array = {SP_99 = token:SKR_Musashi}
+    }
+}
+
+# 4.0级 - 大凤型 (300天)
+KNK_SP_40c_setup = {
+    KNK = {
+        clear_array = SP_40c
+        add_to_array = {SP_40c = token:SKR_Taihou}
+    }
+}
+
+KNK_array_setup = {
+    KNK_DD_10_setup = yes
+    KNK_DD_12_setup = yes
+    KNK_DD_15_setup = yes
+    KNK_DD_17_setup = yes
+    KNK_DD_20_setup = yes
+    KNK_DD_25_setup = yes
+    KNK_DD_30_setup = yes
+    KNK_DD_32_setup = yes
+    
+    KNK_DDR_18_setup = yes
+    KNK_DDR_27_setup = yes
+    KNK_DDR_35_setup = yes
+    KNK_DDR_37_setup = yes
+    KNK_DDR_40_setup = yes
+    KNK_DDR_42_setup = yes
+    
+    KNK_CL_10_setup = yes
+    KNK_CL_20_setup = yes
+    KNK_CL_22_setup = yes
+    KNK_CL_25_setup = yes
+    KNK_CL_28_setup = yes
+    
+    KNK_CLR_29_setup = yes
+    KNK_CLR_30_setup = yes
+    KNK_CLR_30m_setup = yes
+    
+    KNK_CA_10_setup = yes
+    KNK_CA_13_setup = yes
+    KNK_CA_20_setup = yes
+    KNK_CA_25_setup = yes
+    KNK_CA_32_setup = yes
+    KNK_CA_40_setup = yes
+    
+    KNK_BB_10_setup = yes
+    KNK_BB_18_setup = yes
+    KNK_BB_20_setup = yes
+    KNK_BB_30_setup = yes
+
+    KNK_CV_10_setup = yes
+    KNK_CV_18_setup = yes
+    KNK_CV_20_setup = yes
+    KNK_CV_25_setup = yes
+    KNK_CV_29_setup = yes
+    KNK_CV_30_setup = yes
+    KNK_CV_31_setup = yes
+    KNK_CV_35_setup = yes
+    
+    KNK_SP_40_setup = yes
+    KNK_SP_40c_setup = yes
+    KNK_SP_99_setup = yes
+}
+# ============================================
+# 卡池类型数组设置
+# ============================================
+
+# 驱逐舰卡池数组 - 包含所有普通驱逐舰级别
+KNK_DD_pool_setup = {
+    KNK = {
+        clear_array = DD_pool
+        add_to_array = {DD_pool = token:DD_10}
+        add_to_array = {DD_pool = token:DD_12}
+        add_to_array = {DD_pool = token:DD_15}
+        add_to_array = {DD_pool = token:DD_17}
+        add_to_array = {DD_pool = token:DD_20}
+        add_to_array = {DD_pool = token:DD_25}
+        add_to_array = {DD_pool = token:DD_30}
+        add_to_array = {DD_pool = token:DD_32}
+    }
+}
+
+# 稀有驱逐舰卡池数组 - 包含所有稀有驱逐舰级别
+KNK_DD_rare_pool_setup = {
+    KNK = {
+        clear_array = DD_rare_pool
+        add_to_array = {DD_rare_pool = token:DDR_18}
+        add_to_array = {DD_rare_pool = token:DDR_27}
+        add_to_array = {DD_rare_pool = token:DDR_35}
+        add_to_array = {DD_rare_pool = token:DDR_37}
+        add_to_array = {DD_rare_pool = token:DDR_40}
+        add_to_array = {DD_rare_pool = token:DDR_42}
+    }
+}
+
+# 轻巡洋舰卡池数组 - 包含所有轻巡洋舰级别
+KNK_CL_pool_setup = {
+    KNK = {
+        clear_array = CL_pool
+        add_to_array = {CL_pool = token:CL_10}
+        add_to_array = {CL_pool = token:CL_20}
+        add_to_array = {CL_pool = token:CL_22}
+        add_to_array = {CL_pool = token:CL_25}
+        add_to_array = {CL_pool = token:CL_28}
+    }
+}
+
+# 稀有轻巡洋舰卡池数组 - 包含所有稀有轻巡洋舰级别
+KNK_CL_rare_pool_setup = {
+    KNK = {
+        clear_array = CL_rare_pool
+        add_to_array = {CL_rare_pool = token:CLR_29}
+        add_to_array = {CL_rare_pool = token:CLR_30}
+        add_to_array = {CL_rare_pool = token:CLR_30m}
+    }
+}
+
+# 重巡洋舰卡池数组 - 包含所有重巡洋舰级别
+KNK_CA_pool_setup = {
+    KNK = {
+        clear_array = CA_pool
+        add_to_array = {CA_pool = token:CA_10}
+        add_to_array = {CA_pool = token:CA_13}
+        add_to_array = {CA_pool = token:CA_20}
+        add_to_array = {CA_pool = token:CA_25}
+        add_to_array = {CA_pool = token:CA_32}
+        add_to_array = {CA_pool = token:CA_40}
+    }
+}
+
+# 战列舰卡池数组 - 包含所有战列舰级别
+KNK_BB_pool_setup = {
+    KNK = {
+        clear_array = BB_pool
+        add_to_array = {BB_pool = token:BB_10}
+        add_to_array = {BB_pool = token:BB_18}
+        add_to_array = {BB_pool = token:BB_20}
+        add_to_array = {BB_pool = token:BB_30}
+    }
+}
+
+# 航母卡池数组 - 包含所有航母级别
+KNK_CV_pool_setup = {
+    KNK = {
+        clear_array = CV_pool
+        add_to_array = {CV_pool = token:CV_10}
+        add_to_array = {CV_pool = token:CV_18}
+        add_to_array = {CV_pool = token:CV_20}
+        add_to_array = {CV_pool = token:CV_25}
+        add_to_array = {CV_pool = token:CV_29}
+        add_to_array = {CV_pool = token:CV_30}
+        add_to_array = {CV_pool = token:CV_31}
+        add_to_array = {CV_pool = token:CV_35}
+    }
+}
+
+# 大建卡池数组 - 包含所有大建卡池级别
+KNK_Special_pool_setup = {
+    KNK = {
+        clear_array = Special_pool
+        add_to_array = {Special_pool = token:SP_40}
+        add_to_array = {Special_pool = token:SP_40c}
+        add_to_array = {Special_pool = token:SP_99}
+        add_to_array = {Special_pool = token:CV_40}
+    }
+}
+# ============================================
+# 卡池数组聚合初始化方法
+# ============================================
+
+KNK_pool_of_pools_setup = {
+    KNK = {
+        # 初始化驱逐舰卡池
+        KNK_DD_pool_setup = yes
+        
+        # 初始化稀有驱逐舰卡池
+        KNK_DD_rare_pool_setup = yes
+        
+        # 初始化轻巡洋舰卡池
+        KNK_CL_pool_setup = yes
+        
+        # 初始化稀有轻巡洋舰卡池
+        KNK_CL_rare_pool_setup = yes
+        
+        # 初始化重巡洋舰卡池
+        KNK_CA_pool_setup = yes
+        
+        # 初始化战列舰卡池
+        KNK_BB_pool_setup = yes
+        
+        # 初始化航母卡池
+        KNK_CV_pool_setup = yes
+        
+        # 初始化大建卡池
+        KNK_Special_pool_setup = yes
+    }
+}
+
+# ============================================
+# 建造时间变量设置
+# ============================================
+
+KNK_time_setup = {
+    # 普通驱逐舰建造时间
+    set_variable = { DD_10_days = 18 }     # 睦月型 - 18天
+    set_variable = { DD_12_days = 20 }     # 特I型 - 20天
+    set_variable = { DD_15_days = 20 }     # 特II型 - 20天
+    set_variable = { DD_17_days = 20 }     # 特III型 - 20天
+    set_variable = { DD_20_days = 20 }     # 初春型 - 20天
+    set_variable = { DD_25_days = 20 }     # 白露型 - 20天
+    set_variable = { DD_30_days = 21 }     # 朝潮型 - 21天
+    set_variable = { DD_32_days = 23 }     # 阳炎型 - 23天
+    
+    # 稀有驱逐舰建造时间
+    set_variable = { DDR_18_days = 12 }    # 神风型 - 12天
+    set_variable = { DDR_27_days = 20 }    # 白露型春雨 - 20天
+    set_variable = { DDR_35_days = 23 }    # 阳炎型雪风天津风 - 23天
+    set_variable = { DDR_37_days = 24 }    # 夕云型 - 24天
+    set_variable = { DDR_40_days = 30 }    # 秋月型 - 30天
+    set_variable = { DDR_42_days = 30 }    # 岛风型 - 30天
+    
+    # 轻巡洋舰建造时间
+    set_variable = { CL_10_days = 30 }     # 天龙型 - 30天
+    set_variable = { CL_20_days = 30 }     # 球磨型 - 30天
+    set_variable = { CL_22_days = 30 }     # 长良型 - 30天
+    set_variable = { CL_25_days = 35 }     # 川内型 - 35天
+    set_variable = { CL_28_days = 52 }     # 夕张型 - 52天
+    
+    # 稀有轻巡洋舰建造时间
+    set_variable = { CLR_29_days = 45 }    # 长良型阿武隈 - 45天
+    set_variable = { CLR_30_days = 45 }    # 大淀 - 45天
+    set_variable = { CLR_30m_days = 60 }   # 最上 - 60天
+    
+    # 重巡洋舰建造时间
+    set_variable = { CA_10_days = 50 }     # 古鹰型 - 50天
+    set_variable = { CA_13_days = 50 }     # 青叶型 - 50天
+    set_variable = { CA_20_days = 55 }     # 妙高型 - 55天
+    set_variable = { CA_25_days = 60 }     # 高雄型 - 60天
+    set_variable = { CA_32_days = 60 }     # 最上型 - 60天
+    set_variable = { CA_40_days = 70 }     # 利根型 - 70天
+    
+    # 战列舰建造时间
+    set_variable = { BB_10_days = 120 }    # 扶桑型 - 120天
+    set_variable = { BB_18_days = 100 }    # 金刚型 - 100天
+    set_variable = { BB_20_days = 140 }    # 伊势型 - 140天
+    set_variable = { BB_30_days = 150 }    # 长门型 - 150天
+
+    # 航母建造时间
+    set_variable = { CV_10_days = 135 }    # 赤城型 - 135天
+    set_variable = { CV_18_days = 130 }    # 加贺型 - 130天
+    set_variable = { CV_20_days = 85 }     # 龙骧型 - 85天
+    set_variable = { CV_25_days = 90 }     # 飞鹰型 - 90天
+    set_variable = { CV_29_days = 80 }     # 翔凤型 - 80天
+    set_variable = { CV_30_days = 125 }    # 苍龙型 - 125天
+    set_variable = { CV_31_days = 125 }    # 飞龙型 - 125天
+    set_variable = { CV_35_days = 180 }    # 翔鹤型 - 180天
+    
+    # 大建卡池建造时间
+    set_variable = { SP_40_days = 60 }     # 阿贺野型矢矧 - 60天
+    set_variable = { SP_40c_days = 300 }   # 大凤型 - 300天
+    set_variable = { SP_99_days = 360 }    # 大和型 - 360天
+}

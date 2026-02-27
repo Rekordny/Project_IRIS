@@ -21,6 +21,252 @@ OCF_changes_in_parliamentary_history_list_dates_add = {
 #########    ##       ##     ## ######### ##     ##    ##     ##  ##                ##    ##    ##   ##   ##     ## ##    ##  ##    ##  ##       ##
 ##     ##    ##    ## ##     ## ##     ## ##     ##    ##     ##  ##    ##    ##    ##    ##    ##    ##  ##     ## ##    ##  ##    ##  ##       ##
 ##     ##     ######  ##     ## ##     ##  #######     ##    ####  ######      ######     ##    ##     ##  #######   ######    ######   ######## ########
+
+#第一次内战战争热情
+#初始化
+OCF_first_war_feeling = {
+	set_variable = { OCF.WarFervorVar = 75 }
+	set_variable = { OCE.WarFervorVar = 60 }
+	set_variable = { INP.WarFervorVar = 75 }
+	set_variable = { EIA.WarFervorVar = 70 }
+	OCF = { add_dynamic_modifier = { modifier = OCF_civil_war_modifiers } }
+	OMS = { add_dynamic_modifier = { modifier = OCF_civil_war_modifiers } }
+	OCE = { add_dynamic_modifier = { modifier = OCE_civil_war_modifiers } }
+	INP = { add_dynamic_modifier = { modifier = INP_civil_war_modifiers } }
+	EIA = { add_dynamic_modifier = { modifier = EIA_civil_war_modifiers } }
+	CKR = { add_dynamic_modifier = { modifier = EIA_civil_war_modifiers } }
+	OCF_calculate_first_war_feeling = yes
+}
+
+#修改第一次内战战争热情
+OCF_modify_first_war_feeling = {
+	custom_effect_tooltip = {
+		localization_key = OCF_modify_first_war_feeling_TT
+		FELLING = "[?temp]"
+	}
+	if = {
+		limit = { original_tag = OMS }
+		add_to_variable = { OCF.WarFervorVar = temp }
+	}
+	else_if = {
+		limit = { original_tag = CKR }
+		add_to_variable = { EIA.WarFervorVar = temp }
+	}
+	else = { add_to_variable = { ROOT.WarFervorVar = temp } }
+	OCF_calculate_first_war_feeling = yes
+}
+
+#创造民兵模板
+OCF_create_militia_template = {
+	if = {
+		limit = { NOT = { has_template = "内战民兵" } }
+		custom_override_tooltip = {
+			tooltip = {
+				localization_key = IRIS_tooltip_create_division_template
+				NAME = "内战民兵"
+				LINE_1 = { localization_key = IRIS_line_battalion_tt NAME = irregular_infantry ICON = GFX_unit_irregular_infantry_icon_small COUNT = 5 }
+			}
+			division_template = {
+				name = "内战民兵"
+				is_locked = yes
+				division_names_group = OCF_div_conscript
+				regiments = {
+					irregular_infantry = { x = 0 y = 0 }
+					irregular_infantry = { x = 0 y = 1 }
+					irregular_infantry = { x = 0 y = 2 }
+					irregular_infantry = { x = 0 y = 3 }
+					irregular_infantry = { x = 1 y = 0 }
+				}
+			}
+		}
+	}
+	if = {
+		limit = { NOT = { has_template = "内战作战师" } }
+		custom_override_tooltip = {
+			tooltip = {
+				localization_key = IRIS_tooltip_create_division_template
+				NAME = "内战作战师"
+				LINE_1 = { localization_key = IRIS_line_battalion_tt NAME = irregular_infantry ICON = GFX_unit_irregular_infantry_icon_small COUNT = 5 }
+			}
+			division_template = {
+				name = "内战作战师"
+				is_locked = yes
+				division_names_group = OCF_div_conscript
+				regiments = {
+					irregular_infantry = { x = 0 y = 0 }
+					irregular_infantry = { x = 0 y = 1 }
+					irregular_infantry = { x = 0 y = 2 }
+					irregular_infantry = { x = 0 y = 3 }
+					irregular_infantry = { x = 1 y = 0 }
+					artillery_brigade = { x = 2 y = 0 }
+					artillery_brigade = { x = 2 y = 0 }
+				}
+			}
+		}
+	}
+	if = {
+		limit = { NOT = { has_template = "内战玛纳作战师" } }
+		custom_override_tooltip = {
+			tooltip = {
+				localization_key = IRIS_tooltip_create_division_template
+				NAME = "内战玛纳作战师"
+				LINE_1 = { localization_key = IRIS_line_battalion_tt NAME = irregular_infantry ICON = GFX_unit_irregular_infantry_icon_small COUNT = 5 }
+			}
+			division_template = {
+				name = "内战玛纳作战师"
+				is_locked = yes
+				division_names_group = OCF_div_conscript
+				regiments = {
+					Arcane_Battle_Camp = { x = 0 y = 0 }
+					Arcane_Battle_Camp = { x = 0 y = 1 }
+					Arcane_Battle_Camp = { x = 0 y = 2 }
+					Arcane_Battle_Camp = { x = 0 y = 3 }
+					Magic_Breakthrough_Camp = { x = 1 y = 0 }
+				}
+			}
+		}
+	}
+}
+
+#内战领土处理
+OCF_first_war_territory_deal = {
+	ROOT = {
+		if = {
+			limit = { original_tag = CKR }
+			add_to_variable = { EIA.WarFervorVar = 10 }
+		}
+		else_if = {
+			limit = { original_tag = OMS }
+			add_to_variable = { OCF.WarFervorVar = 10 }
+		}
+		else = { add_to_variable = { THIS.WarFervorVar = 10 } }
+	}
+
+	FROM = {
+		if = {
+			limit = { original_tag = CKR }
+			add_to_variable = { EIA.WarFervorVar = -10 }
+		}
+		else_if = {
+			limit = { original_tag = OMS }
+			add_to_variable = { OCF.WarFervorVar = -10 }
+		}
+		else = { add_to_variable = { THIS.WarFervorVar = -10 } }
+	}
+
+
+	OCF_calculate_first_war_feeling = yes
+}
+
+
+#计算战争热情
+OCF_calculate_first_war_feeling = {
+	if = {
+		limit = { check_variable = { OCF.WarFervorVar < 0 } }
+		set_variable = { OCF.WarFervorVar = 0 }
+	}
+	if = {
+		limit = { check_variable = { OCF.WarFervorVar > 100 } }
+		set_variable = { OCF.WarFervorVar = 100 }
+	}
+	if = {
+		limit = { check_variable = { OCE.WarFervorVar < 0 } }
+		set_variable = { OCE.WarFervorVar = 0 }
+	}
+	if = {
+		limit = { check_variable = { OCE.WarFervorVar > 100 } }
+		set_variable = { OCE.WarFervorVar = 100 }
+	}
+	if = {
+		limit = { check_variable = { INP.WarFervorVar < 0 } }
+		set_variable = { INP.WarFervorVar = 0 }
+	}
+	if = {
+		limit = { check_variable = { INP.WarFervorVar > 100 } }
+		set_variable = { INP.WarFervorVar = 100 }
+	}
+	if = {
+		limit = { check_variable = { EIA.WarFervorVar < 0 } }
+		set_variable = { EIA.WarFervorVar = 0 }
+	}
+	if = {
+		limit = { check_variable = { EIA.WarFervorVar > 100 } }
+		set_variable = { EIA.WarFervorVar = 100 }
+	}
+
+	set_variable = { OCF.civil_war_breakthrough_factor = OCF.WarFervorVar }#突破
+	subtract_from_variable = { OCF.civil_war_breakthrough_factor = 50 }
+	divide_variable = { OCF.civil_war_breakthrough_factor = 250 }
+	set_variable = { OCE.civil_war_breakthrough_factor = OCE.WarFervorVar }#突破
+	subtract_from_variable = { OCE.civil_war_breakthrough_factor = 50 }
+	divide_variable = { OCE.civil_war_breakthrough_factor = 250 }
+	set_variable = { INP.civil_war_breakthrough_factor = INP.WarFervorVar }#突破
+	subtract_from_variable = { INP.civil_war_breakthrough_factor = 50 }
+	divide_variable = { INP.civil_war_breakthrough_factor = 250 }
+	set_variable = { EIA.civil_war_breakthrough_factor = EIA.WarFervorVar }#突破
+	subtract_from_variable = { EIA.civil_war_breakthrough_factor = 50 }
+	divide_variable = { EIA.civil_war_breakthrough_factor = 250 }
+
+	set_variable = { OCF.civil_war_army_morale_factor = OCF.WarFervorVar }#军队士气恢复
+	subtract_from_variable = { OCF.civil_war_army_morale_factor = 50 }
+	divide_variable = { OCF.civil_war_army_morale_factor = 100 }
+	set_variable = { OCE.civil_war_army_morale_factor = OCE.WarFervorVar }#军队士气恢复
+	subtract_from_variable = { OCE.civil_war_army_morale_factor = 50 }
+	divide_variable = { OCE.civil_war_army_morale_factor = 100 }
+	set_variable = { INP.civil_war_army_morale_factor = INP.WarFervorVar }#军队士气恢复
+	subtract_from_variable = { INP.civil_war_army_morale_factor = 50 }
+	divide_variable = { INP.civil_war_army_morale_factor = 100 }
+	set_variable = { EIA.civil_war_army_morale_factor = EIA.WarFervorVar }#军队士气恢复
+	subtract_from_variable = { EIA.civil_war_army_morale_factor = 50 }
+	divide_variable = { EIA.civil_war_army_morale_factor = 100 }
+
+	set_variable = { OCF.civil_war_army_speed_factor = OCF.WarFervorVar }#军队速度
+	subtract_from_variable = { OCF.civil_war_army_speed_factor = 50 }
+	divide_variable = { OCF.civil_war_army_speed_factor = 200 }
+	set_variable = { OCE.civil_war_army_speed_factor = OCE.WarFervorVar }#军队速度
+	subtract_from_variable = { OCE.civil_war_army_speed_factor = 50 }
+	divide_variable = { OCE.civil_war_army_speed_factor = 200 }
+	set_variable = { INP.civil_war_army_speed_factor = INP.WarFervorVar }#军队速度
+	subtract_from_variable = { INP.civil_war_army_speed_factor = 50 }
+	divide_variable = { INP.civil_war_army_speed_factor = 200 }
+	set_variable = { EIA.civil_war_army_speed_factor = EIA.WarFervorVar }#军队速度
+	subtract_from_variable = { EIA.civil_war_army_speed_factor = 50 }
+	divide_variable = { EIA.civil_war_army_speed_factor = 200 }
+
+	set_variable = { OCF.civil_war_max_dig_in_factor = OCF.WarFervorVar }#最大堑壕
+	if = {
+		limit = { check_variable = { OCF.civil_war_max_dig_in_factor < 50 } }
+		subtract_from_variable = { OCF.civil_war_max_dig_in_factor = 50 }
+		multiply_variable = { OCF.civil_war_max_dig_in_factor = 0.02 }
+	}
+	else = { set_variable = { OCF.civil_war_max_dig_in_factor = 0 } }
+	set_variable = { OCE.civil_war_max_dig_in_factor = OCE.WarFervorVar }#最大堑壕
+	if = {
+		limit = { check_variable = { OCE.civil_war_max_dig_in_factor < 50 } }
+		subtract_from_variable = { OCE.civil_war_max_dig_in_factor = 50 }
+		multiply_variable = { OCE.civil_war_max_dig_in_factor = 0.02 }
+	}
+	else = { set_variable = { OCE.civil_war_max_dig_in_factor = 0 } }
+	set_variable = { INP.civil_war_max_dig_in_factor = INP.WarFervorVar }#最大堑壕
+	if = {
+		limit = { check_variable = { INP.civil_war_max_dig_in_factor < 50 } }
+		subtract_from_variable = { INP.civil_war_max_dig_in_factor = 50 }
+		multiply_variable = { INP.civil_war_max_dig_in_factor = 0.02 }
+	}
+	else = { set_variable = { INP.civil_war_max_dig_in_factor = 0 } }
+	set_variable = { EIA.civil_war_max_dig_in_factor = EIA.WarFervorVar }#最大堑壕
+	if = {
+		limit = { check_variable = { EIA.civil_war_max_dig_in_factor < 50 } }
+		subtract_from_variable = { EIA.civil_war_max_dig_in_factor = 50 }
+		multiply_variable = { EIA.civil_war_max_dig_in_factor = 0.02 }
+	}
+	else = { set_variable = { EIA.civil_war_max_dig_in_factor = 0 } }
+
+	force_update_dynamic_modifier = yes
+}
+
+
+
 #政府崩溃后（测试）
 OCF_artificial_intelligence_removal = {
 	delete_unit_template_and_units = {
@@ -253,16 +499,16 @@ OCF_After_collapse_government = {
 		add_state_core = 137
 		set_country_flag = OCF_After_collapse_government_countries_flag
 		set_cosmetic_tag = INP_civil_war
-		OCF = {
-			set_nationality = {
-				target_country = INP
-				character = INP_Eblana_Dublinn
-			}
-			set_nationality = {
-				target_country = INP
-				character = INP_Reed_The_Flame_Shadow
-			}
-		}
+		# OCF = {
+		# 	set_nationality = {
+		# 		target_country = INP
+		# 		character = INP_Eblana_Dublinn
+		# 	}
+		# 	set_nationality = {
+		# 		target_country = INP
+		# 		character = INP_Reed_The_Flame_Shadow
+		# 	}
+		# }
 		if = {
 			limit = {
 				NOT = {
@@ -886,7 +1132,13 @@ OCF_brgnews_6_scripted_effects = {
 			limit = {
 				original_tag = OCF
 			}
-			country_event = { id = brgnews.6 days = 1 }
+			if = {
+				limit = { has_global_flag = BRG_macarthur_returned_home_country_flag }
+				country_event = { id = brgnews.12 days = 1 }
+			}
+			else = {
+				country_event = { id = brgnews.6 days = 1 }
+			}
 			hidden_effect = {
 				# USF = {
 				# 	end_puppet = BRG
@@ -3199,6 +3451,9 @@ OCF_spending_funds_other = {
 
 #添加资金
 OCF_spending_funds_temp = {
+	#脏变量刷新，优化性能
+	set_variable_to_random = global.ocf_bill_gui_dirty
+
 	custom_effect_tooltip = {
 		localization_key = OCF_SPENDING_FUNDS_TT
 		FUNDS = "[?temp_fund_exchange_button]"
@@ -8458,6 +8713,42 @@ OCF_Layoffs_automatic = {
 	}
 }
 
+#指定删除 众议院
+#temp_layoffs
+OCF_Layoffs_specify_deletion = {
+	custom_effect_tooltip = OCF_Layoffs_specify_deletion_tt
+	for_loop_effect = {
+		end = temp_layoffs
+		OCF_Layoffs = yes
+	}
+}
+
+
+
+#指定删除 参议院
+#temp_layoffs_senate
+OCF_Layoffs_specify_senate_deletion = {
+	custom_effect_tooltip = OCF_Layoffs_specify_senate_deletion_tt
+	for_loop_effect = {
+		end = temp_layoffs_senate
+		OCF_Layoffs_specify = yes
+	}
+}
+
+#参议院
+OCF_Layoffs_specify = {
+	random_list = {
+		OCF_gridbox_seat_array_original_senate^1 = {
+			add_to_variable = { OCF_gridbox_seat_array_original_senate^1 = -1 }
+		}
+		OCF_gridbox_seat_array_original_senate^2 = {
+			OCF_gridbox_seat_array_senate_no_del = yes
+			add_to_variable = { OCF_gridbox_seat_array_original_senate^2 = -1 }
+		}
+	}
+	OCF_Insert_Party_Position = yes
+}
+
 #随机减少两个议员
 OCF_randomly_reduce_senator_2 = {
 	custom_effect_tooltip = OCF_randomly_reduce_senator_2_tt
@@ -10156,7 +10447,7 @@ OCF_calculate_winning_usage = {
 		OCF.OCF_election_results_max = OCF.OCF_election_results_1
 	}
 	set_variable = {
-		OCF.OCF_election_results_winning = 1
+		ROOT.OCF_election_results_winning = 1
 	}
 	if = {
 		limit = {
@@ -10165,7 +10456,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 2
+			ROOT.OCF_election_results_winning = 2
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_2
@@ -10178,7 +10469,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 3
+			ROOT.OCF_election_results_winning = 3
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_3
@@ -10191,7 +10482,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 4
+			ROOT.OCF_election_results_winning = 4
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_4
@@ -10204,7 +10495,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 5
+			ROOT.OCF_election_results_winning = 5
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_5
@@ -10217,7 +10508,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 6
+			ROOT.OCF_election_results_winning = 6
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_6
@@ -10230,7 +10521,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 7
+			ROOT.OCF_election_results_winning = 7
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_7
@@ -10243,7 +10534,7 @@ OCF_calculate_winning_usage = {
 			}
 		}
 		set_variable = {
-			OCF.OCF_election_results_winning = 8
+			ROOT.OCF_election_results_winning = 8
 		}
 		set_variable = {
 			OCF.OCF_election_results_max = OCF.OCF_election_results_8
@@ -11565,6 +11856,9 @@ OCF_show_all_party_leaders_4 = {
 	add_to_array = {
 		OCF_Party_SubGUI_2_lists_array = token:OCF_Shiina_Mayuri
 	}
+	add_to_array = {
+		OCF_Party_SubGUI_2_lists_array = token:OCF_Hiyajo_Maho
+	}
 }
 
 OCF_show_all_party_leaders_5 = {
@@ -12039,7 +12333,7 @@ OCF_reset_ruling_party = {
 	if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 1
+				ROOT.OCF_election_results_winning = 1
 			}
 		}
 		set_country_flag = OCF_control_government_flag_1
@@ -12048,7 +12342,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 2
+				ROOT.OCF_election_results_winning = 2
 			}
 		}
 		set_country_flag = OCF_control_government_flag_2
@@ -12057,7 +12351,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 3
+				ROOT.OCF_election_results_winning = 3
 			}
 		}
 		set_country_flag = OCF_control_government_flag_3
@@ -12066,7 +12360,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 4
+				ROOT.OCF_election_results_winning = 4
 			}
 		}
 		set_country_flag = OCF_control_government_flag_4
@@ -12075,7 +12369,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 5
+				ROOT.OCF_election_results_winning = 5
 			}
 		}
 		set_country_flag = OCF_control_government_flag_5
@@ -12084,7 +12378,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 6
+				ROOT.OCF_election_results_winning = 6
 			}
 		}
 		set_country_flag = OCF_control_government_flag_6
@@ -12093,7 +12387,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 7
+				ROOT.OCF_election_results_winning = 7
 			}
 		}
 		set_country_flag = OCF_control_government_flag_7
@@ -12102,7 +12396,7 @@ OCF_reset_ruling_party = {
 	else_if = {
 		limit = {
 			check_variable = {
-				OCF.OCF_election_results_winning = 8
+				ROOT.OCF_election_results_winning = 8
 			}
 		}
 		set_country_flag = OCF_control_government_flag_8
@@ -12141,6 +12435,44 @@ OCF_elected_faction_4 = {
 		ideology = democratic
 		long_name = OCF_parties_4_long
 		name = OCF_parties_4
+	}
+}
+
+#合众国干涉
+OCF_usf_elected_faction_4 = {
+	set_cosmetic_tag = OCF_third
+	promote_character = {
+		character = OCF_Hiyajo_Maho
+		ideology = sub_Techno_Bureaucracy
+	}
+	set_party_name = {
+		ideology = democratic
+		long_name = OCF_parties_4_long
+		name = OCF_parties_4
+	}
+	set_politics = {
+		ruling_party = democratic
+		elections_allowed = yes
+		election_frequency = 36
+	}
+	OCF_eliminate_current_ruling_party = yes
+	set_country_flag = OCF_control_government_flag_4
+	OCF_Insert_Party_Position = yes
+	hidden_effect = {
+		add_ideas = OCF_idea_parliament
+		add_ideas = OCF_idea_Shiina_Mayuri
+	}
+	add_to_array = {
+		IRIS_Historical_leaders_Array = token:OCF_Hiyajo_Maho
+	}
+	add_to_array = {
+		IRIS_Historical_leaders_2_Array = token:OCF_idea_parliament
+	}
+	add_to_array = {
+		IRIS_Historical_leaders_voting_rate_Array = OCF_national_support_proportion^4
+	}
+	add_to_array = {
+		GetNameIRISHistoricalDate = global.year
 	}
 }
 
@@ -13145,6 +13477,8 @@ OCE_amidst_intense_discussions_parliament_pack = {
 
 #插入党派位置 总刷新
 OCF_Insert_Party_Position = {
+	#脏变量刷新，优化性能
+	set_variable_to_random = global.ocf_gridbox_seat_dirty
 	OCF = {
 		# custom_effect_tooltip = OCF_Insert_Party_Position_tt
 		clear_array = OCF_seat_x_array

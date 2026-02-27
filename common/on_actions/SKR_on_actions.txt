@@ -3,6 +3,7 @@ on_actions = {
 		effect = {
             SKR = {
                 load_oob = "SKR"
+                SKR_bakufu_setup = yes
                 674 = {
                     set_demilitarized_zone = yes
                 }
@@ -39,23 +40,153 @@ on_actions = {
                             artillery = { x = 0 y = 0 }
                         }
                     }
+                    division_template = {
+                        name = "旗本众"
+                        is_locked = yes
+                        regiments = {
+                            Arcane_Knights_Camp = {x = 0 y = 0}
+                        }
+                    }
                     capital_scope = {
                         create_unit = {
-                            division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.2"
+                            division = "name = \"旗本众\" division_template = \"旗本众\" start_experience_factor = 0.5"
                             owner = PREV
                         }
                         create_unit = {
-                            division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.2"
+                            division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.3"
+                            owner = PREV
+                        }
+                        create_unit = {
+                            division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.3"
+                            owner = PREV
+                        }
+                        create_unit = {
+                            division = "name = \"步兵队\" division_template = \"步兵队\" start_experience_factor = 0.3"
                             owner = PREV
                         }
                     }
                 }
+                every_country = {
+                    limit = {
+                        OR = {
+                            tag = NIS
+                            tag = KUD
+                            tag = SBY
+                            tag = UEH
+                        }
+                    }
+                    add_timed_idea = {idea = SKR_black_foaming_night_north days = 800}
+                }
+                every_country = {
+                    limit = {
+                        OR = {
+                            tag = BDA
+                            tag = SMD
+                            tag = KNK
+                            tag = SWO
+                        }
+                    }
+                    add_timed_idea = {idea = SKR_black_foaming_night_south days = 800}
+                }
 
+                country_event = {id = SKR.1 days = 7}
+                country_event = {id = SKR.6 days = 45}
+                country_event = {id = SKR.8 days = 91}
+                country_event = {id = SKR.9 days = 121}
+                country_event = {id = SKR.10 days = 135}
+                country_event = {id = SKR.11 days = 222}
+                country_event = {id = SKR.14 days = 274}
 
+                country_event = {id = SKR_sankin.1 days = 15}
+                country_event = {id = SKR_sankin.2 days = 60}
+                country_event = {id = SKR_sankin.3 days = 105}
+                country_event = {id = SKR_sankin.4 days = 152}
+                country_event = {id = SKR_sankin.5 days = 158}
+                country_event = {id = SKR_sankin.6 days = 182}
+                country_event = {id = SKR_sankin.7 days = 213}
+                country_event = {id = SKR_sankin.8 days = 244}
+                country_event = {id = SKR_sankin.9 days = 288}
 
+            }
+        }
+    }
 
-                country_event = {id = SKR_temp.1 days = 268}
-                country_event = {id = SKR_temp.2 days = 500}
+    on_weekly_SKR = {
+        effect = {
+            SKR = {
+                if = {
+                    limit = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+                        NOT = {
+                            has_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+                        }
+                    }
+                    set_temp_variable = {SKR_morale_temp = -5}
+                    SKR_update_morale_effect = yes
+                }
+                if = {
+                    limit = {
+                        has_completed_focus = SKR_against_imperialism
+                        NOT = {
+                            has_idea = SKR_defend_our_home
+                        }
+                        OR = {
+                            has_war_with = USF
+                            has_war_with = SLL
+                        }
+                    }
+                    add_ideas = SKR_defend_our_home
+                }
+                if = {
+                    limit = {
+                        has_idea = SKR_defend_our_home
+                        AND = {
+                            NOT = {
+                                has_war_with = USF
+                            }
+                            NOT = {
+                                has_war_with = SLL
+                            }
+                        }
+                    }
+                    remove_ideas = SKR_defend_our_home
+                }
+            }
+        }
+    }
+
+    on_monthly_SKR = {
+        effect = {
+            SKR = {
+                if = {
+                    limit = {
+                        OR = {
+                            has_idea = SKR_encourage_competition_idea_1
+                            has_idea = SKR_encourage_competition_idea_2
+                            has_idea = SKR_encourage_competition_idea_3
+                            has_idea = SKR_encourage_competition_idea_4
+                        }
+                    }
+                    set_temp_variable = {SKR_industralization_point_temp = 0.5}
+                    SKR_industralization_effect = yes
+                }
+            }
+        }
+    }
+
+    on_monthly_SKR = {
+        effect = {
+            SKR = {
+                if = {
+                    limit = {
+                        OR = {
+                            has_idea = SKR_encourage_competition_idea_1
+                            has_idea = SKR_encourage_competition_idea_1
+                        }
+                    }
+                    set_temp_variable = {SKR_industralization_point_temp = 2}
+                    SKR_industralization_effect = yes
+                }
             }
         }
     }
@@ -64,6 +195,7 @@ on_actions = {
         effect = {
             if = {
                 limit = {
+                    has_global_flag = HKD_WAR_STARTED
                     FROM = {
                         OR = {
                             is_SKR_tag = yes
@@ -88,21 +220,90 @@ on_actions = {
                 IRIS_peace_popup_determine_allies = yes
                 add_to_variable = { global.peace_popup_dirty = 1 }
 
-                FROM = {
-                    annex_country = {
-                        target = ROOT
-                    }
-                }
+                set_global_flag = HKD_WAR_ENDED
 
                 if = {
+                    limit = {
+                        ROOT = {
+                            tag = HKD
+                        }
+                        FROM = {
+                            tag = UTR
+                        }
+                    }
+                    FROM = {
+                        annex_country = {
+                            target = ROOT
+                            transfer_troops = no
+                        }
+                    }
+                }
+                else_if = {
                     limit = {
                         ROOT = {
                             tag = UTR
                         }
                     }
-                    SKR = {
-                        country_event = {id = SKR_temp.4 days = 3}
+                    every_state = {
+                        limit = {
+                            is_owned_by = UTR
+                            is_core_of = HKD
+                        }
+                        transfer_state_to = HKD
                     }
+                    HKD = {
+                        annex_country = {
+                            target = UTR
+                            transfer_troops = no
+                        }
+                    }
+                    SKR = {
+                        set_autonomy = {
+                            target = HKD
+                            autonomous_state = SKR_chinjyufu
+                        }
+
+                        if = {
+                            limit = {
+                                NOT = {
+                                    has_country_flag = SKR_15_triggered
+                                }
+                            }
+                            country_event = {id = SKR.16 days = 3}
+                        }
+                        else = {
+                            country_event = {id = SKR.17 days = 3}
+                        }
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+                    NOT = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+                    }
+                    FROM = {
+                        OR = {
+                            tag = SKR
+                            tag = NIS
+                            tag = SBY
+                            tag = KUD
+                            tag = UEH
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            tag = SKR
+                            tag = NIS
+                            tag = SBY
+                            tag = KUD
+                            tag = UEH
+                        }
+                    }
+                }
+                FROM = {
+                    white_peace = ROOT
                 }
             }
             if = {
@@ -214,23 +415,6 @@ on_actions = {
                 IRIS_peace_popup_determine_allies = yes
                 add_to_variable = { global.peace_popup_dirty = 1 }
 
-                if = {
-                    limit = {
-                        FROM = {
-                            OR = {
-                                tag = BDA
-                                is_ally_with = BDA
-                            }
-                        }
-                        ROOT = {
-                            tag = SKR
-                        }
-                    }
-                    BDA = {
-                        country_event = {id = SKR_temp.14 days = 7}
-                    }
-                }
-
                 FROM = {
                     annex_country = {
                         target = ROOT
@@ -239,6 +423,394 @@ on_actions = {
 
                 
             }
+
+            if = {
+                limit = {
+                    has_global_flag = SKR_CIV_WAR_SOUTH_FLAG
+                    FROM = {
+                        OR = {
+                            tag = BDA
+                            tag = SMD
+                            tag = ASK
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            tag = BDA
+                            tag = SMD
+                            tag = ASK
+                        }
+                    }
+                }
+                FROM = {
+                    white_peace = ROOT
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            tag = ASK
+                        }
+                    }
+                    958 = {
+                        transfer_state_to = BDA
+                        add_core_of = BDA
+                    }
+                    936 = {
+                        transfer_state_to = BDA
+                        add_core_of = BDA
+                    }
+                    957 = {
+                        transfer_state_to = SMD
+                        add_core_of = SMD
+                    }
+                    959 = {
+                        transfer_state_to = SMD
+                        add_core_of = SMD
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_global_flag = SKR_YKS_RAISED_FLAG
+                    FROM = {
+                        OR = {
+                            tag = BDA
+                            tag = SMD
+                            tag = YKS
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            tag = BDA
+                            tag = SMD
+                            tag = YKS
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            tag = YKS
+                        }
+                    }
+                    ROOT = {
+                        every_owned_state = {
+                            limit = {
+                                is_core_of = BDA
+                            }
+                            transfer_state_to = BDA
+                        }
+                        every_owned_state = {
+                            limit = {
+                                is_core_of = SMD
+                            }
+                            transfer_state_to = SMD
+                        }
+                    }
+                    FROM = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            OR = {
+                                tag = BDA
+                                tag = SMD
+                            }
+                        }
+                    }
+                    FROM = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_global_flag = SKR_YKS_RAISED_2_FLAG
+                    FROM = {
+                        OR = {
+                            tag = YKS
+                            tag = SWO
+                            tag = KNK
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            tag = YKS
+                            tag = SWO
+                            tag = KNK
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            tag = YKS
+                        }
+                    }
+                    ROOT = {
+                        every_owned_state = {
+                            transfer_state_to = SWO
+                            add_core_of = SWO
+                        }
+                    }
+                    SWO = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            OR = {
+                                tag = SWO
+                                #tag = KNK
+                            }
+                        }
+                    }
+                    YKS = {
+                        annex_country = {
+                            target = ROOT
+                        }
+                    }
+                    every_country = {
+                        limit = {
+                            has_war_with = YKS
+                            is_South_SKR_tag = yes
+                        }
+                        white_peace = YKS
+                    }
+                    every_state = {
+                        limit = {
+                            is_core_of = SWO
+                        }
+                        add_core_of = YKS
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_global_flag = SKR_YKN_RAISED_FLAG
+                    FROM = {
+                        OR = {
+                            is_North_SKR_tag = yes
+                            tag = SKR
+                            tag = YKN
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            is_North_SKR_tag = yes
+                            tag = SKR
+                            tag = YKN
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        ROOT = {
+                            tag = YKN
+                        }
+                    }
+                    YKN = {
+                        every_owned_state = {
+                            limit = {
+                                is_core_of = SKR
+                            }
+                            transfer_state_to = SKR
+                        }
+                        every_owned_state = {
+                            limit = {
+                                is_core_of = NIS
+                            }
+                            transfer_state_to = NIS
+                        }
+                        every_owned_state = {
+                            limit = {
+                                is_core_of = UEH
+                            }
+                            transfer_state_to = UEH
+                        }
+                    }
+                }
+                if = {
+                    limit = {
+                        FROM = {
+                            tag = YKN
+                        }
+                        ROOT = {
+                            tag = SKR
+                        }
+                    }
+                    every_country = {
+                        limit = {
+                            is_North_SKR_tag = yes
+                            tag = SKR
+                        }
+                        YKN = {
+                            annex_country = {
+                                target = PREV
+                            }
+                        }
+                    }
+                    YKN = {
+                        if = {
+                            limit = {
+                                has_war_with = HKD
+                            }
+                            white_peace = HKD
+                        }
+                    }
+                    every_state = {
+                        limit = {
+                            OR = {
+                                is_core_of = SKR
+                                is_core_of = NIS
+                                is_core_of = KUD
+                                is_core_of = SBY
+                                is_core_of = UEH
+                            }
+                        }
+                        add_core_of = YKN
+                    }
+                }
+            }
         }
     }
+    on_state_control_changed = {
+		effect = {
+			if = {
+				limit = {
+					FROM.FROM = { state = 316 }
+				}
+                if = {
+                    limit = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+                        NOT = {
+                            has_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+                        }
+                        ROOT = {
+                            OR = {
+                                tag = NIS
+                                tag = UEH
+                                tag = KUD
+                                tag = SBY
+                            }
+                        }
+                        FROM = {
+                            tag = SKR
+                        }
+                    }
+                    NIS = {
+                        country_event = {id = SKR.114}
+                    }
+                }
+				if = {
+					limit = {
+						ROOT = {
+							OR = {
+								tag = BDA
+								is_ally_with = BDA
+							}
+							
+						}
+						FROM = {
+							tag = SKR
+						}
+					}
+					ROOT = {country_event = {id = SKR_temp.12}}
+				}
+			}
+            if = {
+                limit = {
+                    FROM.FROM = { state = 941 }
+                }
+                if = {
+                    limit = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+                        NOT = {
+                            has_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+                        }
+                        ROOT = {
+							OR = {
+								tag = SKR
+								is_ally_with = SKR
+							}
+							
+						}
+						FROM = {
+							is_North_SKR_tag = yes
+						}
+                        NOT = {
+                            has_global_flag = SKR_116_TRIGGERED
+                        }
+                    }
+                    ROOT = {country_event = {id = SKR.116}}
+                    set_global_flag = SKR_116_TRIGGERED
+                }
+            }
+            if = {
+                limit = {
+                    FROM.FROM = { state = 945 }
+                }
+                if = {
+                    limit = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+                        NOT = {
+                            has_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+                        }
+                        ROOT = {
+							OR = {
+								tag = SKR
+								is_ally_with = SKR
+							}
+							
+						}
+						FROM = {
+							is_North_SKR_tag = yes
+						}
+                        NOT = {
+                            has_global_flag = SKR_117_TRIGGERED
+                        }
+                    }
+                    ROOT = {country_event = {id = SKR.117}}
+                    set_global_flag = SKR_117_TRIGGERED
+                }
+            }
+            if = {
+                limit = {
+                    FROM.FROM = { state = 302 }
+                }
+                if = {
+                    limit = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_FLAG
+                        NOT = {
+                            has_global_flag = SKR_CIV_WAR_NORTH_ENDED_FLAG
+                        }
+                        ROOT = {
+							OR = {
+								tag = SKR
+								is_ally_with = SKR
+							}
+							
+						}
+						FROM = {
+							is_North_SKR_tag = yes
+						}
+                        NOT = {
+                            has_global_flag = SKR_118_TRIGGERED
+                        }
+                    }
+                    ROOT = {country_event = {id = SKR.118}}
+                    set_global_flag = SKR_118_TRIGGERED
+                }
+            }
+		}
+	}
 }
