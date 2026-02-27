@@ -24,13 +24,6 @@ focus_tree = {
 		}
         completion_reward = {
 			add_political_power = 120
-            effect_tooltip = {
-                add_ideas = MDS_whisper
-            }
-            #custom_effect_tooltip = MDS_focus_1_tt
-
-            #set_country_flag = MDS_enable_whisper
-            #unlock_decision_category_tooltip = 
 		}
     }
 
@@ -393,7 +386,10 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			
+			add_ideas = MDS_whisper
+            unlock_decision_tooltip = MDS_whisper_tec
+            unlock_decision_tooltip = MDS_whisper_mic
+            unlock_decision_tooltip = MDS_whisper_man
 		}
     }
 
@@ -403,7 +399,7 @@ focus_tree = {
         #icon = GFX_focus_MDS_focus_alt_2
         icon = GFX_focus_generic_military_academy
         x = -1
-        y = 1
+        y = 1MDS_focus_alt_2_tt
         cost = 10
         relative_position_id = MDS_focus_alt_1
         prerequisite = { focus = MDS_focus_alt_1 }
@@ -416,7 +412,9 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			
+			add_stability = 0.1
+            add_war_support = 0.1
+			custom_effect_tooltip = MDS_focus_alt_2_tt
 		}
     }
 
@@ -439,7 +437,64 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			
+			country_lock_all_division_template = no
+            custom_effect_tooltip = MDS_focus_alt_3_tt
+            hidden_effect = {
+                division_template = {
+                    name = "西风团"
+                    regiments = {
+                        infantry = { x = 0 y = 0 }
+                        infantry = { x = 0 y = 1 }
+                        infantry = { x = 0 y = 2 }
+                        infantry = { x = 0 y = 3 }
+                        infantry = { x = 1 y = 0 }
+                        infantry = { x = 1 y = 1 }
+                        infantry = { x = 1 y = 2 }
+                        infantry = { x = 1 y = 3 }
+                        infantry = { x = 2 y = 0 }
+                        infantry = { x = 2 y = 1 }
+                        infantry = { x = 2 y = 2 }
+                        infantry = { x = 2 y = 3 }
+                        infantry = { x = 3 y = 0 }
+                        artillery_brigade = { x = 4 y = 0 }
+                        artillery_brigade = { x = 4 y = 1 }
+                        artillery_brigade = { x = 4 y = 2 }
+                        anti_tank_brigade = { x = 4 y = 3 }
+                    }
+                    support = {
+                        engineer = { x = 0 y = 0 }
+                        artillery = { x = 0 y = 1 }
+                        anti_air = { x = 0 y = 2 }
+                    }
+                }
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"西风团第二小队\" division_template = \"西风团\" start_experience_factor = 1"
+                        owner = THIS.owner
+                        prioritize_location = 9972
+                    }
+                    create_unit = {
+                        division = "name = \"西风团第三小队\" division_template = \"西风团\" start_experience_factor = 1"
+                        owner = THIS.owner
+                        prioritize_location = 9972
+                    }
+                }
+                add_equipment_to_stockpile = {
+                    type = artillery_equipment
+                    amount = 240
+                    producer = USR
+                }
+                add_equipment_to_stockpile = {
+                    type = anti_tank_equipment
+                    amount = 72
+                    producer = USR
+                }
+                add_equipment_to_stockpile = {
+                    type = anti_air_equipment
+                    amount = 40
+                    producer = USR
+                }
+            }
 		}
     }
 
@@ -462,7 +517,7 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			
+			custom_effect_tooltip = MDS_focus_alt_4_tt
 		}
     }
 
@@ -485,7 +540,36 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			
+            if = {
+                limit = {
+                    has_idea = MDS_puppet_modifier
+                }
+			    remove_ideas = MDS_puppet_modifier
+            }
+            if = {
+                limit = {
+                    has_idea = MDS_puppet_modifier_2
+                }
+			    remove_ideas = MDS_puppet_modifier_2
+            }
+            if = {
+                limit = {
+                    has_idea = MDS_puppet_modifier_3
+                }
+			    remove_ideas = MDS_puppet_modifier_3
+            }
+            if = {
+                limit = {
+                    has_idea = MDS_puppet_modifier_4
+                }
+			    remove_ideas = MDS_puppet_modifier_4
+            }
+            if = {
+                limit = {
+                    has_idea = MDS_puppet_modifier_5
+                }
+			    remove_ideas = MDS_puppet_modifier_5
+            }
 		}
     }
 
@@ -500,6 +584,7 @@ focus_tree = {
         relative_position_id = MDS_focus_alt_1
         prerequisite = { focus = MDS_focus_alt_3 }
         prerequisite = { focus = MDS_focus_alt_5 }
+        will_lead_to_war_with = ELN
         bypass = {
             NOT = {
 			    is_subject_of = ELN
@@ -509,7 +594,13 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			
+			ELN = {
+                end_puppet = MDS
+                declare_war_on = {
+                    target = MDS
+                    type = annex_everything
+                }
+            }
 		}
     }
 
@@ -523,16 +614,33 @@ focus_tree = {
         cost = 10
         relative_position_id = MDS_focus_alt_6
         prerequisite = { focus = MDS_focus_alt_6 }
+        available = {
+            ELN = {
+                OR = {
+                    surrender_progress > 0.24
+                    has_capitulated = yes
+                    exists = no
+                }
+            }
+        }
         bypass = {
             NOT = {
-			    is_subject_of = ELN
+			    has_war_with = ELN
             }
 		}
         ai_will_do = {
             factor = 0
 		}
         completion_reward = {
-			
+			if = {
+                limit = {
+                    has_war_with = ELN
+                }
+                white_peace = ELN
+            }
+            else = {
+                custom_effect_tooltip = MDS_focus_alt_7_tt
+            }
 		}
     }
 
