@@ -640,6 +640,13 @@ focus_tree = {
 		}
 		ai_will_do = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = SKR_ai_hehavior_Hokuriku_war
+                    option = SKR_ai_hehavior_Hokuriku_war_2
+				}
+			}
 		} 
 		completion_reward = {
 			add_political_power = 30
@@ -663,6 +670,13 @@ focus_tree = {
 		}
 		ai_will_do = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = SKR_ai_hehavior_Hokuriku_war
+                    option = SKR_ai_hehavior_Hokuriku_war_3
+				}
+			}
 		} 
 		completion_reward = {
 			set_temp_variable = {SKR_yoshinobu_point_temp = 1}
@@ -704,6 +718,13 @@ focus_tree = {
 		}
 		ai_will_do = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = SKR_ai_hehavior_Hokuriku_war
+                    option = SKR_ai_hehavior_Hokuriku_war_3
+				}
+			}
 		}
 		completion_reward = {
 			custom_effect_tooltip = SKR_a_nice_price_t
@@ -728,6 +749,13 @@ focus_tree = {
 		}
 		ai_will_do = {
 			base = 10
+			modifier = {
+				factor = 0
+				has_game_rule = {
+					rule = SKR_ai_hehavior_Hokuriku_war
+                    option = SKR_ai_hehavior_Hokuriku_war_2
+				}
+			}
 		} 
 		completion_reward = {
 			custom_effect_tooltip = SKR_a_unique_way_t
@@ -1440,14 +1468,12 @@ focus_tree = {
 					}
 					capital_scope = {
 						create_unit = {
-							create_unit = {
-								division = "name = \"黑母衣众\" division_template = \"母衣众\" start_experience_factor = 0.6"
-								owner = ROOT
-							}
-							create_unit = {
-								division = "name = \"赤母衣众\" division_template = \"母衣众\" start_experience_factor = 0.6"
-								owner = ROOT
-							}
+							division = "name = \"黑母衣众\" division_template = \"母衣众\" start_experience_factor = 0.6"
+							owner = ROOT
+						}
+						create_unit = {
+							division = "name = \"赤母衣众\" division_template = \"母衣众\" start_experience_factor = 0.6"
+							owner = ROOT
 						}
 					}
 				}
@@ -1517,7 +1543,8 @@ focus_tree = {
 			focus = SKR_restore_order
 		}
 		completion_reward = {
-			
+			country_event = {id = SKR.49 days = 3}
+			country_event = {id = SKR.50 days = 10}
 		}
 	}
 	#绥靖偶像大名
@@ -1739,7 +1766,8 @@ focus_tree = {
 			focus = SKR_projects_of_reform
 		}
 		completion_reward = {
-			
+			set_temp_variable = {SKR_houshu_relation_temp = -20}
+			SKR_houshu_relation_effect = yes
 		}
 	}
 	#试行议政院
@@ -1760,7 +1788,9 @@ focus_tree = {
 			focus = SKR_everyone_are_equal
 		}
 		completion_reward = {
-			
+			add_ideas = SKR_parliament
+			set_temp_variable = {SKR_kakushin_relation_temp = 10}
+			SKR_kakushin_relation_effect = yes
 		}
 	}
 	#利用牢庆关系
@@ -1814,7 +1844,17 @@ focus_tree = {
 			focus = SKR_centralization
 		}
 		completion_reward = {
-			
+			add_political_power = 100
+			every_country = {
+				limit = {
+					NOT = {
+						tag = HKD
+					}
+					is_SKR_tag = yes
+					is_subject_of = ROOT
+				}
+				add_ideas = SKR_cut_daimyos_power
+			}
 		}
 	}
 	#天领合并令
@@ -1831,8 +1871,75 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_centralization
 		}
+		bypass = {
+			330 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						NOT = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+			302 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						NOT = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+			317 = {
+				owner = {
+					OR = {
+						tag = ROOT
+						NOT = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+			}
+		}
 		completion_reward = {
-			
+			if = {
+				limit = {
+					330 = {
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+				330 = {
+					transfer_state_to = ROOT
+				}
+			}
+			if = {
+				limit = {
+					302 = {
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+				302 = {
+					transfer_state_to = ROOT
+				}
+			}
+			if = {
+				limit = {
+					317 = {
+						owner = {
+							is_subject_of = ROOT
+						}
+					}
+				}
+				317 = {
+					transfer_state_to = ROOT
+				}
+			}
 		}
 	}
 	#撤销镇守府
@@ -1852,8 +1959,23 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_expand_tenryou
 		}
+		bypass = {
+			NOT = {
+				country_exists = HKD
+			}
+		}
 		completion_reward = {
-			
+			if = {
+				limit = {
+					HKD = {
+						is_subject_of = ROOT
+					}
+				}
+				annex_country = {
+					target = HKD
+					transfer_troops = yes
+				}
+			}
 		}
 	}
 	#政权重生
@@ -1895,12 +2017,15 @@ focus_tree = {
 			NOT = {
 				has_dynamic_modifier = {modifier = SKR_black_foaming_night_modifier}
 			}
+			has_global_flag = SKR_N_UNIFICATION_AVAILABLE_FLAG
 		}
 		completion_reward = {
 			add_stability = 0.15
 			add_war_support = 0.2
+			IRIS_unlock_a_new_branch = yes
 		}
 	}
+#统一战争：共和同盟
 	#争取佐嘉
 	focus = {
 		id = SKR_contact_SWO
@@ -1912,11 +2037,437 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 		}
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				AND = {
+					has_completed_focus = SKR_prepare_for_unification
+					has_global_flag= SKR_UNIFICATION_WAR_1_FLAG
+				}
+			}
+		}
 		prerequisite = {
 			focus = SKR_prepare_for_unification
 		}
 		completion_reward = {
 			
+		}
+	}
+	#狠抓军备生产
+	focus = {
+		id = SKR_weapon_production
+		icon = GFX_focus_SKR_weapon_production
+		x = -1
+		y = 1
+		relative_position_id = SKR_contact_SWO
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_contact_SWO
+		}
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 4000
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 200
+			}
+		}
+	}
+	#注重国际观瞻
+	focus = {
+		id = SKR_diplomatic_effort
+		icon = GFX_focus_SKR_diplomatic_effort
+		x = 1
+		y = 1
+		relative_position_id = SKR_contact_SWO
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_contact_SWO
+		}
+		completion_reward = {
+			
+		}
+	}
+	#团结派系
+	focus = {
+		id = SKR_unite_factions
+		icon = GFX_focus_SKR_unite_factions
+		x = 1
+		y = 1
+		relative_position_id = SKR_weapon_production
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_weapon_production
+		}
+		prerequisite = {
+			focus = SKR_diplomatic_effort
+		}
+		completion_reward = {
+			set_temp_variable = {SKR_kakushin_relation_temp = 10}
+			SKR_kakushin_relation_effect = yes
+			set_temp_variable = {SKR_chukan_relation_temp = 10}
+			SKR_chukan_relation_effect = yes
+			set_temp_variable = {SKR_shinsengumi_relation_temp = 10}
+			SKR_shinsengumi_relation_effect = yes
+			set_temp_variable = {SKR_houshu_relation_temp = 10}
+			SKR_houshu_relation_effect = yes
+		}
+	}
+	#宣传攻势
+	focus = {
+		id = SKR_show_our_legitimacy
+		icon = GFX_focus_SKR_show_our_legitimacy
+		x = 0
+		y = 1
+		relative_position_id = SKR_unite_factions
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_unite_factions
+		}
+		completion_reward = {
+			
+		}
+	}
+	#先发制人
+	focus = {
+		id = SKR_march_south
+		icon = GFX_focus_SKR_march_south
+		x = 0
+		y = 1
+		relative_position_id = SKR_show_our_legitimacy
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_show_our_legitimacy
+		}
+		will_lead_to_war_with = BDA
+		will_lead_to_war_with = SMD
+		will_lead_to_war_with = KNK
+		completion_reward = {
+			declare_war_on = {
+				target = BDA
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = SMD
+				type = annex_everything
+			}
+			declare_war_on = {
+				target = KNK
+				type = annex_everything
+			}
+		}
+	}
+#统一战争：佐嘉
+	#未曾设想的局面
+	focus = {
+		id = SKR_an_unprecedented_situation
+		icon = GFX_focus_SKR_an_unprecedented_situation
+		x = 0
+		y = 1
+		offset = {
+			y = 5
+			trigger = {
+				has_country_flag = SKR_focus_debug
+			}
+		}
+		relative_position_id = SKR_prepare_for_unification
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				AND = {
+					has_completed_focus = SKR_prepare_for_unification
+					has_global_flag= SKR_UNIFICATION_WAR_2_FLAG
+				}
+			}
+		}
+		prerequisite = {
+			focus = SKR_prepare_for_unification
+		}
+		completion_reward = {
+			
+		}
+	}
+	#呼吁统一
+	focus = {
+		id = SKR_call_for_unification
+		icon = GFX_focus_SKR_call_for_unification
+		x = 0
+		y = 1
+		relative_position_id = SKR_an_unprecedented_situation
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_an_unprecedented_situation
+		}
+		completion_reward = {
+			
+		}
+	}
+	#南北会谈
+	focus = {
+		id = SKR_the_grand_conference
+		icon = GFX_focus_SKR_the_grand_conference
+		x = 0
+		y = 1
+		relative_position_id = SKR_call_for_unification
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_call_for_unification
+		}
+		completion_reward = {
+			
+		}
+	}
+	#早樱，强大且统一
+	focus = {
+		id = SKR_unite_and_strong
+		icon = GFX_focus_SKR_unite_and_strong
+		x = -1
+		y = 1
+		relative_position_id = SKR_the_grand_conference
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_the_grand_conference
+		}
+		completion_reward = {
+			
+		}
+	}
+	#兄弟阋墙
+	focus = {
+		id = SKR_a_spilted_house
+		icon = GFX_focus_SKR_a_spilted_house
+		x = 1
+		y = 1
+		relative_position_id = SKR_the_grand_conference
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_the_grand_conference
+		}
+		completion_reward = {
+			
+		}
+	}
+#统一战争：教区
+	#与圣座的谈判
+	focus = {
+		id = SKR_conference_with_holy_see
+		icon = GFX_focus_SKR_conference_with_holy_see
+		x = -2
+		y = 1
+		offset = {
+			y = 10
+			trigger = {
+				has_country_flag = SKR_focus_debug
+			}
+		}
+		relative_position_id = SKR_prepare_for_unification
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				AND = {
+					has_completed_focus = SKR_prepare_for_unification
+					has_global_flag= SKR_UNIFICATION_WAR_3_FLAG
+				}
+			}
+		}
+		prerequisite = {
+			focus = SKR_prepare_for_unification
+		}
+		mutually_exclusive = {
+			focus = SKR_challenge_the_god
+		}
+		completion_reward = {
+			
+		}
+	}
+	#统一早樱！
+	focus = {
+		id = SKR_sao_unified
+		icon = GFX_focus_SKR_sao_unified
+		x = 0
+		y = 3
+		relative_position_id = SKR_conference_with_holy_see
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_conference_with_holy_see
+		}
+		completion_reward = {
+			
+		}
+	}
+	#直面神明
+	focus = {
+		id = SKR_challenge_the_god
+		icon = GFX_focus_SKR_conference_with_holy_see
+		x = 2
+		y = 1
+		offset = {
+			y = 10
+			trigger = {
+				has_country_flag = SKR_focus_debug
+			}
+		}
+		relative_position_id = SKR_prepare_for_unification
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		allow_branch = {
+			OR = {
+				has_country_flag = SKR_focus_debug
+				AND = {
+					has_completed_focus = SKR_prepare_for_unification
+					has_global_flag= SKR_UNIFICATION_WAR_3_FLAG
+				}
+			}
+		}
+		prerequisite = {
+			focus = SKR_prepare_for_unification
+		}
+		mutually_exclusive = {
+			focus = SKR_conference_with_holy_see
+		}
+		completion_reward = {
+			
+		}
+	}
+	#孤军奋战
+	focus = {
+		id = SKR_its_our_own_issue
+		icon = GFX_focus_its_our_own_issue
+		x = -1
+		y = 1
+		relative_position_id = SKR_challenge_the_god
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_challenge_the_god
+		}
+		mutually_exclusive = {
+			focus = SKR_we_need_allies
+		}
+		completion_reward = {
+			
+		}
+	}
+	#必要之恶
+	focus = {
+		id = SKR_we_need_allies
+		icon = GFX_focus_SKR_we_need_allies
+		x = 1
+		y = 1
+		relative_position_id = SKR_challenge_the_god
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_challenge_the_god
+		}
+		mutually_exclusive = {
+			focus = SKR_its_our_own_issue
+		}
+		completion_reward = {
+			
+		}
+	}
+	#狠抓军备生产
+	focus = {
+		id = SKR_weapon_production_2
+		icon = GFX_focus_SKR_weapon_production
+		x = -1
+		y = 1
+		relative_position_id = SKR_we_need_allies
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		prerequisite = {
+			focus = SKR_its_our_own_issue
+			focus = SKR_we_need_allies
+		}
+		completion_reward = {
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 4000
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 200
+			}
+		}
+	}
+	#最终决战
+	focus = {
+		id = SKR_the_final_war
+		icon = GFX_focus_SKR_the_final_war
+		x = -2
+		y = 1
+		relative_position_id = SKR_weapon_production_2
+		cost = 5
+		ai_will_do = {
+			base = 10
+		}
+		available = {
+			if = {
+				limit = {
+					has_completed_focus = SKR_conference_with_holy_see
+				}
+				has_country_flag = SKR_conference_with_holy_see_failed_flag
+			}
+		}
+		prerequisite = {
+			focus = SKR_weapon_production_2
+			focus = SKR_conference_with_holy_see
+		}
+		will_lead_to_war_with = YKS
+		completion_reward = {
+			declare_war_on = {
+				target = YKS
+				type = annex_everything
+			}
 		}
 	}
 #经济
@@ -1967,12 +2518,21 @@ focus_tree = {
 			focus = SKR_road_to_industralization
 		}
 		completion_reward = {
+			unlock_decision_category_tooltip = SKR_self_sufficient_category
 			set_temp_variable = {SKR_kakushin_relation_temp = -10}
 			SKR_kakushin_relation_effect = yes
 			set_temp_variable = {SKR_chukan_relation_temp = 15}
 			SKR_chukan_relation_effect = yes
 			set_temp_variable = {SKR_chukan_influence_temp = 0.1}
 			SKR_chukan_influence_effect = yes
+			if = {
+				limit = {
+					NOT = {
+						has_idea = mana_priority
+					}
+				}
+				add_ideas = mana_priority
+			}
 			hidden_effect = {
 				if = {
 					limit = {
@@ -2002,7 +2562,11 @@ focus_tree = {
 			focus = SKR_sustain_agricultural_system
 		}
 		completion_reward = {
-			
+			add_ideas = SKR_lower_rent
+			set_temp_variable = {SKR_chukan_relation_temp = 10}
+			SKR_chukan_relation_effect = yes
+			set_temp_variable = {SKR_houshu_relation_temp = -15}
+			SKR_houshu_relation_effect = yes
 		}
 	}
 	#加速农村现代化
@@ -2020,7 +2584,30 @@ focus_tree = {
 			focus = SKR_sustain_agricultural_system
 		}
 		completion_reward = {
-			
+			add_tech_bonus = {
+				category = industry
+				bonus = 1.0
+				uses = 1
+			}
+			add_tech_bonus = {
+				category = electronics
+				bonus = 1.0
+				uses = 1
+			}
+			every_state = {
+				limit = {
+					is_core_of = SKR
+					owns_or_subject_of = yes
+					OR = {
+						has_state_category = rural
+					}
+				}
+				add_building_construction = {
+					type = infrastructure
+					level = 1
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#扩大粮仓储备
@@ -2038,7 +2625,20 @@ focus_tree = {
 			focus = SKR_reduce_the_rent
 		}
 		completion_reward = {
-			
+			if = {
+				limit = {
+					has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+				}
+				effect_tooltip = {
+					swap_ideas = {
+						remove_idea = SKR_famine_modifier_dummy
+						add_idea = SKR_famine_modifier_4
+					}
+				}
+				add_to_variable = {SKR_famine_monthly_population = 0.25}
+				add_to_variable = {SKR_famine_conscription_factor = 0.25}
+			}
+
 		}
 	}
 	#开垦北方土地
@@ -2059,7 +2659,30 @@ focus_tree = {
 			focus = SKR_rural_modernization
 		}
 		completion_reward = {
-			
+			random_state = {
+				limit = {
+					is_core_of = SKR
+					owns_or_subject_of = yes
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			random_state = {
+				limit = {
+					is_core_of = SKR
+					owns_or_subject_of = yes
+				}
+				add_extra_state_shared_building_slots = 1
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#现代化耕种技术
@@ -2077,7 +2700,7 @@ focus_tree = {
 			focus = SKR_rural_modernization
 		}
 		completion_reward = {
-			
+			add_ideas = SKR_modern_agriculture
 		}
 	}
 	#发展沼津渔业
@@ -2097,8 +2720,23 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_northen_development
 		}
+		bypass = {
+			941 = {
+				owns_or_subject_of = no
+			}
+		}
 		completion_reward = {
-			
+			add_equipment_to_stockpile = {
+				type = convoy
+				amount = 300
+			}
+			941 = {
+				add_extra_state_shared_building_slots = 3
+				add_building_construction = {
+					type = dockyard
+					level = 3
+				}
+			}
 		}
 	}
 	#农业机械化
@@ -2140,7 +2778,16 @@ focus_tree = {
 			focus = SKR_mechanized_agriculture
 		}
 		completion_reward = {
-			
+			every_state = {
+				limit = {
+					is_core_of = SKR
+					owns_or_subject_of = yes
+					OR = {
+						has_state_category = rural
+					}
+				}
+				increase_state_category = yes
+			}
 		}
 	}
 	#自给自足
@@ -2156,6 +2803,14 @@ focus_tree = {
 		}
 		prerequisite = {
 			focus = SKR_restore_the_city
+		}
+		available = {
+			NOT = {
+				has_dynamic_modifier = {modifier = SKR_black_foaming_night_modifier}
+			}
+			NOT = {
+				has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+			}
 		}
 		completion_reward = {
 			
@@ -2305,8 +2960,32 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_end_the_crisis
 		}
+		available = {
+			955 = {
+				owns_or_subject_of = yes
+			}
+			942 = {
+				owns_or_subject_of = yes
+			}
+		}
 		completion_reward = {
-			
+			add_ideas = SKR_music_revolution
+			955 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
+			942 = {
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = industrial_complex
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#国产留声机
@@ -2859,6 +3538,12 @@ focus_tree = {
 		}
 		available = {
 			has_country_flag = SKR_industralization_flag
+			NOT = {
+				has_dynamic_modifier = {modifier = SKR_black_foaming_night_modifier}
+			}
+			NOT = {
+				has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+			}
 		}
 		completion_reward = {
 			add_political_power = 100
@@ -2894,7 +3579,7 @@ focus_tree = {
 	focus = {
 		id = SKR_strengthen_our_army
 		icon = GFX_focus_SKR_strengthen_our_army
-		x = 14
+		x = 16
 		y = 4
 		offset = {
 			y = 15
@@ -2934,6 +3619,7 @@ focus_tree = {
 			focus = SKR_strengthen_our_army
 		}
 		completion_reward = {
+			add_dynamic_modifier = {modifier = SKR_army_reform_dynamic_modifier}
 			unlock_decision_category_tooltip = SKR_army_reform_category
 		}
 	}
@@ -3268,6 +3954,9 @@ focus_tree = {
 			focus = SKR_firepower
 			focus = SKR_victory_of_will
 		}
+		available = {
+			has_country_flag = SKR_army_reform_ended_flag
+		}
 		completion_reward = {
 			
 		}
@@ -3288,7 +3977,10 @@ focus_tree = {
 			focus = SKR_strengthen_our_army
 		}
 		completion_reward = {
-			
+			air_experience = 20
+			mio:SKR_yamaha_organization = {
+				add_mio_funds = 1000
+			}
 		}
 	}
 	#保卫天空
@@ -3306,7 +3998,18 @@ focus_tree = {
 			focus = SKR_new_air_force
 		}
 		completion_reward = {
-			
+			316 = {
+				add_building_construction = {
+					type = air_base
+					level = 2
+					instant_build = yes
+				}
+				add_building_construction = {
+					type = anti_air_building
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 
@@ -3326,7 +4029,19 @@ focus_tree = {
 			focus = SKR_strengthen_our_army
 		}
 		completion_reward = {
-			
+			navy_experience = 30
+			random_owned_controlled_state = {
+				limit = {
+					is_core_of = SKR
+					is_coastal = yes
+				}
+				add_extra_state_shared_building_slots = 2
+				add_building_construction = {
+					type = dockyard
+					level = 2
+					instant_build = yes
+				}
+			}
 		}
 	}
 	#扩建五河造船厂
@@ -3362,7 +4077,14 @@ focus_tree = {
 			focus = SKR_expand_itsuka_seitetsujyo
 		}
 		completion_reward = {
-			
+			add_tech_bonus = {
+				category = bb_tech
+				bonus = 1.0
+				uses = 1
+			}
+			mio:SKR_itsuka_seitetsujyo_organization = {
+				add_mio_funds = 1000
+			}
 		}
 	}
 	#订购外国战舰
@@ -3427,7 +4149,7 @@ focus_tree = {
 	focus = {
 		id = SKR_new_diploymacy
 		icon = GFX_focus_SKR_new_diploymacy
-		x = 26
+		x = 28
 		y = 4
 		offset = {
 			y = 10
@@ -3691,6 +4413,26 @@ focus_tree = {
 		completion_reward = {
 			custom_effect_tooltip = SKR_ciallo_tt
 			unlock_decision_tooltip = SKR_export_to_AKL
+			AUG = {
+				AKL_Koto = {
+					set_nationality = SKR
+				}
+			}
+			division_template = {
+				name = "皇国佣兵"
+				priority = 2
+				is_locked = yes
+				regiments = {
+					bujin = {x = 0 y = 0}
+					bujin = {x = 0 y = 1}
+					bujin = {x = 0 y = 2}
+				}
+			}
+			capital_scope = {
+				create_unit = {
+					division = "name = \"皇国佣兵\" division_template = \"皇国佣兵\" start_experience_factor = 0.5 "
+				}
+			}
 		}
 	}
 	#反对帝国主义

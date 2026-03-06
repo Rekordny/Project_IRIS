@@ -1,14 +1,14 @@
 def generate_hoi4_event_code(event_number):
     return f"""country_event = {{#
-    id = SKR_flavor.{event_number}
-    title = SKR_flavor.{event_number}.t
-    desc = SKR_flavor.{event_number}.desc
-    #picture = GFX_event_SKR_flavor_{event_number}
+    id = SKR.{event_number}
+    title = SKR.{event_number}.t
+    desc = SKR.{event_number}.desc
+    #picture = GFX_event_SKR_{event_number}
     is_triggered_only = yes
     fire_only_once = yes
 
     option = {{
-        name = SKR_flavor.{event_number}.a
+        name = SKR.{event_number}.a
 
         ai_chance = {{
             base = 10
@@ -17,9 +17,9 @@ def generate_hoi4_event_code(event_number):
 }}"""
 #文本自己改
 def generate_localization(event_number):
-    return f""" SKR_flavor.{event_number}.t: ""
- SKR_flavor.{event_number}.desc: ""
- SKR_flavor.{event_number}.a: ""
+    return f""" SKR.{event_number}.t: ""
+ SKR.{event_number}.desc: ""
+ SKR.{event_number}.a: ""
 """
 #文本自己改
 def generate_content(mode, min_event_num, max_event_num):
@@ -60,9 +60,9 @@ def main():
         return
     
     if mode == "1":
-        output_filename = f"SKR_flavor_events_{min_event}_to_{max_event}.txt"
+        output_filename = f"SKR_events_{min_event}_to_{max_event}.txt"
     else:
-        output_filename = f"SKR_flavor_localization_{min_event}_to_{max_event}.yml"
+        output_filename = f"SKR_localization_{min_event}_to_{max_event}.yml"
     
     with open(output_filename, "w", encoding="utf-8") as file:
         file.write(content)
