@@ -17,6 +17,13 @@ NDefines.NMilitary.UNIT_EXP_LEVELS = { 0.15, 0.3, 0.45, 0.6, 0.75, 0.9}
 NDefines.NMilitary.EXPERIENCE_COMBAT_FACTOR = 0.15
 
 --------------------------------------------------------------------------------------------------------------
+-- Production
+--------------------------------------------------------------------------------------------------------------
+
+NDefines.NProduction.BASE_FACTORY_MAX_EFFICIENCY_FACTOR = 100 --50	-- Base max efficiency for factories expressed in %.
+NDefines.NProduction.BASE_FACTORY_START_EFFICIENCY_FACTOR = 25 --10	-- Base start efficiency for factories expressed in %.
+
+--------------------------------------------------------------------------------------------------------------
 -- DESIGNS
 --------------------------------------------------------------------------------------------------------------
 
