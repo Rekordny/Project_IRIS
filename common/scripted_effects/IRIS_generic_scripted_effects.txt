@@ -78,3 +78,82 @@ IRIS_sucessionlaw_setup = {
         IRIS_update_sucession_law = yes
     }
 }
+
+#设置解散部队
+IRIS_disband_units_setup = {
+    set_temp_variable = { disband_country = THIS }
+    random_state = {
+        limit = {
+            impassable = yes
+            is_fully_controlled_by = owner
+        }
+        set_temp_variable = { disband_state = THIS }
+        set_temp_variable = { disband_state_owner = THIS.owner }
+        if = {
+            limit = { NOT = { country_exists = event_target:system } }
+            event_target:system = {
+                transfer_state = PREV
+                set_temp_variable = { debug_tag_instance = THIS }
+                set_temp_variable = { old_manpower = manpower_k }
+            }
+        }
+        else = {
+            create_dynamic_country = {
+                original_tag = event_target:system
+
+                transfer_state = PREV
+                set_temp_variable = { debug_tag_instance = THIS }
+                set_temp_variable = { old_manpower = manpower_k }
+            }
+        }
+    }
+}
+
+#解散部队后的人力转移
+IRIS_disband_units_transfer_manpower = {
+    delete_unit = { disband = yes }
+
+    set_temp_variable = { manpower_diff = manpower_k }
+    subtract_from_temp_variable = { manpower_diff = old_manpower }
+
+    while_loop_effect = { #避免超出上限
+        limit = { check_variable = { manpower_diff > 100 } }
+        subtract_from_temp_variable = { manpower_diff = 100 }
+        var:disband_country = { add_manpower = 100000 }
+        add_manpower = -100000
+    }
+
+    multiply_temp_variable = { manpower_diff = 1000 }
+    var:disband_country = { add_manpower = manpower_diff }
+
+    multiply_temp_variable = { manpower_diff = -1 }
+    add_manpower = manpower_diff
+}
+
+#确认解散部队
+disband_units_finalise = {
+    var:disband_state = { transfer_state_to = var:disband_state_owner }
+}
+
+#解散部队
+#IRIS_disband_percent_units_var 百分比0.2、0.3
+IRIS_disband_percent_units = {
+    custom_effect_tooltip = {
+        localization_key = IRIS_IRIS_disband_percent_units
+        NUM = IRIS_disband_percent_units_var
+    }
+
+    hidden_effect = {
+        IRIS_disband_units_setup = yes
+        transfer_units_fraction = {
+            target = ZTZ
+            size = 0
+            army_ratio = temp_var:IRIS_disband_percent_units_var
+            keep_unit_leaders_trigger = { always = yes }
+        }
+        ZTZ = {
+            IRIS_disband_units_transfer_manpower = yes
+        }
+        disband_units_finalise = yes
+    }
+}
