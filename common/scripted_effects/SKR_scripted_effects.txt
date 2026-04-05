@@ -1041,6 +1041,425 @@ SKR_industralization_effect = {
         }
     }
 }
+#南方工业化月度更新
+SKR_industralization_monthly_update = {
+    hidden_effect = {
+        SKR = {
+            if = {
+                limit = {
+                    check_variable = {SKR_industralization_S_counter < 7}
+                }
+                add_to_variable = {SKR_industralization_point_S = 0.5}
+            }
+            else_if = {
+                limit = {
+                    check_variable = {SKR_industralization_S_counter > 6 }
+                    check_variable = {SKR_industralization_S_counter < 18 }
+                }
+                add_to_variable = {SKR_industralization_point_S = 1.5}
+            }
+            else = {
+                add_to_variable = {SKR_industralization_point_S = 1}
+            }
+
+            if = {
+                limit = {
+                    check_variable = {SKR_industralization_S_counter = 13}
+                }
+                country_event = {id = }
+            }
+            if = {
+                limit = {
+                    check_variable = {SKR_industralization_S_counter = 22}
+                }
+                country_event = {id = }
+            }
+            add_to_variable = {SKR_industralization_S_counter = 1}
+        }
+    }
+}
+
+SKR_self_sufficient_effect = {
+    custom_effect_tooltip = SKR_self_sufficient_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_self_sufficient = SKR_self_sufficient_temp}
+    }
+}
+
+
+SKR_seasonal_changes_effect = {
+    if = {
+        limit = {
+            NOT = {
+                has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+            }
+        }
+        custom_effect_tooltip = SKR_seasonal_changes_effect_desc
+        hidden_effect = {
+            random_list = {
+                5 = {#地质灾害
+                    set_variable = {SKR_season = 1}
+                    set_variable = {SKR_self_sufficient_goal_modifier_S = 10}
+                    set_variable = {SKR_yield_modifier_S = 0}
+                }
+                20 = {#歉收
+                    set_variable = {SKR_season = 2}
+                    set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+                    set_variable = {SKR_yield_modifier_S = -1}
+                }
+                50 = {
+                    set_variable = {SKR_season = 3}#平平无奇
+                    set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+                    set_variable = {SKR_yield_modifier_S = 0}
+                }
+                10 = {
+                    set_variable = {SKR_season = 4}#丰产
+                    set_variable = {SKR_yield_modifier_S = 1}
+                    set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+                }
+            }
+            set_variable = {SKR_self_sufficient = 0}
+            #set_variable = {SKR_self_sufficient_goal = 50}
+            set_variable = {SKR_self_sufficient_goal = SKR_self_sufficient_goal_real}
+            add_to_variable = {SKR_self_sufficient_goal = modifier@SKR_self_sufficient_goal_modifier}
+            SKR_update_yield_effect = yes
+
+            add_to_array = {IRIS_prompt_alert_operations = 9}
+			IRIS_prompt_alert_operation = yes
+        }
+    }
+}
+
+#强行指定下一个季节
+SKR_force_enter_a_season_effect = {
+    custom_effect_tooltip = SKR_force_enter_a_season_effect_desc
+    hidden_effect = {
+        set_variable = {SKR_season = SKR_season_temp}
+        #地质灾害
+        if = {
+            limit = {
+                check_variable = {SKR_season = 1}
+            }
+            set_variable = {SKR_self_sufficient_goal_modifier_S = 10}
+            set_variable = {SKR_yield_modifier_S = 0}
+        }
+        #歉收
+        if = {
+            limit = {
+                check_variable = {SKR_season = 2}
+            }
+            set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+            set_variable = {SKR_yield_modifier_S = -1}
+        }
+        #平平无奇
+        if = {
+            limit = {
+                check_variable = {SKR_season = 3}
+            }
+            set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+            set_variable = {SKR_yield_modifier_S = 0}
+        }
+        #丰产
+        if = {
+            limit = {
+                check_variable = {SKR_season = 4}
+            }
+            set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+            set_variable = {SKR_yield_modifier_S = 1}
+        }
+        #战乱
+        if = {
+            limit = {
+                check_variable = {SKR_season = 5}
+            }
+            set_variable = {SKR_self_sufficient_goal_modifier_S = -20}
+            set_variable = {SKR_yield_modifier_S = -2}
+        }
+        #饥荒
+        if = {
+            limit = {
+                check_variable = {SKR_season = 6}
+            }
+            set_variable = {SKR_self_sufficient_goal_modifier_S = 0}
+            set_variable = {SKR_yield_modifier_S = 0}
+        }
+        add_to_array = {IRIS_prompt_alert_operations = 9}
+		IRIS_prompt_alert_operation = yes
+    }
+}
+
+#这个是基础产值修改别随便乱改
+SKR_change_yield_effect = {
+    custom_effect_tooltip = SKR_change_yield_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_yield = SKR_yield_temp}
+        SKR_update_yield_effect = yes
+    }
+}
+#产值修正
+SKR_update_yield_effect = {
+    hidden_effect = {
+        set_variable = {SKR_yield_f = SKR_yield}
+        add_to_variable = {SKR_yield_f = SKR_yield_m}
+    }
+}
+#周期生产效果
+SKR_yield_effect = {
+    custom_effect_tooltip = SKR_yield_effect_desc 
+    hidden_effect = {
+        add_to_variable = {SKR_self_sufficient = SKR_yield_f}
+    }
+}
+
+SKR_check_yield_effect = {
+    if = {
+        limit = {
+            check_variable = {var = SKR_self_sufficient value = SKR_self_sufficient_goal compare = greater_than_or_equals}#达到目标，根据real数值调整修正
+        }
+        custom_effect_tooltip = SKR_self_sufficient_good_tt
+        custom_effect_tooltip = SKR_self_sufficient_modifier_tt
+        if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 94}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_1
+            set_variable = {SKR_self_sufficient_stability_factor = 0.25}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0.1}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.1}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 89}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_2
+            set_variable = {SKR_self_sufficient_stability_factor = 0.20}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0.075}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.1}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 84}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_3
+            set_variable = {SKR_self_sufficient_stability_factor = 0.15}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0.05}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.075}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 79}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_4
+            set_variable = {SKR_self_sufficient_stability_factor = 0.1}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.05}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 74}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_5
+            set_variable = {SKR_self_sufficient_stability_factor = 0.05}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.025}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.2}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 69}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_6
+            set_variable = {SKR_self_sufficient_stability_factor = 0}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.05}
+            set_variable = {SKR_self_sufficient_monthly_population = 0}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.1}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 64}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_7
+            set_variable = {SKR_self_sufficient_stability_factor = 0}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.1}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.05}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 59}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_8
+            set_variable = {SKR_self_sufficient_stability_factor = 0}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.1}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.1}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.1}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 54}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_9
+            set_variable = {SKR_self_sufficient_stability_factor = -0.1}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.15}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.15}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.2}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 49}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_10
+            set_variable = {SKR_self_sufficient_stability_factor = -0.2}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.2}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.2}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.2}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real < 50}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_11
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.25}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.25}
+            set_variable = {SKR_self_sufficient_stability_factor = -0.25}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.25}
+        }
+        if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real < 95}
+            }
+            add_to_variable = {SKR_self_sufficient_goal_real = 5}
+        }
+        
+
+    }
+    else = {
+        custom_effect_tooltip = SKR_self_sufficient_bad_tt
+        custom_effect_tooltip = SKR_self_sufficient_modifier_tt
+        if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 94}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_1
+            set_variable = {SKR_self_sufficient_stability_factor = 0.25}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0.1}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.1}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 89}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_2
+            set_variable = {SKR_self_sufficient_stability_factor = 0.20}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0.075}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.1}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 84}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_3
+            set_variable = {SKR_self_sufficient_stability_factor = 0.15}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0.05}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.075}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 79}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_4
+            set_variable = {SKR_self_sufficient_stability_factor = 0.1}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.05}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.25}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 74}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_5
+            set_variable = {SKR_self_sufficient_stability_factor = 0.05}
+            set_variable = {SKR_self_sufficient_conscription_factor = 0}
+            set_variable = {SKR_self_sufficient_monthly_population = 0.025}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.2}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 69}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_6
+            set_variable = {SKR_self_sufficient_stability_factor = 0}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.05}
+            set_variable = {SKR_self_sufficient_monthly_population = 0}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0.1}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 64}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_7
+            set_variable = {SKR_self_sufficient_stability_factor = 0}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.1}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.05}
+            set_variable = {SKR_self_sufficient_war_support_factor = 0}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 59}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_8
+            set_variable = {SKR_self_sufficient_stability_factor = 0}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.1}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.1}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.1}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 54}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_9
+            set_variable = {SKR_self_sufficient_stability_factor = -0.1}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.15}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.15}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.2}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient > 49}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_10
+            set_variable = {SKR_self_sufficient_stability_factor = -0.2}
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.2}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.2}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.2}
+        }
+        else_if = {
+            limit = {
+                check_variable = {SKR_self_sufficient < 50}
+            }
+            show_ideas_tooltip = SKR_self_sufficient_modifier_11
+            set_variable = {SKR_self_sufficient_conscription_factor = -0.25}
+            set_variable = {SKR_self_sufficient_monthly_population = -0.25}
+            set_variable = {SKR_self_sufficient_stability_factor = -0.25}
+            set_variable = {SKR_self_sufficient_war_support_factor = -0.25}
+        }
+        if = {
+            limit = {
+                check_variable = {SKR_self_sufficient_goal_real > 5}
+            }
+            add_to_variable = {SKR_self_sufficient_goal_real = -5}
+        }
+    }
+
+}
+
 SKR_export_effect = {
     if = {
         limit = {
@@ -1147,6 +1566,211 @@ SKR_clamp_famine_variable = {
         clamp_variable = {
             var = SKR_famine_monthly_population
             max = 0
+        }
+    }
+}
+
+#统一进度条计算初始化
+SKR_map_progress_bar_setup = {
+    hidden_effect = {
+        #幕府 VS 共和
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+            }
+            set_variable = {SKR_shogunate_bar_real = 30}
+            set_variable = {SKR_republic_bar_real = 25}
+
+            set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
+            set_variable = {SKR_republic_bar = SKR_republic_bar_real}
+            add_to_variable = {SKR_shogunate_bar = SKR_republic_bar}
+        }
+        #幕府 VS 佐嘉 最简单的一集
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_2_FLAG
+            }
+
+            set_variable = {SKR_shogunate_bar = 50}
+        }
+        #幕府 VS 教区
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_3_FLAG
+            }
+            set_variable = {SKR_shogunate_bar_real = 30}
+            set_variable = {SKR_parish_bar = 20}
+
+            set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
+            set_variable = {SKR_parish_bar = SKR_parish_bar_real}
+            add_to_variable = {SKR_shogunate_bar = SKR_parish_bar }
+        }
+        #尊王 VS 共和
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+            }
+            set_variable = {SKR_sonno_bar_real = 30}
+            set_variable = {SKR_republic_bar_real = 25}
+
+            set_variable = {SKR_sonno_bar = SKR_sonno_bar_real}
+            set_variable = {SKR_republic_bar = SKR_republic_bar_real}
+            add_to_variable = {SKR_sonno_bar = SKR_republic_bar}
+        }
+        #尊王 VS 佐嘉
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_5_FLAG
+            }
+        }
+        #尊王 VS 教区
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_6_FLAG
+            }
+        }
+    }
+}
+
+
+#基础：共和/教区 尊王/幕府 = 基础+real
+
+#尊王进度条 果果，我们喜欢你！
+SKR_change_sonno_bar_effect = {
+    custom_effect_tooltip = SKR_change_sonno_bar_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_sonno_bar = SKR_sonno_bar_temp}
+    }
+}
+#幕府进度条 诚字旗高扬！
+SKR_change_shogunate_bar_effect = {
+    custom_effect_tooltip = SKR_change_shogunate_bar_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_shogunate_bar = SKR_shogunate_bar_temp}
+    }
+}
+#共和进度条 ksm今天和ars结婚了吗
+SKR_change_republic_bar_effect = {
+    custom_effect_tooltip = SKR_change_republic_bar_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_republic_bar = SKR_republic_bar_temp}
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+            }
+            add_to_variable = {SKR_shogunate_bar = SKR_republic_bar_temp}
+        }
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+            }
+            add_to_variable = {SKR_sonno_bar = SKR_republic_bar_temp}
+        }
+    }
+}
+#教区进度条 ksm今天和ars结婚了吗
+SKR_change_parish_bar_effect = {
+    custom_effect_tooltip = SKR_change_parish_bar_effect_desc
+    hidden_effect = {
+        add_to_variable = {SKR_parish_bar = SKR_parish_bar_temp}
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_3_FLAG
+            }
+            add_to_variable = {SKR_shogunate_bar = SKR_republic_bar_temp}
+        }
+        if = {
+            limit = {
+                has_global_flag = SKR_UNIFICATION_WAR_6_FLAG
+            }
+            add_to_variable = {SKR_sonno_bar = SKR_republic_bar_temp}
+        }
+    }
+}
+
+#GUI用，刷新地图
+SKR_update_map_frame_effect = {
+    hidden_effect = {
+        every_state = {#默认中立
+            limit = {
+                is_core_of = SKR
+            }
+            set_variable = {SKR_map_frame = 5}
+        }
+        if = {
+            limit = {
+                SKR = {
+                    has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG #幕府
+                }
+            }
+            every_state = {
+                limit = {
+                    is_core_of = SKR
+                    controller = {
+                        NOT = {
+                                tag = SWO
+                            }
+                        OR = {
+                            tag = SKR
+                            is_ally_with = SKR
+                            
+                        }
+                    }
+                }
+                set_variable = {SKR_map_frame = 1}
+            }
+        }
+        if = {
+            limit = {
+                SKR = {
+                    has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_FAILED_FLAG #尊王
+                }
+            }
+            every_state = {
+                limit = {
+                    is_core_of = SKR
+                    controller = {
+                        OR = {
+                            tag = SKR
+                            is_ally_with = SKR
+                        }
+                    }
+                }
+                set_variable = {SKR_map_frame = 2}
+            }
+        }
+        every_state = {#共和
+            limit = {
+                is_core_of = SKR
+                controller = {
+                    has_country_flag = SKR_republic_faction_flag
+                }
+            }
+            set_variable = {SKR_map_frame = 3}
+        }
+        every_state = {#教区
+            limit = {
+                is_core_of = SKR
+                controller = {
+                    OR = {
+                        tag = YKN
+                        tag = YKS
+                    }
+                }
+            }
+            set_variable = {SKR_map_frame = 4}
+        }
+
+        KNK = {
+            if = {
+                limit = {
+                    has_country_flag = SKR_republic_faction_flag
+                }
+                set_variable = {SKR_map_frame = 3}
+            }
+            else = {
+                set_variable = {SKR_map_frame = 5}
+            }
         }
     }
 }
