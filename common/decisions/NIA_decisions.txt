@@ -1,0 +1,383 @@
+NIA_civ_war_category = {
+    NIA_start_a_attack = {
+        icon = GFX_decision_IRIS_generic_armor
+        available = {
+            NER = {
+                has_war_with = NIA
+            }
+            OR = {
+                if = {
+                    limit = {
+                        OR = {
+                            tag = AKL
+                            tag = SKR
+                        }
+                    }
+                    SKR = {
+                        has_completed_focus = SKR_ciallo
+                        has_country_flag = NIA_intervention_flag
+                    }
+                    AKL = {
+                        has_country_flag = NIA_intervention_flag
+                    }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = NIA_has_highest_influence_tt
+                    if = {
+                        limit = {
+                            tag = AKL
+                        }
+                        check_variable = {AKL.NIA_influence > 19}
+                        check_variable = {AKL.NIA_influence > KNK.NIA_influence}
+                        check_variable = {AKL.NIA_influence > SKR.NIA_influence}
+                    }
+                    if = {
+                        limit = {
+                            tag = SKR
+                        }
+                        check_variable = {SKR.NIA_influence > 19}
+                        check_variable = {SKR.NIA_influence > KNK.NIA_influence}
+                        check_variable = {SKR.NIA_influence > AKL.NIA_influence}
+                    }
+                    if = {
+                        limit = {
+                            tag = KNK
+                        }
+                        check_variable = {KNK.NIA_influence > 19}
+                        check_variable = {KNK.NIA_influence > SKR.NIA_influence}
+                        check_variable = {KNK.NIA_influence > AKL.NIA_influence}
+                    }
+                }
+            }
+            any_state = {
+                is_owned_by = NIA
+                has_dynamic_modifier = {modifier = NIA_civ_war_dynamic_modifier}
+            }
+        }
+        days_remove = 70
+        days_re_enable = 70
+        complete_effect = {
+            every_state = {
+                limit = {
+                    has_dynamic_modifier = {modifier = NIA_civ_war_dynamic_modifier}
+                }
+                remove_dynamic_modifier = {modifier = NIA_civ_war_dynamic_modifier}
+            }
+            NER = {
+                add_ideas = NER_attack_idea
+            }
+        }
+        remove_effect = {
+            every_state = {
+                limit = {
+                    is_core_of = NIA
+                }
+                add_dynamic_modifier = {modifier = NIA_civ_war_dynamic_modifier}
+            }
+            NER = {
+                remove_ideas = NER_attack_idea
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    country_exists = NIA
+                }
+                NOT = {
+                    country_exists = NER
+                }
+            }
+        }
+        cancel_effect = {
+            NER = {
+                remove_ideas = NER_attack_idea
+            }
+        }
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                factor = 0
+                OR = {
+                    SKR = {
+                        is_ai = no
+                    }
+                    AKL = {
+                        is_ai = no
+                    }
+                    KNK = {
+                        is_ai = no
+                    }
+                }
+            }
+        }
+    }
+    NIA_send_weapon = {
+        icon = GFX_decision_IRIS_generic_relief
+        available = {
+            NER = {
+                has_war_with = NIA
+            }
+            has_equipment = {
+                infantry_equipment > 999
+            }
+        }
+        cost = 20
+        days_remove = 30
+        days_re_enable = 30
+        remove_effect = {
+            set_temp_variable = {NIA_influence_temp = 5}
+            NIA_change_influence = yes
+            send_equipment = {
+                equipment = infantry_equipment
+                amount = 1000
+                target = NER
+            }
+            NER = {
+                add_manpower = 1000
+                if = {
+                    limit = {
+                        NOT = {
+                            has_relation_modifier = {
+                                target = ROOT
+                                modifier = NER_support_us_modifier
+                            }
+                        }
+                    }
+                    add_opinion_modifier = {
+                        target = ROOT
+                        modifier = NER_support_us_modifier
+                    }
+                }
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    country_exists = NIA
+                }
+                NOT = {
+                    country_exists = NER
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    NIA_send_navy = {
+        icon = GFX_decision_IRIS_generic_relief
+        available = {
+            NER = {
+                has_war_with = NIA
+            }
+            has_navy_size = {
+                size > 9
+            }
+        }
+        cost = 15
+        days_remove = 20
+        days_re_enable = 30
+        remove_effect = {
+            set_temp_variable = {NIA_influence_temp = 5}
+            NIA_change_influence = yes
+            NER = {
+                add_war_support = 0.05
+                add_manpower = 1000
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    country_exists = NIA
+                }
+                NOT = {
+                    country_exists = NER
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    NIA_send_officier = {
+        icon = GFX_decision_IRIS_generic_army
+        available = {
+            NER = {
+                has_war_with = NIA
+            }
+        }
+        custom_cost_trigger = {
+            command_power > 29
+        }
+        custom_cost_text = decision_cost_CP_30
+        days_remove = 20
+        days_re_enable = 30
+        remove_effect = {
+            set_temp_variable = {NIA_influence_temp = 8}
+            NIA_change_influence = yes
+            add_command_power = -30
+            NER = {
+                add_command_power = 30
+                army_experience = 30
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    country_exists = NIA
+                }
+                NOT = {
+                    country_exists = NER
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    NIA_train_army = {
+        icon = GFX_decision_IRIS_generic_army
+        available = {
+            NER = {
+                has_war_with = NIA
+            }
+        }
+        custom_cost_trigger = {
+            command_power > 24
+        }
+        custom_cost_text = decision_cost_CP_25
+        days_remove = 60
+        days_re_enable = 60
+        remove_effect = {
+            set_temp_variable = {NIA_influence_temp = 10}
+            NIA_change_influence = yes
+            NER = {
+                capital_scope = {
+                    create_unit = {
+                        division = "name = \"义勇军\" division_template = \"义勇军\" start_experience_factor = 0.15 "
+                        owner = NER
+                    }
+                }
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    country_exists = NIA
+                }
+                NOT = {
+                    country_exists = NER
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    
+    NIA_gain_influence = {
+        icon = GFX_decision_IRIS_generic_cooperation
+        available = {
+            NER = {
+                has_war_with = NIA
+            }
+            OR = {
+                NER = {
+                    has_opinion = {
+                        target = ROOT
+                        value > 50
+                    }
+                    has_volunteers_amount_from = {
+                        tag = ROOT
+                        count > 0
+                    }
+                }
+            }
+        }
+        visible = {
+            if = {
+                limit = {
+                    OR = {
+                        tag = AKL
+                        tag = SKR
+                    }
+                }
+                SKR = {
+                    if = {
+                        limit = {
+                            has_country_flag = NIA_intervention_flag
+                        }
+                        NOT = {
+                            has_completed_focus = SKR_ciallo
+                        }
+                    }
+                }
+            }
+        }
+        days_remove = 14
+        days_re_enable = 30
+        remove_effect = {
+            set_temp_variable = {NIA_influence_temp = 3}
+            NIA_change_influence = yes
+        }
+        cancel_trigger = {
+            OR = {
+                NOT = {
+                    country_exists = NIA
+                }
+                NOT = {
+                    country_exists = NER
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    NIA_start_war = {
+        icon = GFX_decision_IRIS_generic_navy
+        available = {
+            NOT = {
+                country_exists = NER
+            }
+            NOT = {
+                has_war_with = NIA
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = NIA_last_solution_flag
+            }
+        }
+        days_remove = 7
+        remove_effect = {
+            set_country_flag = NIA_last_solution_flag
+            declare_war_on = {
+                target = NIA
+                type = annex_everything
+            }
+        }
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                add = -10
+                OR = {
+                    any_country = {
+                        is_ai = no
+                        has_country_flag = NIA_intervention_flag
+                    }
+                }
+            }
+            modifier = {
+                add = 1000
+                OR = {
+                    any_country = {
+                        has_war_with = NIA
+                        has_country_flag = NIA_intervention_flag
+                    }
+                }
+            }
+        }
+    }
+}
