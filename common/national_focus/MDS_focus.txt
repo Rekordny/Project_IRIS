@@ -9,7 +9,7 @@ focus_tree = {
 		}
 	}
 	default = no
-	continuous_focus_position = { x = 1500 y = 750 }
+	continuous_focus_position = { x = 610 y = 980 }
 
     #风息之地
     focus = {
@@ -46,6 +46,15 @@ focus_tree = {
 		}
         ai_will_do = {
             factor = 100
+
+            modifier = {
+                factor = 0
+
+                OR = {
+                    has_completed_focus = MDS_focus_alt_1
+                    has_completed_focus = MDS_focus_dip_11
+                }
+            }
 		}
         completion_reward = {
 			swap_ideas = {
@@ -55,6 +64,7 @@ focus_tree = {
             ELN = {
                 add_political_power = 70
             }
+            custom_effect_tooltip = MDS_focus_his_1_tt
 		}
     }
 
@@ -449,6 +459,7 @@ focus_tree = {
             unlock_decision_tooltip = MDS_whisper_tec
             unlock_decision_tooltip = MDS_whisper_mic
             unlock_decision_tooltip = MDS_whisper_man
+            unlock_decision_tooltip = MDS_whisper_reduce_ELN_warn
 		}
     }
 
@@ -554,9 +565,11 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
+            #MDS_gain_ready_medium = yes
 			#country_lock_all_division_template = no
             custom_effect_tooltip = MDS_focus_alt_3_tt
             custom_effect_tooltip = generic_skip_one_line_tt
+
             MDS_Eula_Lawrence = {
                 add_trait = {
                     ideology = sub_Junta
@@ -567,6 +580,9 @@ focus_tree = {
                     trait = vision_cryo
                 }
             }
+            
+            custom_effect_tooltip = generic_skip_one_line_tt
+			unlock_tactic = tactic_guerrilla_tactics
 
             hidden_effect = {
                 set_rule = {
@@ -703,6 +719,7 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
+            MDS_gain_ELN_warn_large = yes
             if = {
                 limit = {
                     has_idea = MDS_puppet_modifier
@@ -751,6 +768,12 @@ focus_tree = {
                 }
 				MDS_retire_vice_country_leader = yes
 				add_ideas = MDS_Jean_Gunnhildr_idea
+
+                set_party_name = {
+                    ideology = neutrality
+                    long_name = MDS_neutrality_party_freedom_long
+                    name = MDS_neutrality_party_freedom
+                }
             }
 		}
     }
@@ -767,6 +790,14 @@ focus_tree = {
         prerequisite = { focus = MDS_focus_alt_3 }
         prerequisite = { focus = MDS_focus_alt_5 }
         will_lead_to_war_with = ELN
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = MDS_focus_alt_6_tt
+                check_variable = {
+                    MDS_whisper_ready > 50
+                }
+            }
+        }
         bypass = {
             NOT = {
 			    is_subject_of = ELN
@@ -792,6 +823,34 @@ focus_tree = {
             hidden_effect = {
                 country_lock_all_division_template = no
                 news_event = mds_news.1
+            }
+            custom_effect_tooltip = generic_skip_one_line_tt
+            if = {
+                limit = {
+                    check_variable = {
+                        MDS_whisper_ready < 51
+                    }
+                }
+                custom_effect_tooltip = MDS_focus_alt_6_tt2
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        MDS_whisper_ready > 75
+                    }
+                    check_variable = {
+                        MDS_whisper_ready < 100
+                    }
+                }
+                add_ideas = MDS_freedom_buff_small
+            }
+            if = {
+                limit = {
+                    check_variable = {
+                        MDS_whisper_ready = 100
+                    }
+                }
+                add_ideas = MDS_freedom_buff_large
             }
 		}
     }
@@ -939,7 +998,7 @@ focus_tree = {
             set_rule = {
                 can_decline_call_to_war = yes
             }
-			add_political_power = 150
+			add_political_power = 200
 		}
     }
 
@@ -999,7 +1058,17 @@ focus_tree = {
         relative_position_id = MDS_focus_dip_1
         prerequisite = { focus = MDS_focus_dip_1 }
         available = {
-            has_political_power > 149
+            if = {
+                limit = {
+                    NOT = {
+                        focus_progress = {
+                            focus = MDS_focus_dip_2
+                            progress > 0
+                        }
+                    }
+                }
+                has_political_power > 99
+            }
             USR = {
                 has_opinion = {
                     target = ROOT
@@ -1026,7 +1095,11 @@ focus_tree = {
         #    add_political_power = -150
         #}
         completion_reward = {
-            add_political_power = -150
+            add_political_power = -100
+			USR = {
+                add_cic = 54000
+            } 
+            custom_effect_tooltip = generic_skip_one_line_tt
             add_tech_bonus = {
                 name = industrial_bonus
                 bonus = 1.0
@@ -1052,9 +1125,8 @@ focus_tree = {
                 }
             }
             custom_effect_tooltip = generic_skip_one_line_tt
-			USR = {
-                add_cic = 54000
-            } 
+            custom_effect_tooltip = MDS_focus_dip_2_tt
+            unlock_decision_tooltip = MDS_whisper_resource
 		}
     }
 
@@ -1069,7 +1141,17 @@ focus_tree = {
         relative_position_id = MDS_focus_dip_0
         prerequisite = { focus = MDS_focus_dip_0 }
         available = {
-            has_political_power > 149
+            if = {
+                limit = {
+                    NOT = {
+                        focus_progress = {
+                            focus = MDS_focus_dip_3
+                            progress > 0
+                        }
+                    }
+                }
+                has_political_power > 99
+            }
             is_subject_of = ELN
             ELN = {
                 has_capitulated = no
@@ -1080,9 +1162,10 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-			add_political_power = -150
+            MDS_reduce_ELN_warn_medium = yes
+			add_political_power = -100
             ELN = {
-                add_political_power = 150
+                add_political_power = 100
                 add_stability = 0.05
             }
             custom_effect_tooltip = generic_skip_one_line_tt
@@ -1101,7 +1184,17 @@ focus_tree = {
         relative_position_id = MDS_focus_dip_3
         prerequisite = { focus = MDS_focus_dip_3 }
         available = {
-            has_political_power > 149
+            if = {
+                limit = {
+                    NOT = {
+                        focus_progress = {
+                            focus = MDS_focus_dip_4
+                            progress > 0
+                        }
+                    }
+                }
+                has_political_power > 99
+            }
             is_subject_of = ELN
             ELN = {
                 has_capitulated = no
@@ -1112,235 +1205,279 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-            add_political_power = -150
+            MDS_reduce_ELN_warn_medium = yes
+            add_political_power = -100
             ELN = {
-                add_political_power = 150
+                add_political_power = 100
                 add_war_support = 0.05
             }
             custom_effect_tooltip = generic_skip_one_line_tt
-			country_lock_all_division_template = no
+            custom_effect_tooltip = MDS_focus_dip_4_tt
+            hidden_effect = {
+			    country_lock_all_division_template = no
+            }
 		}
     }
 
     #荆夫古港
-    focus = {
-        id = MDS_focus_dip_5
-        icon = GFX_focus_MDS_focus_dip_5
-        #icon = GFX_focus_generic_strike_at_democracy2
-        x = -1
-        y = 1
-        cost = 10
-        relative_position_id = MDS_focus_dip_11
-        prerequisite = { focus = MDS_focus_dip_11 }
-        available = {
-            BGT = {
-                has_opinion = {
-                    target = ROOT
-                    value > 74
-                }
-            }
-            NOT = {
-                has_war_with = BGT
-            }
-            BGT = {
-                has_capitulated = no
-                exists = yes
-            }
-        }
-        ai_will_do = {
-            factor = 0
-		}
-        completion_reward = {
-			BGT = {
-                add_opinion_modifier = {
-                    target = ROOT
-                    modifier = MDS_netrual_zone_opinion
-                }
-            }
-            add_opinion_modifier = {
-                target = BGT
-                modifier = MDS_netrual_zone_opinion
-            }
-            diplomatic_relation = {
-                country = BGT
-                relation = non_aggression_pact
-                active = yes
-            }
-		}
-    }
+    #focus = {
+    #    id = MDS_focus_dip_5
+    #    icon = GFX_focus_MDS_focus_dip_5
+    #    #icon = GFX_focus_generic_strike_at_democracy2
+    #    x = -1
+    #    y = 1
+    #    cost = 5
+    #    relative_position_id = MDS_focus_dip_11
+    #    prerequisite = { focus = MDS_focus_dip_11 }
+    #    available = {
+    #        BGT = {
+    #            has_opinion = {
+    #                target = ROOT
+    #                value > 74
+    #            }
+    #        }
+    #        NOT = {
+    #            has_war_with = BGT
+    #        }
+    #        BGT = {
+    #            has_capitulated = no
+    #            exists = yes
+    #        }
+    #    }
+    #    ai_will_do = {
+    #        factor = 0
+	#	}
+    #    completion_reward = {
+	#		BGT = {
+    #            add_opinion_modifier = {
+    #                target = ROOT
+    #                modifier = MDS_netrual_zone_opinion
+    #            }
+    #        }
+    #        add_opinion_modifier = {
+    #            target = BGT
+    #            modifier = MDS_netrual_zone_opinion
+    #        }
+    #        diplomatic_relation = {
+    #            country = BGT
+    #            relation = non_aggression_pact
+    #            active = yes
+    #        }
+	#	}
+    #}
 
     #巡礼驰援
-    focus = {
-        id = MDS_focus_dip_6
-        icon = GFX_focus_MDS_focus_dip_6
-        #icon = GFX_focus_generic_strike_at_democracy2
-        x = 1
-        y = 2
-        cost = 10
-        relative_position_id = MDS_focus_dip_5
-        prerequisite = { focus = MDS_focus_dip_5 focus = MDS_focus_dip_7 }
-        available = {
-            if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_5
-                }
-                BGT = {
-                    has_opinion = {
-                        target = ROOT
-                        value > 74
-                    }
-                }
-                NOT = {
-                    has_war_with = BGT
-                }
-                BGT = {
-                    has_capitulated = no
-                    exists = yes
-                }
-            }
-            if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_7
-                }
-                SCK = {
-                    has_opinion = {
-                        target = ROOT
-                        value > 74
-                    }
-                }
-                NOT = {
-                    has_war_with = SCK
-                }
-                SCK = {
-                    has_capitulated = no
-                    exists = yes
-                }
-            }
-        }
-        ai_will_do = {
-            factor = 0
-		}
-        completion_reward = {
-			if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_5
-                }
-                custom_effect_tooltip = MDS_focus_dip_6_tt1
-                hidden_effect = {
-                    BGT = {
-                        give_guarantee = ROOT
-                        give_military_access = ROOT
-                    }
-                    give_guarantee = BGT
-                    give_military_access = BGT
-                }
-            }
-            if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_7
-                }
-                custom_effect_tooltip = MDS_focus_dip_6_tt2
-                hidden_effect = {
-                    SCK = {
-                        give_guarantee = ROOT
-                        give_military_access = ROOT
-                    }
-                    give_guarantee = SCK
-                    give_military_access = SCK
-                }
-            }
-            if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_5
-                    has_completed_focus = MDS_focus_dip_7
-                }
-                custom_effect_tooltip = MDS_focus_dip_6_tt3
-                hidden_effect = {
-                    BGT = {
-                        give_guarantee = SCK
-                        give_military_access = SCK
-                    }
-                    SCK = {
-                        give_guarantee = BGT
-                        give_military_access = BGT
-                    }
-                    BGT = {
-                        add_opinion_modifier = {
-                            target = SCK
-                            modifier = MDS_netrual_zone_opinion
-                        }
-                    }
-                    SCK = {
-                        add_opinion_modifier = {
-                            target = BGT
-                            modifier = MDS_netrual_zone_opinion
-                        }
-                        diplomatic_relation = {
-                            country = BGT
-                            relation = non_aggression_pact
-                            active = yes
-                        }
-                    }
-                }
-            }
-            if = {
-                limit = {
-                    NOT = {
-                        has_completed_focus = MDS_focus_dip_5
-                        has_completed_focus = MDS_focus_dip_7
-                    }
-                }
-                custom_effect_tooltip = MDS_focus_dip_6_tt
-            }
-		}
-    }
+    #focus = {
+    #    id = MDS_focus_dip_6
+    #    icon = GFX_focus_MDS_focus_dip_6
+    #    #icon = GFX_focus_generic_strike_at_democracy2
+    #    x = 1
+    #    y = 1
+    #    cost = 5
+    #    relative_position_id = MDS_focus_dip_5
+    #    prerequisite = { focus = MDS_focus_dip_5 focus = MDS_focus_dip_7 }
+    #    available = {
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_5
+    #                BGT = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            BGT = {
+    #                has_opinion = {
+    #                    target = ROOT
+    #                    value > 99
+    #                }
+    #            }
+    #            NOT = {
+    #                has_war_with = BGT
+    #            }
+    #            BGT = {
+    #                has_capitulated = no
+    #                exists = yes
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_7
+    #                SCK = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            SCK = {
+    #                has_opinion = {
+    #                    target = ROOT
+    #                    value > 99
+    #                }
+    #            }
+    #            NOT = {
+    #                has_war_with = SCK
+    #            }
+    #            SCK = {
+    #                has_capitulated = no
+    #                exists = yes
+    #            }
+    #        }
+    #    }
+    #    ai_will_do = {
+    #        factor = 0
+	#	}
+    #    completion_reward = {
+	#		if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_5
+    #                BGT = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_6_tt1
+    #            hidden_effect = {
+    #                BGT = {
+    #                    give_guarantee = ROOT
+    #                    give_military_access = ROOT
+    #                }
+    #                give_guarantee = BGT
+    #                give_military_access = BGT
+    #                if = {
+    #                    limit = {
+    #                        is_in_faction = yes
+    #                    }
+    #                    faction_leader = {
+    #                        add_to_faction = BGT
+    #                    }
+    #                }
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_7
+    #                SCK = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_6_tt2
+    #            hidden_effect = {
+    #                SCK = {
+    #                    give_guarantee = ROOT
+    #                    give_military_access = ROOT
+    #                }
+    #                give_guarantee = SCK
+    #                give_military_access = SCK
+    #                if = {
+    #                    limit = {
+    #                        is_in_faction = yes
+    #                    }
+    #                    faction_leader = {
+    #                        add_to_faction = SCK
+    #                    }
+    #                }
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_5
+    #                has_completed_focus = MDS_focus_dip_7
+    #                BGT = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #                SCK = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_6_tt3
+    #            hidden_effect = {
+    #                BGT = {
+    #                    give_guarantee = SCK
+    #                    give_military_access = SCK
+    #                }
+    #                SCK = {
+    #                    give_guarantee = BGT
+    #                    give_military_access = BGT
+    #                }
+    #                BGT = {
+    #                    add_opinion_modifier = {
+    #                        target = SCK
+    #                        modifier = MDS_netrual_zone_opinion
+    #                    }
+    #                }
+    #                SCK = {
+    #                    add_opinion_modifier = {
+    #                        target = BGT
+    #                        modifier = MDS_netrual_zone_opinion
+    #                    }
+    #                    diplomatic_relation = {
+    #                        country = BGT
+    #                        relation = non_aggression_pact
+    #                        active = yes
+    #                    }
+    #                }
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                NOT = {
+    #                    has_completed_focus = MDS_focus_dip_5
+    #                    has_completed_focus = MDS_focus_dip_7
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_6_tt
+    #        }
+	#	}
+    #}
 
     #风龙旧墟
-    focus = {
-        id = MDS_focus_dip_7
-        icon = GFX_focus_MDS_focus_dip_7
-        #icon = GFX_focus_generic_strike_at_democracy2
-        x = 1
-        y = 1
-        cost = 10
-        relative_position_id = MDS_focus_dip_11
-        prerequisite = { focus = MDS_focus_dip_11 }
-        available = {
-            SCK = {
-                has_opinion = {
-                    target = ROOT
-                    value > 74
-                }
-            }
-            NOT = {
-                has_war_with = SCK
-            }
-            SCK = {
-                has_capitulated = no
-                exists = yes
-            }
-        }
-        ai_will_do = {
-            factor = 0
-		}
-        completion_reward = {
-			SCK = {
-                add_opinion_modifier = {
-                    target = ROOT
-                    modifier = MDS_netrual_zone_opinion
-                }
-            }
-            add_opinion_modifier = {
-                target = SCK
-                modifier = MDS_netrual_zone_opinion
-            }
-            diplomatic_relation = {
-                country = SCK
-                relation = non_aggression_pact
-                active = yes
-            }
-		}
-    }
+    #focus = {
+    #    id = MDS_focus_dip_7
+    #    icon = GFX_focus_MDS_focus_dip_7
+    #    #icon = GFX_focus_generic_strike_at_democracy2
+    #    x = 1
+    #    y = 1
+    #    cost = 5
+    #    relative_position_id = MDS_focus_dip_11
+    #    prerequisite = { focus = MDS_focus_dip_11 }
+    #    available = {
+    #        SCK = {
+    #            has_opinion = {
+    #                target = ROOT
+    #                value > 74
+    #            }
+    #        }
+    #        NOT = {
+    #            has_war_with = SCK
+    #        }
+    #        SCK = {
+    #            has_capitulated = no
+    #            exists = yes
+    #        }
+    #    }
+    #    ai_will_do = {
+    #        factor = 0
+	#	}
+    #    completion_reward = {
+	#		SCK = {
+    #            add_opinion_modifier = {
+    #                target = ROOT
+    #                modifier = MDS_netrual_zone_opinion
+    #            }
+    #        }
+    #        add_opinion_modifier = {
+    #            target = SCK
+    #            modifier = MDS_netrual_zone_opinion
+    #        }
+    #        diplomatic_relation = {
+    #            country = SCK
+    #            relation = non_aggression_pact
+    #            active = yes
+    #        }
+	#	}
+    #}
 
     #
     #focus = {
@@ -1438,23 +1575,23 @@ focus_tree = {
     #}
 
     #弱国之首
-    focus = {
-        id = MDS_focus_dip_11
-        icon = GFX_focus_MDS_focus_dip_11
-        #icon = GFX_focus_generic_strike_at_democracy2
-        x = 12
-        y = 1
-        cost = 10
-        relative_position_id = MDS_focus_1
-        prerequisite = { focus = MDS_focus_1 }
-        ai_will_do = {
-            factor = 0
-		}
-        completion_reward = {
-			add_stability = 0.1
-            add_war_support = 0.1
-		}
-    }
+    #focus = {
+    #    id = MDS_focus_dip_11
+    #    icon = GFX_focus_MDS_focus_dip_11
+    #    #icon = GFX_focus_generic_strike_at_democracy2
+    #    x = 12
+    #    y = 1
+    #    cost = 5
+    #    relative_position_id = MDS_focus_1
+    #    prerequisite = { focus = MDS_focus_1 }
+    #    ai_will_do = {
+    #        factor = 0
+	#	}
+    #    completion_reward = {
+	#		add_stability = 0.1
+    #        add_war_support = 0.1
+	#	}
+    #}
 
     #与凶为盟
     focus = {
@@ -1534,7 +1671,17 @@ focus_tree = {
         relative_position_id = MDS_focus_dip_3
         prerequisite = { focus = MDS_focus_dip_3 }
         available = {
-            has_political_power > 149
+            if = {
+                limit = {
+                    NOT = {
+                        focus_progress = {
+                            focus = MDS_focus_dip_14
+                            progress > 0
+                        }
+                    }
+                }
+                has_political_power > 99
+            }
             is_subject_of = ELN
             ELN = {
                 has_capitulated = no
@@ -1545,9 +1692,10 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-            add_political_power = -150
+            MDS_reduce_ELN_warn_medium = yes
+            add_political_power = -100
             ELN = {
-                add_political_power = 150
+                add_political_power = 100
                 add_stability = 0.05
             }
             custom_effect_tooltip = generic_skip_one_line_tt
@@ -1597,7 +1745,17 @@ focus_tree = {
         relative_position_id = MDS_focus_dip_14
         prerequisite = { focus = MDS_focus_dip_14 }
         available = {
-            has_political_power > 149
+            if = {
+                limit = {
+                    NOT = {
+                        focus_progress = {
+                            focus = MDS_focus_dip_15
+                            progress > 0
+                        }
+                    }
+                }
+                has_political_power > 99
+            }
             is_subject_of = ELN
             ELN = {
                 has_capitulated = no
@@ -1608,9 +1766,10 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-            add_political_power = -150
+            MDS_reduce_ELN_warn_medium = yes
+            add_political_power = -100
             ELN = {
-                add_political_power = 150
+                add_political_power = 100
                 add_stability = 0.05
             }
             custom_effect_tooltip = generic_skip_one_line_tt
@@ -1681,7 +1840,17 @@ focus_tree = {
         relative_position_id = MDS_focus_dip_4
         prerequisite = { focus = MDS_focus_dip_4 }
         available = {
-            has_political_power > 149
+            if = {
+                limit = {
+                    NOT = {
+                        focus_progress = {
+                            focus = MDS_focus_dip_16
+                            progress > 0
+                        }
+                    }
+                }
+                has_political_power > 99
+            }
             is_subject_of = ELN
             ELN = {
                 has_capitulated = no
@@ -1692,14 +1861,17 @@ focus_tree = {
             factor = 0
 		}
         completion_reward = {
-            add_political_power = -150
+            MDS_reduce_ELN_warn_medium = yes
+            add_political_power = -100
             ELN = {
-                add_political_power = 150
+                add_political_power = 100
                 add_war_support = 0.05
             }
             custom_effect_tooltip = generic_skip_one_line_tt
 			army_experience = 45
             add_ideas = youxianganshe
+            custom_effect_tooltip = generic_skip_one_line_tt
+            custom_effect_tooltip = MDS_focus_dip_2_tt
             custom_effect_tooltip = MDS_focus_dip_16_tt
             #add_ideas = foreign_expeditions_focus
             #add_ideas = paramilitarism_focus
@@ -1707,133 +1879,450 @@ focus_tree = {
     }
 
     #海防协议
-    focus = {
-        id = MDS_focus_dip_17
-        icon = GFX_focus_MDS_focus_dip_17
-        #icon = GFX_focus_generic_strike_at_democracy2
-        x = 0
-        y = 1
-        cost = 10
-        relative_position_id = MDS_focus_dip_5
-        prerequisite = { focus = MDS_focus_dip_5 }
-        #prerequisite = { focus = MDS_focus_dip_6 }
-        available = {
-            #has_completed_focus = MDS_focus_dip_5
-            #BGT = {
-            #    has_opinion = {
-            #        target = ROOT
-            #        value > 74
-            #    }
-            #}
-            NOT = {
-                has_war_with = BGT
-            }
-            BGT = {
-                has_capitulated = no
-                exists = yes
-            }
-        }
-        ai_will_do = {
-            factor = 0
-		}
-        completion_reward = {
-			navy_experience = 45
-            add_tech_bonus = {
-				name = navy_bonus
-				bonus = 1.0
-				ahead_reduction = 2
-				uses = 2
-				category = naval_equipment
-			}
-            BGT = {
-                navy_experience = 45
-                add_tech_bonus = {
-                    name = navy_bonus
-                    bonus = 1.0
-                    ahead_reduction = 2
-                    uses = 2
-                    category = naval_equipment
-                }
-            }
-            if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_5
-                }
-                SCK = {
-                    navy_experience = 45
-                    add_tech_bonus = {
-                        name = navy_bonus
-                        bonus = 1.0
-                        ahead_reduction = 2
-                        uses = 2
-                        category = naval_equipment
-                    }
-                }
-            }
-		}
-    }
+    @focus = {
+    @    id = MDS_focus_dip_17
+    @    icon = GFX_focus_MDS_focus_dip_17
+    @    #icon = GFX_focus_generic_strike_at_democracy2
+    @    x = 0
+    @    y = 1
+    @    cost = 5
+    @    relative_position_id = MDS_focus_dip_5
+    @    prerequisite = { focus = MDS_focus_dip_5 }
+    @    #prerequisite = { focus = MDS_focus_dip_6 }
+    @    available = {
+    @        #has_completed_focus = MDS_focus_dip_5
+    @        #BGT = {
+    @        #    has_opinion = {
+    @        #        target = ROOT
+    @        #        value > 74
+    @        #    }
+    @        #}
+    @        NOT = {
+    @            has_war_with = BGT
+    @        }
+    @        BGT = {
+    @            has_capitulated = no
+    @            exists = yes
+    @        }
+    @    }
+    @    ai_will_do = {
+    @        factor = 0
+	@	}
+    @    completion_reward = {
+	@		navy_experience = 45
+    @        add_tech_bonus = {
+	@			name = navy_bonus
+	@			bonus = 1.0
+	@			ahead_reduction = 2
+	@			uses = 2
+	@			category = naval_equipment
+	@		}
+    @        BGT = {
+    @            navy_experience = 45
+    @            add_tech_bonus = {
+    @                name = navy_bonus
+    @                bonus = 1.0
+    @                ahead_reduction = 2
+    @                uses = 2
+    @                category = naval_equipment
+    @            }
+    @        }
+    @        if = {
+    @            limit = {
+    @                has_completed_focus = MDS_focus_dip_5
+    @            }
+    @            SCK = {
+    @                navy_experience = 45
+    @                add_tech_bonus = {
+    @                    name = navy_bonus
+    @                    bonus = 1.0
+    @                    ahead_reduction = 2
+    @                    uses = 2
+    @                    category = naval_equipment
+    @                }
+    @            }
+    @        }
+	@	}
+    @}
+@
+    @#独眼小宝
+    @focus = {
+    @    id = MDS_focus_dip_18
+    @    icon = GFX_focus_MDS_focus_dip_18
+    @    #icon = GFX_focus_generic_strike_at_democracy2
+    @    x = 0
+    @    y = 1
+    @    cost = 5
+    @    relative_position_id = MDS_focus_dip_7
+    @    #prerequisite = { focus = MDS_focus_dip_5 }
+    @    prerequisite = { focus = MDS_focus_dip_7 }
+    @    available = {
+    @        #has_completed_focus = MDS_focus_dip_7
+    @        #SCK = {
+    @        #    has_opinion = {
+    @        #        target = ROOT
+    @        #        value > 74
+    @        #    }
+    @        #}
+    @        NOT = {
+    @            has_war_with = SCK
+    @        }
+    @        SCK = {
+    @            has_capitulated = no
+    @            exists = yes
+    @        }
+    @    }
+    @    ai_will_do = {
+    @        factor = 0
+	@	}
+    @    completion_reward = {
+	@		army_experience = 45
+    @        add_tech_bonus = {
+	@			name = armor_bonus
+	@			bonus = 1.0
+	@			uses = 2
+	@			category = armor
+	@		}
+    @        SCK = {
+    @            army_experience = 45
+    @            add_tech_bonus = {
+    @                name = armor_bonus
+    @                bonus = 1.0
+    @                uses = 2
+    @                category = armor
+    @            }
+    @        }
+    @        if = {
+    @            limit = {
+    @                has_completed_focus = MDS_focus_dip_5
+    @            }
+    @            BGT = {
+    @                army_experience = 45
+    @                add_tech_bonus = {
+    @                    name = armor_bonus
+    @                    bonus = 1.0
+    @                    uses = 2
+    @                    category = armor
+    @                }
+    @            }
+    @        }
+	@	}
+    @}
 
-    #独眼小宝
-    focus = {
-        id = MDS_focus_dip_18
-        icon = GFX_focus_MDS_focus_dip_18
-        #icon = GFX_focus_generic_strike_at_democracy2
-        x = 0
-        y = 1
-        cost = 10
-        relative_position_id = MDS_focus_dip_7
-        #prerequisite = { focus = MDS_focus_dip_5 }
-        prerequisite = { focus = MDS_focus_dip_7 }
-        available = {
-            #has_completed_focus = MDS_focus_dip_7
-            #SCK = {
-            #    has_opinion = {
-            #        target = ROOT
-            #        value > 74
-            #    }
-            #}
-            NOT = {
-                has_war_with = SCK
-            }
-            SCK = {
-                has_capitulated = no
-                exists = yes
-            }
-        }
-        ai_will_do = {
-            factor = 0
-		}
-        completion_reward = {
-			army_experience = 45
-            add_tech_bonus = {
-				name = armor_bonus
-				bonus = 1.0
-				uses = 2
-				category = armor
-			}
-            SCK = {
-                army_experience = 45
-                add_tech_bonus = {
-                    name = armor_bonus
-                    bonus = 1.0
-                    uses = 2
-                    category = armor
-                }
-            }
-            if = {
-                limit = {
-                    has_completed_focus = MDS_focus_dip_5
-                }
-                BGT = {
-                    army_experience = 45
-                    add_tech_bonus = {
-                        name = armor_bonus
-                        bonus = 1.0
-                        uses = 2
-                        category = armor
-                    }
-                }
-            }
-		}
-    }
+    #统合指挥
+    #focus = {
+    #    id = MDS_focus_dip_19
+    #    icon = GFX_focus_MDS_focus_dip_19
+    #    #icon = GFX_focus_generic_strike_at_democracy2
+    #    x = 0
+    #    y = 1
+    #    cost = 5
+    #    relative_position_id = MDS_focus_dip_6
+    #    prerequisite = { focus = MDS_focus_dip_6 }
+    #    available = {
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_5
+    #                BGT = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            #BGT = {
+    #            #    has_opinion = {
+    #            #        target = ROOT
+    #            #        value > 74
+    #            #    }
+    #            #}
+    #            NOT = {
+    #                has_war_with = BGT
+    #            }
+    #            BGT = {
+    #                has_capitulated = no
+    #                exists = yes
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_7
+    #                SCK = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            #SCK = {
+    #            #    has_opinion = {
+    #            #        target = ROOT
+    #            #        value > 74
+    #            #    }
+    #            #}
+    #            NOT = {
+    #                has_war_with = SCK
+    #            }
+    #            SCK = {
+    #                has_capitulated = no
+    #                exists = yes
+    #            }
+    #        }
+    #    }
+    #    ai_will_do = {
+    #        factor = 0
+	#	}
+    #    completion_reward = {
+	#		if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_5
+    #                BGT = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_19_tt1
+    #            hidden_effect = {
+    #                division_template = {
+    #                    name = "伯尼盖特步兵师"
+    #                    template_counter = 25
+    #                    override_model = infantry_entity
+    #                    regiments = {
+    #                        infantry = { x = 0 y = 0 }
+    #                        infantry = { x = 0 y = 1 }
+    #                        infantry = { x = 0 y = 2 }
+    #                        infantry = { x = 1 y = 0 }
+    #                        infantry = { x = 1 y = 1 }
+    #                        infantry = { x = 1 y = 2 }
+    #                        infantry = { x = 2 y = 0 }
+    #                        infantry = { x = 2 y = 1 }
+    #                        infantry = { x = 2 y = 2 }
+    #                        artillery_brigade = { x = 3 y = 0 }
+    #                        artillery_brigade = { x = 3 y = 1 }
+    #                    }
+    #                    support = {
+    #                        engineer = { x = 0 y = 0 }
+    #                        artillery = { x = 0 y = 1 }
+    #                    }
+    #                }
+    #                119 = {
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 1867
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                        count = 2
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 10039
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 7732
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 8246
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                }
+    #                109 = {
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 15
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 7040
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 10156
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                }
+    #                set_temp_variable = {
+    #                    MDS_BGT_num_of_army = BGT.num_armies
+    #                }
+    #                if = {
+    #                    limit = {
+    #                        NOT = {
+    #                            has_tech = gw_artillery
+    #                        }
+    #                    }
+    #                    set_temp_variable = {
+    #                        MDS_num_of_art_need = 84
+    #                    }
+    #                    multiply_temp_variable = {
+    #                        MDS_num_of_art_need = MDS_BGT_num_of_army
+    #                    }
+    #                    add_equipment_to_stockpile = {
+    #                        type = artillery_equipment
+    #                        amount = MDS_num_of_art_need
+    #                        producer = USR
+    #                    }
+    #                }
+    #                add_to_temp_variable = { 
+    #                    MDS_BGT_num_of_army = -8 #开局部队数
+    #                }
+    #                while_loop_effect = {
+    #                    limit = { check_variable = {
+    #                        MDS_BGT_num_of_army > 0
+    #                    } }
+    #                    add_to_variable = {
+    #                        MDS_BGT_num_of_army = -1
+    #                    }
+    #                    119 = {
+    #                        create_unit = {
+    #                            division = "name = \"伯尼盖特步兵师\" division_template = \"伯尼盖特步兵师\" start_experience_factor = 0.3"
+    #                            owner = MDS
+    #                        }
+    #                    }
+    #                }
+    #                BGT = {
+    #                    set_country_flag = MDS_control_army
+    #                    delete_unit = {
+    #                        disband = yes
+    #                    }
+    #                }
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                has_completed_focus = MDS_focus_dip_7
+    #                SCK = {
+    #                    has_capitulated = no
+    #                    exists = yes
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_19_tt2
+    #            hidden_effect = {
+    #                division_template = {
+    #                    name = "思故边区步兵师"
+    #                    template_counter = 17
+    #                    override_model = SCK_infantry_entity
+    #                    regiments = {
+    #                        infantry = { x = 0 y = 0 }
+    #                        infantry = { x = 0 y = 1 }
+    #                        infantry = { x = 0 y = 2 }
+    #                        infantry = { x = 1 y = 0 }
+    #                        infantry = { x = 1 y = 1 }
+    #                        infantry = { x = 1 y = 2 }
+    #                        infantry = { x = 2 y = 0 }
+    #                        infantry = { x = 2 y = 1 }
+    #                        infantry = { x = 2 y = 2 }
+    #                        artillery_brigade = { x = 3 y = 0 }
+    #                        artillery_brigade = { x = 3 y = 1 }
+    #                    }
+    #                    support = {
+    #                        engineer = { x = 0 y = 0 }
+    #                        artillery = { x = 0 y = 1 }
+    #                    }
+    #                }
+    #                120 = {
+    #                    create_unit = {
+    #                        division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 4794
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 1654
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 6379
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                }
+    #                144 = {
+    #                    create_unit = {
+    #                        division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 8709
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 10272
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                    create_unit = {
+    #                        division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                        owner = MDS
+    #                        prioritize_location = 7244
+    #                        #allow_spawning_on_enemy_provs = yes
+    #                    }
+    #                }
+    #                set_temp_variable = {
+    #                    MDS_SCK_num_of_army = SCK.num_armies
+    #                }
+    #                if = {
+    #                    limit = {
+    #                        NOT = {
+    #                            has_tech = gw_artillery
+    #                        }
+    #                    }
+    #                    set_temp_variable = {
+    #                        MDS_num_of_art_need = 84
+    #                    }
+    #                    multiply_temp_variable = {
+    #                        MDS_num_of_art_need = MDS_SCK_num_of_army
+    #                    }
+    #                    add_equipment_to_stockpile = {
+    #                        type = artillery_equipment
+    #                        amount = MDS_num_of_art_need
+    #                        producer = USR
+    #                    }
+    #                }
+    #                add_to_temp_variable = { 
+    #                    MDS_SCK_num_of_army = -6 #开局部队数
+    #                }
+    #                while_loop_effect = {
+    #                    limit = { check_variable = {
+    #                        MDS_SCK_num_of_army > 0
+    #                    } }
+    #                    add_to_variable = {
+    #                        MDS_SCK_num_of_army = -1
+    #                    }
+    #                    144 = {
+    #                        create_unit = {
+    #                            division = "name = \"思故边区步兵师\" division_template = \"思故边区步兵师\" start_experience_factor = 0.3"
+    #                            owner = MDS
+    #                        }
+    #                    }
+    #                }
+    #                SCK = {
+    #                    set_country_flag = MDS_control_army
+    #                    delete_unit = {
+    #                        disband = yes
+    #                    }
+    #                }
+    #            }
+    #        }
+    #        if = {
+    #            limit = {
+    #                NOT = {
+    #                    has_completed_focus = MDS_focus_dip_5
+    #                    has_completed_focus = MDS_focus_dip_7
+    #                }
+    #            }
+    #            custom_effect_tooltip = MDS_focus_dip_19_tt
+    #        }
+    #        custom_effect_tooltip = MDS_focus_dip_19_tt4
+    #        custom_effect_tooltip = MDS_focus_dip_19_tt5
+	#	}
+    #}
 }
