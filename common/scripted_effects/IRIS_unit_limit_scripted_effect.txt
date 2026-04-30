@@ -1,13 +1,21 @@
 
 #刷新部队上限
 IRIS_refresh_troop_limit = {
-	if = {
-		limit = {
-			has_global_flag = has_activate_military_restrictions_flag
+	set_variable = { global.IRIS_refresh_troop_limit_var = 0 }
+	for_each_scope_loop = {
+		array = global.IRIS_effect_list
+		if = {
+			# limit = { has_country_flag = demon_nation_flag } #是魔族国家
+			limit = { IRIS_monster_ethnic_group = yes }
+			set_variable = { max_divisions = 12 }
+
+			multiply_variable = { max_divisions = 12 }
+			IRIS_refresh_troop_limit_correct = yes
+			IRIS_calculate_current_proportion_military = yes
+			add_to_variable = { global.IRIS_refresh_troop_limit_var = 1 }
 		}
-		set_variable = { global.IRIS_refresh_troop_limit_var = 0 }
-		for_each_scope_loop = {
-			array = global.IRIS_effect_list
+		else_if = { #不是魔族国家
+			limit = { has_global_flag = has_activate_military_restrictions_flag }
 			if = {
 				limit = { check_variable = { global.var < 3 } }
 				set_variable = { max_divisions = 72 }
@@ -28,20 +36,20 @@ IRIS_refresh_troop_limit = {
 			IRIS_calculate_current_proportion_military = yes
 			add_to_variable = { global.IRIS_refresh_troop_limit_var = 1 }
 		}
-		every_country = {
-			if = {
-				limit = {
-					not = {
-						is_in_array = {
-							array = global.IRIS_effect_list
-							value = this
-						}
+	}
+	every_country = {
+		if = {
+			limit = {
+				not = {
+					is_in_array = {
+						array = global.IRIS_effect_list
+						value = this
 					}
 				}
-				set_variable = { max_divisions = 0 }
-				IRIS_refresh_troop_limit_correct = yes
-				IRIS_calculate_current_proportion_military = yes
 			}
+			set_variable = { max_divisions = 0 }
+			IRIS_refresh_troop_limit_correct = yes
+			IRIS_calculate_current_proportion_military = yes
 		}
 	}
 }
@@ -51,6 +59,26 @@ IRIS_refresh_troop_limit_correct = {
 	set_variable = { increase_in_troops_coming_online_percentage_temp = 1 }
 	add_to_variable = { increase_in_troops_coming_online_percentage_temp = modifier@increase_in_troops_coming_online_percentage }
 	add_to_variable = { max_divisions = modifier@increase_in_troops_coming_online }
+	if = {
+		# limit = { has_country_flag = demon_nation_flag } #是魔族国家
+		limit = { IRIS_monster_ethnic_group = yes }
+		add_to_variable = { max_divisions = modifier@demon_increase_in_troops_coming_online }
+
+		#计算地区加成
+		set_variable = { demon_num_controlled_states = num_controlled_states }
+		multiply_variable = { demon_num_controlled_states = 12 }
+		add_to_variable = { max_divisions = demon_num_controlled_states }
+
+		#计算额外的工厂
+		set_variable = { demon_additional_civilian_factories_num = modifier@demon_additional_civilian_factories }
+		round_variable = demon_additional_civilian_factories_num
+
+		#添加负面
+		if = {
+			limit = { NOT = { has_dynamic_modifier = { modifier = IRIS_exceeding_military_punishment_modifier } } }
+			add_dynamic_modifier = { modifier = IRIS_exceeding_military_punishment_modifier }
+		}
+	}
 	multiply_variable = { max_divisions = increase_in_troops_coming_online_percentage_temp }
 
 	if = {
@@ -152,11 +180,6 @@ IRIS_troops_exceed_negative_calculation = {
 	if = {
 		limit = { check_variable = { least_stable_garrison_field < 1 } }
 		set_variable = { least_stable_garrison_field = 1 }
-	}
-
-	#添加负面
-	add_dynamic_modifier = {
-		modifier = IRIS_exceeding_military_punishment_modifier
 	}
 
 	if = {
