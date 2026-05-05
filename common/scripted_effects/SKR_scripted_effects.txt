@@ -17,6 +17,14 @@ SKR_bakufu_setup = {
         SKR_refresh_bakufu_modifier = yes
     }    
 }
+
+SKR_bakufu_test = {
+    set_variable = {SKR_kakushin_relation = 100}
+    set_variable = {SKR_chukan_relation = 100}
+    set_variable = {SKR_shinsengumi_relation = 100}
+    set_variable = {SKR_houshu_relation = 100}
+}
+
 # 标准化所有影响力，确保总和为1
 SKR_normalize_influence = {
     SKR = {
@@ -885,6 +893,9 @@ SKR_shinsengumi_fail_effect = {
             SKR_Kaiyoumaru = {
                 set_nationality = SHI
             }
+            SKR_Jules_Brunet = {
+                set_nationality = SHI
+            }
             transfer_navy = {
                 target = SHI
             }
@@ -952,6 +963,78 @@ SKR_shinsengumi_fail_effect = {
                     owner = SHI
                 }
             }
+        }
+    }
+}
+
+#帅气黑西装
+SKR_shinsengumi_new_portraits_effect = {
+    custom_effect_tooltip = SKR_shinsengumi_new_portraits_effect_desc
+    hidden_effect = {
+        set_country_flag = SKR_shinsengumi_new_clothes_flag
+        set_portraits = {
+            character = SKR_Okita_Souji
+            army = { large ="GFX_SKR_Okita_Souji_new" }
+        }
+        set_portraits = {
+            character = SKR_Hijikata_Toshizo
+            army = { large ="GFX_SKR_Hijikata_Toshizo_new" }
+        }
+        set_portraits = {
+            character = SKR_Inoue_Gensaburo
+            army = { large ="GFX_SKR_Inoue_Gensaburo_new" }
+        }
+        set_portraits = {
+            character = SKR_Kondo_Isami
+            army = { large ="GFX_SKR_Kondo_Isami_new" }
+        }
+        set_portraits = {
+            character = SKR_Nagakura_Shinbachi
+            army = { large ="GFX_SKR_Nagakura_Shinbachi_new" }
+        }
+        set_portraits = {
+            character = SKR_Saito_Hajime
+            army = { large ="GFX_SKR_Saito_Hajime_new" }
+        }
+        set_portraits = {
+            character = SKR_Serizawa_Kamo
+            army = { large ="GFX_SKR_Serizawa_Kamo_new" }
+        }
+        set_portraits = {
+            character = SKR_Toudo_Heisuke
+            army = { large ="GFX_SKR_Toudo_Heisuke_new" }
+        }
+        set_portraits = {
+            character = SKR_Yamanami_Keisuke
+            army = { large ="GFX_SKR_Yamanami_Keisuke_new" }
+        }
+        set_portraits = {
+            character = SKR_Yamazaki_Susumu
+            army = { large ="GFX_SKR_Yamazaki_Susumu_new" }
+        }
+        set_portraits = {
+            character = SKR_Harada_Sanosuke
+            army = { large ="GFX_SKR_Harada_Sanosuke_new" }
+        }
+        set_portraits = {
+            character = SKR_Matsubara_Chuji
+            army = { large ="GFX_SKR_Matsubara_Chuji_new" }
+        }
+        set_portraits = {
+            character = SKR_Ogata_Shuntaro
+            army = { large ="GFX_SKR_Ogata_Shuntaro_new" }
+        }
+        set_portraits = {
+            character = SKR_Oishi_Kuwajiro
+            army = { large ="GFX_SKR_Oishi_Kuwajiro_new" }
+        }
+        set_portraits = {
+            character = SKR_Shimada_Kai
+            army = { large ="GFX_SKR_Shimada_Kai_new" }
+        }
+        set_portraits = {
+            character = SKR_Nimi_Nishiki
+            army = { large ="GFX_SKR_Nimi_Nishiki_new" }
         }
     }
 }
@@ -1126,6 +1209,13 @@ SKR_seasonal_changes_effect = {
 
             add_to_array = {IRIS_prompt_alert_operations = 9}
 			IRIS_prompt_alert_operation = yes
+
+            if = {
+                limit = {
+                    has_completed_focus = SKR_expand_food_storage
+                }
+                add_to_variable = {SKR_self_sufficient = 5}
+            }
         }
     }
 }
@@ -1570,65 +1660,87 @@ SKR_clamp_famine_variable = {
     }
 }
 
-#统一进度条计算初始化
+#统一进度条计算初始化 real是实际用来算动态修正的，不带real的是gui工具变量
 SKR_map_progress_bar_setup = {
     hidden_effect = {
-        #幕府 VS 共和
-        if = {
+        every_country = {
             limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+                is_SKR_tag = yes
             }
-            set_variable = {SKR_shogunate_bar_real = 30}
-            set_variable = {SKR_republic_bar_real = 25}
+            #幕府 VS 共和
+            if = {
+                limit = {
+                    has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+                }
+                set_variable = {SKR_shogunate_bar_real = 30}
+                set_variable = {SKR_republic_bar_real = 25}
 
-            set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
-            set_variable = {SKR_republic_bar = SKR_republic_bar_real}
-            add_to_variable = {SKR_shogunate_bar = SKR_republic_bar}
-        }
-        #幕府 VS 佐嘉 最简单的一集
-        if = {
-            limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_2_FLAG
-            }
+                set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
+                set_variable = {SKR_republic_bar = SKR_republic_bar_real}
+                add_to_variable = {SKR_shogunate_bar = SKR_republic_bar}
 
-            set_variable = {SKR_shogunate_bar = 50}
-        }
-        #幕府 VS 教区
-        if = {
-            limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_3_FLAG
+                set_variable = {SKR_neutral_bar_real = 100}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_shogunate_bar_real}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_republic_bar_real}
             }
-            set_variable = {SKR_shogunate_bar_real = 30}
-            set_variable = {SKR_parish_bar = 20}
+            #幕府 VS 佐嘉 最简单的一集
+            if = {
+                limit = {
+                    has_global_flag = SKR_UNIFICATION_WAR_2_FLAG
+                }
 
-            set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
-            set_variable = {SKR_parish_bar = SKR_parish_bar_real}
-            add_to_variable = {SKR_shogunate_bar = SKR_parish_bar }
-        }
-        #尊王 VS 共和
-        if = {
-            limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
-            }
-            set_variable = {SKR_sonno_bar_real = 30}
-            set_variable = {SKR_republic_bar_real = 25}
+                set_variable = {SKR_shogunate_bar_real = 50}
+                set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
 
-            set_variable = {SKR_sonno_bar = SKR_sonno_bar_real}
-            set_variable = {SKR_republic_bar = SKR_republic_bar_real}
-            add_to_variable = {SKR_sonno_bar = SKR_republic_bar}
-        }
-        #尊王 VS 佐嘉
-        if = {
-            limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_5_FLAG
+                set_variable = {SKR_neutral_bar_real = 100}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_shogunate_bar_real}
+            }
+            #幕府 VS 教区
+            if = {
+                limit = {
+                    has_global_flag = SKR_UNIFICATION_WAR_3_FLAG
+                }
+                set_variable = {SKR_shogunate_bar_real = 30}
+                set_variable = {SKR_parish_bar_real = 20}
+
+                set_variable = {SKR_shogunate_bar = SKR_shogunate_bar_real}
+                set_variable = {SKR_parish_bar = SKR_parish_bar_real}
+                add_to_variable = {SKR_shogunate_bar = SKR_parish_bar }
+
+                set_variable = {SKR_neutral_bar_real = 100}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_shogunate_bar_real}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_parish_bar_real}
+            }
+            #尊王 VS 共和
+            if = {
+                limit = {
+                    has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+                }
+                set_variable = {SKR_sonno_bar_real = 30}
+                set_variable = {SKR_republic_bar_real = 25}
+
+                set_variable = {SKR_sonno_bar = SKR_sonno_bar_real}
+                set_variable = {SKR_republic_bar = SKR_republic_bar_real}
+                add_to_variable = {SKR_sonno_bar = SKR_republic_bar}
+
+                set_variable = {SKR_neutral_bar_real = 100}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_sonno_bar_real}
+                subtract_from_variable = {SKR_neutral_bar_real = SKR_republic_bar_real}
+            }
+            #尊王 VS 佐嘉
+            if = {
+                limit = {
+                    has_global_flag = SKR_UNIFICATION_WAR_5_FLAG
+                }
+            }
+            #尊王 VS 教区
+            if = {
+                limit = {
+                    has_global_flag = SKR_UNIFICATION_WAR_6_FLAG
+                }
             }
         }
-        #尊王 VS 教区
-        if = {
-            limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_6_FLAG
-            }
-        }
+        
     }
 }
 
@@ -1639,51 +1751,225 @@ SKR_map_progress_bar_setup = {
 SKR_change_sonno_bar_effect = {
     custom_effect_tooltip = SKR_change_sonno_bar_effect_desc
     hidden_effect = {
-        add_to_variable = {SKR_sonno_bar = SKR_sonno_bar_temp}
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+            }
+            add_to_variable = {SKR_sonno_bar = SKR_sonno_bar_temp}
+            add_to_variable = {SKR_sonno_bar_real = SKR_sonno_bar_temp}
+        }
+        SKR_update_unification_modifer_effect = yes
     }
 }
 #幕府进度条 诚字旗高扬！
 SKR_change_shogunate_bar_effect = {
     custom_effect_tooltip = SKR_change_shogunate_bar_effect_desc
     hidden_effect = {
-        add_to_variable = {SKR_shogunate_bar = SKR_shogunate_bar_temp}
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+            }
+            add_to_variable = {SKR_shogunate_bar = SKR_shogunate_bar_temp}
+            add_to_variable = {SKR_shogunate_bar_real = SKR_shogunate_bar_temp}
+
+            clamp_variable = {
+                var = SKR_shogunate_bar
+                min = 0
+                max = 100
+            }
+            clamp_variable = {
+                var = SKR_shogunate_bar_real
+                min = 0
+                max = 100
+            }
+        }
+        SKR_update_unification_modifer_effect = yes
     }
 }
 #共和进度条 ksm今天和ars结婚了吗
 SKR_change_republic_bar_effect = {
     custom_effect_tooltip = SKR_change_republic_bar_effect_desc
     hidden_effect = {
-        add_to_variable = {SKR_republic_bar = SKR_republic_bar_temp}
-        if = {
+        every_country = {
             limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+                is_SKR_tag = yes
             }
-            add_to_variable = {SKR_shogunate_bar = SKR_republic_bar_temp}
-        }
-        if = {
-            limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+            add_to_variable = {SKR_republic_bar = SKR_republic_bar_temp}
+            add_to_variable = {SKR_republic_bar_real = SKR_republic_bar_temp}
+
+            clamp_variable = {
+                var = SKR_republic_bar
+                min = 0
+                max = 100
             }
-            add_to_variable = {SKR_sonno_bar = SKR_republic_bar_temp}
+            clamp_variable = {
+                var = SKR_republic_bar_real
+                min = 0
+                max = 100
+            }
         }
+        SKR_update_unification_modifer_effect = yes
     }
 }
-#教区进度条 ksm今天和ars结婚了吗
+#教区进度条
 SKR_change_parish_bar_effect = {
     custom_effect_tooltip = SKR_change_parish_bar_effect_desc
     hidden_effect = {
-        add_to_variable = {SKR_parish_bar = SKR_parish_bar_temp}
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+            }
+            add_to_variable = {SKR_parish_bar = SKR_parish_bar_temp}
+            add_to_variable = {SKR_parish_bar_real = SKR_parish_bar_temp}
+
+            clamp_variable = {
+                var = SKR_parish_bar
+                min = 0
+                max = 100
+            }
+            clamp_variable = {
+                var = SKR_parish_bar_real
+                min = 0
+                max = 100
+            }
+        }
+        SKR_update_unification_modifer_effect = yes
+    }
+}
+
+#中立进度条（GUI进度条底板）
+SKR_change_neutral_bar_effect = {
+    custom_effect_tooltip = SKR_change_neutral_bar_effect_desc
+    hidden_effect = {
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+            }
+            add_to_variable = {SKR_neutral_bar = SKR_neutral_bar_temp}
+            add_to_variable = {SKR_neutral_bar_real = SKR_neutral_bar_temp}
+
+            clamp_variable = {
+                var = SKR_neutral_bar
+                min = 0
+                max = 100
+            }
+            clamp_variable = {
+                var = SKR_neutral_bar_real
+                min = 0
+                max = 100
+            }
+        }
+        SKR_update_unification_modifer_effect = yes
+    }
+}
+
+#刷新动态修正
+SKR_update_unification_modifer_effect = {
+    hidden_effect = {
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+            }
+            set_variable = {SKR_unification_war_stability_factor_b = 0.004}
+            set_variable = {SKR_unification_war_war_support_factor_b = 0.004}
+            set_variable = {SKR_unification_war_army_attack_factor_b = 0.004 }
+            set_variable = {SKR_unification_war_army_defence_factor_b = 0.004 }
+            set_variable = {SKR_unification_war_army_org_factor_b = 0.004 }
+            set_variable = {SKR_unification_war_army_speed_factor_b = 0.004 }
+            set_variable = {SKR_unification_war_conscription_factor_b = 0.004 }
+            set_variable = {SKR_unification_war_stability_factor = SKR_unification_war_stability_factor_b}
+            set_variable = {SKR_unification_war_war_support_factor = SKR_unification_war_war_support_factor_b}
+            set_variable = {SKR_unification_war_army_attack_factor = SKR_unification_war_army_attack_factor_b}
+            set_variable = {SKR_unification_war_army_defence_factor = SKR_unification_war_army_defence_factor_b}
+            set_variable = {SKR_unification_war_army_speed_factor = SKR_unification_war_army_speed_factor_b}
+            set_variable = {SKR_unification_war_army_org_factor = SKR_unification_war_army_org_factor_b}
+            set_variable = {SKR_unification_war_conscription_factor = SKR_unification_war_conscription_factor_b}
+        }
+                
         if = {
             limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_3_FLAG
+                has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG #幕府
+                
             }
-            add_to_variable = {SKR_shogunate_bar = SKR_republic_bar_temp}
+            every_country = {
+                limit = {
+                    is_SKR_tag = yes
+                    OR = {
+                        tag = SKR
+                        is_subject_of = SKR
+                    }
+                }
+                set_variable = {SKR_shogunate_morale = SKR_shogunate_bar_real}
+                add_to_variable = {SKR_shogunate_morale = -40}
+
+                multiply_variable = {SKR_unification_war_stability_factor = SKR_shogunate_morale}
+                multiply_variable = {SKR_unification_war_war_support_factor = SKR_shogunate_morale}
+                multiply_variable = {SKR_unification_war_army_attack_factor = SKR_shogunate_morale}
+                multiply_variable = {SKR_unification_war_army_defence_factor = SKR_shogunate_morale}
+                multiply_variable = {SKR_unification_war_army_speed_factor = SKR_shogunate_morale}
+                multiply_variable = {SKR_unification_war_army_org_factor = SKR_shogunate_morale}
+                multiply_variable = {SKR_unification_war_conscription_factor = SKR_shogunate_morale}
+                
+            }
         }
         if = {
             limit = {
-                has_global_flag = SKR_UNIFICATION_WAR_6_FLAG
+                has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_FAILED_FLAG #幕府
             }
-            add_to_variable = {SKR_sonno_bar = SKR_republic_bar_temp}
+            every_country = {
+                limit = {
+                    is_SKR_tag = yes
+                    OR = {
+                        tag = SKR
+                        is_subject_of = SKR
+                    }
+                }
+                set_variable = {SKR_sonno_morale = SKR_sonno_bar_real}
+                add_to_variable = {SKR_sonno_morale = -40}
+
+                multiply_variable = {SKR_unification_war_stability_factor = SKR_sonno_morale}
+                multiply_variable = {SKR_unification_war_war_support_factor = SKR_sonno_morale}
+                multiply_variable = {SKR_unification_war_army_attack_factor = SKR_sonno_morale}
+                multiply_variable = {SKR_unification_war_army_defence_factor = SKR_sonno_morale}
+                multiply_variable = {SKR_unification_war_army_speed_factor = SKR_sonno_morale}
+                multiply_variable = {SKR_unification_war_army_org_factor = SKR_sonno_morale}
+                multiply_variable = {SKR_unification_war_conscription_factor = SKR_sonno_morale}
+                
+            }
+        }
+        every_country = {
+            limit = {
+                is_SKR_tag = yes
+                has_country_flag = SKR_republic_faction_flag
+            }
+            set_variable = {SKR_republic_morale = SKR_republic_bar_real}
+            add_to_variable = {SKR_republic_morale = -40}
+
+            multiply_variable = {SKR_unification_war_stability_factor = SKR_republic_morale}
+            multiply_variable = {SKR_unification_war_war_support_factor = SKR_republic_morale}
+            multiply_variable = {SKR_unification_war_army_attack_factor = SKR_republic_morale}
+            multiply_variable = {SKR_unification_war_army_defence_factor = SKR_republic_morale}
+            multiply_variable = {SKR_unification_war_army_speed_factor = SKR_republic_morale}
+            multiply_variable = {SKR_unification_war_army_org_factor = SKR_republic_morale}
+            multiply_variable = {SKR_unification_war_conscription_factor = SKR_republic_morale}
+        }
+        every_country = {
+            limit = {
+                OR = {
+                    tag = YKS
+                    tag = YKN
+                }
+            }
+            set_variable = {SKR_parish_morale = SKR_parish_bar_real}
+            add_to_variable = {SKR_parish_morale = -40}
+
+            multiply_variable = {SKR_unification_war_stability_factor = SKR_parish_morale}
+            multiply_variable = {SKR_unification_war_war_support_factor = SKR_parish_morale}
+            multiply_variable = {SKR_unification_war_army_attack_factor = SKR_parish_morale}
+            multiply_variable = {SKR_unification_war_army_defence_factor = SKR_parish_morale}
+            multiply_variable = {SKR_unification_war_army_speed_factor = SKR_parish_morale}
+            multiply_variable = {SKR_unification_war_army_org_factor = SKR_parish_morale}
+            multiply_variable = {SKR_unification_war_conscription_factor = SKR_parish_morale}
         }
     }
 }
@@ -1771,6 +2057,15 @@ SKR_update_map_frame_effect = {
             else = {
                 set_variable = {SKR_map_frame = 5}
             }
+        }
+    }
+}
+
+SKR_escalate_war_effect = {
+    custom_effect_tooltip = SKR_escalate_war_desc
+    hidden_effect = {
+        ZTZ = {
+            add_to_variable = {SKR_war_level = 1}
         }
     }
 }
