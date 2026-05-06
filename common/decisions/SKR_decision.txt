@@ -4097,7 +4097,7 @@ SKR_self_sufficient_category = {
     SKR_seasonal_change_mission = {
         icon = GFX_decision_SKR_countdown
 		is_good = no
-		days_mission_timeout = 90
+		days_mission_timeout = 92
 		available = {
 			always = no
         }
@@ -4115,11 +4115,331 @@ SKR_self_sufficient_category = {
             SKR_seasonal_changes_effect = yes
 		}
     }
+
+    SKR_agricultural_susbsidy = {
+        icon = GFX_decision_SKR_money
+        available = {
+            NOT = {
+                has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+            }
+        }
+        visible = {
+            NOT = {
+                has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+            }
+        }
+        cost = var:SKR_agricultural_susbsidy_cost?40
+        days_remove = 60
+        complete_effect = {
+            hidden_effect = {
+                SKR_update_yield_effect = yes
+            }
+        }
+        modifier = {
+            consumer_goods_factor = 0.1
+            SKR_yield_modifier = 1
+        }
+        cancel_trigger = {
+            has_dynamic_modifier = {modifier = SKR_famine_dynamic_modifier}
+        }
+        cancel_effect = {
+            add_political_power = var:SKR_agricultural_susbsidy_cost?40
+            SKR_update_yield_effect = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_build_granary = {
+        icon = GFX_decision_IRIS_generic_development
+        available = {
+            num_of_civilian_factories_available_for_projects > 4
+        }
+        visible = {
+            has_completed_focus = SKR_expand_food_storage
+            check_variable = {SKR_build_granary_var < 2}
+        }
+        cost = 60
+        days_remove = 90
+        days_re_enable = 60
+        remove_effect = {
+            custom_effect_tooltip = SKR_build_granary_tt
+            add_to_variable = {SKR_extra_storage = 2.5}
+            add_to_variable = {SKR_build_granary_var = 1}
+        }
+        modifier = {
+            civilian_factory_use = 5
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_reclaim_northen_land = {
+        icon = GFX_decision_IRIS_generic_excavation
+        available = {
+            OR = {
+                948 = {
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+                949 = {
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+                261 = {
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+                229 = {
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_northen_development
+            check_variable = {SKR_reclaim_northen_land < 4}
+        }
+        cost = 50
+        days_remove = 70
+        days_re_enable = 70
+        remove_effect = {
+            custom_effect_tooltip = SKR_reclaim_northen_land_tt
+            set_temp_variable = {SKR_yield_temp = 0.5}
+            SKR_change_yield_effect = yes
+            set_temp_variable_to_random = {
+                var = SKR_pop_var
+                max = 2500
+                min = 1000
+                integer = yes
+            }
+            every_state = {
+                limit = {
+                    OR = {
+                        state = 948
+                        state = 949
+                        state = 261
+                        state = 229
+                    }
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+                add_manpower = var:SKR_pop_var
+                add_extra_state_shared_building_slots = 1
+            }
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+
+    SKR_invest_on_agricultural_tech = {
+        icon = GFX_decision_IRIS_generic_mana
+        available = {
+            OR = {
+                has_tech = Hermeteic_tech_1
+                has_tech = Tella_Arts_1
+            }
+        }
+        cost = 30
+        days_remove = 60
+        days_re_enable = 30
+        remove_effect = {
+            set_temp_variable = {SKR_yield_temp = 0.2}
+            SKR_change_yield_effect = yes
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_plant_mana = {
+        icon = GFX_decision_IRIS_generic_mana
+        available = {
+            OR = {
+                has_completed_focus = SKR_full_cooperation
+                SLL = {
+                    has_opinion = {
+                        target = ROOT
+                        value > 99
+                    }
+                }
+            }
+        }
+        fire_only_once = yes
+        cost = 70
+        days_remove = 100
+        remove_effect = {
+            set_temp_variable = {SKR_yield_temp = 0.5}
+            SKR_change_yield_effect = yes
+            random_owned_controlled_state = {
+                limit = {
+                    is_core_of = SKR
+                }
+                add_resource = {
+                    type = raw_mana
+                    amount = 2
+                }
+            }
+            random_owned_controlled_state = {
+                limit = {
+                    is_core_of = SKR
+                }
+                add_resource = {
+                    type = raw_mana
+                    amount = 2
+                }
+            }
+            random_owned_controlled_state = {
+                limit = {
+                    is_core_of = SKR
+                }
+                add_resource = {
+                    type = raw_mana
+                    amount = 2
+                }
+            }
+            random_owned_controlled_state = {
+                limit = {
+                    is_core_of = SKR
+                }
+                add_resource = {
+                    type = raw_mana
+                    amount = 2
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
 }
 
 SKR_unification_category = {
 #早樱行动
-    SKR_show_our_legitimacy = {
+    SKR_let_SWO_join_us = {
+        icon = GFX_decision_SKR_relationship
+        available = {
+            NOT = {
+                has_global_flag = SKR_SWO_MADE_CHOICE
+            }
+            country_exists = SWO
+            NOT = {
+                has_war_with = SWO
+            }
+            OR = {
+                custom_trigger_tooltip = {
+                    tooltip = SKR_has_SWO_support_50_tt
+                    check_variable = {SKR_SWO_support > 49}
+                }
+                if = {
+                    limit = {
+                        tag = SKR
+                    }
+                    BDA = {
+                        has_war_with = SKR
+                        surrender_progress > 0.19
+                    }
+                }
+                if = {
+                    limit = {
+                        has_country_flag = SKR_is_south_leader_flag
+                    }
+                    SKR = {
+                        has_war_with = ROOT
+                        surrender_progress > 0.19
+                    }
+                }
+            }
+        }
+        days_remove = 3
+        fire_only_once = yes
+        visible = {
+            OR = {
+                tag = SKR
+                tag = BDA
+            }
+            OR = {
+                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+            }
+            NOT = {
+                has_global_flag = SKR_SWO_MADE_CHOICE
+            }
+        }
+        complete_effect = {
+            set_global_flag = SKR_SWO_MADE_CHOICE
+        }
+        remove_effect = {
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                set_autonomy = {
+                    target = SWO
+                    autonomous_state = SKR_daimyo
+                }
+            }
+            if = {
+                limit = {
+                    tag = BDA
+                }
+                add_to_faction = SWO
+            }
+        }
+        cancel_trigger = {
+            has_global_flag = SKR_SWO_MADE_CHOICE
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_get_close_with_SWO = {
+        icon = GFX_decision_SKR_relationship
+        available = {
+            NOT = {
+                has_global_flag = SKR_SWO_MADE_CHOICE
+            }
+            country_exists = SWO
+            NOT = {
+                has_war_with = SWO
+            }
+        }
+        cost = 30
+        days_remove = 14
+        days_re_enable = 28
+        visible = {
+            OR = {
+                tag = SKR
+                tag = BDA
+            }
+            OR = {
+                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+            }
+            NOT = {
+                has_global_flag = SKR_SWO_MADE_CHOICE
+            }
+
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                has_completed_focus = SKR_contact_SWO
+            }
+        }
+        complete_effect = {
+            set_global_flag = SKR_SWO_MADE_CHOICE
+        }
+        remove_effect = {
+            set_temp_variable = {SKR_SWO_support_temp = 10}
+            SKR_change_SWO_support_effect = yes
+        }
+        cancel_trigger = {
+            has_global_flag = SKR_SWO_MADE_CHOICE
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    SKR_show_our_legitimacy_d = {
         icon = GFX_decision_IRIS_generic_propaganda
         available = {
             NOT = {
@@ -4136,6 +4456,14 @@ SKR_unification_category = {
                 tag = BDA
                 tag = YKS 
                 tag = YKN
+            }
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                OR = {
+                    has_completed_focus = SKR_show_our_legitimacy
+                }
             }
         }
         cost = 30
@@ -4200,6 +4528,14 @@ SKR_unification_category = {
             }
             NOT = {
                 has_global_flag = SKR_UNIFICATION_WAR_2_FLAG
+            }
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                OR = {
+                    has_completed_focus = SKR_show_our_legitimacy
+                }
             }
         }
         cost = 50
@@ -4387,6 +4723,93 @@ SKR_unification_category = {
             factor = 10
         }
     }
+
+    SKR_ask_for_support = {
+        icon = GFX_decision_SKR_relationship
+        available = {
+            NOT = {
+                has_global_flag = SKR_UNIFIED_FLAG
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_diplomatic_effort
+        }
+        fire_only_once = yes
+        cost = 50
+        days_remove = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                if = {
+                    limit = {
+                        has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG #幕府
+                    }
+                    set_temp_variable = {SKR_shogunate_bar_temp = 5}
+                    SKR_change_shogunate_bar_effect = yes
+                }
+                else = {
+                    set_temp_variable = {SKR_sonno_bar_temp = 5}
+                    SKR_change_sonno_bar_effect = yes
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    SKR_request_AKL_navy = {#百亿补贴皇多多
+        icon = GFX_decision_SKR_relationship
+        available = {
+            NOT = {
+                has_global_flag = SKR_UNIFIED_FLAG
+            }
+            NOT = {
+                has_war_with = AKL
+            }
+            AKL = {
+                is_subject = no
+                has_navy_size = {
+                    size > 14
+                }
+            }
+        }
+        visible = {
+            has_completed_focus = SKR_diplomatic_effort
+            has_completed_focus = SKR_ciallo
+        }
+        fire_only_once = yes
+        cost = 30
+        remove_effect = {
+            add_war_support = 0.1
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = 2500
+            }
+            add_equipment_to_stockpile = {
+                type = mana_infantry_weapons
+                amount = 2500
+            }
+            add_equipment_to_stockpile = {
+                type = support_equipment
+                amount = 150
+            }
+            add_equipment_to_stockpile = {
+                type = jyusoutou_equipment
+                amount = 50
+            }
+            AKL = {
+                add_war_support = 0.05
+                add_cic = 1500
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
 #战斗决议
     SKR_grand_battle = {
         icon = GFX_decision_IRIS_generic_army
