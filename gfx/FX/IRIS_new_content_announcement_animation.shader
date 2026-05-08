@@ -77,8 +77,8 @@ PixelShader =
 
             // 可配置常量（直接修改此处调整效果）
             float NUM_IMAGES = 6.0f;          // 图片数量
-            float STAY_DURATION = 4.0f;       // 每张图停留时间
-            float SLIDE_DURATION = 0.8f;      // 滚动过渡时间
+            float STAY_DURATION = 2.5f;       // 每张图停留时间
+            float SLIDE_DURATION = 0.5f;      // 滚动过渡时间
             float SLIDE_OFFSET_SCALE = 1.0f / NUM_IMAGES;  // 修改  每张图占X轴1/NUM_IMAGES宽度，避免偏移过量
 
             // 计算总循环周期：(停留+滚动)×图片数
@@ -371,8 +371,8 @@ PixelShader =
 
             // 可配置常量（直接修改此处调整效果）
             float NUM_IMAGES = 6.0f;          // 图片数量
-            float STAY_DURATION = 4.0f;       // 每张图停留时间
-            float SLIDE_DURATION = 0.8f;      // 滚动过渡时间
+            float STAY_DURATION = 2.5f;       // 每张图停留时间
+            float SLIDE_DURATION = 0.5f;      // 滚动过渡时间
             float SLIDE_OFFSET_SCALE = 1.0f / NUM_IMAGES;  // 修改  每张图占X轴1/NUM_IMAGES宽度，避免偏移过量
 
             // 计算总循环周期：(停留+滚动)×图片数
