@@ -1626,16 +1626,21 @@ focus_tree = {
 		x = 0
 		y = 1
 		relative_position_id = SKR_THE_NEW_ORDER
-		cost = 5
+		cost = 20
 		ai_will_do = {
 			base = 10
 		}
 		prerequisite = {
 			focus = SKR_THE_NEW_ORDER
 		}
+		select_effect = {
+			hidden_effect = {
+				country_event = {id = SKR.76 days = 3}
+			}
+		}
 		cancelable = no
 		completion_reward = {
-			
+			custom_effect_tooltip = SKR_internal_affairs_tt
 		}
 	}
 	#一山不容二虎
@@ -1649,11 +1654,15 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 		}
+		available = {
+			has_country_flag = SKR_a_winner_in_shinsengumi_flag
+		}
 		prerequisite = {
 			focus = SKR_internal_affairs
 		}
 		completion_reward = {
-			
+			add_stability = 0.1
+			IRIS_unlock_a_new_branch = yes
 		}
 	}
 	#重组御庭番
@@ -1666,6 +1675,12 @@ focus_tree = {
 		cost = 5
 		ai_will_do = {
 			base = 10
+		}
+		allow_branch = {
+			OR = {
+				has_completed_focus = SKR_the_only_winner
+				has_country_flag = SKR_focus_debug
+			}
 		}
 		prerequisite = {
 			focus = SKR_the_only_winner
@@ -1690,11 +1705,18 @@ focus_tree = {
 		ai_will_do = {
 			base = 10
 		}
+		allow_branch = {
+			OR = {
+				has_completed_focus = SKR_the_only_winner
+				has_country_flag = SKR_focus_debug
+			}
+		}
 		prerequisite = {
 			focus = SKR_the_only_winner
 		}
 		completion_reward = {
 			add_political_power = 150
+			add_ideas = SKR_bakufu_reform_1
 		}
 	}
 	#议题草案
@@ -1772,6 +1794,10 @@ focus_tree = {
 		completion_reward = {
 			set_temp_variable = {SKR_houshu_relation_temp = -20}
 			SKR_houshu_relation_effect = yes
+			swap_ideas = {
+				remove_idea = SKR_bakufu_reform_1
+				add_idea = SKR_bakufu_reform_2
+			}
 		}
 	}
 	#试行议政院
@@ -1804,15 +1830,18 @@ focus_tree = {
 		x = 0
 		y = 1
 		relative_position_id = SKR_reform_the_bakufu
-		cost = 5
+		cost = 3
 		ai_will_do = {
 			base = 10
+		}
+		available = {
+			has_country_flag = SKR_yoshinobu_released_flag
 		}
 		prerequisite = {
 			focus = SKR_reform_the_bakufu
 		}
 		completion_reward = {
-			
+			country_event = {id = SKR.61}
 		}
 	}
 	#强化中央集权
@@ -1830,7 +1859,18 @@ focus_tree = {
 			focus = SKR_reform_the_bakufu
 		}
 		completion_reward = {
-			
+			every_country = {
+				limit = {
+					is_subject_of = SKR
+					has_autonomy_state = SKR_daimyo
+				}
+				SKR = {
+					set_autonomy = {
+						target = PREV
+						autonomous_state = SKR_integrated_daimyo
+					}
+				}
+			}
 		}
 	}
 	#收拢藩权
@@ -2001,6 +2041,10 @@ focus_tree = {
 		}
 		completion_reward = {
 			remove_ideas = SKR_declining_bakufu
+			swap_ideas = {
+				remove_idea = SKR_bakufu_reform_2
+				add_idea = SKR_bakufu_reform_3
+			}
 		}
 	}
 	#准备统一战争
@@ -2016,6 +2060,12 @@ focus_tree = {
 		}
 		prerequisite = {
 			focus = SKR_the_only_winner
+		}
+		allow_branch = {
+			OR = {
+				has_completed_focus = SKR_the_only_winner
+				has_country_flag = SKR_focus_debug
+			}
 		}
 		available = {
 			NOT = {
@@ -2059,7 +2109,7 @@ focus_tree = {
 			focus = SKR_prepare_for_unification
 		}
 		completion_reward = {
-			
+			unlock_decision_tooltip = SKR_get_close_with_SWO
 		}
 	}
 	#狠抓军备生产
@@ -2101,8 +2151,28 @@ focus_tree = {
 		prerequisite = {
 			focus = SKR_contact_SWO
 		}
+		available = {
+			OR = {
+				has_completed_focus = SKR_full_cooperation
+				has_completed_focus = SKR_befriend_UNG
+				has_completed_focus = SKR_ciallo
+				has_completed_focus = SKR_invite_rossiya
+				any_country = {
+					is_major = yes
+					NOT = {
+						has_war_with = SKR
+					}
+					has_opinion = {
+						target = ROOT
+                        value > 59
+					}
+				}
+			}
+		}
 		completion_reward = {
-			
+			unlock_decision_tooltip = SKR_ask_for_support
+			custom_effect_tooltip = SKR_diplomatic_effort_AKL_tt
+			unlock_decision_tooltip = SKR_request_AKL_navy
 		}
 	}
 	#团结派系
@@ -2148,7 +2218,8 @@ focus_tree = {
 			focus = SKR_unite_factions
 		}
 		completion_reward = {
-			
+			unlock_decision_tooltip = SKR_show_our_legitimacy_d
+			unlock_decision_tooltip = SKR_criticize_enemy
 		}
 	}
 	#先发制人
@@ -2599,6 +2670,8 @@ focus_tree = {
 			set_temp_variable = {SKR_houshu_relation_temp = -15}
 			SKR_houshu_relation_effect = yes
 
+			SKR_update_yield_effect = yes
+
 			add_to_variable = {SKR_focus_completed = 1}
 		}
 	}
@@ -2674,6 +2747,7 @@ focus_tree = {
 				add_to_variable = {SKR_famine_conscription_factor = 0.25}
 			}
 			custom_effect_tooltip = SKR_gain_5_base_yield_tt
+			unlock_decision_tooltip = SKR_build_granary
 
 			add_to_variable = {SKR_focus_completed = 1}
 		}
@@ -2732,6 +2806,9 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
+
+			custom_effect_tooltip = SKR_northen_development_tt
+			unlock_decision_tooltip = SKR_reclaim_northen_land
 
 			add_to_variable = {SKR_focus_completed = 1}
 		}
@@ -2912,6 +2989,10 @@ focus_tree = {
 			add_to_variable = {SKR_self_sufficient_global_building_slots_factor = 0.2}
 			add_to_variable = {SKR_self_sufficient_production_speed_buildings_factor = 0.1}
 			add_to_variable = {SKR_self_sufficient_local_resources_factor = 0.1}
+			add_to_variable = {SKR_self_sufficient_SKR_yield_modifier = 0.5}
+
+			custom_effect_tooltip = SKR_self_sufficient_focus_tt
+			set_variable = {SKR_agricultural_susbsidy_cost = 30}
 
 			add_to_variable = {SKR_focus_completed = 1}
 		}
@@ -4093,6 +4174,13 @@ focus_tree = {
 			}
 
 			add_to_variable = {SKR_focus_completed = 1}
+			set_country_flag = SKR_shinsengumi_reformed_flag
+			if = {
+				limit = {
+					has_country_flag = SKR_shouyoukei_crushed_flag
+				}
+				country_event = {id = SKR.73}
+			}
 		}
 	}
 	#极端环境训练
@@ -4958,7 +5046,23 @@ focus_tree = {
 			focus = SKR_defend_USF
 		}
 		available = {
-
+			OR = {
+				BLA = {
+					exists = yes
+				}
+				NAC = {
+					exists = yes
+					has_country_flag = NAC_united_rossiya
+				}
+			}
+		}
+		bypass = {
+			NOT = {
+				country_exists = BLA
+			}
+			NOT = {
+				country_exists = NAC
+			}
 		}
 		completion_reward = {
 			
