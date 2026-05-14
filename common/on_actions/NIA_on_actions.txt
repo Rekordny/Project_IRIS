@@ -1,0 +1,248 @@
+on_actions = {
+    on_startup = {
+        effect = {
+            912 = {
+                set_demilitarized_zone = yes
+            }
+            913 = {
+                set_demilitarized_zone = yes
+            }
+        }
+    }
+    on_capitulation = {
+        effect = {
+            if = {
+                limit = {
+                    FROM = {
+                        OR = {
+                            tag = NER
+                            tag = NIA
+                        }
+                    }
+                    ROOT = {
+                        OR = {
+                            tag = NER
+                            tag = NIA
+                        }
+                    }
+                }
+                FROM = {
+                    annex_country = {
+                        target = ROOT
+                        transfer_troops = no
+                    }
+                }
+                every_state = {
+                    limit = {
+                        is_core_of = ROOT
+                    }
+                    add_core_of = FROM
+                }
+                if = {
+                    limit = {
+                        FROM = {
+                            tag = NER
+                        }
+                    }
+                    #八月国
+                    if = {
+                        limit = {
+                            check_variable = {AKL.NIA_influence > KNK.NIA_influence}
+                            check_variable = {AKL.NIA_influence > SKR.NIA_influence}
+                            SKR = {
+                                NOT = {
+                                    has_completed_focus = SKR_ciallo
+                                }
+                            }
+                        }
+                        FROM = {
+                            every_state = {
+                                transfer_state_to = AUG
+                                add_core_of = AUG
+                            }
+                            every_character = {
+                                set_nationality = AUG
+                            }
+                        }
+                        AKL = {
+                            add_ideas = AKL_profit_of_AUG
+                            AKL_Christine = {
+                                set_nationality = AUG
+                            }
+                            AKL_Yu = {
+                                set_nationality = AUG
+                            }
+                            set_autonomy = {
+                                target = AUG
+                                autonomous_state = AKL_charter_company
+                            }
+                        }
+                        AUG = {
+                            add_ideas = AKL_galgame_company
+                            inherit_technology = AKL
+                            add_ideas = in_transition
+                            add_ideas = AUG_Yu_leader
+                            set_politics = {
+                                ruling_party = democratic
+                            }
+                            set_variable = {another_country_leader_group = 30}
+                            add_country_leader_role = {
+                                character = AKL_Christine
+                                promote_leader = yes
+                                country_leader = {
+                                    ideology = sub_Social_Liberalism
+                                    expire = "3200.1.1.1"
+                                    traits = {}
+                                }
+                            }
+                        }
+                    }
+                    #费利佩尼亚国
+                    if = {
+                        limit = {
+                            check_variable = {SKR.NIA_influence > KNK.NIA_influence}
+                            check_variable = {SKR.NIA_influence > AKL.NIA_influence}
+                            SKR = {
+                                NOT = {
+                                    has_completed_focus = SKR_ciallo
+                                }
+                            }
+                        }
+                        FROM = {
+                            every_state = {
+                                transfer_state_to = SKN
+                                add_core_of = SKN
+                            }
+                            every_character = {
+                                set_nationality = SKN
+                            }
+                        }
+                        SKR = {
+                            set_autonomy = {
+                                target = SKN
+                                autonomous_state = AKL_charter_company
+                            }
+                        }
+                        SKN = {
+                            
+                            inherit_technology = SKR
+                            
+                            set_variable = {another_country_leader_group = 30}
+                        }
+                    }
+                    #鹿儿藩
+                    if = {
+                        limit = {
+                            country_exists = KNK
+                            check_variable = {KNK.NIA_influence > SKR.NIA_influence}
+                            check_variable = {KNK.NIA_influence > AKL.NIA_influence}
+                        }
+                        KNK = {
+                            set_autonomy = {
+                                target = FROM
+                                autonomous_state = autonomy_integrated_puppet
+                            }
+                        }
+                    }
+                    #贴贴
+                    else_if = {
+                        limit = {
+                            SKR = {
+                                has_completed_focus = SKR_ciallo
+                            }
+                        }
+                        SKR = {
+                            give_guarantee = NER
+                            diplomatic_relation = {
+                                country = NER
+                                relation = docking_rights
+                                active = yes
+                            }
+                        }
+                        AKL = {
+                            give_guarantee = NER
+                            diplomatic_relation = {
+                                country = NER
+                                relation = docking_rights
+                                active = yes
+                            }
+                        }
+                        NER = {
+                            give_military_access = SKR
+                            give_military_access = AKL
+                            set_country_flag = NER_friend_with_SKR_AKL_flag
+                            set_cosmetic_tag = NER_INDP
+                        }
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    FROM = {
+                        has_country_flag = NIA_last_solution_flag
+                    }
+                    ROOT = {
+                        tag = NIA
+                    }
+                }
+                set_global_flag = NIA_CIV_WAR_ENDED_FLAG
+                ROOT = {
+                    if = {
+                        limit = {
+                            AKL = {
+                                has_country_flag = NIA_intervention_flag
+                            }
+                        }
+                        every_owned_state = {
+                            limit = {
+                                controller = {
+                                    OR = {
+                                        tag = AKL
+                                        is_ally_with = AKL
+                                    }
+                                }
+                            }
+                            transfer_state_to = AKL
+                        }
+                    }
+                    if = {
+                        limit = {
+                            SKR = {
+                                has_country_flag = NIA_intervention_flag
+                            }
+                        }
+                        every_owned_state = {
+                            limit = {
+                                controller = {
+                                    OR = {
+                                        tag = SKR
+                                        is_ally_with = SKR
+                                    }
+                                }
+                            }
+                            transfer_state_to = SKR
+                        }
+                    }
+                    if = {
+                        limit = {
+                            KNK = {
+                                has_country_flag = NIA_intervention_flag
+                            }
+                        }
+                        every_owned_state = {
+                            limit = {
+                                controller = {
+                                    OR = {
+                                        tag = KNK
+                                        is_ally_with = KNK
+                                    }
+                                }
+                            }
+                            transfer_state_to = KNK
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

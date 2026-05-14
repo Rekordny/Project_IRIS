@@ -9,12 +9,21 @@ NDefines.NDiplomacy.MIN_OPINION_VALUE = -200						-- Min opinion value cap.
 NDefines.NCountry.MIN_STABILITY = -1.0
 NDefines.NCountry.MAX_WAR_SUPPORT = 1.0			
 
-NDefines.NSupply.RIVER_RAILWAY_LEVEL = 3                            -- 水路=3级铁路
+-- NDefines.NSupply.RIVER_RAILWAY_LEVEL = 3                            -- 水路=3级铁路
+NDefines.NSupply.RAILWAY_FLOW_PER_LEVEL = 10
+NDefines.NSupply.RAILWAY_FLOW_PENALTY_PER_DAMAGED = 10
 
 NDefines.NGame.MAX_SCRIPTED_LOC_RECURSION = 1001				-- max recursion for scripted localizations 最大递归
 
 NDefines.NMilitary.UNIT_EXP_LEVELS = { 0.15, 0.3, 0.45, 0.6, 0.75, 0.9}
 NDefines.NMilitary.EXPERIENCE_COMBAT_FACTOR = 0.15
+
+--------------------------------------------------------------------------------------------------------------
+-- Production
+--------------------------------------------------------------------------------------------------------------
+
+NDefines.NProduction.BASE_FACTORY_MAX_EFFICIENCY_FACTOR = 100 --50	-- Base max efficiency for factories expressed in %.
+NDefines.NProduction.BASE_FACTORY_START_EFFICIENCY_FACTOR = 25 --10	-- Base start efficiency for factories expressed in %.
 
 --------------------------------------------------------------------------------------------------------------
 -- DESIGNS
