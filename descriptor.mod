@@ -1,4 +1,4 @@
-version="1.17.*"
+version="3.1*"
 tags={
 	"Alternative History"
 	"Map"
@@ -39,5 +39,5 @@ replace_path="common/bookmarks"
 replace_path="gfx/loadingscreens"
 replace_path="gfx/flags"
 replace_path="gfx/cursors"
-supported_version="1.17.*"
+supported_version="1.18.*"
 remote_file_id="3299590035"
