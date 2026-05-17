@@ -697,6 +697,31 @@ SKR_Honoka_portrait_category = {
             }
         }
     }
+    SKR_Honoka_portrait_4 = {
+        icon = GFX_decision_SKR_honoka
+        visible = {
+            has_country_flag = SKR_Honoka_extra_portrait_flag
+            NOT = {
+                check_variable = {SKR_Honoka_portrait_var = 4}
+            }
+        }
+        complete_effect = {
+            set_variable = {SKR_Honoka_portrait_var = 4}
+            custom_effect_tooltip = SKR_Honoka_portrait_4_effect
+            hidden_effect = {
+                if = {
+                    limit = {
+                        has_country_leader = {
+                            character = SKR_Kousaka_Honoka
+                        }
+                    }
+                    set_country_leader_portrait = {
+                        portrait = GFX_SKR_Kousaka_Honoka_win
+                    }
+                }
+            }
+        }
+    }
 }
 
 SKR_Kyoshu_Conference_category = {
@@ -4395,6 +4420,70 @@ SKR_self_sufficient_category = {
 
 SKR_unification_category = {
 #早樱行动
+    SKR_force_SWO_join_us = {
+        icon = GFX_decision_SKR_relationship
+        available = {
+            country_exists = SWO
+            NOT = {
+                has_war_with = SWO
+            }
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                BDA = {
+                    has_war_with = SKR
+                    surrender_progress > 0.19
+                }
+            }
+            if = {
+                limit = {
+                    has_country_flag = SKR_is_south_leader_flag
+                }
+                is_faction_leader = yes
+                SKR = {
+                    has_war_with = ROOT
+                    surrender_progress > 0.19
+                }
+            }
+        }
+        days_remove = 3
+        fire_only_once = yes
+        visible = {
+            OR = {
+                tag = SKR
+                tag = BDA
+            }
+            OR = {
+                has_global_flag = SKR_UNIFICATION_WAR_1_FLAG
+                has_global_flag = SKR_UNIFICATION_WAR_4_FLAG
+            }
+            NOT = {
+                has_war_with = SWO
+            }
+            country_exists = SWO
+        }
+        remove_effect = {
+            if = {
+                limit = {
+                    tag = SKR
+                }
+                set_autonomy = {
+                    target = SWO
+                    autonomous_state = SKR_daimyo
+                }
+            }
+            if = {
+                limit = {
+                    tag = BDA
+                }
+                add_to_faction = SWO
+            }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
     SKR_let_SWO_join_us = {
         icon = GFX_decision_SKR_relationship
         available = {
@@ -4405,33 +4494,10 @@ SKR_unification_category = {
             NOT = {
                 has_war_with = SWO
             }
-            OR = {
-                custom_trigger_tooltip = {
-                    tooltip = SKR_has_SWO_support_50_tt
-                    check_variable = {SKR_SWO_support > 49}
-                }
-                AND = {
-                    has_global_flag = SKR_UNIFICATION_WAR_ONGOING_FLAG
-                    if = {
-                        limit = {
-                            tag = SKR
-                        }
-                        BDA = {
-                            has_war_with = SKR
-                            surrender_progress > 0.19
-                        }
-                    }
-                    if = {
-                        limit = {
-                            has_country_flag = SKR_is_south_leader_flag
-                        }
-                        is_faction_leader = yes
-                        SKR = {
-                            has_war_with = ROOT
-                            surrender_progress > 0.19
-                        }
-                    }
-                }
+
+            custom_trigger_tooltip = {
+                tooltip = SKR_has_SWO_support_50_tt
+                check_variable = {SKR_SWO_support > 49}
             }
         }
         days_remove = 3
@@ -4508,7 +4574,17 @@ SKR_unification_category = {
                 limit = {
                     tag = SKR
                 }
-                has_completed_focus = SKR_contact_SWO
+                OR = {
+                    has_country_leader = {character = SKR_Kousaka_Honoka} #果皇目前无内容默认可用
+                    has_completed_focus = SKR_contact_SWO
+                }
+                
+            }
+            if = {
+                limit = {
+                    tag = BDA
+                }
+                is_faction_leader = yes
             }
         }
         complete_effect = {
@@ -4548,6 +4624,7 @@ SKR_unification_category = {
                     tag = SKR
                 }
                 OR = {
+                    has_country_leader = {character = SKR_Kousaka_Honoka} #果皇目前无内容默认可用
                     has_completed_focus = SKR_show_our_legitimacy
                 }
             }
@@ -4620,6 +4697,7 @@ SKR_unification_category = {
                     tag = SKR
                 }
                 OR = {
+                    has_country_leader = {character = SKR_Kousaka_Honoka} #果皇目前无内容默认可用
                     has_completed_focus = SKR_show_our_legitimacy
                 }
             }
@@ -4863,8 +4941,13 @@ SKR_unification_category = {
             }
         }
         visible = {
-            has_completed_focus = SKR_diplomatic_effort
-            has_completed_focus = SKR_ciallo
+            OR = {
+                has_country_leader = {character = SKR_Kousaka_Honoka} #果皇目前无内容默认可用
+                AND = {
+                    has_completed_focus = SKR_diplomatic_effort
+                    has_completed_focus = SKR_ciallo
+                }
+            }
         }
         fire_only_once = yes
         cost = 30
