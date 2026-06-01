@@ -1,122 +1,129 @@
+####################################################################################
+# 能源转换系统 - 变量说明表格
+# ==============================================================================
+# 变量名                                 | 类型    | 作用域 | 说明
+# ---------------------------------------|---------|--------|----------------------------------
+# consuming_mana                         | 国家变量 | 国家   | 手动模式下计划消耗的玛纳量（整数）
+# resource@raw_mana                      | 国家资源 | 国家   | 当前拥有的玛纳总量
+# resource@coal                          | 国家资源 | 国家   | 当前拥有的煤炭总量
+# modifier@energy_conversion_efficiency_percentage | 国家修正 | 国家 | 转换效率加成（例如 2.0 = 200%）
+# conversion_percentage_temp             | 临时变量 | 国家   | 临时存储 1 + 效率加成
+# coal_shortfall_temp                    | 临时变量 | 国家   | 煤炭缺口（目标煤炭 - 当前煤炭）
+# raw_mana_need_temp                     | 临时变量 | 国家   | 计算出的所需玛纳（向上取整前）
+# raw_mana_need_rounded_temp             | 临时变量 | 国家   | 向上取整后的所需玛纳
+# coal_rounded_temp                      | 临时变量 | 国家   | 煤炭数值取整时的临时变量
+# IRIS_energy_transition_resource_coal   | 国家变量 | 国家   | 本次转换实际获得的煤炭量（输出）
+# IRIS_energy_transition_cost_raw_mana   | 国家变量 | 国家   | 本次转换实际消耗的玛纳量（输出）
+# IRIS_energy_transition_cost_raw_mana_positive | 国家变量 | 国家 | 消耗玛纳的正值副本（用于动态修正）
+# ==============================================================================
+# 转换公式：
+#   获得煤炭 = ceil( 消耗玛纳 × (1 + 效率加成) )
+#   消耗玛纳 = min( 需求玛纳, 可用玛纳 ) ，其中需求玛纳 = ceil( 煤炭缺口 / (1 + 效率加成) )
+#   所有计算结果均向上取整，保证整数资源。
+####################################################################################
+
 #手动计算能源转换
 IRIS_manually_calculate_energy_conversion = {
-    #获取当前的玛纳消耗数量
-
-    #如果大于当前拥有的玛纳
-    # if = {
-    #     limit = { NOT = { check_variable = { this.consuming_mana < this.resource@raw_mana } } }
-    #     set_temp_variable = { this.consuming_mana = this.resource@raw_mana }
-    # }
+    #确保 consuming_mana 变量存在且非负
     if = {
-        limit = { check_variable = { this.resource@raw_mana < 0 } }
-
-        #如果欠了3点
-        set_temp_variable = { missing_raw_mana_temp = this.resource@raw_mana }
-        add_to_variable = { this.consuming_mana = missing_raw_mana_temp }
-
-        if = {
-            limit = { check_variable = { this.consuming_mana < 0 } }
-            set_variable = { this.consuming_mana = 0 }
-        }
+        limit = { NOT = { has_variable = consuming_mana } }
+        set_variable = { consuming_mana = 0 }
     }
-    else_if = {
-        limit = {
-            check_variable = { this.consuming_mana < 0 }
-            NOT = { check_variable = { this.resource@raw_mana < 0 } }
-        }
-        set_variable = { this.consuming_mana = 0 }
+    if = {
+        limit = { check_variable = { consuming_mana < 0 } }
+        set_variable = { consuming_mana = 0 }
+    }
+    #限制消耗玛纳不超过实际拥有的玛纳
+    if = {
+        limit = { check_variable = { consuming_mana > resource@raw_mana } }
+        set_variable = { consuming_mana = resource@raw_mana }
     }
 
-    #计算当前的转化效率
-    set_variable = { this.IRIS_energy_transition_resource_coal = this.consuming_mana }
-    set_temp_variable = { conversion_percentage_temp = 1 }
-    add_to_temp_variable = { conversion_percentage_temp = this.modifier@energy_conversion_efficiency_percentage }
+    #计算当前转化效率（1 + 效率加成）
+    set_variable = { conversion_percentage_temp = 1 }
+    add_to_variable = { conversion_percentage_temp = modifier@energy_conversion_efficiency_percentage }
 
-    #获取的能量
-    multiply_variable = { this.IRIS_energy_transition_resource_coal = conversion_percentage_temp }
+    #计算获得的煤炭（向上取整）
+    set_variable = { IRIS_energy_transition_resource_coal = consuming_mana }
+    multiply_variable = { IRIS_energy_transition_resource_coal = conversion_percentage_temp }
+    #向上取整
+    set_temp_variable = { coal_rounded_temp = IRIS_energy_transition_resource_coal }
+    round_variable = coal_rounded_temp
+    if = {
+        limit = { check_variable = { coal_rounded_temp < IRIS_energy_transition_resource_coal } }
+        add_to_temp_variable = { coal_rounded_temp = 1 }
+    }
+    set_variable = { IRIS_energy_transition_resource_coal = coal_rounded_temp }
 
-    #消耗的玛纳
-    set_variable = { this.IRIS_energy_transition_cost_raw_mana = this.consuming_mana }
+    #消耗的玛纳就是设定的 consuming_mana
+    set_variable = { IRIS_energy_transition_cost_raw_mana = consuming_mana }
+    set_variable = { IRIS_energy_transition_cost_raw_mana_positive = IRIS_energy_transition_cost_raw_mana }
 
-    set_variable = { this.IRIS_energy_transition_cost_raw_mana_positive = this.IRIS_energy_transition_cost_raw_mana }
     force_update_dynamic_modifier = yes
 }
 
-
-#自动计算能源转换 他不会管你买了多少
+#自动计算能源转换
 IRIS_automatic_calculation_energy_conversion = {
-    #先看看目前有多少
-    set_variable = { this.lack_coal_temp = resource@coal }
-    subtract_from_variable = { this.lack_coal_temp = this.IRIS_energy_transition_resource_coal }
-
-    set_variable = { this.IRIS_energy_transition_resource_coal = 0 }
-    set_variable = { this.IRIS_energy_transition_cost_raw_mana = 0 }
-
-    
-
-    log = "---------------开始计算---------------"
-    log = "当前煤炭：[?this.lack_coal_temp]"
-
-    #计算当前的转化效率
+    #计算当前转化效率（1 + 效率加成）
     set_variable = { conversion_percentage_temp = 1 }
-    add_to_variable = { conversion_percentage_temp = this.modifier@energy_conversion_efficiency_percentage }
-    log = "当前转化率：[?this.conversion_percentage_temp]"
-    #去除掉现在转换的
+    add_to_variable = { conversion_percentage_temp = modifier@energy_conversion_efficiency_percentage }
+
+    #计算煤炭缺口（需要多少煤炭才能达到目标产量）
+    set_variable = { coal_shortfall_temp = IRIS_energy_transition_resource_coal }
+    subtract_from_variable = { coal_shortfall_temp = resource@coal }
+
+    #先清零输出变量，避免残留
+    set_variable = { IRIS_energy_transition_resource_coal = 0 }
+    set_variable = { IRIS_energy_transition_cost_raw_mana = 0 }
+
+    #只有当缺口为正时才需要进行转换
     if = {
-        limit = { check_variable = { this.IRIS_energy_transition_cost_raw_mana > 0 } }
-        #计算转化率
-        set_variable = { this.coal_difference_temp = this.IRIS_energy_transition_cost_raw_mana }
-        multiply_variable = { this.coal_difference_temp = conversion_percentage_temp }
+        limit = { check_variable = { coal_shortfall_temp > 0 } }
 
-        #看看实际有多少
-        subtract_from_variable = { this.lack_coal_temp = this.coal_difference_temp }
-    }
-
-    log = "当前缺少的煤炭：[?this.lack_coal_temp]"
-
-    #如果实际上缺少煤炭
-    if = {
-        limit = { check_variable = { this.lack_coal_temp < 0 } }
-        #转为正数
-        multiply_variable = { this.lack_coal_temp = -1 }
-        set_variable = { this.IRIS_energy_transition_cost_raw_mana = this.lack_coal_temp }
-        log = "需要的煤炭：[?this.lack_coal_temp]"
-
-        #计算需要多少玛纳
-        divide_variable = { this.IRIS_energy_transition_cost_raw_mana = conversion_percentage_temp }
-        set_variable = { this.coal_difference_selection_temp = this.IRIS_energy_transition_cost_raw_mana }
-        round_variable = this.coal_difference_selection_temp
-
-        #取近似值
+        #计算所需玛纳（向上取整）
+        set_variable = { raw_mana_need_temp = coal_shortfall_temp }
+        divide_variable = { raw_mana_need_temp = conversion_percentage_temp }
+        set_temp_variable = { raw_mana_need_rounded_temp = raw_mana_need_temp }
+        round_temp_variable = raw_mana_need_rounded_temp
         if = {
-            limit = { check_variable = { this.coal_difference_selection_temp < this.IRIS_energy_transition_cost_raw_mana } }
-            set_variable = { this.IRIS_energy_transition_cost_raw_mana = this.coal_difference_selection_temp }
-            add_to_variable = { this.IRIS_energy_transition_cost_raw_mana = 1 }
+            limit = { check_variable = { raw_mana_need_rounded_temp < raw_mana_need_temp } }
+            add_to_temp_variable = { raw_mana_need_rounded_temp = 1 }
         }
-        else = {
-            set_variable = { this.IRIS_energy_transition_cost_raw_mana = this.coal_difference_selection_temp }
-        }
+        set_variable = { raw_mana_need_temp = raw_mana_need_rounded_temp }
 
-        log = "需要的玛纳：[?this.IRIS_energy_transition_cost_raw_mana]"
-
-        #检测手上是否有玛纳
+        #检查是否有玛纳可用
         if = {
-            limit = { check_variable = { this.resource@raw_mana > 0 } }
-            #检测手上有多少玛纳
-            if = {#检测是否有等量的玛纳
-                limit = { check_variable = { this.resource@raw_mana < this.IRIS_energy_transition_cost_raw_mana } }
-                set_variable = { this.IRIS_energy_transition_cost_raw_mana = this.resource@raw_mana }
+            limit = { check_variable = { resource@raw_mana > 0 } }
+            #实际消耗不能超过现有玛纳
+            set_variable = { IRIS_energy_transition_cost_raw_mana = raw_mana_need_temp }
+            if = {
+                limit = { check_variable = { IRIS_energy_transition_cost_raw_mana > resource@raw_mana } }
+                set_variable = { IRIS_energy_transition_cost_raw_mana = resource@raw_mana }
             }
-            set_variable = { this.IRIS_energy_transition_resource_coal = this.IRIS_energy_transition_cost_raw_mana }
-            multiply_variable = { this.IRIS_energy_transition_resource_coal = conversion_percentage_temp }
+            #计算获得的煤炭（向上取整）
+            set_variable = { IRIS_energy_transition_resource_coal = IRIS_energy_transition_cost_raw_mana }
+            multiply_variable = { IRIS_energy_transition_resource_coal = conversion_percentage_temp }
+            #向上取整
+            set_temp_variable = { coal_rounded_temp = IRIS_energy_transition_resource_coal }
+            round_temp_variable = coal_rounded_temp
+            if = {
+                limit = { check_variable = { coal_rounded_temp < IRIS_energy_transition_resource_coal } }
+                add_to_temp_variable = { coal_rounded_temp = 1 }
+            }
+            set_variable = { IRIS_energy_transition_resource_coal = coal_rounded_temp }
         }
         else = {
-            #没有资源的话就不会转换
-            set_variable = { this.IRIS_energy_transition_resource_coal = 0 }
-            set_variable = { this.IRIS_energy_transition_cost_raw_mana = 0 }
+            #没有玛纳，无法转换
+            set_variable = { IRIS_energy_transition_resource_coal = 0 }
+            set_variable = { IRIS_energy_transition_cost_raw_mana = 0 }
         }
     }
+    else = {
+        #不缺煤炭，无需转换
+        set_variable = { IRIS_energy_transition_resource_coal = 0 }
+        set_variable = { IRIS_energy_transition_cost_raw_mana = 0 }
+    }
 
-    set_variable = { this.IRIS_energy_transition_cost_raw_mana_positive = this.IRIS_energy_transition_cost_raw_mana }
+    set_variable = { IRIS_energy_transition_cost_raw_mana_positive = IRIS_energy_transition_cost_raw_mana }
     force_update_dynamic_modifier = yes
 }
