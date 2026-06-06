@@ -5463,6 +5463,7 @@ SKR_after_unification_diplomacy_category = {
                 exists = yes
                 is_faction_leader = yes
             }
+            has_government = communism
             NOT = {
                 has_war_with = NAC
             }
@@ -5472,6 +5473,9 @@ SKR_after_unification_diplomacy_category = {
             has_government = communism
             NOT = {
                 has_global_flag = SKR_JOINED_FACTION_FLAG
+            }
+            NOT = {
+                tag = SHI
             }
         }
         cost = 30
@@ -5519,6 +5523,9 @@ SKR_after_unification_diplomacy_category = {
             NOT = {
                 has_global_flag = SKR_JOINED_FACTION_FLAG
             }
+            NOT = {
+                tag = SHI
+            }
         }
         fire_only_once = yes
         cost = 30
@@ -5546,9 +5553,8 @@ SKR_after_unification_diplomacy_category = {
             NOT = {
                 has_war_with = AKL
             }
-            OR = {
-                has_completed_focus = SKR_on_our_own
-                has_completed_focus = SKR_ciallo
+            NOT = {
+                has_completed_focus = SKR_stand_with_SLL
             }
         }
         visible = {
@@ -5557,6 +5563,9 @@ SKR_after_unification_diplomacy_category = {
             }
             NOT = {
                 has_global_flag = SKR_JOINED_FACTION_FLAG
+            }
+            NOT = {
+                tag = SHI
             }
         }
         fire_only_once = yes
@@ -5574,11 +5583,17 @@ SKR_after_unification_diplomacy_category = {
                 add_to_faction = ROOT
             }
             AKL = {
-                country_event = {id = AKL.0723 days = 5}
+                country_event = {id = AKL.0723 days = 1}
             }
         }
         ai_will_do = {
             factor = 10
+            modifier = {
+                add = -1000
+                AKL = {
+                    is_ai = no
+                }
+            }
         }
     }
     SKR_join_USF = {
@@ -5603,6 +5618,9 @@ SKR_after_unification_diplomacy_category = {
             NOT = {
                 has_global_flag = SKR_JOINED_FACTION_FLAG
             }
+            NOT = {
+                tag = SHI
+            }
         }
         fire_only_once = yes
         cost = 30
@@ -5613,6 +5631,557 @@ SKR_after_unification_diplomacy_category = {
         remove_effect = {
             USF = {
                 add_to_faction = ROOT
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+
+    SKR_expansion = {
+        target_array = SKR.expansion_array
+        target_trigger = {
+            FROM = {
+                NOT = {
+                    has_war_with = ROOT
+                }
+                NOT = {
+                    is_ally_with = ROOT
+                }
+            }
+        }
+        visible = {
+            FROM = {
+                NOT = {
+                    has_country_flag = SKR_declared_war_on_us
+                }
+                if = {
+                    limit = {
+                        OR = {
+                            tag = BLA
+                            tag = NAC
+                        }
+                    }
+                    owns_state = 167
+                }
+            }
+        }
+        cost = 10
+        days_remove = 30
+        remove_effect = {
+            declare_war_on = {
+                target = FROM
+                type = annex_everything
+            }
+            hidden_effect = {
+                FROM = {
+                    set_country_flag = SKR_declared_war_on_us
+                }
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                is_ally_with = FROM
+                FROM = {
+                    exists = no
+                }
+            }
+        }
+        will_lead_to_war_with = FROM
+        ai_will_do = {
+            factor = 10
+            modifier = {
+                add = -1000
+                FROM = {
+                    OR = {
+                        tag = BLA
+                        tag = NAC
+                    }
+                }
+            }
+        }
+    }
+    SKR_war_with_USF = {
+        available = {
+            is_faction_leader = yes
+            NOT = {
+                is_ally_with = USF
+            }
+            has_completed_focus = SKR_against_imperialism
+        }
+        visible = {
+            is_faction_leader = yes
+        }
+        days_remove = 30
+        fire_only_once = yes
+        will_lead_to_war_with = USF
+        remove_effect = {
+            declare_war_on = {
+                target = USF
+                type = annex_everything
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                is_ally_with = USF
+                USF = {
+                    exists = no
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 0
+        }
+
+    }
+    SKR_white_peace_with_rossiya = {
+        available = {
+            surrender_progress < 0.05
+            OR = {
+                has_war_with = BLA
+                has_war_with = NAC
+            }
+            884 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            885 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            886 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            102 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            117 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            167 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+        }
+        visible = {
+            167 = {
+                OR = {
+                    is_owned_by = BLA
+                    is_owned_by = NAC
+                }
+            }
+            OR = {
+                has_war_with = BLA
+                has_war_with = NAC
+            }
+            NOT = {
+                has_global_flag = SKR_WHITE_PEACE_WITH_ROSSIYA_FLAG
+            }
+        }
+        days_remove = 7
+        remove_effect = {
+            set_global_flag = SKR_WHITE_PEACE_WITH_ROSSIYA_FLAG
+            every_country = {
+                limit = {
+                    OR = {
+                        has_war_with = BLA
+                        has_war_with = NAC
+                    }
+                    OR = {
+                        tag = ROOT
+                        is_ally_with = ROOT
+                    }
+                }
+                if = {
+                    limit = {
+                        has_war_with = BLA
+                    }
+                    white_peace = BLA
+                }
+                if = {
+                    limit = {
+                        has_war_with = NAC
+                    }
+                    white_peace = NAC
+                }
+            }
+            every_state = {
+                limit = {
+                    OR = {
+                        state = 884
+                        state = 885
+                        state = 886
+                        state = 102
+                        state = 117
+                        state = 167
+                        state = 950
+                    }
+                    OR = {
+                        is_owned_by = BLA
+                        is_owned_by = NAC
+                    }
+                }
+                transfer_state_to = ROOT
+            }
+            if = {
+                limit = {
+                    950 = {
+                        NOT = {
+                            is_core_of = ROOT
+                        }
+                    }
+                }
+                950 = {
+                    add_core_of = ROOT
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_release_SK1 = {
+        available = {
+            327 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            283 = {
+                is_controlled_by_ROOT_or_ally = yes
+            }
+            MUJ = {
+                OR = {
+                    exists = no
+                    is_subject_of = ROOT
+                }
+            }
+            MYG = {
+                OR = {
+                    exists = no
+                    is_subject_of = ROOT
+                }
+            }
+        }
+        visible = {
+            OR = {
+                327 = {
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+                283 = {
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+            }
+            NOT = {
+                country_exists = SK1
+            }
+        }
+        days_remove = 7
+        remove_effect = {
+            every_state = {
+                limit = {
+                    OR = {
+                        state = 327
+                        state = 283
+                    }
+                    is_controlled_by_ROOT_or_ally = yes
+                }
+                transfer_state_to = SK1
+                add_core_of = SK1
+            }
+            set_autonomy = {
+                target = SK1
+                autonomous_state = SKR_chinjyufu
+            }
+            if = {
+                limit = {
+                    country_exists = MYG
+                }
+                SK1 = {
+                    annex_country = {
+                        target = MYG
+                        transfer_troops = yes
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    country_exists = MUJ
+                }
+                SK1 = {
+                    annex_country = {
+                        target = MUJ
+                        transfer_troops = yes
+                    }
+                }
+            }
+            MYG = {
+                every_character = {
+                    set_nationality = SK1
+                }
+            }
+            MUJ = {
+                every_character = {
+                    set_nationality = SK1
+                }
+            }
+            SK1 = {
+                inherit_technology = ROOT
+                set_politics = {
+                    ruling_party = neutrality
+                }
+                add_country_leader_role = {
+                    character = SKR_Tomorin
+                    promote_leader = yes
+                    country_leader = {
+                        ideology = sub_enlightened_despotism
+                        expire = "3200.1.1.1"
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_release_SK2 = {
+        available = {
+            OR = {
+                owns_state = 884
+                owns_state = 885
+                owns_state = 886
+                owns_state = 102
+                owns_state = 117
+                owns_state = 167
+                owns_state = 950
+            }
+        }
+        visible = {
+            NOT = {
+                country_exists = SK2
+            }
+            OR = {
+                owns_state = 884
+                owns_state = 885
+                owns_state = 886
+                owns_state = 102
+                owns_state = 117
+                owns_state = 167
+                owns_state = 950
+            }
+        }
+        days_remove = 7
+        remove_effect = {
+            every_state = {
+                limit = {
+                    OR = {
+                        state = 884
+                        state = 885
+                        state = 886
+                        state = 102
+                        state = 117
+                        state = 167
+                        state = 950
+                    }
+                }
+                add_core_of = SK2
+            }
+            every_owned_state = {
+                limit = {
+                    OR = {
+                        state = 884
+                        state = 885
+                        state = 886
+                        state = 102
+                        state = 117
+                        state = 167
+                        state = 950
+                    }
+                }
+                transfer_state_to = SK2
+            }
+            set_autonomy = {
+                target = SK2
+                autonomous_state = SKR_chinjyufu
+            }
+            every_possible_country = {
+                limit = {
+                    has_character = SKR_Enomoto_Takeaki
+                }
+                SKR_Enomoto_Takeaki = {
+                    set_nationality = SK2
+                }
+            }
+            SK2 = {
+                inherit_technology = ROOT
+                set_politics = {
+                    ruling_party = neutrality
+                }
+                add_country_leader_role = {
+                    character = SKR_Enomoto_Takeaki
+                    promote_leader = yes
+                    country_leader = {
+                        ideology = sub_Junta
+                        expire = "3200.1.1.1"
+                    }
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_release_SKN = {
+        available = {
+            NIA = {
+                OR = {
+                    exists = no
+                    is_subject_of = ROOT
+                }
+            }
+            NER = {
+                OR = {
+                    exists = no
+                    is_subject_of = ROOT
+                }
+            }
+            OR = {
+                910 = {
+                    owns_or_subject_of = yes
+                }
+                911 = {
+                    owns_or_subject_of = yes
+                }
+                912 = {
+                    owns_or_subject_of = yes
+                }
+                913 = {
+                    owns_or_subject_of = yes
+                }
+            }
+            NOT = {
+                country_exists = SKN
+            }
+        }
+        visible = {
+            NOT = {
+                country_exists = SKN
+            }
+            OR = {
+                910 = {
+                    owns_or_subject_of = yes
+                }
+                911 = {
+                    owns_or_subject_of = yes
+                }
+                912 = {
+                    owns_or_subject_of = yes
+                }
+                913 = {
+                    owns_or_subject_of = yes
+                }
+            }
+        }
+        days_remove = 7
+        remove_effect = {
+            every_state = {
+                limit = {
+                    OR = {
+                        state = 910
+                        state = 911
+                        state = 912
+                        state = 913
+                    }
+                }
+                add_core_of = SKN
+            }
+            every_state = {
+                limit = {
+                    OR = {
+                        state = 910
+                        state = 911
+                        state = 912
+                        state = 913
+                    }
+                    owns_or_subject_of = yes
+                }
+                transfer_state_to = SKN
+            }
+            every_possible_country = {
+				limit = {
+					has_character = SKR_Zhong_Lanzhu
+				}
+				SKR_Zhong_Lanzhu = {
+					set_nationality = SKN
+				}
+			}
+            set_autonomy = {
+				target = SKN
+				autonomous_state = AKL_charter_company
+			}
+			SKN = {
+				inherit_technology = SKR
+				promote_character = {
+					character = SKR_Zhong_Lanzhu
+					ideology = sub_Social_Democracy
+				}
+				set_politics = {
+					ruling_party = democratic
+				}
+				set_variable = {another_country_leader_group = 30}
+			}
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+    SKR_give_state_to_subject = {
+        available = {
+            any_owned_state = {
+                NOT = {
+                    is_core_of = ROOT
+                }
+                OR = {
+                    is_core_of = SK1
+                    is_core_of = SK2
+                    is_core_of = SKN
+                }
+            }
+        }
+        visible = {
+            any_owned_state = {
+                NOT = {
+                    is_core_of = ROOT
+                }
+                OR = {
+                    is_core_of = SK1
+                    is_core_of = SK2
+                    is_core_of = SKN
+                }
+            }
+        }
+        complete_effect = {
+            every_owned_state = {
+                limit = {
+                    is_core_of = SK1
+                    NOT = {
+                        is_core_of = ROOT
+                    }
+                }
+                transfer_state_to = SK1
+            }
+            every_owned_state = {
+                limit = {
+                    is_core_of = SK2
+                    NOT = {
+                        is_core_of = ROOT
+                    }
+                }
+                transfer_state_to = SK2
+            }
+            every_owned_state = {
+                limit = {
+                    is_core_of = SKN
+                    NOT = {
+                        is_core_of = ROOT
+                    }
+                }
+                transfer_state_to = SKN
             }
         }
         ai_will_do = {
