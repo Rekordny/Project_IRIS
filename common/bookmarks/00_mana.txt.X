@@ -5,39 +5,23 @@ bookmarks = {
 		date = 3090.1.1.12
 		picture = "GFX_select_date_ouluoba"
 		default_country = "USR"
-		# filters = { new_content continent label_1 label_2 }
+		# filters = { label_1 label_2 label_3 label_4 label_5 }
 		default = yes
-		"USR" = {
-			history = "USR_GATHERING_STORM_DESC"
-			ideology = fascism
-			ideas = {
-				USR_who_owns_the_republic
-				USR_the_clemen_treaty
-				USR_the_republic_congress
-			}
-			focuses = {
-				USR_real_nishizumi_ryu
-				USR_kings_title_is_a_glorious_chore
-			}
-		}
-		
+
 		"ELN" = {
 			history = "ELN_GATHERING_STORM_DESC"
 			ideology = neutrality
 			ideas = {
 				ELN_Aftermath_of_Black_Foaming_Night
 				ELN_Quagmire_of_war
-				ELN_Political_chaos
+				#ELN_Political_chaos
 			}
 			focuses = {
-				ELN_Rearmament
-				ELN_Partial_mobilization
-
-				# ELN_Red_Dawn
-				# ELN_Hold_general_elections
+				ELN_Red_Dawn
+				ELN_Hold_general_elections
 				#ELN_Breaking_promises
 			}
-			#label = { label_1 }
+			label = { label_1 }
 		}
 		"UNG"={
 			history = "UNG_GATHERING_STORM_DESC"
@@ -50,7 +34,7 @@ bookmarks = {
 				UNG_Tianyouwuwang
 				UNG_Angeliyagongtongtijinshen
 			}
-			#label = { label_2 }
+			label = { label_1 }
 		}
 		"DOC" = {
 			history = "DOC_GATHERING_STORM_DESC"
@@ -67,45 +51,43 @@ bookmarks = {
 				#DOC_NF_B01_Break_Reaffirmation_of_the_System_of_Primogeniture
 				#DOC_NF_A_LAST_The_Now_Is_Here_The_Future_Is_the_Future
 			}
-			#label = { label_1 }
+			label = { label_2 }
 		}
-		"ANZ" = {
-			history = "ANZ_GATHERING_STORM_DESC"
-			ideology = fascism
+		"SKR"={
+			history = "SKR_GATHERING_STORM_DESC"
+			ideology = neutrality
 			ideas = {
-				ANZ_ancient_mana_tradition
-				ANZ_imbalance_development
-				ANZ_senshado_industrialization
+				SKR_shinsengumi_idea
+				SKR_declining_bakufu
+				SKR_black_foaming_night_north
 			}
 			focuses = {
-				ANZ_santa_sede_and_its_children
-				ANZ_salute_to_shout
+				SKR_samurai_glory
+				SKR_honoka_banzai
 			}
-			#label = { label_1 }
+			label = { label_4 }
 		}
+		AKL = {
+			history = "AKL_GATHERING_STORM_DESC"
+			ideology = democratic
+			ideas = {
+				AKL_dark_memory
+				AKL_reubild_our_country
+				AKL_spirit_of_empire
+			}
+			focuses = {
+				AKL_opening_1
+				AKL_akari_ending
+			}
+			label = { label_4 }
+		}
+		
+		
 		
 		
 		
 		
 		#minor
-
-		"STG"={
-			minor = yes
-			history = "STG_GATHERING_STORM_DESC"
-			ideology = democratic
-			ideas = {
-				STG_paradox
-				STG_Graceful_Army
-				STG_Nervous_Army
-			}
-			focuses = {
-				STG_mil_11
-				STG_grey_5
-				#STG_mil_17
-			}
-			#label = { label_1 }
-		}
-		
 		
 		MDS = {
 			minor = yes
@@ -119,25 +101,53 @@ bookmarks = {
 			focuses = {
 				MDS_focus_dip_4
 				MDS_focus_alt_6
+
 			}
-			#label = { label_1 }
+			label = { label_1 }
 		}
-		
-		
-		CID = {
+		IKR = {
 			minor = yes
-			history = "CID_GATHERING_STORM_DESC"
+			history = "IKR_GATHERING_STORM_DESC"
 			ideology = neutrality
 			ideas = {
-				CID_new_constitution_idea
-				CID_Unrecognized_regime
-				CID_loan_ideas
+				IKR_treaty_of_west_Istabul
+				IKR_treaty_of_east_Istabul
+				IKR_drug
 			}
 			focuses = {
-				CID_Consolidate_coastal_defense
-				CID_Expand_legacy_industries
+				IKR_2
+				IKR_restoration_final
 			}
-			#label = { label_1 }
+			label = { label_3 }
+		}
+		YUZ = {
+			minor = yes
+			history = "YUZ_GATHERING_STORM_DESC"
+			ideology = neutrality
+			ideas = {
+				YUZ_nation_of_galgame
+				YUZ_aftermath_of_crisis
+				YUZ_yuzufan_army
+			}
+			focuses = {
+				
+			}
+			label = { label_5 }
+		}
+		"BOW"={
+			minor = yes
+			history = "BOW_GATHERING_STORM_DESC"
+			ideology = neutrality
+			ideas = {
+				BOW_feud_of_era_standing
+				BOW_dysprosium
+				WML_idea_concession_dependence
+			}
+			focuses = {
+				BOW_A_sudden_war
+				BOW_ABA_ours_new_republic
+			}
+			label = { label_5 }
 		}
 	}
 }
