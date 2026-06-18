@@ -25,40 +25,77 @@ IRIS_impact_settlement = {
             is_IRIS_UB_country = no
             is_IRIS_LB_country = no
         }
+        #工业与资源评估
+        set_variable = { THIS.resource_score = 0 }
+        
+        #定义资源列表及其权重
+        add_to_variable = { THIS.resource_score = THIS.resource_produced@oil }
+        multiply_variable = { THIS.resource_score = 2.0 }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@aluminium }
+        multiply_variable = { THIS.temp_resource = 1.2 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@rubber }
+        multiply_variable = { THIS.temp_resource = 1.5 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@tungsten }
+        multiply_variable = { THIS.temp_resource = 1.8 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@steel }
+        multiply_variable = { THIS.temp_resource = 1.0 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@chromium }
+        multiply_variable = { THIS.temp_resource = 1.8 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@raw_mana }
+        multiply_variable = { THIS.temp_resource = 1.3 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+        
+        set_variable = { THIS.temp_resource = THIS.resource_produced@coal }
+        multiply_variable = { THIS.temp_resource = 0.8 }
+        add_to_variable = { THIS.resource_score = THIS.temp_resource }
+
+        multiply_variable = { THIS.resource_score = 0.1 }
+
+        
         set_variable = { THIS.national_influence = THIS.num_of_factories }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@oil }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@aluminium }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@rubber }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@tungsten }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@steel }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@chromium }
-        # add_to_variable = { THIS.national_influence = THIS.resource_produced@raw_mana }
+        add_to_variable = { THIS.national_influence = THIS.resource_score }
+
+
+        #不通过省份来算了
+
+        #人口与经济评估
+        #总人口
+        set_variable = { THIS.population_score = THIS.max_available_manpower_k }
+        multiply_variable = { THIS.population_score = 0.05 }  # 进一步缩放
+        
+        # 合并人口经济分
+        add_to_variable = { THIS.national_influence = THIS.population_score }
+        
+
+
+
         set_variable = { THIS.national_influence_2 = THIS.num_subjects }
         multiply_variable = { THIS.national_influence_2 = 0.003 }
-        set_variable = { THIS.national_influence_3 = THIS.num_owned_controlled_states }
-        multiply_variable = { THIS.national_influence_3 = 0.001 }
-        set_variable = { THIS.national_influence_4 = THIS.national_influence_2 }
-        add_to_variable = { THIS.national_influence_4 = THIS.national_influence_3 }
-        # if = {
-        #     limit = { is_major = yes }
-        #     multiply_variable = { THIS.national_influence_4 = 1.1 }
-        # }
+        add_to_variable = { THIS.national_influence_2 = 1 }
+        multiply_variable = { THIS.national_influence = THIS.national_influence_2 }
+
         if = {
             limit = { is_faction_leader = yes }
-            multiply_variable = { THIS.national_influence_4 = 1.1 }
+            multiply_variable = { THIS.national_influence = 1.1 }
         }
-        # if = { #在派系里不进行计算
-        #     limit = { is_in_faction = yes }
-        #     multiply_variable = { THIS.national_influence_4 = 1.05 }
-        # }
         if = {
             limit = { is_puppet = yes }
-            multiply_variable = { THIS.national_influence_4 = 0.85 }
+            multiply_variable = { THIS.national_influence = 0.85 }
         }
         set_variable = { THIS.effect_tax_cap_2 = 1 }
         add_to_variable = { THIS.effect_tax_cap_2 = modifier@effect_tax_cap }
-        multiply_variable = { THIS.national_influence_4 = effect_tax_cap_2 }
-        multiply_variable = { THIS.national_influence = THIS.national_influence_4 }
+        multiply_variable = { THIS.national_influence = THIS.effect_tax_cap_2 }
         multiply_variable = { THIS.national_influence = 100 }
         add_to_array = { global.IRIS_effect_list = THIS }
 
