@@ -222,6 +222,93 @@ SKR_bakufu_category = {
         }
     }
 
+    SKR_strengthen_own_influence = {
+        icon = GFX_decision_SKR_diplomatic
+        available = {
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = SKR_Oda_Nobunaga
+                    }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = SKR_kakushin_influence_60_tt_2
+                    check_variable = {SKR_kakushin_influence < 0.6}
+                }
+            }
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = SKR_Hitotsubashi_Yoshinobu
+                    }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = SKR_chukan_influence_60_tt_2
+                    check_variable = {SKR_chukan_influence < 0.6}
+                }
+            }
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = SKR_Okita_Souji
+                    }
+                }
+                custom_trigger_tooltip = {
+                    tooltip = SKR_shinsengumi_influence_60_tt_2
+                    check_variable = {SKR_shinsengumi_influence < 0.6}
+                }
+            }
+        }
+        visible = {
+            OR = {
+                has_country_leader = {
+                    character = SKR_Oda_Nobunaga
+                }
+                has_country_leader = {
+                    character = SKR_Hitotsubashi_Yoshinobu
+                }
+                has_country_leader = {
+                    character = SKR_Okita_Souji
+                }
+            }
+        }
+        cost = 50
+        days_remove = 60
+        days_re_enable = 30
+        remove_effect = {
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = SKR_Oda_Nobunaga
+                    }
+                }
+                set_temp_variable = {SKR_kakushin_influence_temp = 0.05}
+                SKR_kakushin_influence_effect = yes
+            }
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = SKR_Hitotsubashi_Yoshinobu
+                    }
+                }
+                set_temp_variable = {SKR_chukan_influence_temp = 0.05}
+                SKR_chukan_influence_effect = yes
+            }
+            if = {
+                limit = {
+                    has_country_leader = {
+                        character = SKR_Okita_Souji
+                    }
+                }
+                set_temp_variable = {SKR_shinsengumi_influence_temp = 0.05}
+                SKR_shinsengumi_influence_effect = yes
+            }
+        }
+        ai_will_do = {
+            base = 0
+        }
+    }
+
     SKR_galgame_chukan = {
         icon = GFX_decision_SKR_chukan
         available = {
@@ -1390,10 +1477,10 @@ SKR_industralization_category = {
 		}
 		timeout_effect = {
             add_ideas = industrial_priority
-            if = {
-                limit = {
-                    check_variable = {SKR_industralization_point > SKR_industralization_point_S}
-                }
+            country_event = {id = SKR.87}
+            effect_tooltip = {
+                custom_effect_tooltip = SKR_industralization_end_tt
+                
                 add_political_power = 100
                 set_temp_variable = {SKR_kakushin_relation_temp = 20}
                 SKR_kakushin_relation_effect = yes
@@ -1416,6 +1503,7 @@ SKR_industralization_category = {
                     bonus = 2.0
                     ahead_reduction = 1
                 }
+                
             }
 		}
     }
@@ -3859,7 +3947,7 @@ SKR_army_reform_category = {
                     }
                     has_opinion = {
                         target = ROOT
-                        value > 99
+                        value > 79
                     }
                 }
             }
@@ -3915,7 +4003,7 @@ SKR_army_reform_category = {
                     }
                     has_opinion = {
                         target = ROOT
-                        value > 99
+                        value > 79
                     }
                 }
             }
@@ -3985,7 +4073,7 @@ SKR_army_reform_category = {
                     }
                     has_opinion = {
                         target = ROOT
-                        value > 99
+                        value > 79
                     }
                 }
             }
@@ -4035,7 +4123,7 @@ SKR_army_reform_category = {
                     }
                     has_opinion = {
                         target = ROOT
-                        value > 99
+                        value > 79
                     }
                 }
             }
@@ -4085,7 +4173,7 @@ SKR_army_reform_category = {
                     }
                     has_opinion = {
                         target = ROOT
-                        value > 99
+                        value > 79
                     }
                 }
             }
@@ -4137,7 +4225,7 @@ SKR_army_reform_category = {
                         }
                         has_opinion = {
                             target = ROOT
-                            value > 99
+                            value > 79
                         }
                     }
                 }
@@ -4157,7 +4245,7 @@ SKR_army_reform_category = {
                         }
                         has_opinion = {
                             target = ROOT
-                            value > 99
+                            value > 79
                         }
                     }
                 }
@@ -4369,7 +4457,7 @@ SKR_self_sufficient_category = {
                 SLL = {
                     has_opinion = {
                         target = ROOT
-                        value > 99
+                        value > 79
                     }
                 }
             }
@@ -4419,6 +4507,153 @@ SKR_self_sufficient_category = {
         }
         ai_will_do = {
             factor = 10
+        }
+    }
+}
+
+SKR_appease_LL_category = {
+    SKR_appease_NIS = {
+        available = {
+            NIS = {
+                is_subject_of = ROOT
+                any_owned_state = {
+                    has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                divisions_in_state = {
+                    size > 5
+                    state = 942
+                }
+            }
+        }
+        highlight_states = {
+            highlight_states_trigger = {
+                state = 942
+            }
+        }
+        cost = 10
+        days_remove = 30
+        remove_effect = {
+            NIS = {
+                every_owned_state = {
+                    limit = {
+                        has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                    }
+                    remove_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+        }
+    }
+    SKR_appease_KUD = {
+        available = {
+            KUD = {
+                is_subject_of = ROOT
+                any_owned_state = {
+                    has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                divisions_in_state = {
+                    size > 5
+                    state = 941
+                }
+            }
+        }
+        highlight_states = {
+            highlight_states_trigger = {
+                state = 941
+            }
+        }
+        cost = 10
+        days_remove = 30
+        remove_effect = {
+            KUD = {
+                every_owned_state = {
+                    limit = {
+                        has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                    }
+                    remove_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+        }
+    }
+    SKR_appease_UEH = {
+        available = {
+            UEH = {
+                is_subject_of = ROOT
+                any_owned_state = {
+                    has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                divisions_in_state = {
+                    size > 5
+                    state = 947
+                }
+            }
+        }
+        highlight_states = {
+            highlight_states_trigger = {
+                state = 947
+            }
+        }
+        cost = 10
+        days_remove = 30
+        remove_effect = {
+            UEH = {
+                every_owned_state = {
+                    limit = {
+                        has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                    }
+                    remove_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+        }
+    }
+    SKR_appease_SBY = {
+        available = {
+            SBY = {
+                is_subject_of = ROOT
+                any_owned_state = {
+                    has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
+            if = {
+                limit = {
+                    is_ai = no
+                }
+                divisions_in_state = {
+                    size > 5
+                    state = 945
+                }
+            }
+        }
+        highlight_states = {
+            highlight_states_trigger = {
+                state = 945
+            }
+        }
+        cost = 10
+        days_remove = 30
+        remove_effect = {
+            SBY = {
+                every_owned_state = {
+                    limit = {
+                        has_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                    }
+                    remove_dynamic_modifier = {modifier = SKR_sonno_unrest_dynamic_modifier}
+                }
+            }
         }
     }
 }
@@ -4540,6 +4775,9 @@ SKR_unification_category = {
                 }
                 add_to_faction = SWO
             }
+            hidden_effect = {
+                SKR_update_map_frame_effect = yes
+            }
         }
         cancel_trigger = {
             has_global_flag = SKR_SWO_MADE_CHOICE
@@ -4603,7 +4841,12 @@ SKR_unification_category = {
             has_global_flag = SKR_SWO_MADE_CHOICE
         }
         ai_will_do = {
-            factor = 100
+            base = 100
+            modifier = {
+                add = -90
+                tag = BDA
+                date < 3094.1.1
+            }
         }
     }
     SKR_show_our_legitimacy_d = {
