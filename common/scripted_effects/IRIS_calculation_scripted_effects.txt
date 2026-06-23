@@ -142,74 +142,179 @@ Integration_computing_cores = {
     }
 }
 
-#添加可整合核心 废除
-add_integrable_core = {
-    custom_effect_tooltip = integratable_regions
+# ===================== 入口函数（由决议或事件调用） =====================
 
-    add_to_array = {
-        FROM.add_integrable_core = PREV
-    }
-
-    FROM = {
-        set_country_flag = integratable_regions_yes
-    }
-
-    FROM.FROM = {
-        custom_effect_tooltip = add_integrable_core_tooltip
-        every_controlled_state = {
-            set_occupation_law = integratable_regions
-        }
-    }
+enable_state_integration_30_compliance = {
+	set_temp_variable = { integration_threshold = 30 }
+	enable_state_integration = yes
 }
 
-#添加可整合核心(废除)
-add_integrable_core_xx = {
-    custom_effect_tooltip = integratable_regions
-
-    set_state_flag = integratable_regions_@FROM
-
-    FROM.FROM = {
-        custom_effect_tooltip = add_integrable_core_tooltip
-        every_controlled_state = {
-            set_occupation_law = integratable_regions
-        }
-    }
+enable_state_integration_50_compliance = {
+	set_temp_variable = { integration_threshold = 50 }
+	enable_state_integration = yes
 }
 
-#再废弃
-add_integrable_core_80 = {
-    FROM = {
-        set_temp_variable = { integrator_target = THIS }
-    }
-    if = {
-        limit = { has_variable = integratable_regions_tag }
-        if = {
-            limit = { NOT = { check_variable = { can_integratable_regions@var:integratable_regions_tag = 80 } } }
-            set_variable = { can_integratable_regions@var:integratable_regions_tag = 80 }
-            if = {
-                limit = {
-                    is_controlled_by = var:integratable_regions_tag
-                    compliance > 80
-                }
-                add_core_of = var:integratable_regions_tag
+enable_state_integration_80_compliance = {
+	set_temp_variable = { integration_threshold = 80 }
+	enable_state_integration = yes
+}
+
+# ===================== 核心整合启动逻辑 =====================
+
+enable_state_integration = {
+	if = {
+		limit = { NOT = { check_variable = { can_integrate_@PREV = integration_threshold?50 } } }
+		set_variable = { can_integrate_@PREV = integration_threshold?50 }
+		if = {
+			limit = {
+				is_owned_and_controlled_by = PREV
+				compliance > var:integration_threshold?50
+			}
+			add_state_core_upon_reaching_compliance_threshold = yes
+		}
+		else = {
+			if = {
+				limit = { NOT = { is_core_of = PREV } }
+				state_integration_tooltip = yes
+			}
+			hidden_effect = {
+				if = {
+					limit = {
+						is_controlled_by = PREV
+						NOT = { is_core_of = PREV }
+						impassable = no
+					}
+					set_event_target = { system = PREV }
+					start_state_integration_resistance = yes
+				}
+				force_update_map_mode = { mapmode = cores_claims_map_mode }
+			}
+		}
+	}
+}
+
+# ===================== 界面提示 =====================
+
+state_integration_tooltip = {
+	custom_effect_tooltip = state_integration_enabled_tooltip
+	custom_effect_tooltip = state_integration_law_unlocked
+}
+
+# ===================== 立即核化（高顺从度时触发） =====================
+
+add_state_core_upon_reaching_compliance_threshold = {
+	add_core_of = var:controller
+	hidden_effect = {
+		every_neighbor_state = {
+			limit = {
+				impassable = yes
+				if = {
+					limit = { has_variable = paired_impassable }
+					var:paired_impassable = { is_core_of = PREV.PREV.controller }
+				}
+				else = {
+					is_owned_by = var:PREV.controller
+				}
+			}
+			add_core_of = var:PREV.controller
+			remove_claim_by = var:PREV.controller
+		}
+		remove_claim_by = var:controller
+
+		# 如果有抵抗状态则清除
+		clear_state_integration_resistance = yes
+
+		# 遍历该州所有核心，移除已灭亡国家的核心（此处保留循环结构，但注释掉具体标签判断，以防报错）
+		# for_each_scope_loop = {
+		# 	array = core_countries
+		# 	if = {
+		# 		limit = {
+		# 			exists = no
+		# 			remove_cores_of_tag_if_non_existent = yes
+		# 		}
+		# 		add_to_temp_array = { cores_to_remove = THIS }
+		# 	}
+		# }
+		# for_each_loop = {
+		# 	array = cores_to_remove
+		# 	remove_core_of = var:v
+		# }
+
+		if = {
+			limit = {
+				var:controller = { is_ai = no }
+			}
+			save_event_target_as = integrated_state
+            var:controller = {
+                IRIS_region_was_integrated_hint = yes
             }
-        }
-    }
-    else = {
-        if = {
-            limit = {
-                is_controlled_by = PREV
-                compliance > 80
-            }
-            add_core_of = PREV
-        }
-    }
-    FROM.FROM = {
-        custom_effect_tooltip = add_integrable_core_tooltip
-        every_controlled_state = {
-            set_occupation_law = integratable_regions
-        }
-    }
+		}
+
+		# 为了保持结构，我保留调用，并将该函数定义为空（见下方）
+		fire_country_specific_integration_content = yes
+	}
+}
+
+# ===================== 过渡期抵抗机制（低顺从度时触发） =====================
+
+start_state_integration_resistance = {
+	if = {
+		limit = { NOT = { occupied_country_tag = event_target:system } }
+		if = {
+			limit = { has_resistance = yes }
+			set_temp_variable = { previous_compliance = compliance }
+			set_temp_variable = { previous_resistance = resistance }
+			cancel_resistance = yes
+		}
+		add_core_of = event_target:system
+		start_resistance = event_target:system
+		set_compliance = var:previous_compliance?0
+		set_resistance = var:previous_resistance?0
+	}
+	hidden_effect = { clear_state_integration_resistance = yes }
+	controller = { event_target:system = { set_occupation_law_where_available = territorial_integration } }
+}
+
+# ===================== 清理整合抵抗（核化后或取消整合时调用） =====================
+
+clear_state_integration_resistance = {
+	event_target:system = {
+		every_core_state = {
+			limit = {
+				OR = {
+					is_core_of = controller
+					NOT = { has_variable = can_integrate_@var:controller }
+				}
+			}
+			remove_core_of = event_target:system
+		}
+	}
+}
+
+# ===================== 取消整合（供取消决议使用） =====================
+
+disable_state_integration = {
+	if = {
+		limit = { has_variable = can_integrate_@PREV }
+		clear_variable = can_integrate_@PREV
+		if = {
+			limit = { NOT = { is_core_of = PREV } }
+			custom_effect_tooltip = state_integration_disabled_tooltip
+		}
+		hidden_effect = {
+			if = {
+				limit = { is_controlled_by = PREV }
+				clear_state_integration_resistance = yes
+			}
+			force_update_map_mode = { mapmode = cores_claims_map_mode }
+		}
+	}
+}
+
+# ===================== 空存根函数（专属事件） =====================
+
+fire_country_specific_integration_content = {
+	
 }
 
 #添加默认政策
