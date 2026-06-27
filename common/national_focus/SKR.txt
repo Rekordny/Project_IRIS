@@ -461,7 +461,7 @@ focus_tree = {
 				has_country_flag = SKR_focus_debug
 			}
 		}
-		cost = 1
+		cost = 2
 		ai_will_do = {
 			base = 10
 		} 
@@ -479,7 +479,7 @@ focus_tree = {
 		id = SKR_trip_to_HKD
 		icon = GFX_focus_SKR_trip_to_HKD
 		x = 0
-		y = 1
+		y = 2
 		relative_position_id = SKR_northen_warfare
 		prerequisite = {
 			focus = SKR_northen_warfare
@@ -547,7 +547,7 @@ focus_tree = {
 		x = 0
 		y = 1
 		relative_position_id = SKR_what_shall_we_do
-		cost = 1
+		cost = 2
 		allow_branch = {
 			OR = {
 				has_country_flag = SKR_focus_debug
@@ -598,7 +598,7 @@ focus_tree = {
 		x = 0
 		y = 1
 		relative_position_id = SKR_Yoshinobu_regime
-		cost = 1
+		cost = 2
 		prerequisite = {
 			focus = SKR_Yoshinobu_regime
 		}
@@ -702,7 +702,7 @@ focus_tree = {
 		x = 1
 		y = 1
 		relative_position_id = SKR_conform_to_the_trend
-		cost = 1
+		cost = 2
 		prerequisite = {
 			focus = SKR_conform_to_the_trend
 			focus = SKR_do_a_treat
@@ -890,6 +890,20 @@ focus_tree = {
 						end_puppet = PREV
 					}
 				}
+				ASK = {
+					give_military_access = SKR
+					diplomatic_relation = {
+						country = SKR
+						relation = non_aggression_pact
+						active = yes
+					}
+				}
+				give_military_access = ASK
+				diplomatic_relation = {
+					country = ASK
+					relation = non_aggression_pact
+					active = yes
+				}
 				every_country = {
 					limit = {
 						OR = {
@@ -904,16 +918,9 @@ focus_tree = {
 						regiments = {
 							infantry = {x = 0 y = 0}
 							infantry = {x = 0 y = 1}
-							infantry = {x = 0 y = 2}
-							infantry = {x = 0 y = 3}
-							infantry = {x = 0 y = 4}
 						}
 					}
 					every_owned_state = {
-						create_unit = {
-							division = "name = \"国人众\" division_template = \"国人众\" start_experience_factor = 0.2"
-    						owner = PREV
-						}
 						create_unit = {
 							division = "name = \"国人众\" division_template = \"国人众\" start_experience_factor = 0.2"
     						owner = PREV
@@ -934,7 +941,7 @@ focus_tree = {
 					if = {
 						limit = {
 							SKR = {
-								is_ai = yes
+								is_ai = no
 							}
 						}
 						capital_scope = {
@@ -1117,6 +1124,21 @@ focus_tree = {
 					instant_build = yes
 				}
 			}
+			if = {
+				limit = {
+					is_ai = yes
+				}
+				capital_scope = {
+					create_unit = {
+						division = "name = \"新选组后备队\" division_template = \"新选组\" start_experience_factor = 0.4"
+						owner = ROOT
+					}
+					create_unit = {
+						division = "name = \"新选组后备队\" division_template = \"新选组\" start_experience_factor = 0.4"
+						owner = ROOT
+					}
+				}
+			}
 		}
 	}
 	#速战速决
@@ -1140,6 +1162,17 @@ focus_tree = {
 			has_global_flag = SKR_CIV_WAR_NORTH_BAKUFU_WON_FLAG
 		}
 		completion_reward = {
+			add_manpower = 2500
+			add_equipment_to_stockpile = {
+				type = jyusoutou_equipment_1
+				amount = 100
+				producer = ROOT
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 1000
+				producer = ROOT
+			}
 			effect_tooltip = {
 				swap_ideas = {
 					remove_idea = SKR_northen_warfare_dummy
@@ -1276,6 +1309,21 @@ focus_tree = {
 					remove_idea = SKR_northen_warfare_dummy
 					add_idea = SKR_northen_warfare_5
 				}
+			}
+			add_equipment_to_stockpile = {
+				type = jyusoutou_equipment_1
+				amount = 50
+				producer = ROOT
+			}
+			add_equipment_to_stockpile = {
+				type = artillery_equipment
+				amount = 50
+				producer = ROOT
+			}
+			add_equipment_to_stockpile = {
+				type = infantry_equipment
+				amount = 1000
+				producer = ROOT
 			}
 			hidden_effect = {
 				add_to_variable = {SKR_northen_warfare_max_planning = 0.075}
@@ -1879,6 +1927,10 @@ focus_tree = {
 		completion_reward = {
 			set_temp_variable = {SKR_houshu_relation_temp = -20}
 			SKR_houshu_relation_effect = yes
+			set_temp_variable = {temp_law = token:SKR_bukeshohatto_law}
+			IRIS_remove_law = yes
+			set_temp_variable = {temp_law = token:SKR_banminbyoudou_law}
+			IRIS_add_law = yes
 			swap_ideas = {
 				remove_idea = SKR_bakufu_reform_1
 				add_idea = SKR_bakufu_reform_2
@@ -1906,6 +1958,8 @@ focus_tree = {
 			add_ideas = SKR_parliament
 			set_temp_variable = {SKR_kakushin_relation_temp = 10}
 			SKR_kakushin_relation_effect = yes
+			set_temp_variable = {temp_law = token:SKR_parliament_law}
+			IRIS_add_law = yes
 		}
 	}
 	#利用牢庆关系
@@ -2142,6 +2196,23 @@ focus_tree = {
 			swap_ideas = {
 				remove_idea = SKR_bakufu_reform_2
 				add_idea = SKR_bakufu_reform_3
+			}
+			set_temp_variable = {temp_law = token:SKR_bakufu_law}
+			IRIS_remove_law = yes
+			set_temp_variable = {temp_law = token:SKR_taikun_law}
+			IRIS_add_law = yes
+			hidden_effect = {
+				if = {
+					limit = {
+						has_country_leader = {
+							character = SKR_Okita_Souji
+						}
+					}
+					set_country_leader_description = {
+						ideology = neutrality
+						desc = SKR_Okita_Souji_desc_2
+					}
+				}
 			}
 		}
 	}
