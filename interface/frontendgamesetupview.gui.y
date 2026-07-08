@@ -1005,7 +1005,7 @@ guiTypes = {
 			font = "Orwell_16"
 			borderSize = {x = 0 y = 0}
 			maxWidth = 380
-			maxHeight = 30
+			# maxHeight = 30
 			format = left
 			maxHeight = 199
 			ScrollBarType = standardtext_slider

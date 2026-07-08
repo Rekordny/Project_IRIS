@@ -1,0 +1,80 @@
+scripted_gui = {
+    start_local_control_capability = {
+        context_type = selected_state_context
+        parent_window_token = selected_state_view
+        window_name = "start_local_control_capability"
+        visible = {
+            always = no
+        }
+        properties = {
+            scale = {
+				x = this.scale_grid_array_x^scale_grid_array_index
+				# frame = OCF_gridbox_seat_array_senate^idx
+			}
+            damage_bar = { frame = 20 }
+        }
+        effects = {
+            building_picture_click = {
+                if = {
+                    limit = {
+                        check_variable = { ROOT.local_control_capability_var = 1 }
+                    }
+                    set_variable = { ROOT.local_control_capability_var = 0 }
+                }
+                else = {
+                    set_variable = { ROOT.local_control_capability_var = 1 }
+                }
+            }
+        }
+    }
+    local_control_capability = {
+        context_type = selected_state_context
+        parent_window_token = selected_state_view
+        window_name = "local_control_capability"
+        visible = {
+            check_variable = { ROOT.local_control_capability_var = 1 }
+        }
+        dynamic_lists = {
+			# 进度刻度
+			scale_grid = {
+				array = this.scale_grid_array
+				index = scale_grid_array_index
+                value = scale_grid_array_value
+				entry_container = scale_slot
+				# change_scope = no
+			}
+            # 政策
+			policy_grid = {
+				array = this.policy_grid_array
+				index = policy_grid_array_index
+                value = policy_grid_array_value
+				entry_container = policy_slot
+				# change_scope = no
+			}
+        }
+        triggers = {
+
+        }
+        properties = {
+            scale = {
+				x = this.scale_grid_array_x^scale_grid_array_index
+				# frame = OCF_gridbox_seat_array_senate^idx
+			}
+            policy = { image = "GFX_[?policy_grid_array_value.GetTokenKey]" }
+            policy_bg = { frame = this.policy_grid_frame_array^policy_grid_array_index }
+        }
+        triggers = {
+            
+        }
+        effects = {
+            policy_bg_click = {
+                clear_array = this.policy_grid_frame_array
+                for_loop_effect = {
+                    end = this.policy_grid_array^num
+                    add_to_array = { this.policy_grid_frame_array = 2 }
+                }
+                set_variable = { this.policy_grid_frame_array^policy_grid_array_index = 1 }
+            }
+        }
+    }
+}
