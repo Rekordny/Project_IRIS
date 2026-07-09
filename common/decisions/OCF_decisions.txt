@@ -268,29 +268,88 @@ OCF_first_invasion_decision_cat = {
 		activation = {
 			has_war = yes
 			has_global_flag = OCE_civil_war
-			controls_state = 115
+			if = {
+				limit = { original_tag = OMS}
+				OR = {
+					controls_state = 115
+					OCF = { controls_state = 115 }
+				}
+			}
+			else_if = {
+				limit = { original_tag = OCF}
+				OR = {
+					controls_state = 115
+					OMS = { controls_state = 115 }
+				}
+			}
+			else_if = {
+				limit = { original_tag = CKR}
+				OR = {
+					controls_state = 115
+					EIA = { controls_state = 115 }
+				}
+			}
+			else_if = {
+				limit = { original_tag = EIA}
+				OR = {
+					controls_state = 115
+					CKR = { controls_state = 115 }
+				}
+			}
+			else = { controls_state = 115 }
 		}
 		available = {
-			if = {
-				limit = {
+			# if = {
+			# 	limit = {
+			# 		OR = {
+			# 			AND = {
+			# 				original_tag = OMS
+			# 				NOT = { country_exists = OCF }
+			# 			}
+			# 			AND = {
+			# 				original_tag = CKR
+			# 				NOT = { country_exists = EIA }
+			# 			}
+			# 			original_tag = OCF
+			# 			original_tag = OCE
+			# 			# original_tag = OMS
+			# 			original_tag = INP
+			# 			original_tag = EIA
+			# 			# original_tag = CKR
+			# 		}
+			# 	}
+			# 	NOT = { controls_state = 115 }
+			# }
+			NOT = {
+				if = {
+					limit = { original_tag = OMS}
 					OR = {
-						AND = {
-							original_tag = OMS
-							NOT = { country_exists = OCF }
-						}
-						AND = {
-							original_tag = CKR
-							NOT = { country_exists = EIA }
-						}
-						original_tag = OCF
-						original_tag = OCE
-						# original_tag = OMS
-						original_tag = INP
-						original_tag = EIA
-						# original_tag = CKR
+						controls_state = 115
+						OCF = { controls_state = 115 }
 					}
 				}
-				NOT = { controls_state = 115 }
+				else_if = {
+					limit = { original_tag = OCF}
+					OR = {
+						controls_state = 115
+						OMS = { controls_state = 115 }
+					}
+				}
+				else_if = {
+					limit = { original_tag = CKR}
+					OR = {
+						controls_state = 115
+						EIA = { controls_state = 115 }
+					}
+				}
+				else_if = {
+					limit = { original_tag = EIA}
+					OR = {
+						controls_state = 115
+						CKR = { controls_state = 115 }
+					}
+				}
+				else = { controls_state = 115 }
 			}
 		}
 		visible = {
@@ -336,10 +395,69 @@ OCF_first_invasion_decision_cat = {
 		activation = {
 			has_war = yes
 			has_global_flag = OCE_civil_war
-			NOT = { controls_state = 115 }
+			NOT = {
+				if = {
+					limit = { original_tag = OMS}
+					OR = {
+						controls_state = 115
+						OCF = { controls_state = 115 }
+					}
+				}
+				else_if = {
+					limit = { original_tag = OCF}
+					OR = {
+						controls_state = 115
+						OMS = { controls_state = 115 }
+					}
+				}
+				else_if = {
+					limit = { original_tag = CKR}
+					OR = {
+						controls_state = 115
+						EIA = { controls_state = 115 }
+					}
+				}
+				else_if = {
+					limit = { original_tag = EIA}
+					OR = {
+						controls_state = 115
+						CKR = { controls_state = 115 }
+					}
+				}
+				else = { controls_state = 115 }
+			}
 		}
 		available = {
-			controls_state = 115
+			# controls_state = 115
+			if = {
+				limit = { original_tag = OMS}
+				OR = {
+					controls_state = 115
+					OCF = { controls_state = 115 }
+				}
+			}
+			else_if = {
+				limit = { original_tag = OCF}
+				OR = {
+					controls_state = 115
+					OMS = { controls_state = 115 }
+				}
+			}
+			else_if = {
+				limit = { original_tag = CKR}
+				OR = {
+					controls_state = 115
+					EIA = { controls_state = 115 }
+				}
+			}
+			else_if = {
+				limit = { original_tag = EIA}
+				OR = {
+					controls_state = 115
+					CKR = { controls_state = 115 }
+				}
+			}
+			else = { controls_state = 115 }
 		}
 		visible = {
 			has_war = yes
@@ -382,6 +500,78 @@ OCF_first_invasion_decision_cat = {
 		fixed_random_seed = no
 	}
 
+	#劝降
+	OCF_persuade_surrender = {
+		icon = GFX_decision_generic_nationalism
+		# fire_only_once = yes
+		ai_will_do = {
+			factor = 10000
+		}
+		cost = 30
+		allowed = {
+			OR = {
+				original_tag = OCF
+				original_tag = OCE
+				original_tag = OMS
+				original_tag = INP
+				original_tag = EIA
+				original_tag = CKR
+			}
+		}
+		visible = {
+			FROM = {
+				state = 115
+			}
+		}
+		available = {
+			NOT = { controls_state = 115 }
+			FROM = {
+				controller = {
+					has_war_with = ROOT
+					surrender_progress > 0.6
+				}
+			}
+			OR = {
+				controls_state = 826
+				AND = {
+					controls_state = 841
+					controls_state = 842
+					controls_state = 843
+					controls_state = 844
+				}
+			}
+		}
+		days_remove = 7
+		state_target = yes
+		cancel_trigger = {
+			OR = {
+				controls_state = 115
+				NOT = {
+					FROM = {
+						controller = {
+							has_war_with = ROOT
+							surrender_progress > 0.6
+						}
+					}
+				}
+				NOT = {
+					controls_state = 826
+					controls_state = 841
+					controls_state = 842
+					controls_state = 843
+					controls_state = 844
+				}
+			}
+		}
+		remove_effect = {
+			FROM = {
+				controller = {
+					country_event = { id = OCE.24 }
+				}
+			}
+		}
+	}
+
 	#搜刮补给
 	OCF_first_invasion_scavenge_supplies = {
 		icon = generic_prepare_civil_war
@@ -392,7 +582,7 @@ OCF_first_invasion_decision_cat = {
 			OCF_detect_war_frenzy = yes
 		}
 		ai_will_do = {
-			factor = 10000
+			factor = 1
 			modifier = {
 				factor = 0
 				set_temp_variable = { temp = 65 }
@@ -566,7 +756,7 @@ OCF_first_invasion_decision_cat = {
 			OCF_detect_war_frenzy = yes
 		}
 		ai_will_do = {
-			factor = 10000
+			factor = 1
 			modifier = {
 				factor = 0
 				set_temp_variable = { temp = 60 }
@@ -5469,8 +5659,10 @@ OCF_foreign_policy = {
 		#效果
 		complete_effect = {
 			add_stability = -0.01
-			add_state_core = 303
-			add_state_core = 266
+			# add_state_core = 303
+			# add_state_core = 266
+			303 = { enable_state_integration_50_compliance = yes }
+			266 = { enable_state_integration_50_compliance = yes }
 			transfer_state = 303
 			transfer_state = 266
 			custom_effect_tooltip = OCF_changes_parliamentary_parties
@@ -8802,19 +8994,21 @@ OCF_Anisufia_Win_Parettia_workshop = {
 						has_war_with = OCF
 					}
 					NOT = {
-						OR = {
-							has_country_flag = country_region_collapsed_flag
-							has_country_flag = has_Unmanned_area_flag
-							has_country_flag = has_Wasteland_flag
-							has_country_flag = has_Anarchy_flag
-							has_country_flag = has_Regional_riots_flag
-							has_country_flag = has_government_vacant_ocean_flag
-							TAG = WRQ
-							TAG = ANA
-							TAG = WST
-							TAG = ZTZ
-							TAG = RIR
-						}
+						# OR = {
+						# 	has_country_flag = country_region_collapsed_flag
+						# 	has_country_flag = has_Unmanned_area_flag
+						# 	has_country_flag = has_Wasteland_flag
+						# 	has_country_flag = has_Anarchy_flag
+						# 	has_country_flag = has_Regional_riots_flag
+						# 	has_country_flag = has_government_vacant_ocean_flag
+						# 	original_tag = WRQ
+						# 	original_tag = ANA
+						# 	original_tag = WST
+						# 	original_tag = ZTZ
+						# 	original_tag = RIR
+						# 	original_tag = AAA
+						# }
+						country_region_collapsed = yes
 					}
 					is_IRIS_TOUHOU_country = no
 					is_IRIS_UB_country = no
@@ -8856,19 +9050,21 @@ OCF_Anisufia_Win_Parettia_workshop = {
 						has_war_with = OCF
 					}
 					NOT = {
-						OR = {
-							has_country_flag = country_region_collapsed_flag
-							has_country_flag = has_Unmanned_area_flag
-							has_country_flag = has_Wasteland_flag
-							has_country_flag = has_Anarchy_flag
-							has_country_flag = has_Regional_riots_flag
-							has_country_flag = has_government_vacant_ocean_flag
-							TAG = WRQ
-							TAG = ANA
-							TAG = WST
-							TAG = ZTZ
-							TAG = RIR
-						}
+						# OR = {
+						# 	has_country_flag = country_region_collapsed_flag
+						# 	has_country_flag = has_Unmanned_area_flag
+						# 	has_country_flag = has_Wasteland_flag
+						# 	has_country_flag = has_Anarchy_flag
+						# 	has_country_flag = has_Regional_riots_flag
+						# 	has_country_flag = has_government_vacant_ocean_flag
+						# 	original_tag = WRQ
+						# 	original_tag = ANA
+						# 	original_tag = WST
+						# 	original_tag = ZTZ
+						# 	original_tag = RIR
+						# 	original_tag = AAA
+						# }
+						country_region_collapsed = yes
 					}
 					is_IRIS_TOUHOU_country = no
 					is_IRIS_UB_country = no
@@ -10099,6 +10295,22 @@ OCF_unification_eastern_europe_decisions = {
 				state = 188
 				state = 192
 				state = 249
+				state = 961
+				state = 962
+				state = 963
+
+				state = 80
+
+				state = 81
+
+				state = 97
+				state = 105
+				state = 140
+				state = 141
+				state = 770
+				state = 769
+				state = 132
+				state = 143
 			}
 		}
 		ai_will_do = {
@@ -10107,13 +10319,31 @@ OCF_unification_eastern_europe_decisions = {
 		available = {
 			is_subject = no
 			is_faction_leader = yes
-			OHR = { all_core_state = { is_owned_and_controlled_by = ROOT } }
-			OWL = { all_core_state = { is_owned_and_controlled_by = ROOT } }
-			BRG = { all_core_state = { is_owned_and_controlled_by = ROOT } }
-			CID = { all_core_state = { is_owned_and_controlled_by = ROOT } }
-			DOC = { all_core_state = { is_owned_and_controlled_by = ROOT } }
-			PLP = { all_core_state = { is_owned_and_controlled_by = ROOT } }
-			AED = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+			count_triggers = {
+				amount = 8
+				# OHR = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# OWL = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# BRG = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# CID = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# DOC = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# PLP = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# AED = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# DYM = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# NGW = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# URU = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				# CTC = { all_core_state = { is_owned_and_controlled_by = ROOT } }
+				OHR = { all_core_state = { is_controlled_by = ROOT } }
+				OWL = { all_core_state = { is_controlled_by = ROOT } }
+				BRG = { all_core_state = { is_controlled_by = ROOT } }
+				CID = { all_core_state = { is_controlled_by = ROOT } }
+				DOC = { all_core_state = { is_controlled_by = ROOT } }
+				PLP = { all_core_state = { is_controlled_by = ROOT } }
+				AED = { all_core_state = { is_controlled_by = ROOT } }
+				DYM = { all_core_state = { is_controlled_by = ROOT } }
+				NGW = { all_core_state = { is_controlled_by = ROOT } }
+				URU = { all_core_state = { is_controlled_by = ROOT } }
+				CTC = { all_core_state = { is_controlled_by = ROOT } }
+			}
 		}
 		complete_effect = {
 			every_state = {
@@ -10121,15 +10351,33 @@ OCF_unification_eastern_europe_decisions = {
 					OR = {
 						is_core_of = OHR
 						is_core_of = OWL
-						# is_core_of = BRG
-						# is_core_of = CID
-						is_core_of = DOC
+						is_core_of = YMD
 						is_core_of = PLP
 						is_core_of = AED
-						is_core_of = YMD
+						is_core_of = NGE
+						is_core_of = DYM
 					}
 				}
-				add_core_of = ROOT
+				# add_core_of = ROOT
+				enable_state_integration_80_compliance = yes
+			}
+			every_state = {
+				limit = {
+					OR = {
+						is_core_of = URU
+						is_core_of = PLD
+						is_core_of = CTC
+					}
+				}
+				# add_core_of = ROOT
+				enable_state_integration_50_compliance = yes
+			}
+			every_state = {
+				limit = {
+					is_core_of = DOC
+				}
+				# add_core_of = ROOT
+				enable_state_integration_30_compliance = yes
 			}
 			# every_country = {
 			# 	limit = {
