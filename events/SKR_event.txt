@@ -1412,20 +1412,26 @@ country_event = {#早樱，你回头吧
 					regiments = {
 						militia = {x = 0 y = 0}
 						militia = {x = 0 y = 1}
-						militia = {x = 0 y = 2}
 						militia = {x = 1 y = 0}
 						militia = {x = 1 y = 1}
-						militia = {x = 1 y = 2}
 					}
 				}
-				set_temp_variable = {YKN_unit_count = 5}
+				set_variable = {YKN_unit_count = 5}
 				if = {
 					limit = {
 						SKR = {
 							is_ai = no
 						}
 					}
-					add_to_temp_variable = {YKN_unit_count = 3}
+					add_to_variable = {YKN_unit_count = 3}
+				}
+				if = {
+					limit = {
+						SKR = {
+							is_ai = yes
+						}
+					}
+					add_to_variable = {YKN_unit_count = -1}
 				}
 				if = {
 					limit = {
@@ -1433,7 +1439,7 @@ country_event = {#早樱，你回头吧
 							has_idea = SKR_daijin_Tang_Keke
 						}
 					}
-					add_to_temp_variable = {YKN_unit_count = 1}
+					add_to_variable = {YKN_unit_count = 1}
 				}
 				if = {
 					limit = {
@@ -1445,13 +1451,29 @@ country_event = {#早樱，你回头吧
 						limit = {
 							check_variable = {SKR.SKR_houshu_relation < 50}
 						}
-						add_to_temp_variable = {YKN_unit_count = 1}
+						add_to_variable = {YKN_unit_count = 1}
 					}
 					if = {
 						limit = {
 							check_variable = {SKR.SKR_houshu_relation < 25}
 						}
-						add_to_temp_variable = {YKN_unit_count = 1}
+						add_to_variable = {YKN_unit_count = 1}
+					}
+					if = {
+						limit = {
+							check_variable = {SKR.SKR_houshu_relation > 70}
+						}
+						add_to_variable = {YKN_unit_count = -1}
+					}
+				}
+				for_loop_effect = {
+					start = 0
+					end = var:YKN_unit_count
+					every_owned_state = {
+						create_unit = {
+							division = "name = \"铃兰教一揆\" division_template = \"铃兰教一揆\" start_experience_factor = 0.25"
+							owner = YKN
+						}
 					}
 					if = {
 						limit = {
@@ -1971,14 +1993,14 @@ country_event = {#会议闭幕
 						militia = {x = 1 y = 2}
 					}
 				}
-				set_temp_variable = {YKN_unit_count = 6}
+				set_variable = {YKN_unit_count = 6}
 				if = {
 					limit = {
 						SKR = {
 							is_ai = no
 						}
 					}
-					add_to_temp_variable = {YKN_unit_count = 3}
+					add_to_variable = {YKN_unit_count = 3}
 				}
 				if = {
 					limit = {
@@ -1986,7 +2008,7 @@ country_event = {#会议闭幕
 							has_idea = SKR_daijin_Tang_Keke
 						}
 					}
-					add_to_temp_variable = {YKN_unit_count = 1}
+					add_to_variable = {YKN_unit_count = 1}
 				}
 				if = {
 					limit = {
@@ -1998,29 +2020,28 @@ country_event = {#会议闭幕
 						limit = {
 							check_variable = {SKR.SKR_houshu_relation < 50}
 						}
-						add_to_temp_variable = {YKN_unit_count = 1}
+						add_to_variable = {YKN_unit_count = 1}
 					}
 					if = {
 						limit = {
 							check_variable = {SKR.SKR_houshu_relation < 25}
 						}
-						add_to_temp_variable = {YKN_unit_count = 1}
+						add_to_variable = {YKN_unit_count = 1}
 					}
 					if = {
 						limit = {
 							check_variable = {SKR.SKR_houshu_relation > 70}
 						}
-						add_to_temp_variable = {YKN_unit_count = -1}
+						add_to_variable = {YKN_unit_count = -1}
 					}
 				}
-				meta_effect = {
-					text = {
-						every_owned_state = {
-							create_unit = {
-								division = "name = \"铃兰教一揆\" division_template = \"铃兰教一揆\" start_experience_factor = 0.2"
-								owner = YKN
-								count = [YKN_UNIT_COUNT]
-							}
+				for_loop_effect = {
+					start = 0
+					end = var:YKN_unit_count
+					every_owned_state = {
+						create_unit = {
+							division = "name = \"铃兰教一揆\" division_template = \"铃兰教一揆\" start_experience_factor = 0.25"
+							owner = YKN
 						}
 					}
 					YKN_UNIT_COUNT = "[?YKN_unit_count_temp]"
@@ -4189,19 +4210,8 @@ country_event = {#LycoReco
     title = SKR.93.t
     desc = SKR.93.desc
     picture = GFX_event_SKR_93
-    trigger = {
-		tag = SKR
-		has_global_flag = BDA_LYCORECO_FLAG
-		NOT = {
-			country_exists = BDA
-		}
-		has_global_flag = SKR_UNIFIED_FLAG
-	}
-    fire_only_once = yes
-
-	mean_time_to_happen = {
-		days = 100
-	}
+    is_triggered_only = yes
+	fire_only_once = yes
 
     option = {
         name = SKR.93.a
@@ -4222,6 +4232,8 @@ country_event = {#LycoReco
 				set_nationality = SKR
 			}
 		}
+
+		country_event = {id = SKR_ending.2 days = 7}
 
         ai_chance = {
             base = 10
@@ -8201,8 +8213,8 @@ country_event = {#冲田桑大胜利
 			portrait = GFX_SKR_Okita_Souji_Taikun
 		}
 		
-		country_event = {id = SKR_ending.2 days = 3}
-		country_event = {id = SKR_temp.18 days = 30}
+		
+		country_event = {id = SKR_temp.18 days = 14}
 		hidden_effect = {
 			news_event = {id = SKR_news.17 days = 2}
 			SKR_unification_politics_effect_bakufu = yes
@@ -8261,6 +8273,18 @@ country_event = {#合体！
 
     option = {
         name = SKR_temp.18.a
+
+		if = {
+			limit = {
+				has_country_leader = {
+					character = SKR_Okita_Souji
+				}
+			}
+			set_cosmetic_tag = SKR_UNITED
+			hidden_effect = {
+				country_event = {id = SKR.93 days = 7}
+			}
+		}
 
 		every_country = {
 			limit = {
@@ -9707,6 +9731,90 @@ country_event = {#准备进攻东云
         }
     }
 }
+country_event = {#BDA北伐
+    id = SKR_temp.37
+    title = SKR_temp.37.t
+    desc = SKR_temp.37.desc
+    #picture = GFX_event_SKR_temp_36
+    trigger = {
+		tag = BDA
+		is_faction_leader = yes
+		has_country_flag = SKR_republic_faction_flag
+		NOT = {
+			has_global_flag = SKR_UNIFIED_FLAG
+		}
+		NOT = {
+			has_war_with = SKR
+		}
+		NOT = {
+			is_ally_with = SKR
+		}
+		SKR = {
+			has_country_leader = {
+				character = SKR_Okita_Souji
+			}
+		}
+		date > 3095.5.1
+	}
+    fire_only_once = yes
+
+	mean_time_to_happen = {
+		days = 10
+	}
+
+
+    option = {
+        name = SKR_temp.37.a
+
+		add_equipment_to_stockpile = {
+			type = infantry_equipment
+			amount = 10000
+		}
+		add_equipment_to_stockpile = {
+			type = artillery_equipment
+			amount = 1500
+		}
+		set_temp_variable = { temp_tag = THIS }
+		set_temp_variable = { temp_tag2 = SKR }
+		IRIS_warning_imminent_declaration_war = yes
+
+		country_event = {id = SKR_temp.38 days = 30}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
+country_event = {#BDA北伐
+    id = SKR_temp.38
+    title = SKR_temp.38.t
+    desc = SKR_temp.38.desc
+    #picture = GFX_event_SKR_temp_36
+    is_triggered_only = yes
+    fire_only_once = yes
+
+    option = {
+        name = SKR_temp.35.a
+
+		declare_war_on = {
+			target = SKR
+			type = annex_everything
+		}
+
+		if = {
+			limit = {
+				NOT = {
+					has_global_flag = SKR_NEWS_4_TRIGGERED_FLAG
+				}
+			}
+			news_event = {id = SKR_news.4}
+		}
+
+        ai_chance = {
+            base = 10
+        }
+    }
+}
 ######################################################################
 #新闻
 
@@ -9798,6 +9906,7 @@ news_event = {
 
 	immediate = {
 		hidden_effect = {
+			set_global_flag = SKR_NEWS_4_TRIGGERED_FLAG
 			if = {
 				limit = {
 					has_game_rule = {
@@ -9909,6 +10018,9 @@ news_event = {
 	option = {
 		name = SKR_news.4.c
 		trigger = {
+			NOT = {
+				tag = SKR
+			}
 			OR = {
 				tag = BDA
 				is_ally_with = BDA
