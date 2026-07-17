@@ -19,6 +19,11 @@ SKR_debug = {
             set_country_flag = SKR_unification_debug
         }
     }
+    SKR_assassin_debug = {
+        complete_effect = {
+            set_country_flag = SKR_assassin_category_debug
+        }
+    }
     SKR_focus_debug = {
         complete_effect = {
             set_country_flag = SKR_focus_debug
@@ -6203,6 +6208,7 @@ SKR_after_unification_diplomacy_category = {
         }
         visible = {
             is_faction_leader = yes
+            is_ally_with = AKL
         }
         days_remove = 30
         fire_only_once = yes
@@ -6214,6 +6220,7 @@ SKR_after_unification_diplomacy_category = {
             }
         }
         remove_effect = {
+            set_global_flag = VOYAGE_WAR_WITH_USF_FLAG
             declare_war_on = {
                 target = USF
                 type = annex_everything
@@ -6684,6 +6691,291 @@ SKR_after_unification_diplomacy_category = {
         }
         ai_will_do = {
             factor = 10
+        }
+    }
+}
+
+SKR_assassin_category = {
+    SKR_assassin_mission = {
+        icon = GFX_decision_SKR_countdown
+		is_good = no
+		days_mission_timeout = 35
+		available = {
+			always = no
+        }
+		activation = {
+			has_global_flag = SKR_ASSASSIN_FLAG
+            NOT = {
+                has_global_flag = SKR_ASSASSIN_CRUSHED_FLAG
+            }
+		}
+		cancel_trigger = {
+			has_global_flag = SKR_ASSASSIN_CRUSHED_FLAG
+		}
+		timeout_effect = {
+            random_list = {
+                55 = {}
+                3 = {
+                    country_event = {id = SKR_spy.6}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.7}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.8}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.9}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.10}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.11}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.12}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.13}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.14}
+                }
+                3 = {
+                    country_event = {id = SKR_spy.15}
+                    modifier = {
+                        add = 1
+                        check_variable = {SKR_Saito_level > 1}
+                    }
+                }
+                3 = {
+                    country_event = {id = SKR_spy.16}
+                    modifier = {
+                        add = 1
+                        check_variable = {SKR_Saito_level > 1}
+                    }
+                }
+                3 = {
+                    country_event = {id = SKR_spy.17}
+                    modifier = {
+                        add = 1
+                        check_variable = {SKR_Saito_level > 1}
+                    }
+                }
+                3 = {
+                    country_event = {id = SKR_spy.18}
+                    modifier = {
+                        add = 1
+                        check_variable = {SKR_Saito_level > 1}
+                    }
+                }
+                3 = {
+                    country_event = {id = SKR_spy.19}
+                    modifier = {
+                        add = 1
+                        check_variable = {SKR_Saito_level > 1}
+                    }
+                }
+                3 = {
+                    country_event = {id = SKR_spy.20}
+                    modifier = {
+                        add = 1
+                        check_variable = {SKR_Saito_level > 1}
+                    }
+                }
+            }
+		}
+    }
+    #信息板
+    SKR_assassin_selected_info_tab = {
+        available = {
+            hidden_trigger = {
+                always = no
+            }
+        }
+    }
+#干员升级
+    SKR_upgrade_Hattori = {
+        visible = {
+            check_variable = {SKR.SKR_Hattori_level < 3}
+        }
+        days_remove = 60
+        custom_cost_trigger = {
+            command_power > 29
+        }
+        custom_cost_text = decision_cost_CP_30
+        complete_effect = {
+            add_command_power = -30
+        }
+        remove_effect = {
+            custom_effect_tooltip = SKR_upgrade_Hattori_tt
+            add_to_variable = {SKR_Hattori_level = 1}
+            if = {
+                limit = {
+                    check_variable = {SKR_Hattori_level = 1}
+                }
+                set_variable = {SKR_Hattori_decision_time = 20}
+            }
+            if = {
+                limit = {
+                    check_variable = {SKR_Hattori_level = 2}
+                }
+                set_variable = {SKR_Hattori_decision_cost = 10}
+            }
+        }
+        cancel_trigger ={
+            has_global_flag = SKR_ASSASSIN_CRUSHED_FLAG
+        }
+        cancel_effect = {
+            add_command_power = 30
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    SKR_upgrade_Saito = {
+        visible = {
+            check_variable = {SKR.SKR_Saito_level < 3}
+        }
+        cost = 40
+        days_remove = 60
+        remove_effect = {
+            custom_effect_tooltip = SKR_upgrade_Saito_tt
+            add_to_variable = {SKR_Saito_level = 1}
+        }
+        cancel_trigger ={
+            has_global_flag = SKR_ASSASSIN_CRUSHED_FLAG
+            if = {
+                limit = {
+                    check_variable = {SKR_Saito_level = 1}
+                }
+                set_variable = {SKR_Saito_decision_cost = 15}
+            }
+        }
+        cancel_effect = {
+            add_political_power = 40
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    SKR_upgrade_Yamazaki = {
+        visible = {
+            check_variable = {SKR.SKR_Yamazaki_level < 3}
+        }
+        custom_cost_trigger = {
+            has_army_experience > 24
+        }
+        custom_cost_text = decision_cost_ArmXP_25
+        complete_effect = {
+            army_experience = -25
+        }
+        days_remove = 60
+        remove_effect = {
+            custom_effect_tooltip = SKR_upgrade_Yamazaki_tt
+            add_to_variable = {SKR_Yamazaki_level = 1}
+        }
+        cancel_trigger ={
+            has_global_flag = SKR_ASSASSIN_CRUSHED_FLAG
+        }
+        cancel_effect = {
+            army_experience = 25
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    SKR_establish_battoutai = {
+        visible = {
+            check_variable = {SKR.SKR_Saito_level > 2}
+        }
+        custom_cost_trigger = {
+            command_power > 39
+        }
+        custom_cost_text = decision_cost_CP_40
+        fire_only_once = yes
+        days_remove = 14
+        complete_effect = {
+            add_command_power = -40
+        }
+        remove_effect = {
+            custom_effect_tooltip = SKR_battoutai_tt
+            set_country_flag = SKR_battoutai_flag
+            army_experience = 15
+        }
+        ai_will_do = {
+            factor = 10
+        }
+    }
+#开始侦察
+    SKR_start_action = {
+        available = {
+            custom_trigger_tooltip = {
+                tooltip = SKR_start_action_tt
+                has_variable = SKR_assassin_select
+
+                meta_trigger = {
+                    text = {
+                        check_variable = {[SKR_SELECTED]_status < 2}
+                    }
+                    SKR_SELECTED = "[?SKR_assassin_select.GetTokenKey]"
+                }
+            }
+        }
+        visible = {
+            has_variable = SKR_assassin_select
+            meta_trigger = {
+                text = {
+                    check_variable = {[SKR_SELECTED]_phase = 0}
+                }
+                SKR_SELECTED = "[?SKR_assassin_select.GetTokenKey]"
+            }
+        }
+        complete_effect = {
+            set_country_flag = SKR_is_dealing_with_assassin_flag
+            custom_effect_tooltip = SKR_cannot_switch_untill_end_tt
+            
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+#前期侦察
+    SKR_Hattori_action_phase_1 = {
+        visible = {
+            meta_trigger = {
+                text = {
+                    check_variable = {[SKR_SELECTED]_phase = 1}
+                }
+                SKR_SELECTED = "[?SKR_assassin_select.GetTokenKey]"
+            }
+        }
+        cost = var:SKR_Hattori_decision_cost?15
+        days_remove = var:SKR_Hattori_decision_time?25
+        remove_effect = {
+
+        }
+        ai_will_do = {
+            factor = 1000
+        }
+    }
+    SKR_Saito_action_phase_1 = {
+        visible = {
+            meta_trigger = {
+                text = {
+                    check_variable = {[SKR_SELECTED]_phase = 1}
+                }
+                SKR_SELECTED = "[?SKR_assassin_select.GetTokenKey]"
+            }
+        }
+        cost = var:SKR_Saito_decision_cost?20
+        days_remove = 20
+        remove_effect = {
+
+        }
+        ai_will_do = {
+            factor = 1000
         }
     }
 }
