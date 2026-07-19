@@ -2878,6 +2878,49 @@ AKL_export_our_galgame_category = {
 
 #外交
 AKL_dip_category = {
+    AKL_declare_war_on_USF = {
+        available = {
+            is_faction_leader = yes
+            is_ally_with = SAO
+            NOT = {
+                is_ally_with = USF
+            }
+        }
+        visible = {
+            is_ally_with = SAO
+            has_completed_focus = AKL_akari_tatakai
+            NOT = {
+                has_country_leader = {
+                    character = AKL_Himinomikoto
+                }
+            }
+        }
+        complete_effect = {
+            hidden_effect = {
+                set_temp_variable = { temp_tag = THIS }
+                set_temp_variable = { temp_tag2 = USF }
+                IRIS_warning_imminent_declaration_war = yes
+            }
+        }
+        remove_effect = {
+            set_global_flag = VOYAGE_WAR_WITH_USF_FLAG
+            declare_war_on = {
+                target = USF
+                type = annex_everything
+            }
+        }
+        cancel_trigger = {
+            OR = {
+                is_ally_with = USF
+                USF = {
+                    exists = no
+                }
+            }
+        }
+        ai_will_do = {
+            factor = 0
+        }
+    }
     AKL_stand_with_SKR = {
         available = {
             has_global_flag = SKR_UNIFIED_FLAG
@@ -3075,6 +3118,337 @@ AKL_dip_category = {
                     }
                 }
             }
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+}
+
+#撤侨 
+AKL_evacuation_category = {
+    AKL_evacuation_end_mission = {
+        icon = GFX_decision_SKR_countdown
+		is_good = no
+		days_mission_timeout = 80
+        available = {
+            always = no
+        }
+        activation = {
+            always = no
+        }
+        timeout_effect = {
+            custom_effect_tooltip = AKL_citizen_saved_tt
+            add_manpower = var:AKL_saved_manpower
+            add_political_power = var:AKL_saved_pp
+            custom_effect_tooltip = AKL_capital_saved_tt
+            add_cic = var:AKL_saved_cic
+            add_equipment_to_stockpile = {
+                type = infantry_equipment
+                amount = var:AKL_saved_equipment
+            }
+            custom_effect_tooltip = AKL_saved_total_tt
+            add_stability = var:AKL_saved_st
+            add_war_support = var:AKL_saved_ws
+
+            set_country_flag = AKL_evacuation_ended_flag
+        }
+    }
+    AKL_save_citizen_1 = {
+        icon = GFX_decision_IRIS_generic_cooperation
+        available = {
+            NOT = {
+                has_country_flag = AKL_ship_1_busy
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = AKL_ship_1_busy
+            }
+        }
+        days_remove = var:AKL_ship_time?10
+        complete_effect = {
+            set_variable_to_random = {
+                var = AKL_saved_manpower_temp
+                min = 100
+                max = 500
+                integer = yes #人可不兴小数
+            }
+            custom_effect_tooltip = AKL_save_citizen_tt
+            add_to_variable = {AKL_saved_citizen = AKL_saved_manpower_temp}
+            add_to_variable = {AKL_saved_manpower = AKL_saved_manpower_temp}
+            set_variable = {AKL_saved_pp_t = AKL_saved_manpower_temp}
+            divide_variable = {AKL_saved_pp_t = 100}
+            add_to_variable = {AKL_saved_pp = AKL_saved_pp_t}
+            add_to_variable = {AKL_saved_st = 0.002}
+            add_to_variable = {AKL_saved_ws = 0.002}
+
+            add_to_variable = {AKL_available_ship = -1}
+            add_to_variable = {AKL_busy_ship = 1}
+
+            add_to_variable = {AKL_time_of_ship_sent = 1}
+
+            set_country_flag = AKL_ship_1_busy
+        }
+        remove_effect = {
+            add_to_variable = {AKL_available_ship = 1}
+            add_to_variable = {AKL_busy_ship = -1}
+            clr_country_flag = AKL_ship_1_busy
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    AKL_save_capital_1 = {
+        icon = GFX_decision_SKR_money
+        available = {
+            NOT = {
+                has_country_flag = AKL_ship_1_busy
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = AKL_ship_1_busy
+            }
+        }
+        days_remove = var:AKL_ship_time?10
+        complete_effect = {
+            set_variable_to_random = {
+                var = AKL_saved_capital_temp
+                min = 100
+                max = 300
+                integer = yes
+            }
+            custom_effect_tooltip = AKL_save_capital_tt
+            add_to_variable = {AKL_saved_capital = AKL_saved_capital_temp}
+            add_to_variable = {AKL_saved_cic = AKL_saved_capital_temp}
+            add_to_variable = {AKL_saved_equipment = AKL_saved_capital_temp}
+
+            add_to_variable = {AKL_saved_st = 0.002}
+            add_to_variable = {AKL_saved_ws = 0.002}
+
+            add_to_variable = {AKL_available_ship = -1}
+            add_to_variable = {AKL_busy_ship = 1}
+
+            add_to_variable = {AKL_time_of_ship_sent = 1}
+            set_country_flag = AKL_ship_1_busy
+        }
+        remove_effect = {
+            add_to_variable = {AKL_available_ship = 1}
+            add_to_variable = {AKL_busy_ship = -1}
+            clr_country_flag = AKL_ship_1_busy
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    AKL_save_citizen_2 = {
+        icon = GFX_decision_IRIS_generic_cooperation
+        available = {
+            NOT = {
+                has_country_flag = AKL_ship_2_busy
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = AKL_ship_2_busy
+            }
+        }
+        days_remove = var:AKL_ship_time?10
+        complete_effect = {
+            set_variable_to_random = {
+                var = AKL_saved_manpower_temp
+                min = 100
+                max = 500
+                integer = yes #人可不兴小数
+            }
+            custom_effect_tooltip = AKL_save_citizen_tt
+            add_to_variable = {AKL_saved_citizen = AKL_saved_manpower_temp}
+            add_to_variable = {AKL_saved_manpower = AKL_saved_manpower_temp}
+            set_variable = {AKL_saved_pp_t = AKL_saved_manpower_temp}
+            divide_variable = {AKL_saved_pp_t = 100}
+            add_to_variable = {AKL_saved_pp = AKL_saved_pp_t}
+            add_to_variable = {AKL_saved_st = 0.002}
+            add_to_variable = {AKL_saved_ws = 0.002}
+
+            add_to_variable = {AKL_available_ship = -1}
+            add_to_variable = {AKL_busy_ship = 1}
+
+            add_to_variable = {AKL_time_of_ship_sent = 1}
+            set_country_flag = AKL_ship_2_busy
+        }
+        remove_effect = {
+            add_to_variable = {AKL_available_ship = 1}
+            add_to_variable = {AKL_busy_ship = -1}
+            clr_country_flag = AKL_ship_2_busy
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    AKL_save_capital_2 = {
+        icon = GFX_decision_SKR_money
+        available = {
+            NOT = {
+                has_country_flag = AKL_ship_2_busy
+            }
+        }
+        visible = {
+            NOT = {
+                has_country_flag = AKL_ship_2_busy
+            }
+        }
+        days_remove = var:AKL_ship_time?10
+        complete_effect = {
+            set_variable_to_random = {
+                var = AKL_saved_capital_temp
+                min = 100
+                max = 300
+                integer = yes
+            }
+            custom_effect_tooltip = AKL_save_capital_tt
+            add_to_variable = {AKL_saved_capital = AKL_saved_capital_temp}
+            add_to_variable = {AKL_saved_cic = AKL_saved_capital_temp}
+            add_to_variable = {AKL_saved_equipment = AKL_saved_capital_temp}
+
+            add_to_variable = {AKL_saved_st = 0.002}
+            add_to_variable = {AKL_saved_ws = 0.002}
+
+            add_to_variable = {AKL_available_ship = -1}
+            add_to_variable = {AKL_busy_ship = 1}
+
+            add_to_variable = {AKL_time_of_ship_sent = 1}
+            set_country_flag = AKL_ship_2_busy
+        }
+        remove_effect = {
+            add_to_variable = {AKL_available_ship = 1}
+            add_to_variable = {AKL_busy_ship = -1}
+            clr_country_flag = AKL_ship_2_busy
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    AKL_save_citizen_3 = {
+        icon = GFX_decision_IRIS_generic_cooperation
+        available = {
+            NOT = {
+                has_country_flag = AKL_ship_3_busy
+            }
+        }
+        visible = {
+            has_country_flag = AKL_deploy_a_new_ship_flag
+            NOT = {
+                has_country_flag = AKL_ship_3_busy
+            }
+        }
+        days_remove = var:AKL_ship_time?10
+        complete_effect = {
+            set_variable_to_random = {
+                var = AKL_saved_manpower_temp
+                min = 100
+                max = 500
+                integer = yes #人可不兴小数
+            }
+            custom_effect_tooltip = AKL_save_citizen_tt
+            add_to_variable = {AKL_saved_citizen = AKL_saved_manpower_temp}
+            add_to_variable = {AKL_saved_manpower = AKL_saved_manpower_temp}
+            set_variable = {AKL_saved_pp_t = AKL_saved_manpower_temp}
+            divide_variable = {AKL_saved_pp_t = 100}
+            add_to_variable = {AKL_saved_pp = AKL_saved_pp_t}
+            add_to_variable = {AKL_saved_st = 0.002}
+            add_to_variable = {AKL_saved_ws = 0.002}
+
+            add_to_variable = {AKL_available_ship = -1}
+            add_to_variable = {AKL_busy_ship = 1}
+
+            add_to_variable = {AKL_time_of_ship_sent = 1}
+            set_country_flag = AKL_ship_3_busy
+        }
+        remove_effect = {
+            add_to_variable = {AKL_available_ship = 1}
+            add_to_variable = {AKL_busy_ship = -1}
+            clr_country_flag = AKL_ship_3_busy
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    AKL_save_capital_3 = {
+        icon = GFX_decision_SKR_money
+        available = {
+            NOT = {
+                has_country_flag = AKL_ship_3_busy
+            }
+        }
+        visible = {
+            has_country_flag = AKL_deploy_a_new_ship_flag
+            NOT = {
+                has_country_flag = AKL_ship_3_busy
+            }
+        }
+        days_remove = var:AKL_ship_time?10
+        complete_effect = {
+            set_variable_to_random = {
+                var = AKL_saved_capital_temp
+                min = 100
+                max = 300
+                integer = yes
+            }
+            custom_effect_tooltip = AKL_save_capital_tt
+            add_to_variable = {AKL_saved_capital = AKL_saved_capital_temp}
+            add_to_variable = {AKL_saved_cic = AKL_saved_capital_temp}
+            add_to_variable = {AKL_saved_equipment = AKL_saved_capital_temp}
+
+            add_to_variable = {AKL_saved_st = 0.002}
+            add_to_variable = {AKL_saved_ws = 0.002}
+
+            add_to_variable = {AKL_available_ship = -1}
+            add_to_variable = {AKL_busy_ship = 1}
+
+            add_to_variable = {AKL_time_of_ship_sent = 1}
+            set_country_flag = AKL_ship_3_busy
+        }
+        remove_effect = {
+            add_to_variable = {AKL_available_ship = 1}
+            add_to_variable = {AKL_busy_ship = -1}
+            clr_country_flag = AKL_ship_3_busy
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+
+    AKL_deploy_a_new_ship = {
+        icon = GFX_decision_IRIS_generic_agreement
+        custom_cost_trigger = {
+            command_power > 29
+        }
+        custom_cost_text = decision_cost_CP_30
+        fire_only_once = yes
+        days_remove = 15
+        remove_effect = {
+            custom_effect_tooltip = AKL_deploy_a_new_ship_tt
+            add_to_variable = {AKL_available_ship = 1}
+            navy_experience = 15
+            set_country_flag = AKL_deploy_a_new_ship_flag
+        }
+        ai_will_do = {
+            factor = 100
+        }
+    }
+    AKL_deploy_escort_force = {
+        icon = GFX_decision_IRIS_generic_navy
+        available = {
+            has_navy_size = {
+                size > 0
+            }
+        }
+        fire_only_once = yes
+        days_remove = 20
+        remove_effect = {
+            custom_effect_tooltip = AKL_deploy_escort_force_tt
+            set_variable = {AKL_ship_time = 7}
         }
         ai_will_do = {
             factor = 100
