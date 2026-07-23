@@ -254,7 +254,7 @@ country_event = {
 			IRIS_closing_world_conflicts = yes
 		}
 		ai_chance = {
-			base = 1
+			base = 10
 		}
 	}
     option = {
@@ -289,7 +289,7 @@ country_event = {
 			IRIS_closing_world_conflicts = yes
 		}
 		ai_chance = {
-			base = 10
+			base = 1
 		}
 	}
 }
@@ -304,8 +304,164 @@ country_event = {
 	option = {
 		name = AKL.12.a
         488 = {set_demilitarized_zone = yes}
+		set_country_flag = AKL_defend_the_invasion_flag
+		unlock_decision_category_tooltip = AKL_war_with_USF
+		custom_effect_tooltip = AKL_war_with_USF_tt
         hidden_effect = {
+			add_victory_points = {
+				province = 16362
+				value = 10
+			}
             488 = {add_core_of = USM}
+			908 = {
+				transfer_state_to = USM
+				add_core_of = USM
+				add_dynamic_modifier = {modifier = USM_hq_dynamic_modifier scope = USM}
+			}
+			USM = {
+				division_template = {
+					name = "特别海军陆战队"
+					priority = 2
+					regiments = {
+						marine = { x = 0 y = 0 }
+						marine = { x = 0 y = 1 }
+						marine = { x = 0 y = 2 }
+						marine = { x = 1 y = 0 }
+						marine = { x = 1 y = 1 }
+						marine = { x = 1 y = 2 }
+						marine = { x = 2 y = 0 }
+						marine = { x = 2 y = 1 }
+						marine = { x = 2 y = 2 }
+						artillery_brigade = {x = 3 y = 0}
+						artillery_brigade = {x = 3 y = 1}
+						artillery_brigade = {x = 3 y = 2}
+					}
+					support = {
+						engineer = {x = 0 y = 0}
+					}
+				}
+				add_ideas = USM_naval_support
+				add_ideas = USM_hidden_bonus
+				inherit_technology = USF
+                set_politics = {
+                    ruling_party = neutrality
+                }
+                add_popularity = {
+                    ideology = neutrality
+                    popularity = 1.0
+                }
+				add_ai_strategy = {
+					type = invasion_unit_request
+					tag = AKL
+					value = 9999
+				}
+				908 = {
+					create_unit = {
+						division = "name = \"特别海军陆战队\" division_template = \"特别海军陆战队\" start_experience_factor = 0.3"
+						owner = USM
+						count = 12
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+				load_oob = "USM_naval_invasion"
+			}
+			if = {
+				limit = {
+					NOT = {
+						has_game_rule = {
+							rule = NSJ_ai_behavior
+							option = NSJ_ai_behavior_2
+						}
+					}
+					NOT = {
+						has_game_rule = {
+							rule = NSJ_ai_behavior
+							option = NSJ_ai_behavior_3
+						}
+					}
+					country_exists = NSJ
+				}
+				USF = {
+					end_puppet = NSJ
+				}
+				NSJ = {
+					if = {
+						limit = {
+							has_war_with = TDL
+						}
+						white_peace = TDL
+					}
+					leave_faction = yes
+					give_military_access = USM
+					diplomatic_relation = {
+						country = USM
+						relation = docking_rights
+						active = yes
+					}
+					USM = {
+						diplomatic_relation = {
+							country = NSJ
+							relation = docking_rights
+							active = yes
+						}
+						add_ai_strategy = {
+							type = befriend
+							id = NSJ
+							value = 9999
+						}
+					}
+					add_ideas = USM_naval_support
+					add_ideas = USM_hidden_bonus
+					add_ai_strategy = {
+						type = invasion_unit_request
+						tag = AKL
+						value = 9999
+					}
+					add_ai_strategy = {
+						type = befriend
+						id = USM
+						value = 9999
+					}
+					capital_scope = {
+						add_dynamic_modifier = {modifier = USM_hq_dynamic_modifier scope = NSJ}
+					}
+					division_template = {
+						name = "特别海军陆战队"
+						is_locked = yes
+						regiments = {
+							marine = {x = 0 y = 0}
+							marine = {x = 0 y = 1}
+							marine = {x = 0 y = 2}
+							marine = {x = 1 y = 0}
+							marine = {x = 1 y = 1}
+							marine = {x = 1 y = 2}
+							marine = {x = 2 y = 0}
+							marine = {x = 2 y = 1}
+							marine = {x = 2 y = 2}
+							artillery_brigade = {x = 3 y = 0}
+							artillery_brigade = {x = 3 y = 1}
+							artillery_brigade = {x = 3 y = 2}
+						}
+						regimental_support = {
+							field_guns = {x = 0 y = 0}
+							field_guns = {x = 1 y = 0}
+							field_guns = {x = 2 y = 0}
+						}
+						support = {
+							engineer = {x = 0 y = 0}
+							artillery = {x = 0 y = 1}
+						}
+					}
+					capital_scope = {
+						create_unit = {
+							division = "name = \"特别海军陆战队\" division_template = \"特别海军陆战队\" start_experience_factor = 0.3"
+							owner = NSJ
+							count = 12
+							allow_spawning_on_enemy_provs = yes
+						}
+					}
+				}
+			}
         }
 		ai_chance = {
 			base = 10
@@ -395,16 +551,11 @@ country_event = {
             set_demilitarized_zone = no
             transfer_state_to = USM
         }
+		AKL = {
+			activate_mission = AKL_retake_our_land
+		}
         hidden_effect = {
             USM = {
-                inherit_technology = USF
-                set_politics = {
-                    ruling_party = neutrality
-                }
-                add_popularity = {
-                    ideology = neutrality
-                    popularity = 1.0
-                }
                 division_template = {
                     name = "雇佣兵"
                     regiments = {
@@ -489,7 +640,7 @@ country_event = {
                     for_loop_effect = {
                         start = 0
                         end = 18
-                        488 = {
+                        908 = {
                             create_unit = {
                                 division = "name = \"雇佣兵\" division_template = \"雇佣兵\" start_experience_factor = 0.3"
                                 owner = USM
@@ -499,7 +650,7 @@ country_event = {
                     for_loop_effect = {
                         start = 0
                         end = 18
-                        488 = {
+                        908 = {
                             create_unit = {
                                 division = "name = \"海盗\" division_template = \"海盗\" start_experience_factor = 0.3"
                                 owner = USM
@@ -509,7 +660,7 @@ country_event = {
                     for_loop_effect = {
                         start = 0
                         end = 4
-                        488 = {
+                        908 = {
                             create_unit = {
                                 division = "name = \"摩托旅\" division_template = \"摩托旅\" start_experience_factor = 0.3"
                                 owner = USM
@@ -517,11 +668,24 @@ country_event = {
                         }
                     }
                 }
-                add_timed_idea = {idea = USM_naval_support days = 180}
+                
                 declare_war_on = {
                     target = AKL
                     type = annex_everything
                 }
+				if = {
+					limit = {
+						NSJ = {
+							has_idea = USM_naval_support
+						}
+					}
+					NSJ = {
+						declare_war_on = {
+							target = AKL
+							type = annex_everything
+						}
+					}
+				}
             }
         }
 		ai_chance = {
@@ -1105,33 +1269,83 @@ country_event = {#被困南国的同胞
     }
 }
 
-country_event = {#
+country_event = {#早樱战火
     id = AKL.43
     title = AKL.43.t
     desc = AKL.43.desc
     #picture = GFX_event_AKL_43
-    is_triggered_only = yes
+    trigger = {
+		tag = AKL
+		has_global_flag = SKR_UNIFICATION_WAR_ONGOING_FLAG
+		NOT = {
+			has_global_flag = SKR_UNIFIED_FLAG
+		}
+	}
     fire_only_once = yes
+
+	mean_time_to_happen = {
+		days = 5
+	}
 
     option = {
         name = AKL.43.a
 
+		IRIS_unlock_a_new_branch = yes
+
         ai_chance = {
             base = 10
         }
     }
 }
 
-country_event = {#
+country_event = {#合众国远征军随机登陆
     id = AKL.44
     title = AKL.44.t
     desc = AKL.44.desc
     #picture = GFX_event_AKL_44
-    is_triggered_only = yes
-    fire_only_once = yes
+    trigger = {
+		tag = AKL
+		has_war_with = USM
+		NOT = {
+			has_country_flag = AKL_defeated_invasion
+		}
+	}
+    mean_time_to_happen = {
+		days = 30
+	}
+
 
     option = {
         name = AKL.44.a
+		USM = {
+			random_state = {
+				limit = {
+					is_coastal = yes
+					is_owned_and_controlled_by = AKL
+				}
+				if = {
+					limit = {
+						AKL = {
+							is_ai = no
+						}
+					}
+					create_unit = {
+						division = "name = \"特别海军陆战队\" division_template = \"特别海军陆战队\" start_experience_factor = 0.5"
+						owner = USM
+						count = 4
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+				else = {
+					create_unit = {
+						division = "name = \"特别海军陆战队\" division_template = \"特别海军陆战队\" start_experience_factor = 0.5"
+						owner = USM
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+		}
 
         ai_chance = {
             base = 10
@@ -1139,16 +1353,54 @@ country_event = {#
     }
 }
 
-country_event = {#
+country_event = {#第九舰队随机登陆
     id = AKL.45
     title = AKL.45.t
     desc = AKL.45.desc
     #picture = GFX_event_AKL_45
-    is_triggered_only = yes
-    fire_only_once = yes
+    trigger = {
+		tag = AKL
+		has_war_with = NSJ
+		NOT = {
+			has_country_flag = AKL_defeated_invasion
+		}
+	}
+    mean_time_to_happen = {
+		days = 30
+	}
+
 
     option = {
         name = AKL.45.a
+		NSJ = {
+			random_state = {
+				limit = {
+					is_coastal = yes
+					is_owned_and_controlled_by = AKL
+				}
+				if = {
+					limit = {
+						AKL = {
+							is_ai = no
+						}
+					}
+					create_unit = {
+						division = "name = \"特别海军陆战队\" division_template = \"特别海军陆战队\" start_experience_factor = 0.5"
+						owner = NSJ
+						count = 4
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+				else = {
+					create_unit = {
+						division = "name = \"特别海军陆战队\" division_template = \"特别海军陆战队\" start_experience_factor = 0.5"
+						owner = NSJ
+						count = 2
+						allow_spawning_on_enemy_provs = yes
+					}
+				}
+			}
+		}
 
         ai_chance = {
             base = 10
@@ -1311,7 +1563,7 @@ country_event = {
 			country_exists = ASK
 		}
 		has_country_flag = SKR_149_triggered
-		has_global_flag = AKL_evacuation_ended_flag
+		has_country_flag = AKL_evacuation_ended_flag
 	}
 	fire_only_once = yes
 	mean_time_to_happen = {
