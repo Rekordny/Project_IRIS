@@ -1,22 +1,88 @@
 @PROGRESS_BAR_WIDTH = 256
+@TOTAL_PROGRESS = 100
+@REGION_LOWEST_LEVEL = 1
 
-
-#temp_levels_array #等级类别
+#temp_levels_array 等级类别
+#temp_policy_grid_array 占领类别
+#level_temp 初始等级
+#progress_temp 初始进度
+#policy_temp 初始占领法案
 #初始化地区控制力等级
 IRIS_initialize_level_regional_control = {
-    set_temp_variable = { temp_levels = temp_levels_array^num }
-    add_to_temp_variable = { temp_levels = -1 }
-    clear_array = scale_grid_array
-    for_loop_effect = {
-        start = 0
-        end = temp_levels
-        IRIS_add_segmentation_regional_control_level = yes
-    }
-    clear_array = regional_control_level_array
-    for_loop_effect = {
-        end = temp_levels_array^num
-        value = i
-        add_to_array = { regional_control_level_array = temp_levels_array^i }
+    hidden_effect = {
+        IRIS_remove_region_control_mechanism = yes
+        custom_effect_tooltip = IRIS_initialize_level_regional_control_TT
+        set_temp_variable = { temp_levels = temp_levels_array^num }
+        add_to_temp_variable = { temp_levels = -1 }
+        clear_array = scale_grid_array
+        for_loop_effect = {
+            start = 0
+            end = temp_levels
+            IRIS_add_segmentation_regional_control_level = yes
+        }
+        clear_array = regional_control_level_array
+        for_loop_effect = {
+            end = temp_levels_array^num
+            value = i
+            add_to_array = { regional_control_level_array = temp_levels_array^i }
+        }
+        for_loop_effect = {
+            end = temp_policy_grid_array^num
+            value = i
+            add_to_array = { policy_grid_array = temp_policy_grid_array^i }
+        }
+        add_to_array = {
+            array = global.IRIS_has_region_control_mechanism
+            value = THIS
+        }
+
+        if = {
+            limit = { has_variable = policy_temp }
+            log = "ceshi"
+            clear_array = this.policy_grid_frame_array
+            for_loop_effect = {
+                end = this.policy_grid_array^num
+                value = i
+                if = {
+                    limit = { check_variable = { this.policy_grid_array^i = policy_temp } }
+                    set_temp_variable = { temp_i = i }
+                }
+                add_to_array = { this.policy_grid_frame_array = 2 }
+            }
+            clear_variable = region_bill
+
+            set_variable = { this.policy_grid_frame_array^temp_i = 1 }
+            meta_effect = {
+                text = {
+                    set_variable = { region_bill = token:[region_bill] }
+                    add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+                }
+                region_bill = "[?policy_temp.GetTokenKey]"
+            }
+        }
+        else_if = {
+            limit = { check_variable = { policy_grid_array^num > 0 } }
+            set_variable = { policy_temp = policy_grid_array^0 }
+            for_loop_effect = {
+                end = this.policy_grid_array^num
+                add_to_array = { this.policy_grid_frame_array = 2 }
+            }
+            clear_variable = region_bill
+
+            set_variable = { this.policy_grid_frame_array^0 = 1 }
+            meta_effect = {
+                text = {
+                    set_variable = { region_bill = token:[region_bill] }
+                    add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+                }
+                region_bill = "[?policy_temp.GetTokenKey]"
+            }
+        }
+        clear_variable = temp_levels
+        clear_variable = temp_i
+        clear_variable = policy_temp
+        clear_array = temp_levels_array
+        clear_array = temp_policy_grid_array
     }
 }
 #添加地区控制力等级分段
@@ -38,5 +104,162 @@ IRIS_add_segmentation_regional_control_level = {
         multiply_temp_variable = { x = i }
         add_to_array = { scale_grid_array_x = x }
     }
+    IRIS_region_control_initial_progress = yes
+}
+
+#设定地区控制力初始进度
+#level_now 现在的分段等级，最低级为1
+#level_progress_now 分段下方的进度 为100段，如果为'<0'或者'100>'将直接切换，除非为特殊占领
+IRIS_region_control_initial_progress ={
+    set_variable = { this.level_now = level_temp }
+    if = {
+        limit = { check_variable = { this.level_now = 0 } }
+        set_variable = { this.level_now = 1 }
+    }
+    set_variable = { this.level_progress_now = progress_temp }
+    IRIS_calculate_region_level_progress = yes
+    IRIS_region_occupation_level_refresh = yes
+}
+
+#刷新每日
+IRIS_daily_region_occupation_progress_refresh = {
+    add_to_variable = { this.level_progress_now = modifier@IRIS_daily_region_occupation_modifier }
+    # add_to_variable = { this.level_progress_now = 30 }
+    IRIS_region_occupation_level_refresh = yes
+}
+
+#地区占领等级刷新
+IRIS_region_occupation_level_refresh = {
+    if = {
+        limit = { check_variable = { this.level_progress_now > 100 } }
+        IRIS_region_occupation_level_refresh_increase = yes
+    }
+    else_if = {
+        limit = { check_variable = { this.level_progress_now < 0 } }
+        IRIS_region_occupation_level_refresh_decrease = yes
+    }
+    if = {
+        limit = {
+            check_variable = { this.level_progress_now > 50 }
+            set_temp_variable = { target_level_temp = this.level_now }
+            meta_trigger = {
+                text = {
+                    NOT = { has_dynamic_modifier = { modifier = [modifier] } }
+                }
+                modifier = "[GetLocalControlCapabilityScaleNowLevel]"
+            }
+        }
+        log = "走了大于50"
+        IRIS_refresh_region_control_modifier = yes
+    }
+    else_if = {
+        limit = {
+            set_temp_variable = { target_level_temp = this.level_now }
+            add_to_temp_variable = { target_level_temp = -1 }
+            meta_trigger = {
+                text = {
+                    NOT = { has_dynamic_modifier = { modifier = [modifier] } }
+                }
+                modifier = "[GetLocalControlCapabilityScaleNowLevel]"
+            }
+        }
+        log = "走了小于50"
+        IRIS_refresh_region_control_modifier = yes
+    }
+}
+
+#地区占领等级刷新增加
+IRIS_region_occupation_level_refresh_increase = {
+    add_to_variable = { this.level_now = 1 }
+    set_variable = { this.level_progress_now = 0 }
+    IRIS_calculate_region_level_progress = yes
+    if = {
+        limit = { check_variable = { this.level_now > this.scale_grid_array^num } }
+        IRIS_remove_region_control_mechanism = yes
+    }
+}
+
+#地区占领等级刷新减少
+IRIS_region_occupation_level_refresh_decrease = {
+    if = {
+        limit = { check_variable = { this.level_now > @REGION_LOWEST_LEVEL } }
+        add_to_variable = { this.level_now = -1 }
+        set_variable = { this.level_progress_now = 100 }
+        IRIS_calculate_region_level_progress = yes
+    }
+    else = {
+        set_variable = { this.level_progress_now = @REGION_LOWEST_LEVEL }
+    }
+}
+
+#计算地区等级进度
+IRIS_calculate_region_level_progress = {
+    set_temp_variable = { total_progress_temp = @TOTAL_PROGRESS }
+    set_temp_variable = { split_count_temp = this.scale_grid_array^num }
+    add_to_temp_variable = { split_count_temp = 1 }
+    divide_temp_variable = { total_progress_temp = split_count_temp }
+    multiply_temp_variable = { total_progress_temp = this.level_now }
+    set_variable = { this.level_now_split = total_progress_temp }
+    set_variable = { this.IRIS_start_local_control_capability_damage_bar_frame = this.level_now }
+    multiply_variable = { this.IRIS_start_local_control_capability_damage_bar_frame = 100 }
+    divide_variable = { this.IRIS_start_local_control_capability_damage_bar_frame = this.regional_control_level_array^num }
+}
+
+#刷新地区控制力法案
+IRIS_refresh_region_control_bill = {
+    clear_array = this.policy_grid_frame_array
+    for_loop_effect = {
+        end = this.policy_grid_array^num
+        add_to_array = { this.policy_grid_frame_array = 2 }
+    }
+    clear_variable = region_bill
+
+    set_variable = { this.policy_grid_frame_array^policy_grid_array_index = 1 }
+    meta_effect = {
+        text = {
+            # ROOT = {
+            #     show_ideas_tooltip = [region_bill]
+            # }
+            set_variable = { region_bill = token:[region_bill] }
+            add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+        }
+        region_bill = "[?this.policy_grid_array^policy_grid_array_index.GetTokenKey]"
+    }
+}
+
+#移除地区控制力机制
+IRIS_remove_region_control_mechanism = {
+    remove_from_array = {
+        array = global.IRIS_has_region_control_mechanism
+        value = THIS
+    }
+    clear_variable = this.level_now_split
+    clear_variable = this.level_now
+    clear_variable = this.level_progress_now
+    clear_variable = this.IRIS_start_local_control_capability_damage_bar_frame
+    clear_variable = building_picture_click
+    set_variable = { this.region_bill = token:IRIS_token_NULL }
+    set_variable = { this.control_modifier = token:IRIS_token_NULL }
+    clear_array = this.scale_grid_array_x
+    clear_array = this.scale_grid_array
+    clear_array = this.policy_grid_array
+    clear_array = this.policy_grid_frame_array
+}
+
+#刷新地区控制力修正
+IRIS_refresh_region_control_modifier = {
+    meta_effect = {
+        text = {
+            set_variable = { control_modifier = token:[modifier] }
+            add_dynamic_modifier = { modifier = [modifier]_modifiers }
+        }
+        modifier = "[GetLocalControlCapabilityScaleNowLevel]"
+    }
+    log = "这里添加了[GetLocalControlCapabilityScaleNowLevel]"
+    IRIS_refresh_region_control_effect = yes
+}
+
+#刷新地区控制力效果-自定义
+IRIS_refresh_region_control_effect = {
 
 }

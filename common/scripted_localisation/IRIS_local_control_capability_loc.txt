@@ -1,28 +1,96 @@
 #上一级
 defined_text = {
-	name = GetLocalControlCapabilityScaleUpperLevel
-	text = {
-        trigger = {
-            has_variable = scale_grid_array_index
-        }
+    name = GetLocalControlCapabilityScaleUpperLevel
+    text = {
+        # trigger = { has_variable = scale_grid_array_index }
         localization_key = "[?regional_control_level_array^v.GetTokenKey]"
     }
-    text = {
-        localization_key = "111"
-    }
+    # text = {
+    #     localization_key = "111"
+    # }
 }
 #下一级
 defined_text = {
-	name = GetLocalControlCapabilityScaleNextLevel
-	text = {
+    name = GetLocalControlCapabilityScaleNextLevel
+    text = {
         trigger = {
-            has_variable = scale_grid_array_index
+            # has_variable = scale_grid_array_index
             set_temp_variable = { v = scale_grid_array_index }
             add_to_temp_variable = { v = 1 }
         }
         localization_key = "[?regional_control_level_array^v.GetTokenKey]"
     }
+    # text = {
+    #     localization_key = "111"
+    # }
+}
+#这一级
+defined_text = {
+    name = GetLocalControlCapabilityScaleNowLevel
     text = {
-        localization_key = "111"
+        trigger = { has_variable = temp_var:target_level_temp }
+        localization_key = "[?regional_control_level_array^target_level_temp.GetTokenKey]"
+    }
+    text = {
+        localization_key = "[?regional_control_level_array^level_now.GetTokenKey]"
+    }
+}
+
+#替换小换大
+defined_text = {
+    name = GetIncreaseRegionControlModifierLevel
+    text = {
+        trigger = {
+            NOT = { check_variable = { this.level_progress_now > 50 } }
+        }
+        localization_key = "[?regional_control_level_array^level_now.GetTokenKey]"
+    }
+    text = {
+        trigger = {
+            set_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = this.level_now }
+            add_to_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = -1 }
+        }
+        localization_key = "[?regional_control_level_array^GetIncreaseRegionControlModifierLevelTemp.GetTokenKey]"
+    }
+}
+
+#替换大换小
+defined_text = {
+    name = GetDecreaseRegionControlModifierLevel
+    text = {
+        trigger = {
+            NOT = { check_variable = { this.level_progress_now > 50 } }
+            set_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = this.level_now }
+            add_to_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = -1 }
+        }
+        localization_key = "[?regional_control_level_array^GetIncreaseRegionControlModifierLevelTemp.GetTokenKey]"
+    }
+    text = {
+        localization_key = "[?regional_control_level_array^level_now.GetTokenKey]"
+    }
+}
+
+#进度条颜色
+defined_text = {
+    name = IRIS_start_local_control_capability_damage_bar_image
+    text = {
+        trigger = {
+            set_temp_variable = { damage_bar_3_temp = this.regional_control_level_array^num }
+            divide_temp_variable = { damage_bar_3_temp = 3 }
+            check_variable = { this.level_now < temp_var:damage_bar_3_temp }
+        }
+        localization_key = "GFX_start_local_control_capability_progress_r"
+    }
+    text = {
+        trigger = {
+            set_temp_variable = { damage_bar_3_temp = this.regional_control_level_array^num }
+            divide_temp_variable = { damage_bar_3_temp = 1.5 }
+            check_variable = { this.level_now > temp_var:damage_bar_3_temp }
+            
+        }
+        localization_key = "GFX_start_local_control_capability_progress_g"
+    }
+    text = {
+        localization_key = "GFX_start_local_control_capability_progress_y"
     }
 }

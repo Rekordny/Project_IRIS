@@ -5,15 +5,22 @@ scripted_gui = {
         window_name = "start_local_control_capability"
         visible = {
             # always = no
-            check_variable = { this.scale_grid_array^num > 0 }
+            # check_variable = { this.scale_grid_array^num > 0 }
+            is_in_array = { global.IRIS_has_region_control_mechanism = THIS }
         }
         properties = {
             scale = {
-				x = this.scale_grid_array_x^scale_grid_array_index
-				# frame = OCF_gridbox_seat_array_senate^idx
-			}
-            damage_bar = { frame = 20 }
+                x = this.scale_grid_array_x^scale_grid_array_index
+                # frame = OCF_gridbox_seat_array_senate^idx
+            }
+            damage_bar = {
+                image = "[IRIS_start_local_control_capability_damage_bar_image]"
+                frame = this.IRIS_start_local_control_capability_damage_bar_frame
+            }
         }
+        triggers = {
+			arrow_pointer_animation_visible = { NOT = { check_variable = { building_picture_click > 0 } } }
+		}
         effects = {
             building_picture_click = {
                 if = {
@@ -25,6 +32,7 @@ scripted_gui = {
                 else = {
                     set_variable = { ROOT.local_control_capability_var = 1 }
                 }
+                add_to_variable = { building_picture_click = 1 }
             }
         }
     }
@@ -35,48 +43,132 @@ scripted_gui = {
         visible = {
             check_variable = { ROOT.local_control_capability_var = 1 }
             check_variable = { this.scale_grid_array^num > 0 }
+            is_in_array = { global.IRIS_has_region_control_mechanism = THIS }
         }
         dynamic_lists = {
-			# 进度刻度
-			scale_grid = {
-				array = this.scale_grid_array
-				index = scale_grid_array_index
+            # 进度刻度
+            scale_grid = {
+                array = this.scale_grid_array
+                index = scale_grid_array_index
                 value = scale_grid_array_value
-				entry_container = scale_slot
-				# change_scope = no
-			}
+                entry_container = scale_slot
+                # change_scope = no
+            }
             # 政策
-			policy_grid = {
-				array = this.policy_grid_array
-				index = policy_grid_array_index
+            policy_grid = {
+                array = this.policy_grid_array
+                index = policy_grid_array_index
                 value = policy_grid_array_value
-				entry_container = policy_slot
-				# change_scope = no
-			}
+                entry_container = policy_slot
+                # change_scope = no
+            }
+        }
+        properties = {
+            scale = {
+                x = this.scale_grid_array_x^scale_grid_array_index
+                # frame = OCF_gridbox_seat_array_senate^idx
+            }
+            policy = { image = "GFX_[?policy_grid_array_value.GetTokenKey]" }
+            policy_bg = { frame = this.policy_grid_frame_array^policy_grid_array_index }
+            region_occupation_progress = { frame = this.level_progress_now }
+            progress = { frame = this.level_now_split }
         }
         triggers = {
 
         }
-        properties = {
-            scale = {
-				x = this.scale_grid_array_x^scale_grid_array_index
-				# frame = OCF_gridbox_seat_array_senate^idx
-			}
-            policy = { image = "GFX_[?policy_grid_array_value.GetTokenKey]" }
-            policy_bg = { frame = this.policy_grid_frame_array^policy_grid_array_index }
-        }
-        triggers = {
-            
-        }
         effects = {
-            policy_bg_click = {
-                clear_array = this.policy_grid_frame_array
-                for_loop_effect = {
-                    end = this.policy_grid_array^num
-                    add_to_array = { this.policy_grid_frame_array = 2 }
+            level_tt_click = {
+                # set_temp_variable = { this.level_tt_click_temp = this.level_now }
+                meta_effect = {
+                    text = {
+                        ROOT = { add_ideas = [modifier] }
+                    }
+                    modifier = "[?this.control_modifier.GetTokenKey]"
                 }
-                set_variable = { this.policy_grid_frame_array^policy_grid_array_index = 1 }
             }
+            left_icon_click = {
+                if = {
+                    limit = { check_variable = { this.level_progress_now > 50 } }
+                    meta_effect = {
+                        text = {
+                            ROOT = {
+                                swap_ideas = {
+                                    remove_idea = [NowLevel]
+                                    add_idea = [NextLevel]	
+                                }
+                            }
+                        }
+                        NextLevel = "[GetIncreaseRegionControlModifierLevel]"
+                        NowLevel = "[GetLocalControlCapabilityScaleNowLevel]"
+                    }
+                }
+                else = {
+                    meta_effect = {
+                        text = {
+                            ROOT = { 
+                                swap_ideas = {
+                                    remove_idea = [NowLevel]
+                                    add_idea = [NowLevel]	
+                                }
+                                custom_effect_tooltip = IRIS_local_control_capability_level_pdx_tooltip_null
+                            }
+                        }
+                        NowLevel = "[?this.control_modifier.GetTokenKey]"
+                    }
+                }
+            }
+            right_icon_click = {
+                if = {
+                    limit = { NOT = { check_variable = { this.level_progress_now > 50 } } }
+                    meta_effect = {
+                        text = {
+                            ROOT = {
+                                swap_ideas = {
+                                    remove_idea = [NextLevel]
+                                    add_idea = [NowLevel]	
+                                }
+                            }
+                        }
+                        NextLevel = "[GetDecreaseRegionControlModifierLevel]"
+                        NowLevel = "[GetLocalControlCapabilityScaleNowLevel]"
+                    }
+                }
+                else = {
+                    meta_effect = {
+                        text = {
+                            ROOT = { 
+                                swap_ideas = {
+                                    remove_idea = [NowLevel]
+                                    add_idea = [NowLevel]	
+                                }
+                                custom_effect_tooltip = IRIS_local_control_capability_level_pdx_tooltip_null
+                            }
+                        }
+                        NowLevel = "[?this.control_modifier.GetTokenKey]"
+                    }
+                }
+            }
+            policy_bg_click = { IRIS_refresh_region_control_bill = yes }
         }
     }
+
+    region_control_map_mode_gui = {
+		window_name = "region_control_map_mode_gui_window"
+		context_type = state_mapicon
+		mapmode = region_control_map_mode
+		
+		visible = { 
+			always = yes
+		}
+		
+		mapicon_targets = {
+			target_array = global.IRIS_has_region_control_mechanism
+			target_trigger = {
+				# FROM = {
+				# 	has_deputy_leade_triggersr = yes
+				# }
+                always = yes
+			}
+		}
+	}
 }
