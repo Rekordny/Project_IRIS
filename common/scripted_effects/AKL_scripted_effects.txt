@@ -586,22 +586,379 @@ AKL_stock_test = {
     add_to_array = {AKL_stock_Array = 220}
     add_to_array = {AKL_stock_Array_p = 8}
 }
-AKL_select_stock_effect = {
-    set_variable = {AKL_stock_amount_selected = AKL_stock_Array^i}
-    set_variable = {AKL_stock_price_selected = AKL_stock_Array_p^i}
+#并行数组Info
+#AKL_stock_Array主数组=手数
+#AKL_stock_Array_p成本
+#AKL_stock_Array_o产地
+#AKL_stock_Array_t时间
+#AKL_stock_Array_v合约价值
+
+AKL_trade_setup = {
+    set_variable = {AKL_money = 1000}
+    #美乐蒂
+    set_variable = {AKL_MEL_AKL_consumer_goods = 200}
+    set_variable = {AKL_MEL_AKL_weapon = 220}
+    set_variable = {AKL_MEL_AKL_galgame = 160}
+    set_variable = {AKL_MEL_AKL_raw_material = 170}
+    #欧罗巴
+    set_variable = {AKL_EUR_AKL_consumer_goods = 210}
+    set_variable = {AKL_EUR_AKL_weapon = 190}
+    set_variable = {AKL_EUR_AKL_galgame = 230}
+    set_variable = {AKL_EUR_AKL_raw_material = 175}
+    #阿西娅
+    set_variable = {AKL_ASA_AKL_consumer_goods = 190}
+    set_variable = {AKL_ASA_AKL_weapon = 160}
+    set_variable = {AKL_ASA_AKL_galgame = 245}
+    set_variable = {AKL_ASA_AKL_raw_material = 185}
+    #早樱
+    set_variable = {AKL_SAO_AKL_consumer_goods = 200}
+    set_variable = {AKL_SAO_AKL_weapon = 240}
+    set_variable = {AKL_SAO_AKL_galgame = 200}
+    set_variable = {AKL_SAO_AKL_raw_material = 220}
+
+    set_variable = {AKL_goods_selected = token:AKL_consumer_goods}
+    set_variable = {AKL_location_selected = token:AKL_EUR}
+
+    AKL_set_price_effect = yes
 }
-AKL_remove_stock_effect = {
-    set_temp_variable = {AKL_price_temp = AKL_stock_price_selected}
+AKL_set_price_effect = {
+    hidden_effect = {
+        meta_effect = {
+            text = {
+                set_variable = {AKL_current_price = [LOCATION]_[GOODS]}
+            }
+            LOCATION = "[?AKL_location_selected.GetTokenKey]"
+            GOODS = "[?AKL_goods_selected.GetTokenKey]"
+        }
+        AKL_update_cost_effect = yes
+    }
+}
+AKL_monthly_price_change = {
+    #基础波动
+    set_temp_variable_to_random = {
+        var = AKL_MEL_p_1
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_MEL_p_2
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_MEL_p_3
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_MEL_p_4
+        max = 1.05
+        min = 0.9
+    }
+    #处于战时则消费品和武器价格提高
+    if = {
+        limit = {
+            any_country = {
+                limit = {
+                    is_IRIS_melody_country = yes
+                    is_major = yes
+                    has_war = yes
+                }
+            }
+        }
+        set_temp_variable_to_random = {
+            var = AKL_MEL_p_war_1
+            max = 1.055
+            min = 1.05
+        }
+        set_temp_variable_to_random = {
+            var = AKL_MEL_p_war_2
+            max = 1.055
+            min = 1.05
+        }
+        multiply_temp_variable = {AKL_MEL_p_1 = AKL_MEL_p_war_1}
+        multiply_temp_variable = {AKL_MEL_p_2 = AKL_MEL_p_war_2}
+    }
+
+    multiply_variable = {AKL_MEL_AKL_consumer_goods = AKL_MEL_p_1}
+    multiply_variable = {AKL_MEL_AKL_weapon = AKL_MEL_p_2}
+    multiply_variable = {AKL_MEL_AKL_galgame = AKL_MEL_p_3}
+    multiply_variable = {AKL_MEL_AKL_raw_material = AKL_MEL_p_4}
+
+    #基础波动
+    set_temp_variable_to_random = {
+        var = AKL_EUR_p_1
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_EUR_p_2
+        max = 1.05
+        min = 0.9
+    }
+    set_temp_variable_to_random = {
+        var = AKL_EUR_p_3
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_EUR_p_4
+        max = 1.05
+        min = 0.9
+    }
+    #处于战时则消费品和武器价格提高
+    if = {
+        limit = {
+            any_country = {
+                limit = {
+                    is_IRIS_melody_country = yes
+                    is_major = yes
+                    has_war = yes
+                }
+            }
+        }
+        set_temp_variable_to_random = {
+            var = AKL_EUR_p_war_1
+            max = 1.055
+            min = 1.05
+        }
+        set_temp_variable_to_random = {
+            var = AKL_EUR_p_war_2
+            max = 1.055
+            min = 1.05
+        }
+        multiply_temp_variable = {AKL_EUR_p_1 = AKL_EUR_p_war_1}
+        multiply_temp_variable = {AKL_EUR_p_2 = AKL_EUR_p_war_2}
+    }
+
+    multiply_variable = {AKL_EUR_AKL_consumer_goods = AKL_EUR_p_1}
+    multiply_variable = {AKL_EUR_AKL_weapon = AKL_EUR_p_2}
+    multiply_variable = {AKL_EUR_AKL_galgame = AKL_EUR_p_3}
+    multiply_variable = {AKL_EUR_AKL_raw_material = AKL_EUR_p_4}
+
+    #基础波动
+    set_temp_variable_to_random = {
+        var = AKL_ASA_p_1
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_ASA_p_2
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_ASA_p_3
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_ASA_p_4
+        max = 1.05
+        min = 0.9
+    }
+    #处于战时则消费品和武器价格提高
+    if = {
+        limit = {
+            any_country = {
+                limit = {
+                    is_IRIS_melody_country = yes
+                    is_major = yes
+                    has_war = yes
+                }
+            }
+        }
+        set_temp_variable_to_random = {
+            var = AKL_ASA_p_war_1
+            max = 1.055
+            min = 1.05
+        }
+        set_temp_variable_to_random = {
+            var = AKL_ASA_p_war_2
+            max = 1.055
+            min = 1.05
+        }
+        multiply_temp_variable = {AKL_ASA_p_1 = AKL_ASA_p_war_1}
+        multiply_temp_variable = {AKL_ASA_p_2 = AKL_ASA_p_war_2}
+    }
+
+    multiply_variable = {AKL_ASA_AKL_consumer_goods = AKL_ASA_p_1}
+    multiply_variable = {AKL_ASA_AKL_weapon = AKL_ASA_p_2}
+    multiply_variable = {AKL_ASA_AKL_galgame = AKL_ASA_p_3}
+    multiply_variable = {AKL_ASA_AKL_raw_material = AKL_ASA_p_4}
+
+    #基础波动
+    set_temp_variable_to_random = {
+        var = AKL_SAO_p_1
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_SAO_p_2
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_SAO_p_3
+        max = 1.05
+        min = 0.95
+    }
+    set_temp_variable_to_random = {
+        var = AKL_SAO_p_4
+        max = 1.05
+        min = 0.95
+    }
+    #处于战时则消费品和武器价格提高
+    if = {
+        limit = {
+            any_country = {
+                limit = {
+                    is_IRIS_melody_country = yes
+                    is_major = yes
+                    has_war = yes
+                }
+            }
+        }
+        set_temp_variable_to_random = {
+            var = AKL_SAO_p_war_1
+            max = 1.055
+            min = 1.05
+        }
+        set_temp_variable_to_random = {
+            var = AKL_SAO_p_war_2
+            max = 1.055
+            min = 1.05
+        }
+        multiply_temp_variable = {AKL_SAO_p_1 = AKL_SAO_p_war_1}
+        multiply_temp_variable = {AKL_SAO_p_2 = AKL_SAO_p_war_2}
+    }
+
+    multiply_variable = {AKL_SAO_AKL_consumer_goods = AKL_SAO_p_1}
+    multiply_variable = {AKL_SAO_AKL_weapon = AKL_SAO_p_2}
+    multiply_variable = {AKL_SAO_AKL_galgame = AKL_SAO_p_3}
+    multiply_variable = {AKL_SAO_AKL_raw_material = AKL_SAO_p_4}
+    AKL_set_price_effect = yes
+}
+
+#计算当前成本
+AKL_update_cost_effect = {
+    set_variable = {AKL_current_cost = AKL_current_price}
+    multiply_variable = {AKL_current_cost = AKL_lots}
+}
+AKL_buy_effect = {
+    AKL_update_cost_effect = yes
+    subtract_from_variable = {AKL_money = AKL_current_cost}
+
+    add_to_array = {AKL_stock_Array = AKL_lots}
+    add_to_array = {AKL_stock_Array_y = AKL_goods_selected}
+    add_to_array = {AKL_stock_Array_p = AKL_current_price}
+    add_to_array = {AKL_stock_Array_o = AKL_location_selected}
+    add_to_array = {AKL_stock_Array_t = global.date}
+    add_to_array = {AKL_stock_Array_v = AKL_current_cost}
+
+    #输入记录Log
+    add_to_array = {AKL_trade_log_o = AKL_location_selected}
+    add_to_array = {AKL_trade_log_t = global.date}
+    add_to_array = {AKL_trade_log_e = AKL_current_cost}#销售 支出为0
+    add_to_array = {AKL_trade_log_i = 0}
+    add_to_array = {AKL_trade_log_m = AKL_money}
+}
+AKL_select_stock_effect = {
+    set_variable = {AKL_goods_selected = AKL_stock_Array_y^i}
+    AKL_set_price_effect = yes
+    set_variable = {AKL_stock_amount_selected = AKL_stock_Array^i}
+    set_variable = {AKL_stock_cost_selected = AKL_stock_Array_p^i}
+    set_variable = {AKL_stock_value_selected = AKL_stock_Array_v^i}
+    set_variable = {AKL_stock_origin_selected = AKL_stock_Array_o^i}
+    set_variable = {AKL_stock_time_selected = AKL_stock_Array_t^i}
+}
+AKL_select_stock_estimate_effect = {
+    set_temp_variable = {AKL_price_e_temp = AKL_current_price}
+    multiply_temp_variable = {AKL_price_e_temp = AKL_stock_amount_selected}
+    #收入-成本！
+    set_temp_variable = {AKL_revenue_e_temp = AKL_price_e_temp}
+    subtract_from_temp_variable = {AKL_revenue_e_temp = AKL_stock_cost_selected}
+    if = {
+        limit = {
+            check_variable = {AKL_revenue_temp > 0}
+        }
+        set_temp_variable = {AKL_cic_income_temp = AKL_revenue_temp}
+        set_temp_variable = {AKL_pp_income_temp = AKL_revenue_temp}
+        multiply_temp_variable = {AKL_pp_income_temp = 0.01}
+        round_temp_variable = AKL_pp_income_temp
+    }
+}
+AKL_sell_stock_effect = {
+    set_temp_variable = {AKL_price_temp = AKL_current_price}
     multiply_temp_variable = {AKL_price_temp = AKL_stock_amount_selected}
     add_to_variable = {AKL_money = AKL_price_temp}
+    #收入-成本！
+    set_temp_variable = {AKL_revenue_temp = AKL_price_temp}
+    subtract_from_temp_variable = {AKL_revenue_temp = AKL_stock_cost_selected}
+    if = {
+        limit = {
+            check_variable = {AKL_revenue_temp > 0}
+        }
+        set_temp_variable = {AKL_cic_income_temp = AKL_revenue_temp}
+        set_temp_variable = {AKL_pp_income_temp = AKL_revenue_temp}
+        add_cic = var:AKL_cic_income_temp
+        multiply_temp_variable = {AKL_pp_income_temp = 0.01}
+        round_temp_variable = AKL_pp_income_temp
+        add_political_power = var:AKL_pp_income_temp
+        set_temp_variable = {AKL_finance_temp = AKL_pp_income_temp}
+        AKL_finance_effect = yes
+    }
+
+    #我们真的会在gui里头给早樱卖武器
+    if = {
+        limit = {
+            check_variable = {AKL_goods_selected = token:AKL_weapon}
+            check_variable = {AKL_location_selected = token:AKL_SAO}
+        }
+        SKR = {
+            country_event = {id = AKL.47 days = 3}
+        }
+    }
+    
+    #销售完成
+
+    #输入记录Log
+    add_to_array = {AKL_trade_log_o = AKL_location_selected}
+    add_to_array = {AKL_trade_log_t = AKL_stock_time_selected}
+    add_to_array = {AKL_trade_log_e = 0}#销售 支出为0
+    add_to_array = {AKL_trade_log_i = AKL_price_temp}
+    add_to_array = {AKL_trade_log_m = AKL_money}
+
+    #移除销售项目
     remove_from_array = {
         array = AKL.AKL_stock_Array
+        index = i
+    }
+    remove_from_array = {
+        array = AKL.AKL_stock_Array_y
         index = i
     }
     remove_from_array = {
         array = AKL.AKL_stock_Array_p
         index = i
     }
+    remove_from_array = {
+        array = AKL.AKL_stock_Array_o
+        index = i
+    }
+    remove_from_array = {
+        array = AKL.AKL_stock_Array_t
+        index = i
+    }
+    remove_from_array = {
+        array = AKL.AKL_stock_Array_v
+        index = i
+    }
+
+    #清空变量
     clear_variable = AKL_stock_amount_selected
-    clear_variable = AKL_stock_price_selected
+    clear_variable = AKL_stock_cost_selected
+    clear_variable = AKL_stock_value_selected
+    clear_variable = AKL_stock_origin_selected
+    clear_variable = AKL_stock_time_selected
 }
