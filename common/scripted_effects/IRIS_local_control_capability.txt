@@ -9,13 +9,11 @@
 #policy_temp 初始占领法案
 #初始化地区控制力等级
 IRIS_initialize_level_regional_control = {
-    hidden_effect = {
-        if = {
-            limit = { NOT = { has_variable = level_now@ROOT } }
-            add_to_array = {
-                array = global.IRIS_has_region_control_mechanism
-                value = THIS
-            }
+    if = {
+        limit = { NOT = { has_variable = level_now@ROOT } }
+        add_to_array = {
+            array = global.IRIS_has_region_control_mechanism
+            value = THIS
         }
         # IRIS_remove_region_control_mechanism = yes
         clear_variable = level_now_split@ROOT
@@ -52,52 +50,53 @@ IRIS_initialize_level_regional_control = {
             value = i
             add_to_array = { policy_grid_array@ROOT = temp_policy_grid_array^i }
         }
-
-        #设定法案
-        if = {
-            limit = { has_variable = policy_temp }
-            log = "ceshi"
-            set_variable = { TAG_regional_control = ROOT }
-            clear_array = this.policy_grid_frame_array@ROOT
-            for_loop_effect = {
-                end = this.policy_grid_array@ROOT^num
-                value = i
-                if = {
-                    limit = { check_variable = { this.policy_grid_array@ROOT^i = policy_temp } }
-                    set_temp_variable = { temp_i = i }
+        hidden_effect = {
+            #设定法案
+            if = {
+                limit = { has_variable = policy_temp }
+                log = "ceshi"
+                set_variable = { TAG_regional_control = ROOT }
+                clear_array = this.policy_grid_frame_array@ROOT
+                for_loop_effect = {
+                    end = this.policy_grid_array@ROOT^num
+                    value = i
+                    if = {
+                        limit = { check_variable = { this.policy_grid_array@ROOT^i = policy_temp } }
+                        set_temp_variable = { temp_i = i }
+                    }
+                    add_to_array = { this.policy_grid_frame_array@ROOT = 2 }
                 }
-                add_to_array = { this.policy_grid_frame_array@ROOT = 2 }
-            }
-            clear_variable = region_bill@ROOT
+                clear_variable = region_bill@ROOT
 
-            set_variable = { this.policy_grid_frame_array@ROOT^temp_i = 1 }
-            meta_effect = {
-                text = {
-                    set_variable = { region_bill@[tag] = token:[region_bill] }
-                    add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+                set_variable = { this.policy_grid_frame_array@ROOT^temp_i = 1 }
+                meta_effect = {
+                    text = {
+                        set_variable = { region_bill@[tag] = token:[region_bill] }
+                        add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+                    }
+                    region_bill = "[?policy_temp.GetTokenKey]"
+                    tag = "[?ROOT.GetTag]"
                 }
-                region_bill = "[?policy_temp.GetTokenKey]"
-                tag = "[?ROOT.GetTag]"
             }
-        }
-        else_if = {
-            limit = { check_variable = { policy_grid_array@ROOT^num > 0 } }
-            set_variable = { TAG_regional_control = ROOT }
-            set_variable = { policy_temp = policy_grid_array@ROOT^0 }
-            for_loop_effect = {
-                end = this.policy_grid_array@ROOT^num
-                add_to_array = { this.policy_grid_frame_array@ROOT = 2 }
-            }
-            clear_variable = region_bill@ROOT
+            else_if = {
+                limit = { check_variable = { policy_grid_array@ROOT^num > 0 } }
+                set_variable = { TAG_regional_control = ROOT }
+                set_variable = { policy_temp = policy_grid_array@ROOT^0 }
+                for_loop_effect = {
+                    end = this.policy_grid_array@ROOT^num
+                    add_to_array = { this.policy_grid_frame_array@ROOT = 2 }
+                }
+                clear_variable = region_bill@ROOT
 
-            set_variable = { this.policy_grid_frame_array@ROOT^0 = 1 }
-            meta_effect = {
-                text = {
-                    set_variable = { region_bill@[tag] = token:[region_bill] }
-                    add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+                set_variable = { this.policy_grid_frame_array@ROOT^0 = 1 }
+                meta_effect = {
+                    text = {
+                        set_variable = { region_bill@[tag] = token:[region_bill] }
+                        add_dynamic_modifier = { modifier = [region_bill]_modifiers }
+                    }
+                    region_bill = "[?policy_temp.GetTokenKey]"
+                    tag = "[?ROOT.GetTag]"
                 }
-                region_bill = "[?policy_temp.GetTokenKey]"
-                tag = "[?ROOT.GetTag]"
             }
         }
         clear_variable = temp_levels
@@ -173,48 +172,52 @@ IRIS_region_occupation_bill_condition_refresh = {
                 tag = "[?THIS.GetTag]"
             }
         }
-        # log = "地区占领法案条件刷新:[?THIS.GetTag]"
-        meta_effect = {
-            text = {
-                set_variable = { [tag].NowBill_l = token:[NowBill] }
-            }
-            NowBill = "[?PREV.region_bill@THIS.GetTokenKey]"
-            tag = "[?THIS.GetTag]"
-        }
-        set_variable = { TAG_regional_control = THIS }
-        clear_array = PREV.policy_grid_frame_array@THIS
-        for_loop_effect = {
-            end = PREV.policy_grid_array@THIS^num
-            add_to_array = { PREV.policy_grid_frame_array@THIS = 2 }
-        }
-        clear_variable = region_bill@THIS
+        IRIS_convert_to_default_region_bill = yes
+    }
+}
 
-        set_variable = { PREV.policy_grid_frame_array@THIS^0 = 1 }
-        meta_effect = {
-            text = {
-                [state] = {
-                    set_variable = { region_bill@[tag] = token:IRIS_state_no_garrison }
-                    add_dynamic_modifier = { modifier = IRIS_state_no_garrison_modifiers }
-                }
-            }
-            tag = "[?THIS.GetTag]"
-            state = "[?PREV.GetID]"
+#转换为默认地区法案
+IRIS_convert_to_default_region_bill = {
+    meta_effect = {
+        text = {
+            set_variable = { [tag].NowBill_l = token:[NowBill] }
         }
-        meta_effect = {
-            text = {
-                [tag] = {
-                    set_variable = { NowLevel = token:[NowBill] }
-                    set_variable = { NextLevel = token:[NextBill] }
-                    set_variable = { region_influence_change_state_temp = [state] }
-                    set_variable = { region_influence_change_temp = 3 }
-                    IRIS_region_influence_change = yes
-                }
+        NowBill = "[?PREV.region_bill@THIS.GetTokenKey]"
+        tag = "[?THIS.GetTag]"
+    }
+    set_variable = { TAG_regional_control = THIS }
+    clear_array = PREV.policy_grid_frame_array@THIS
+    for_loop_effect = {
+        end = PREV.policy_grid_array@THIS^num
+        add_to_array = { PREV.policy_grid_frame_array@THIS = 2 }
+    }
+    clear_variable = region_bill@THIS
+
+    set_variable = { PREV.policy_grid_frame_array@THIS^0 = 1 }
+    meta_effect = {
+        text = {
+            [state] = {
+                set_variable = { region_bill@[tag] = token:IRIS_state_no_garrison }
+                add_dynamic_modifier = { modifier = IRIS_state_no_garrison_modifiers }
             }
-            NowBill = "[?THIS.NowBill_l.GetTokenKey]"
-            NextBill = "[?PREV.region_bill@THIS.GetTokenKey]"
-            tag = "[?THIS.GetTag]"
-            state = "[?PREV.GetID]"
         }
+        tag = "[?THIS.GetTag]"
+        state = "[?PREV.GetID]"
+    }
+    meta_effect = {
+        text = {
+            [tag] = {
+                set_variable = { NowLevel = token:[NowBill] }
+                set_variable = { NextLevel = token:[NextBill] }
+                set_variable = { region_influence_change_state_temp = [state] }
+                set_variable = { region_influence_change_temp = 3 }
+                IRIS_region_influence_change = yes
+            }
+        }
+        NowBill = "[?THIS.NowBill_l.GetTokenKey]"
+        NextBill = "[?PREV.region_bill@THIS.GetTokenKey]"
+        tag = "[?THIS.GetTag]"
+        state = "[?PREV.GetID]"
     }
 }
 
@@ -375,9 +378,7 @@ IRIS_region_occupation_level_refresh_decrease = {
         set_variable = { PREV.level_progress_now@THIS = 100 }
         IRIS_calculate_region_level_progress = yes
     }
-    else = {
-        set_variable = { PREV.level_progress_now@THIS = @REGION_LOWEST_LEVEL }
-    }
+    else = { set_variable = { PREV.level_progress_now@THIS = @REGION_LOWEST_LEVEL } }
 }
 
 #计算地区等级进度
@@ -388,9 +389,6 @@ IRIS_calculate_region_level_progress = {
     divide_temp_variable = { total_progress_temp = split_count_temp }
     multiply_temp_variable = { total_progress_temp = PREV.level_now@THIS }
     set_variable = { PREV.level_now_split@THIS = total_progress_temp }
-    # set_variable = { PREV.IRIS_start_local_control_capability_damage_bar_frame@THIS = PREV.level_now@THIS }
-    # multiply_variable = { PREV.IRIS_start_local_control_capability_damage_bar_frame@THIS = 100 }
-    # divide_variable = { PREV.IRIS_start_local_control_capability_damage_bar_frame@THIS = PREV.regional_control_level_array@THIS^num }
 }
 
 #刷新地区控制力法案
@@ -468,6 +466,221 @@ IRIS_refresh_region_control_modifier = {
         id = "[?PREV.GetID]"
     }
     log = "这里[?THIS.GetTag]-[?PREV.GetID]添加了[GetLocalControlCapabilityScaleNowLevel]"
+}
+
+#地区控制力手动提升
+IRIS_manual_increase_region_control = {
+    if = {
+        limit = { IRIS_check_region_has_region_control = yes }
+        custom_effect_tooltip = IRIS_manual_increase_region_control_TT
+
+        add_to_variable = { level_now@ROOT = 1 }
+        set_variable = { level_progress_now@ROOT = 51 }
+        IRIS_manual_calculate_region_level_progress = yes
+        if = {
+            limit = { check_variable = { level_now@ROOT > scale_grid_array@ROOT^num } }
+            IRIS_manual_remove_region_control_mechanism = yes
+        }
+    }
+}
+
+#地区控制力手动降低
+IRIS_manual_decrease_region_control = {
+    if = {
+        limit = { IRIS_check_region_has_region_control = yes }
+        custom_effect_tooltip = IRIS_manual_decrease_region_control_TT
+        if = {
+            limit = { check_variable = { level_now@ROOT > @REGION_LOWEST_LEVEL } }
+            add_to_variable = { level_now@ROOT = -1 }
+            set_variable = { level_progress_now@ROOT = 49 }
+            IRIS_manual_calculate_region_level_progress = yes
+        }
+        else = { set_variable = { level_progress_now@ROOT = @REGION_LOWEST_LEVEL } }
+    }
+}
+
+#手动计算地区等级进度
+IRIS_manual_calculate_region_level_progress = {
+    set_temp_variable = { total_progress_temp = @TOTAL_PROGRESS }
+    set_temp_variable = { split_count_temp = scale_grid_array@ROOT^num }
+    add_to_temp_variable = { split_count_temp = 1 }
+    divide_temp_variable = { total_progress_temp = split_count_temp }
+    multiply_temp_variable = { total_progress_temp = level_now@ROOT }
+    set_variable = { level_now_split@ROOT = total_progress_temp }
+}
+
+#添加新地区法案
+#bill_temp
+IRIS_add_new_region_bill = {
+    if = {
+        limit = {
+            IRIS_check_region_has_region_control = yes
+            meta_trigger = {
+                text = {
+                    NOT = { is_in_array = { policy_grid_array@[tag] = token:[bill] } }
+                }
+                tag = "[?ROOT.GetTag]"
+                bill = "[?bill_temp.GetTokenKey]"
+            }
+        }
+        custom_effect_tooltip = IRIS_add_new_region_bill_TT
+        meta_effect = {
+            text = {
+                add_to_array = { policy_grid_array@[tag] = token:[bill] }
+                show_ideas_tooltip = [bill]
+            }
+            tag = "[?ROOT.GetTag]"
+            bill = "[?bill_temp.GetTokenKey]"
+        }
+        add_to_array = { policy_grid_frame_array@ROOT = 2 }
+    }
+}
+
+#移除新地区法案
+#bill_temp
+IRIS_remove_new_region_bill = {
+    if = {
+        limit = {
+            IRIS_check_region_has_region_control = yes
+            meta_trigger = {
+                text = {
+                    is_in_array = { policy_grid_array@[tag] = token:[bill] }
+                }
+                tag = "[?ROOT.GetTag]"
+                bill = "[?bill_temp.GetTokenKey]"
+            }
+        }
+        custom_effect_tooltip = IRIS_remove_new_region_bill_TT
+        meta_effect = {
+            text = {
+                show_ideas_tooltip = [bill]
+                remove_from_array = { policy_grid_array@[tag] = token:[bill] }
+            }
+            tag = "[?ROOT.GetTag]"
+            bill = "[?bill_temp.GetTokenKey]"
+        }
+        if = {
+            limit = {
+                meta_trigger = {
+                    text = {
+                        check_variable = { [id].region_bill@[tag] = token:[bill] }
+                    }
+                    id = "[?THIS.GetID]"
+                    tag = "[?ROOT.GetTag]"
+                    bill = "[?bill_temp.GetTokenKey]"
+                }
+            }
+            # log = "移除新地区法案恢复原样"
+            # IRIS_convert_to_default_region_bill = yes
+            hidden_effect = {
+                meta_effect = {
+                    text = {
+                        set_variable = { [tag].NowBill_l = token:[NowBill] }
+                    }
+                    NowBill = "[?THIS.region_bill@ROOT.GetTokenKey]"
+                    tag = "[?ROOT.GetTag]"
+                }
+                set_variable = { TAG_regional_control = ROOT }
+                clear_array = THIS.policy_grid_frame_array@ROOT
+                for_loop_effect = {
+                    end = THIS.policy_grid_array@ROOT^num
+                    add_to_array = { THIS.policy_grid_frame_array@ROOT = 2 }
+                }
+                clear_variable = region_bill@ROOT
+            
+                set_variable = { THIS.policy_grid_frame_array@ROOT^0 = 1 }
+                meta_effect = {
+                    text = {
+                        [state] = {
+                            set_variable = { region_bill@[tag] = token:IRIS_state_no_garrison }
+                            add_dynamic_modifier = { modifier = IRIS_state_no_garrison_modifiers }
+                        }
+                    }
+                    tag = "[?ROOT.GetTag]"
+                    state = "[?THIS.GetID]"
+                }
+                meta_effect = {
+                    text = {
+                        [tag] = {
+                            set_variable = { NowLevel = token:[NowBill] }
+                            set_variable = { NextLevel = token:[NextBill] }
+                            set_variable = { region_influence_change_state_temp = [state] }
+                            set_variable = { region_influence_change_temp = 3 }
+                            IRIS_region_influence_change = yes
+                        }
+                    }
+                    NowBill = "[?ROOT.NowBill_l.GetTokenKey]"
+                    NextBill = "[?THIS.region_bill@ROOT.GetTokenKey]"
+                    tag = "[?ROOT.GetTag]"
+                    state = "[?THIS.GetID]"
+                }
+            }
+        }
+        #刷新高亮
+        else = {
+            clear_array = policy_grid_frame_array@ROOT
+            clear_variable = region_bill@ROOT
+            for_loop_effect = {
+                end = policy_grid_array@ROOT^num
+                value = bill_temp
+                if = {
+                    limit = {
+                        meta_trigger = {
+                            text = {
+                                check_variable = { [id].region_bill@[tag] = token:[bill] }
+                            }
+                            id = "[?THIS.GetID]"
+                            tag = "[?ROOT.GetTag]"
+                            bill = "[?bill_temp.GetTokenKey]"
+                        }
+                    }
+                    add_to_array = { policy_grid_frame_array@ROOT = 1 }
+                }
+                else = {
+                    add_to_array = { policy_grid_frame_array@ROOT = 2 }
+                }
+            }
+        }
+    }
+}
+
+#手动移除地区控制力机制
+IRIS_manual_remove_region_control_mechanism = {
+    #国家是否有地区影响力机制
+    if = {
+        limit = { IRIS_check_region_has_region_control = yes }
+        custom_effect_tooltip = IRIS_manual_remove_region_control_mechanism_TT
+        remove_from_array = {
+            array = global.IRIS_has_region_control_mechanism
+            value = THIS
+        }
+        meta_effect = {
+            text = {
+                [tag] = {
+                    set_variable = { NowLevel = token:[NowLevel] }
+                    set_variable = { NextLevel = token:IRIS_token_NULL }
+                    set_variable = { region_influence_change_state_temp = [state] }
+                    set_variable = { region_influence_change_temp = 2 }
+                    IRIS_region_influence_change = yes
+                }
+            }
+            NowLevel = "[?THIS.control_modifier@ROOT.GetTokenKey]"
+            tag = "[?ROOT.GetTag]"
+            state = "[?THIS.GetID]"
+        }
+        clear_variable = level_now_split@ROOT
+        clear_variable = level_now@ROOT
+        clear_variable = level_progress_now@ROOT
+        clear_variable = IRIS_start_local_control_capability_damage_bar_frame@ROOT
+        clear_variable = building_picture_click@ROOT
+        set_variable = { region_bill@ROOT = token:IRIS_token_NULL }
+        set_variable = { control_modifier@ROOT = token:IRIS_token_NULL }
+        clear_array = PREV.scale_grid_array_x@ROOT
+        clear_array = scale_grid_array@ROOT
+        clear_array = policy_grid_array@ROOT
+        clear_array = policy_grid_frame_array@ROOT
+        clear_variable = TAG_regional_control
+    }
 }
 
 #PREV.level_now@THIS 是等级

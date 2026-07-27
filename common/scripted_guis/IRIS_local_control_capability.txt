@@ -94,7 +94,7 @@ scripted_gui = {
                                     limit = { check_variable = { bill_pp = 0 } }
                                     set_temp_variable = { bill_pp = 15 }
                                 }
-                                hidden_trigger = { NOT = { has_political_power < temp_var:bill_pp } }
+                                # hidden_trigger = { NOT = { has_political_power < temp_var:bill_pp } }
                             }
                             bill = "[?policy_grid_array_value.GetTokenKey]"
                         }
@@ -202,10 +202,27 @@ scripted_gui = {
             }
             policy_bg_click = {
                 if = {
-                    limit = { NOT = { check_variable = { this.policy_grid_frame_array@ROOT^policy_grid_array_index = 1 } } }
-                    hidden_effect = { ROOT = { add_political_power = -15 } }
+                    limit = {
+                        meta_trigger = {
+                            text = {
+                                set_temp_variable = { bill_pp = global.[bill]_pp }
+                                if = {
+                                    limit = { check_variable = { bill_pp = 0 } }
+                                    set_temp_variable = { bill_pp = 15 }
+                                }
+                                [tag] = { NOT = { has_political_power < temp_var:bill_pp } }
+                                set_temp_variable = { bill_pp_2 = bill_pp }
+                                multiply_temp_variable = { bill_pp_2 = -1 }
+                            }
+                            bill = "[?policy_grid_array_value.GetTokenKey]"
+                            tag = "[?ROOT.GetTag]"
+                        }
+                        NOT = { check_variable = { this.policy_grid_frame_array@ROOT^policy_grid_array_index = 1 } }
+                    }
+                    hidden_effect = { ROOT = { add_political_power = temp_var:bill_pp_2 } }
                     IRIS_refresh_region_control_bill = yes
                 }
+                else = { effect_tooltip = { IRIS_refresh_region_control_bill = yes } }
             }
         }
     }
@@ -221,12 +238,32 @@ scripted_gui = {
 
         mapicon_targets = {
             target_array = global.IRIS_has_region_control_mechanism
-            target_trigger = {
-                # FROM = {
-                # 	has_deputy_leade_triggersr = yes
-                # }
-                always = yes
+            target_trigger = { check_variable = { FROM.scale_grid_array@ROOT^num > 0 } }
+        }
+
+        triggers = {
+            icon_visible = {
+                set_temp_variable = { level_icon_temp = FROM.level_now@ROOT }
+                if = {
+                    limit = { NOT = { check_variable = { FROM.level_progress_now@ROOT > 50 } } }
+                    add_to_temp_variable = { level_icon_temp = -1 }
+                }
             }
+        }
+
+        effects = {
+            icon_click = {
+                meta_effect = {
+                    text = {
+                        ROOT = { add_ideas = [modifier] }
+                    }
+                    modifier = "[?FROM.control_modifier@ROOT.GetTokenKey]"
+                }
+            }
+        }
+
+        properties = {
+            icon = { image = "GFX_[?FROM.regional_control_level_array@ROOT^level_icon_temp.GetTokenKey]" }
         }
     }
 }
