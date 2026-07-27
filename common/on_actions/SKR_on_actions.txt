@@ -99,7 +99,7 @@ on_actions = {
                 every_country = {
                     limit = {
                         OR = {
-                            tag = BDA
+                            #tag = BDA
                             tag = SMD
                             tag = KNK
                             tag = SWO
@@ -127,6 +127,31 @@ on_actions = {
                 country_event = {id = SKR_sankin.8 days = 244}
                 country_event = {id = SKR_sankin.9 days = 288}
 
+            }
+            BDA = {
+                every_country = {
+					limit = {
+						OR = {
+							tag = USF
+                            tag = BLA
+                            tag = IKR
+                            tag = TDL
+                            tag = SLL 
+                            tag = ELN 
+                            tag = USR 
+                            tag = UNG
+                            tag = STG 
+                            tag = AKL
+						}
+					}
+					add_to_array = {
+                        array = BDA.BDA_kaientai_country_array
+                        value = THIS.id
+                    }
+				}
+                add_to_array = {BDA.BDA_kaientai_equipment_array = token:infantry_equipment}
+                add_to_array = {BDA.BDA_kaientai_equipment_array = token:support_equipment}
+                add_to_array = {BDA.BDA_kaientai_equipment_array = token:artillery_equipment}
             }
         }
     }
@@ -387,15 +412,15 @@ on_actions = {
                 IRIS_peace_popup_determine_allies = yes
                 add_to_variable = { global.peace_popup_dirty = 1 }
 
-                every_country = {
-                    limit = {
-                        has_war_with = ROOT
-                        is_ally_with = FROM
-                    }
-                    white_peace = {
-                        tag = ROOT
-                    }
-                }
+                # every_country = {
+                #     limit = {
+                #         has_war_with = ROOT
+                #         is_ally_with = FROM
+                #     }
+                #     white_peace = {
+                #         tag = ROOT
+                #     }
+                # }
 
                 if = {
                     limit = {
@@ -431,6 +456,12 @@ on_actions = {
                                 tag = SWO
                             }
                         }
+                        FROM = {
+                            OR = {
+                                tag = SKR
+                                is_ally_with = SKR
+                            }
+                        }
                     }
                     SKR = {
                         set_autonomy = {
@@ -455,16 +486,16 @@ on_actions = {
                             country_event = {id = SKR.88}
                         }
                     }
-                    if = {
-                        limit = {
-                            ROOT = {
-                                tag = SMD
-                            }
-                        }
-                        940 = {
-                            transfer_state_to = SKR
-                        }
-                    }
+                    # if = {
+                    #     limit = {
+                    #         ROOT = {
+                    #             tag = SMD
+                    #         }
+                    #     }
+                    #     940 = {
+                    #         transfer_state_to = SKR
+                    #     }
+                    # }
                     
                 }
                 else_if = {
@@ -478,6 +509,60 @@ on_actions = {
                             target = ROOT
                             transfer_troops = no
                         }
+                    }
+                }
+                else_if = {
+                    limit = {
+                        ROOT = {
+                            tag = YKN
+                        }
+                        FROM = {
+                            OR = {
+                                tag = BDA
+                                is_ally_with = BDA
+                            }
+                        }
+                    }
+                    BDA  = {
+                        annex_country = {
+                            target = ROOT
+                            transfer_troops = no
+                        }
+                    }
+                    if = {
+                        limit = {
+                            HKD = {
+                                is_subject = no
+                                NOT = {
+                                    has_war_with = BDA
+                                }
+                            }
+                        }
+                        BDA  = {
+                            annex_country = {
+                                target = HKD
+                                transfer_troops = yes
+                            }
+                        }
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    has_global_flag = ASK_JOINED_UNIFICATION_FLAG
+                    FROM = {
+                        tag = ASK
+                    }
+                    ROOT = {
+                        OR = {
+                            is_SKR_tag = yes
+                            tag = YKN
+                        }
+                    }
+                }
+                FROM = {
+                    annex_country = {
+                        target = ROOT
                     }
                 }
             }
@@ -516,6 +601,9 @@ on_actions = {
             if = {
                 limit = {
                     has_global_flag = SKR_CIV_WAR_SOUTH_FLAG
+                    NOT = {
+                        has_global_flag = SKR_CIV_WAR_SOUTH_ENDED_FLAG
+                    }
                     FROM = {
                         OR = {
                             tag = BDA
@@ -539,6 +627,16 @@ on_actions = {
                         ROOT = {
                             tag = ASK
                         }
+                    }
+                    set_global_flag = SKR_CIV_WAR_SOUTH_ENDED_FLAG
+                    SKR = {
+                        country_event = {id = SKR.149}
+                    }
+                    AKL = {
+                        country_event = {id = SKR.149}
+                    }
+                    BDA = {
+                        country_event = {id = SKR.149}
                     }
                     958 = {
                         transfer_state_to = BDA
@@ -761,6 +859,7 @@ on_actions = {
                             tag = SKR
                         }
                     }
+                    set_global_flag = YKN_WON_FLAG
                     every_country = {
                         limit = {
                             OR = {
@@ -854,7 +953,7 @@ on_actions = {
                         transfer_troops = no
                     }
                 }
-                news_event = {id = SKR_news.18 days = 2}
+                #news_event = {id = SKR_news.18 days = 2}
             }
 
             if = {
@@ -917,7 +1016,7 @@ on_actions = {
 							tag = SKR
 						}
 					}
-					ROOT = {country_event = {id = SKR_temp.12}}
+					BDA = {country_event = {id = SKR_temp.12}}
 				}
 			}
             if = {
