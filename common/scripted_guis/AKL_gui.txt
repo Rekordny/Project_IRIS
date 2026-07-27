@@ -88,14 +88,157 @@ scripted_gui = {
             always = no
         }
     }
-    AKL_stock_window = {
-        context_type = decision_category
-		window_name = "AKL_stock_window"
-        ai_enabled = {
-			#always = no
-		}
-		visible = {
+
+    AKL_trade_icon_window = {
+        context_type = player_context
+		parent_window_token = top_bar
+        window_name = "AKL_trade_icon_window"
+
+        visible = {
 			tag = AKL
+            has_country_flag = AKL_trade_gui_flag
+		}
+
+        effects = {
+            AKL_trade_gui_button_click = {
+                if = {
+                    limit = {
+                        check_variable = {AKL_gui_window = 0}
+                    }
+                    set_variable = {AKL_gui_window = 1}
+                }
+                else = {
+                    set_variable = {AKL_gui_window = 0}
+                }
+            }
+        }
+    }
+
+    AKL_trade_window = {
+        context_type = player_context
+		parent_window_token = top_bar
+        window_name = "AKL_trade_window"
+
+        visible = {
+			tag = AKL
+            check_variable = {AKL_gui_window = 1}
+		}
+
+        effects = {
+            AKL_close_button_click = {
+                set_variable = {AKL_gui_window = 0}
+            }
+            AKL_balance_sheet_button_click = {
+                if = {
+                    limit = {
+                        check_variable = {AKL_balance_window = 0}
+                    }
+                    set_variable = {AKL_balance_window = 1}
+                }
+                else = {
+                    set_variable = {AKL_balance_window = 0}
+                }
+            }
+            AKL_dropdown_button_click = {
+                if = {
+                    limit = {
+                        check_variable = {AKL_menu_window = 0}
+                    }
+                    set_variable = {AKL_menu_window = 1}
+                }
+                else = {
+                    set_variable = {AKL_menu_window = 0}
+                }
+            }
+            AKL_buy_button_click = {
+                AKL_buy_effect = yes
+                set_country_flag = AKL_buy_flag
+            }
+            AKL_add_button_click = {
+                add_to_variable = {AKL_lots = 1}
+                AKL_update_cost_effect = yes
+            }
+            AKL_reduce_button_click = {
+                add_to_variable = {AKL_lots = -1}
+                AKL_update_cost_effect = yes
+            }
+            AKL_consumer_goods_icon_click = {
+                set_variable = {AKL_goods_selected = token:AKL_consumer_goods}
+                AKL_set_price_effect = yes
+            }
+            AKL_weapon_icon_click = {
+                set_variable = {AKL_goods_selected = token:AKL_weapon}
+                AKL_set_price_effect = yes
+            }
+            AKL_galgame_icon_click = {
+                set_variable = {AKL_goods_selected = token:AKL_galgame}
+                AKL_set_price_effect = yes
+            }
+            AKL_raw_material_icon_click = {
+                set_variable = {AKL_goods_selected = token:AKL_raw_material}
+                AKL_set_price_effect = yes
+            }
+
+            AKL_stock_button_click = {
+                AKL_select_stock_effect = yes
+            }
+            AKL_sell_button_click = {
+                AKL_sell_stock_effect = yes
+                set_country_flag = AKL_sell_flag
+            }
+        }
+        triggers = {
+            AKL_buy_button_click_enabled = {
+                custom_trigger_tooltip = {
+                    tooltip = AKL_buy_button_click_enabled_tt
+                    check_variable = {AKL_money > AKL_current_cost}
+                }
+                custom_trigger_tooltip = {
+                    tooltip = AKL_buy_button_click_enabled_tt_2
+                    check_variable = {AKL_lots > 0}
+                }
+                NOT = {
+                    has_country_flag = AKL_sell_flag
+                }
+            }
+            AKL_sell_button_click_enabled = {
+                custom_trigger_tooltip = {
+                    tooltip = AKL_sell_button_click_enabled_tt
+                    has_variable = AKL_stock_amount_selected
+                    has_variable = AKL_stock_cost_selected
+                    has_variable = AKL_stock_value_selected
+                }
+                NOT = {
+                    has_country_flag = AKL_buy_flag
+                }
+            }
+            AKL_add_button_click_enabled = {
+                check_variable = {AKL_money > AKL_current_cost}
+            }
+            AKL_reduce_button_click_enabled = {
+                check_variable = {AKL_lots > 1}
+            }
+            AKL_consumer_goods_pointer_visible = {
+                check_variable = {AKL_goods_selected = token:AKL_consumer_goods}
+            }
+            AKL_weapon_pointer_visible = {
+                check_variable = {AKL_goods_selected = token:AKL_weapon}
+            }
+            AKL_galgame_pointer_visible = {
+                check_variable = {AKL_goods_selected = token:AKL_galgame}
+            }
+            AKL_raw_material_pointer_visible = {
+                check_variable = {AKL_goods_selected = token:AKL_raw_material}
+            }
+        }
+    }
+    AKL_stock_list_container = {
+        context_type = player_context
+		parent_window_token = AKL_trade_window
+        window_name = "AKL_stock_list_container"
+        visible = {
+			tag = AKL
+            check_variable = {AKL_gui_window = 1}
 		}
         dynamic_lists = {
 			AKL_stock_list = {
@@ -105,12 +248,66 @@ scripted_gui = {
 				entry_container = AKL_stock_list_entry
 			}
 		}
+
+    }
+    AKL_balance_sheet_window = {
+        context_type = player_context
+		parent_window_token = AKL_trade_window
+        window_name = "AKL_balance_sheet_window"
+
+        visible = {
+			tag = AKL
+            check_variable = {AKL_balance_window = 1}
+		}
         effects = {
-            AKL_stock_button_click = {
-                AKL_select_stock_effect = yes
+            AKL_balance_sheet_close_button_click = {
+                set_variable = {AKL_balance_window = 0}
             }
-            AKL_stock_list_remove_button_click = {
-                AKL_remove_stock_effect = yes
+        }
+    }
+    AKL_log_container = {
+        context_type = player_context
+		parent_window_token = AKL_balance_sheet_window
+        window_name = "AKL_log_container"
+        visible = {
+			tag = AKL
+            check_variable = {AKL_balance_window = 1}
+		}
+        dynamic_lists = {
+			AKL_log_list = {
+				array = AKL_trade_log_o
+				index = i
+				value = v
+				entry_container = AKL_log_list_entry
+			}
+		}
+    }
+    AKL_dropdown_menu = {
+        context_type = player_context
+		parent_window_token = AKL_trade_window
+        window_name = "AKL_dropdown_menu"
+
+        visible = {
+			tag = AKL
+            check_variable = {AKL_menu_window = 1}
+		}
+
+        effects = {
+            AKL_MEL_button_click = {
+                set_variable = {AKL_location_selected = token:AKL_MEL}
+                AKL_set_price_effect = yes
+            }
+            AKL_EUR_button_click = {
+                set_variable = {AKL_location_selected = token:AKL_EUR}
+                AKL_set_price_effect = yes
+            }
+            AKL_ASA_button_click = {
+                set_variable = {AKL_location_selected = token:AKL_ASA}
+                AKL_set_price_effect = yes
+            }
+            AKL_SAO_button_click = {
+                set_variable = {AKL_location_selected = token:AKL_SAO}
+                AKL_set_price_effect = yes
             }
         }
     }
