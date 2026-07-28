@@ -1,0 +1,42 @@
+on_actions = {
+    on_daily_WRQ = {
+        effect = {
+            clear_array = global.IRIS_has_region_control_mechanism_temp
+            for_each_scope_loop = {
+                array = global.IRIS_has_region_control_mechanism
+                # value = i
+                log = "当前索引[?global.IRIS_has_region_control_mechanism_temp^num]"
+                log = "当前索引省份[?global.IRIS_has_region_control_mechanism^global.IRIS_has_region_control_mechanism_temp^num.GetID]"
+                set_variable = { global.IRIS_has_region_control_mechanism_temp_v = global.IRIS_has_region_control_mechanism^global.IRIS_has_region_control_mechanism_temp^num }
+                if = {
+                    limit = {
+                        NOT = { is_in_array = { global.IRIS_has_region_control_mechanism_temp = global.IRIS_has_region_control_mechanism_temp_v } }
+                    }
+                    log = "未重复省份：[?global.IRIS_has_region_control_mechanism^global.IRIS_has_region_control_mechanism_temp^num.GetID]"
+                    controller = { IRIS_daily_region_occupation_progress_refresh = yes }
+                }
+                add_to_array = { global.IRIS_has_region_control_mechanism_temp = global.IRIS_has_region_control_mechanism_temp_v }
+            }
+        }
+    }
+    on_state_control_changed = {
+        effect = {
+            # log = ""
+            if = {
+                limit = {
+                    is_in_array = { global.IRIS_has_region_control_mechanism = FROM.FROM }
+                }
+                #修正占领法案
+                log = "修正占领法案:[?from.from.policy_grid_array@ROOT^policy_grid_array_index.GetTokenLocalizedKey]"
+                meta_effect = {
+                    text = {
+                        [state] = { add_dynamic_modifier = { modifier = [region_bill]_modifiers } }
+                    }
+                    region_bill = "[?from.from.region_bill@ROOT.GetTokenKey]"
+                    state = "[?from.from.GetID]"
+                }
+                IRIS_region_occupation_level_refresh = yes
+            }
+        }
+    }
+}
