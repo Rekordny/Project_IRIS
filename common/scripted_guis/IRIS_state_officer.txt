@@ -3,6 +3,7 @@ scripted_gui = {
         context_type = selected_state_context
         parent_window_token = selected_state_view
         window_name = "IRIS_state_officer"
+        # dirty = global.ocf_civil_war_dirty
         visible = {
             OR = {
                 # always = no
@@ -20,11 +21,17 @@ scripted_gui = {
             }
         }
         triggers = {
+
+            IRIS_state_officer_button_1_visible = {
+                set_temp_variable = { role_experience_up_temp = THIS.state_and_terrain_strategic_value }
+                divide_temp_variable = { role_experience_up_temp = 60 }
+            }
             IRIS_state_officer_button_1_enabled = {
-                custom_override_tooltip = {
-                    tooltip = IRIS_state_officer_trigger_9_tt
-                    always = no
-                }
+                # custom_override_tooltip = {
+                #     tooltip = IRIS_state_officer_trigger_9_tt
+                #     always = no
+                # }
+                hidden_trigger = { ROOT = { NOT = { has_political_power < 50 } } }
                 root = {
                     custom_override_tooltip = {
                         tooltip = IRIS_state_officer_trigger_5_tt
@@ -54,13 +61,25 @@ scripted_gui = {
                         }
                     }
                 }
+                this = {
+                    custom_override_tooltip = {
+                        tooltip = IRIS_state_officer_trigger_10_tt
+                        OR = {
+                            has_state_flag = {
+                                flag = IRIS_state_officer_trigger_10_flag
+                                days > 6
+                            }
+                            NOT = { has_state_flag = IRIS_state_officer_trigger_10_flag }
+                        }
+                    }
+                }
             }
         }
         effects = {
             IRIS_state_officer_button_1_click = {
                 if = {
                     limit = {
-                        always = no
+                        # always = no
                         root = {
                             check_variable = { currently_promoted_regional_role < 11 }
                         }
@@ -79,18 +98,40 @@ scripted_gui = {
                                 value = role
                             }
                         }
-                        this = { create_character_promote = yes }
-                        every_country = {
-                            limit = { tag = root }
-                            this = {
-                                every_controlled_state = {
-                                    limit = { state = from }
-                                    this = { create_character = yes }
+                        custom_effect_tooltip = IRIS_state_officer_button_1_click_TT
+                        set_state_flag = IRIS_state_officer_button_1_click_temp_flag
+                        if = {
+                            limit = {
+                                ROOT = { NOT = { has_political_power < 50 } }
+                                OR = {
+                                    has_state_flag = {
+                                        flag = IRIS_state_officer_trigger_10_flag
+                                        days > 6
+                                    }
+                                    NOT = { has_state_flag = IRIS_state_officer_trigger_10_flag }
+                                }
+                                has_state_flag = IRIS_state_officer_button_1_click_temp_flag
+                            }
+                            hidden_effect = {
+                                set_state_flag = IRIS_state_officer_trigger_10_flag
+                                ROOT = { add_political_power = -50 }
+                                this = { create_character_promote = yes }
+                                every_country = {
+                                    limit = { tag = root }
+                                    this = {
+                                        every_controlled_state = {
+                                            limit = { state = from }
+                                            this = { create_character = yes }
+                                        }
+                                    }
                                 }
                             }
                         }
+                        clr_state_flag = IRIS_state_officer_button_1_click_temp_flag
                     }
+                    else = { custom_effect_tooltip = IRIS_state_officer_button_1_click_TT_no }
                 }
+                else = { custom_effect_tooltip = IRIS_state_officer_button_1_click_TT_no }
             }
         }
     }
