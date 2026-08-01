@@ -51,7 +51,18 @@
 #temp_tag2
 IRIS_prompt_alert_operation = {
 	if = {
-		limit = { root = { is_ai = no } }
+		limit = {
+			OR = {
+				if = {
+					limit = { check_variable = { IRIS_prompt_alert_operations = 14 } }
+					this = { is_ai = no }
+				}
+				if = {
+					limit = { NOT = { check_variable = { IRIS_prompt_alert_operations = 14 } } }
+					root = { is_ai = no }
+				}
+			}
+		}
 		hidden_effect = {
 			scoped_sound_effect = "diplomatic_notification"
 			add_to_array = { IRIS_prompt_alerts = IRIS_prompt_alert_operations^0 }
@@ -60,7 +71,7 @@ IRIS_prompt_alert_operation = {
 			add_to_array = { IRIS_prompt_alert_other_var3 = IRIS_prompt_alert_operations^3 }
 			add_to_array = { IRIS_prompt_alert_other_var4 = IRIS_prompt_alert_operations^4 }
 			add_to_array = { IRIS_prompt_alert_other_var5 = IRIS_prompt_alert_operations^5 }
-	
+
 			if = {
 				limit = {
 					has_variable = temp_var:temp_tag
@@ -79,12 +90,12 @@ IRIS_prompt_alert_operation = {
 			else = {
 				add_to_array = { IRIS_prompt_alert_flags2 = ROOT }
 			}
-	
+
 			add_to_array = { IRIS_prompt_alerts_progressbars = -317 }
 			set_variable_to_random = global.IRIS_alerts_dirty
-	
+
 			clear_array = IRIS_prompt_alert_operations
-	
+
 			country_event = { id = IRIS_mechanism.1 }
 		}
 	}
@@ -152,5 +163,34 @@ IRIS_region_was_integrated_hint = {
 	add_to_array = { IRIS_prompt_alert_operations = PREV.GetID }
 	add_to_array = { IRIS_prompt_alert_flags = var:controller }
 	add_to_array = { IRIS_prompt_alert_flags2 = var:controller }
+	IRIS_prompt_alert_operation = yes
+}
+
+#地区影响力改变
+IRIS_region_influence_change = {
+	# log = "地区影响力改变提示：THIS:[THIS.GetName]"
+	set_temp_variable = { temp_tag = THIS }
+	set_temp_variable = { temp_tag2 = THIS }
+	add_to_array = { IRIS_prompt_alert_operations = 14 }
+	add_to_array = { IRIS_prompt_alert_operations = region_influence_change_state_temp }
+	#0下降 1上升 2移除
+	add_to_array = { IRIS_prompt_alert_operations = region_influence_change_temp }
+	meta_effect = {
+		text = {
+			[tag] = {
+				add_to_array = { IRIS_prompt_alert_operations = token:[NowLevel] }
+				add_to_array = { IRIS_prompt_alert_operations = token:[NextLevel] }
+			}
+		}
+		NowLevel = "[?NowLevel.GetTokenKey]"
+		NextLevel = "[?NextLevel.GetTokenKey]"
+		tag = "[?THIS.GetTag]"
+	}
+
+	clear_variable = NowLevel
+	clear_variable = NextLevel
+	clear_variable = region_influence_change_state_temp
+	clear_variable = region_influence_change_temp
+
 	IRIS_prompt_alert_operation = yes
 }
