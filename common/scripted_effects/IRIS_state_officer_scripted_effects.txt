@@ -1,3 +1,22 @@
+#替换地区领导人
+#temp_role 存人物
+IRIS_replace_regional_administrative_officer = {
+    custom_effect_tooltip = {
+        localization_key = IRIS_replace_regional_administrative_officer_no_state_tt
+        STATE = [THIS.GetName]
+        CHARACTER = [?temp_role.GetTokenLocalizedKey]
+        CHARACTEROLD = [GetStateOfficerName]
+    }
+    meta_effect = {
+        text = {
+            set_variable = { role = token:[temp_role] }
+        }
+        temp_role = "[?temp_role.GetTokenKey]"
+    }
+    
+    set_variable = { role = token:OCF_Herman_Douglas }
+}
+
 #创建地区行政官
 
 #TAG = {STATE = {create_character = yes}}
@@ -56,8 +75,21 @@ create_character = {
             refresh_character_name = yes
         }
         else = {
-            add_to_variable = { role_index = 1 } #存储于省份
+            # add_to_variable = { role_index = 1 } #存储于省份
+            
             set_variable = { role_owner = PREV.PREV } #存储国家TAG在省份
+            
+            meta_effect = { #THIS 是地区  PREV是国家
+                text = {
+                    [t_state] = {
+                        add_to_variable = { role_index_tag@[t_tag] = 1 } #存储于省份
+                        set_variable = { role_index = role_index_tag@[t_tag] }
+                    }
+                }
+                t_tag = "[?PREV.PREV.GetTag]"
+                t_state = "[?THIS.GetID]"
+            }
+            # LOG = "[?role_index_tag@PREV]"
             if = {
                 # limit = { check_variable = { THIS.role_experience = -1 } }
 
