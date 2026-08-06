@@ -361,6 +361,23 @@ on_actions = {
 					}
 				}
 			}
+
+
+			#地区领导人经验修改
+			every_state = {
+				# limit = { NOT = { has_country_flag = not_create_character_flag } }
+				set_temp_variable = { v = THIS.state_and_terrain_strategic_value }
+				divide_temp_variable = { v = 60 }
+				add_to_variable = { THIS.role_experience = v }
+				if = {
+					limit = { check_variable = { THIS.role_experience > 100 } }
+					set_variable = { THIS.role_experience = 100 }
+				}
+				else_if = {
+					limit = { check_variable = { THIS.role_experience < 0 } }
+					set_variable = { THIS.role_experience = 0 }
+				}
+			}
 		}
 	}
 	on_daily_WRQ = {
@@ -406,42 +423,43 @@ on_actions = {
 		}
 	}
 	# #地区丢失 切换新地区领导
-	# on_state_control_changed = {
-	# 	effect = {
-	# 		FROM = {
-	# 			FROM.FROM = {
-	# 				exile_create_character = yes
-	# 			}
-	# 			if = {
-	# 				limit = {
-	# 					NOT = {
-	# 						has_country_flag = not_create_character_flag
-	# 					}
-	# 				}
-	# 				FROM.FROM = {
-	# 					del_create_character = yes
-	# 				}
-	# 			}
-	# 		}
-	# 		ROOT = {
-	# 			if = {
-	# 				limit = {
-	# 					NOT = {
-	# 						has_country_flag = not_create_character_flag
-	# 					}
-	# 				}
-	# 				FROM.FROM = {
-	# 					create_character = yes
-	# 				}
-	# 			}
-	# 			else = {
-	# 				FROM.FROM = {
-	# 					del_create_character = yes
-	# 				}
-	# 			}
-	# 		}
-	# 	}
-	# }
+	on_state_control_changed = {
+		effect = {
+			FROM = {
+				FROM.FROM = {
+					exile_create_character = yes
+				}
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = not_create_character_flag
+						}
+					}
+					FROM.FROM = {
+						del_create_character = yes
+					}
+				}
+			}
+			ROOT = {
+				if = {
+					limit = {
+						NOT = {
+							has_country_flag = not_create_character_flag
+						}
+					}
+					FROM.FROM = {
+						create_character = yes
+					}
+				}
+				else = {
+					FROM.FROM = {
+						del_create_character = yes
+					}
+				}
+			}
+			set_variable_to_random = global.IRIS_topbar_update
+		}
+	}
 
 	on_state_control_changed = {
 		effect = {

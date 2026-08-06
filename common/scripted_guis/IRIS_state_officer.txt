@@ -3,6 +3,7 @@ scripted_gui = {
         context_type = selected_state_context
         parent_window_token = selected_state_view
         window_name = "IRIS_state_officer"
+        dirty = global.IRIS_topbar_update
         visible = {
             OR = {
                 # always = no
@@ -20,11 +21,112 @@ scripted_gui = {
             }
         }
         triggers = {
-            IRIS_state_officer_button_1_enabled = {
-                custom_override_tooltip = {
-                    tooltip = IRIS_state_officer_trigger_9_tt
-                    always = no
+            IRIS_state_officer_button_alert_visible = {
+                is_in_array = {
+                    array = global.new_character_array
+                    value = role
                 }
+
+                meta_trigger = {
+                    text = {
+                        [t_state] = {
+                            set_temp_variable = { role_index = role_index_tag@[t_tag] }
+                        }
+                    }
+                    t_tag     = "[?owner.GetTag]"
+                    t_state   = "[?THIS.GetID]"
+                }
+                meta_trigger = {
+                    text = {
+                        [t_state] = {
+                            AND = {
+                                NOT = { check_variable = { [t_chara] = token:[t_tag]_new_character_[t_state]_index_[t_index] } }
+                                NOT = { check_variable = { [t_chara] = token:IRIS_token_NULL } }
+                            }
+                        }
+                    }
+                    t_array   = "[?global.new_character_array]"
+                    t_chara   = "[?role]"
+                    t_tag     = "[?owner.GetTag]"
+                    t_index   = "[?THIS.role_index]"
+                    t_state   = "[?THIS.GetID]"
+                }
+            }
+            IRIS_state_officer_button_2_visible = {
+                is_in_array = {
+                    array = global.new_character_array
+                    value = role
+                }
+
+                meta_trigger = {
+                    text = {
+                        [t_state] = {
+                            set_temp_variable = { role_index = role_index_tag@[t_tag] }
+                        }
+                    }
+                    t_tag     = "[?owner.GetTag]"
+                    t_state   = "[?THIS.GetID]"
+                }
+                meta_trigger = {
+                    text = {
+                        [t_state] = {
+                            AND = {
+                                NOT = { check_variable = { [t_chara] = token:[t_tag]_new_character_[t_state]_index_[t_index] } }
+                                NOT = { check_variable = { [t_chara] = token:IRIS_token_NULL } }
+                            }
+                        }
+                    }
+                    t_array   = "[?global.new_character_array]"
+                    t_chara   = "[?role]"
+                    t_tag     = "[?owner.GetTag]"
+                    t_index   = "[?THIS.role_index]"
+                    t_state   = "[?THIS.GetID]"
+                }
+            }
+
+            IRIS_state_officer_button_1_visible = {
+                set_temp_variable = { role_experience_up_temp = THIS.state_and_terrain_strategic_value }
+                divide_temp_variable = { role_experience_up_temp = 60 }
+
+                NOT = {
+                    AND = {
+                        is_in_array = {
+                            array = global.new_character_array
+                            value = role
+                        }
+                        meta_trigger = {
+                            text = {
+                                [t_state] = {
+                                    set_temp_variable = { role_index = role_index_tag@[t_tag] }
+                                }
+                            }
+                            t_tag     = "[?owner.GetTag]"
+                            t_state   = "[?THIS.GetID]"
+                        }
+                        meta_trigger = {
+                            text = {
+                                [t_state] = {
+                                    AND = {
+                                        NOT = { check_variable = { [t_chara] = token:[t_tag]_new_character_[t_state]_index_[t_index] } }
+                                        NOT = { check_variable = { [t_chara] = token:IRIS_token_NULL } }
+                                    }
+                                }
+                            }
+                            t_array   = "[?global.new_character_array]"
+                            t_chara   = "[?role]"
+                            t_tag     = "[?owner.GetTag]"
+                            t_index   = "[?THIS.role_index]"
+                            t_state   = "[?THIS.GetID]"
+                        }
+                    }
+                }
+            }
+            IRIS_state_officer_button_1_enabled = {
+                # custom_override_tooltip = {
+                #     tooltip = IRIS_state_officer_trigger_9_tt
+                #     always = no
+                # }
+                hidden_trigger = { ROOT = { NOT = { has_political_power < 50 } } }
                 root = {
                     custom_override_tooltip = {
                         tooltip = IRIS_state_officer_trigger_5_tt
@@ -54,13 +156,160 @@ scripted_gui = {
                         }
                     }
                 }
+                this = {
+                    custom_override_tooltip = {
+                        tooltip = IRIS_state_officer_trigger_10_tt
+                        OR = {
+                            has_state_flag = {
+                                flag = IRIS_state_officer_trigger_10_flag
+                                days > 6
+                            }
+                            NOT = { has_state_flag = IRIS_state_officer_trigger_10_flag }
+                        }
+                    }
+                }
             }
         }
         effects = {
+            #刷新名称
+            IRIS_state_officer_button_alert_click = {
+                # for_each_loop = {
+                #     array = global.states
+                #     value = v
+
+                # }
+                # for_each_scope_loop = {
+                #     array = global.states
+
+                # }
+                set_state_flag = IRIS_state_officer_button_alert_click_flag
+                if = {
+                    limit = { has_state_flag = IRIS_state_officer_button_alert_click_flag }
+                    every_state = {
+                        limit = {
+                            owner = {
+                                NOT = { has_country_flag = not_create_character_flag }
+                            }
+                            is_in_array = {
+                                array = global.new_character_array
+                                value = role
+                            }
+                            meta_trigger = {
+                                text = {
+                                    [t_state] = {
+                                        AND = {
+                                            NOT = { check_variable = { [t_chara] = token:[t_tag]_new_character_[t_state]_index_[t_index] } }
+                                            NOT = { check_variable = { [t_chara] = token:IRIS_token_NULL } }
+                                        }
+                                    }
+                                }
+    
+                                t_array   = "[?global.new_character_array]"
+                                t_chara   = "[?role]"
+                                t_tag     = "[?owner.GetTag]"
+                                t_index   = "[?THIS.role_index]"
+                                t_state   = "[?THIS.GetID]"
+                            }
+                        }
+                        hidden_effect = {
+                            meta_effect = { #THIS 是地区  PREV是国家
+                                text = {
+                                    [t_tag] = {
+                                        generate_character = {
+                                            token_base = [t_tag]_new_character_[t_state]_index_[t_index]
+                                        }
+                                    }
+                                    set_variable = {
+                                        global.new_character = token:[t_tag]_new_character_[t_state]_index_[t_index]
+                                    }
+                                    add_to_array = {
+                                        global.new_character_array = global.new_character
+                                    }
+                                    create_character_image = yes #随机头像
+                                }
+                                t_tag = "[?owner.GetTag]"
+                                t_state = "[?THIS.GetID]"
+                                t_index = "[?THIS.role_index]"
+                            }
+                            log = "global.new_character[?global.new_character]"
+                            set_variable = { THIS.role = global.new_character }
+                        }
+                        
+                    }
+                }
+                clr_state_flag = IRIS_state_officer_button_alert_click_flag
+                
+                custom_effect_tooltip = IRIS_state_officer_button_alert_click_TT
+                set_variable_to_random = global.IRIS_topbar_update
+            }
+
+            IRIS_state_officer_button_2_click = {
+                set_state_flag = IRIS_state_officer_button_alert_click_flag
+                if = {
+                    limit = { has_state_flag = IRIS_state_officer_button_alert_click_flag }
+                    every_state = {
+                        limit = {
+                            owner = {
+                                NOT = { has_country_flag = not_create_character_flag }
+                            }
+                            is_in_array = {
+                                array = global.new_character_array
+                                value = role
+                            }
+                            meta_trigger = {
+                                text = {
+                                    [t_state] = {
+                                        AND = {
+                                            NOT = { check_variable = { [t_chara] = token:[t_tag]_new_character_[t_state]_index_[t_index] } }
+                                            NOT = { check_variable = { [t_chara] = token:IRIS_token_NULL } }
+                                        }
+                                    }
+                                }
+    
+                                t_array   = "[?global.new_character_array]"
+                                t_chara   = "[?role]"
+                                t_tag     = "[?owner.GetTag]"
+                                t_index   = "[?THIS.role_index]"
+                                t_state   = "[?THIS.GetID]"
+                            }
+                        }
+                        hidden_effect = {
+                            meta_effect = { #THIS 是地区  PREV是国家
+                                text = {
+                                    [t_tag] = {
+                                        generate_character = {
+                                            token_base = [t_tag]_new_character_[t_state]_index_[t_index]
+                                        }
+                                    }
+                                    set_variable = {
+                                        global.new_character = token:[t_tag]_new_character_[t_state]_index_[t_index]
+                                    }
+                                    add_to_array = {
+                                        global.new_character_array = global.new_character
+                                    }
+                                    create_character_image = yes #随机头像
+                                }
+                                t_tag = "[?owner.GetTag]"
+                                t_state = "[?THIS.GetID]"
+                                t_index = "[?THIS.role_index]"
+                            }
+                            log = "global.new_character[?global.new_character]"
+                            set_variable = { THIS.role = global.new_character }
+                        }
+                        
+                    }
+                }
+                clr_state_flag = IRIS_state_officer_button_alert_click_flag
+                
+                custom_effect_tooltip = IRIS_state_officer_button_alert_click_TT
+                set_variable_to_random = global.IRIS_topbar_update
+            }
+
+            #晋升角色
             IRIS_state_officer_button_1_click = {
                 if = {
                     limit = {
-                        always = no
+                        # always = no
                         root = {
                             check_variable = { currently_promoted_regional_role < 11 }
                         }
@@ -79,18 +328,41 @@ scripted_gui = {
                                 value = role
                             }
                         }
-                        this = { create_character_promote = yes }
-                        every_country = {
-                            limit = { tag = root }
-                            this = {
-                                every_controlled_state = {
-                                    limit = { state = from }
-                                    this = { create_character = yes }
+                        custom_effect_tooltip = IRIS_state_officer_button_1_click_TT
+                        set_state_flag = IRIS_state_officer_button_1_click_temp_flag
+                        if = {
+                            limit = {
+                                ROOT = { NOT = { has_political_power < 50 } }
+                                OR = {
+                                    has_state_flag = {
+                                        flag = IRIS_state_officer_trigger_10_flag
+                                        days > 6
+                                    }
+                                    NOT = { has_state_flag = IRIS_state_officer_trigger_10_flag }
+                                }
+                                has_state_flag = IRIS_state_officer_button_1_click_temp_flag
+                            }
+                            hidden_effect = {
+                                set_state_flag = IRIS_state_officer_trigger_10_flag
+                                ROOT = { add_political_power = -50 }
+                                this = { create_character_promote = yes }
+                                every_country = {
+                                    limit = { tag = root }
+                                    this = {
+                                        every_controlled_state = {
+                                            limit = { state = from }
+                                            this = { create_character = yes }
+                                        }
+                                    }
                                 }
                             }
                         }
+                        clr_state_flag = IRIS_state_officer_button_1_click_temp_flag
                     }
+                    else = { custom_effect_tooltip = IRIS_state_officer_button_1_click_TT_no }
                 }
+                else = { custom_effect_tooltip = IRIS_state_officer_button_1_click_TT_no }
+                set_variable_to_random = global.IRIS_topbar_update
             }
         }
     }

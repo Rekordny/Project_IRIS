@@ -1,28 +1,124 @@
 #上一级
 defined_text = {
-	name = GetLocalControlCapabilityScaleUpperLevel
-	text = {
-        trigger = {
-            has_variable = scale_grid_array_index
-        }
-        localization_key = "[?regional_control_level_array^v.GetTokenKey]"
-    }
+    name = GetLocalControlCapabilityScaleUpperLevel
     text = {
-        localization_key = "111"
+        # trigger = { has_variable = scale_grid_array_index }
+        localization_key = "[?regional_control_level_array@ROOT^v.GetTokenKey]"
     }
+    # text = {
+    #     localization_key = "111"
+    # }
 }
 #下一级
 defined_text = {
-	name = GetLocalControlCapabilityScaleNextLevel
-	text = {
+    name = GetLocalControlCapabilityScaleNextLevel
+    text = {
         trigger = {
-            has_variable = scale_grid_array_index
+            # has_variable = scale_grid_array_index
             set_temp_variable = { v = scale_grid_array_index }
             add_to_temp_variable = { v = 1 }
         }
-        localization_key = "[?regional_control_level_array^v.GetTokenKey]"
+        localization_key = "[?regional_control_level_array@ROOT^v.GetTokenKey]"
+    }
+    # text = {
+    #     localization_key = "111"
+    # }
+}
+#这一级
+defined_text = {
+    name = GetLocalControlCapabilityScaleNowLevel
+    text = {
+        trigger = { has_variable = temp_var:target_level_temp }
+        localization_key = "[?PREV.regional_control_level_array@THIS^target_level_temp.GetTokenKey]"
     }
     text = {
-        localization_key = "111"
+        localization_key = "[?regional_control_level_array@ROOT^level_now@ROOT.GetTokenKey]"
+    }
+}
+
+#替换小换大
+defined_text = {
+    name = GetIncreaseRegionControlModifierLevel
+    text = {
+        trigger = {
+            NOT = { check_variable = { this.level_progress_now@ROOT > 50 } }
+        }
+        localization_key = "[?regional_control_level_array@ROOT^level_now@ROOT.GetTokenKey]"
+    }
+    text = {
+        trigger = {
+            set_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = this.level_now@ROOT }
+            add_to_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = -1 }
+        }
+        localization_key = "[?regional_control_level_array@ROOT^GetIncreaseRegionControlModifierLevelTemp.GetTokenKey]"
+    }
+}
+
+#替换大换小
+defined_text = {
+    name = GetDecreaseRegionControlModifierLevel
+    text = {
+        trigger = {
+            NOT = { check_variable = { this.level_progress_now@ROOT > 50 } }
+            set_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = this.level_now@ROOT }
+            add_to_temp_variable = { GetIncreaseRegionControlModifierLevelTemp = -1 }
+        }
+        localization_key = "[?regional_control_level_array@ROOT^GetIncreaseRegionControlModifierLevelTemp.GetTokenKey]"
+    }
+    text = {
+        localization_key = "[?regional_control_level_array@ROOT^level_now@ROOT.GetTokenKey]"
+    }
+}
+
+#地区政策花费获取
+defined_text = {
+    name = GetRegionBillCostGain
+    text = {
+        trigger = {
+            ROOT = { has_political_power < temp_var:bill_pp }
+        }
+        localization_key = "IRIS_GetRegionBillCostGain_no"
+    }
+    text = {
+        localization_key = "[?bill_pp]"
+    }
+}
+
+#地区修正变化获取
+defined_text = {
+    name = GetRegionModifierChangeGain
+    text = {
+        trigger = {
+            NOT = { ROOT = { controls_state = PREV } }
+        }
+        localization_key = "IRIS_region_occupation_progress_tt_no"
+    }
+    text = {
+        localization_key = "IRIS_region_occupation_progress_tt_yes"
+    }
+}
+
+#进度条颜色
+defined_text = {
+    name = IRIS_start_local_control_capability_damage_bar_image
+    text = {
+        trigger = {
+            set_temp_variable = { damage_bar_3_temp = this.regional_control_level_array@ROOT^num }
+            divide_temp_variable = { damage_bar_3_temp = 3 }
+            check_variable = { this.level_now@ROOT < temp_var:damage_bar_3_temp }
+        }
+        localization_key = "GFX_start_local_control_capability_progress_r"
+    }
+    text = {
+        trigger = {
+            set_temp_variable = { damage_bar_3_temp = this.regional_control_level_array@ROOT^num }
+            divide_temp_variable = { damage_bar_3_temp = 1.5 }
+            check_variable = { this.level_now@ROOT > temp_var:damage_bar_3_temp }
+            
+        }
+        localization_key = "GFX_start_local_control_capability_progress_g"
+    }
+    text = {
+        localization_key = "GFX_start_local_control_capability_progress_y"
     }
 }

@@ -1,4 +1,3 @@
-
 ConstantBuffer( 0, 0 )
 {
 	float4x4	ViewProjectionMatrix;
@@ -317,6 +316,38 @@ PixelShader =
 		return float3(x, y, z);
 	}
 
+	// ---- 根据摄像机缩放程度计算值 ----
+	float getZoom()
+	{
+		float y = 0;
+		y = saturate((log(vCamLookAtDir.z) + 3.912)/1.609);
+		return y;
+	}
+
+	// ---- 检测并处理纯白色国家颜色（放大后变暗） ----
+	float4 checkForChange(float4 inColour)
+	{
+		float4 outColour = inColour;
+		// 检测接近纯白 (254/255 ≈ 0.996) 不对……我们模组似乎修改了颜色值先用0.5
+		if (inColour.r > 0.5 && inColour.g > 0.5 && inColour.b > 0.5) // SLL
+		{
+			float4 changeColour = float4(0.15, 0.15, 0.15, 1); // 变暗目标
+			float4 baseColour = float4(0.5, 0.5, 0.5, 1);  // 原始
+			float zoom = getZoom();
+			// 缩放值越大（越放大），颜色越接近暗色
+			inColour.rgb = lerp(baseColour.rgb, changeColour.rgb, zoom);
+		}
+		// else if (inColour.r > 0.39 && inColour.g > 0.39 && inColour.b > 0.39) // TAU
+		// {
+		// 	float4 changeColour = float4(0.15, 0.15, 0.15, 1); // 变暗目标
+		// 	float4 baseColour = float4(0.39, 0.39, 0.39, 1);  // 原始
+		// 	float zoom = getZoom();
+		// 	// 缩放值越大（越放大），颜色越接近暗色
+		// 	inColour.rgb = lerp(baseColour.rgb, changeColour.rgb, zoom);
+		// }
+		outColour = inColour;
+		return outColour;
+	}
 
 	//#define NO_NIGHT
 
@@ -788,6 +819,7 @@ PixelShader =
 	#endif
 	}
 
+	// ---- 修改：对每个采样值应用 checkForChange ----
 	float4 gradient_border_multisample_alpha( in float4 vCh, in sampler2D TexCh, in float2 vUV )
 	{
 	#ifdef LOW_END_GFX
@@ -795,18 +827,18 @@ PixelShader =
 	#else
 		float vOffsetX = -0.5f / MAP_SIZE_X;
 		float vOffsetY = -0.5f / MAP_SIZE_Y;
+		vCh = checkForChange(vCh);
 		float4 vResult = vCh;
-		vResult += tex2D( TexCh, vUV + float2( -vOffsetX, 0 ) );
-		vResult += tex2D( TexCh, vUV + float2( 0, -vOffsetY ) );
-		vResult += tex2D( TexCh, vUV + float2( vOffsetX, 0 ) );
-		vResult += tex2D( TexCh, vUV + float2( 0, vOffsetY ) );
-		vResult += tex2D( TexCh, vUV + float2( -vOffsetX, -vOffsetY ) );
-		vResult += tex2D( TexCh, vUV + float2(  vOffsetX, -vOffsetY ) );
-		vResult += tex2D( TexCh, vUV + float2(  vOffsetX,  vOffsetY ) );
-		vResult += tex2D( TexCh, vUV + float2( -vOffsetX,  vOffsetY ) );
+		vResult += checkForChange(tex2D( TexCh, vUV + float2( -vOffsetX, 0 ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2( 0, -vOffsetY ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2( vOffsetX, 0 ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2( 0, vOffsetY ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2( -vOffsetX, -vOffsetY ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2(  vOffsetX, -vOffsetY ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2(  vOffsetX,  vOffsetY ) ));
+		vResult += checkForChange(tex2D( TexCh, vUV + float2( -vOffsetX,  vOffsetY ) ));
 		vResult /= 9;
 		return vResult;
-		//return vCh;
 	#endif
 	}
 
@@ -1249,4 +1281,3 @@ PixelShader =
 	]]
 
 }
-

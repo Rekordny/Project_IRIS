@@ -2,12 +2,13 @@ BDA_temp_category = {
     BDA_build_factory = {
         visible = {
             check_variable = {
-                BDA_bonus_factory < 3
+                BDA_bonus_factory < 4
             }
         }
         cost = 100
-        days_remove = 250
+        days_remove = 150
         remove_effect = {
+            add_to_variable = {BDA_bonus_factory = 1}
             random_owned_controlled_state = {
                 add_extra_state_shared_building_slots = 2
                 add_building_construction = {
@@ -28,5 +29,86 @@ BDA_temp_category = {
         ai_will_do = {
             base = 100
         }
+    }
+}
+
+BDA_kaientai_category = {
+    BDA_kaientai_mission = {
+        icon = GFX_decision_SKR_countdown
+		is_good = no
+		days_mission_timeout = 60
+		available = {
+			always = no
+        }
+		activation = {
+			has_character = SKR_Sakamoto_Tatsuma
+            NOT = {
+                has_global_flag = SKR_UNIFIED_FLAG
+            }
+		}
+		cancel_trigger = {
+			has_global_flag = SKR_UNIFIED_FLAG
+		}
+		timeout_effect = {
+            set_temp_variable = {BDA_array_size_1 = BDA.BDA_kaientai_country_array^num}
+            add_to_temp_variable = {BDA_array_size_1 = -1}
+            set_temp_variable_to_random = {
+                var = BDA_country_var
+                max = BDA_array_size_1
+                integer = yes
+            }
+            meta_effect = {
+                text = {
+                    set_temp_variable = {BDA_country_selected = BDA.BDA_kaientai_country_array^[COUNTRY]}
+                }
+                COUNTRY = "[?BDA_country_var]"
+            }
+            set_temp_variable = {BDA_array_size_2 = BDA.BDA_kaientai_equipment_array^num}
+            add_to_temp_variable = {BDA_array_size_2 = -1}
+            set_temp_variable_to_random = {
+                var = BDA_equipment_var
+                max = BDA_array_size_2
+                integer = yes
+            }
+            meta_effect = {
+                text = {
+                    set_temp_variable = {BDA_equipment_selected = BDA.BDA_kaientai_equipment_array^[EQUIPMENT]}
+                }
+                EQUIPMENT = "[?BDA_equipment_var]"
+            }
+            if = {
+                limit = {
+                    check_variable = {BDA_equipment_selected = token:infantry_equipment}
+                }
+                set_temp_variable_to_random = {
+                    var = BDA_equipment_amount
+                    max = 2000
+                    min = 100
+                    integer = yes
+                }
+            }
+            else = {
+                set_temp_variable_to_random = {
+                    var = BDA_equipment_amount
+                    max = 300
+                    min = 50
+                    integer = yes
+                }
+            }
+            meta_effect = {
+                text = {
+                    add_equipment_to_stockpile = {
+                        type = [EQUIPMENT]
+                        amount = var:BDA_equipment_amount
+                        producer = var:[COUNTRY]
+                    }
+                }
+                EQUIPMENT = "[?BDA_equipment_selected.GetTokenKey]"
+                COUNTRY = "[?BDA_country_selected]"
+            }
+		}
+    }
+    BDA_kaientai_debug = {
+        complete_effect = {}
     }
 }
