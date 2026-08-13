@@ -1,0 +1,192 @@
+USF_civ_war_categories = {
+    USF_unification = {
+        available = {
+            is_USF_civ_war_last_player = yes
+        }
+        fire_only_once = yes
+        days_remove = 3
+        remove_effect = {
+            set_global_flag = USF_CIV_WAR_ENDED
+            set_country_flag = USF_unifier #可用USC指向统一者
+            if = {
+                limit = {
+                    NOT = {
+                        tag = USF
+                    }
+                    NOT = {
+                        tag = SLA
+                    }
+                }
+                add_research_slot = 1
+            }
+            
+            every_state = {
+                limit = {
+                    is_core_of = USF
+                }
+                add_core_of = ROOT
+            }
+            UAN = {
+                transfer_navy = {
+                    target = ROOT
+                }
+                every_character = {
+                    set_nationality = ROOT
+                }
+            }
+            annex_country = {
+                target = UAN
+                transfer_troops = yes
+            }
+
+            if = {
+                limit = {
+                    LUA = {
+                        exists = yes
+                        NOT = {
+                            has_global_flag = INTEGRATED_LUA
+                        }
+                    }
+                }
+                set_autonomy = {
+                    target = LUA
+                    autonomous_state = USF_homeland_state
+                }
+                LUA = {
+                    clr_country_flag = has_Anarchy_flag
+                    every_owned_state = {
+                        set_demilitarized_zone = no
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    LUA = {
+                        exists = yes
+                        has_global_flag = INTEGRATED_LUA
+                    }
+                }
+                LUA = {
+                    clr_country_flag = has_Anarchy_flag
+                    every_owned_state = {
+                        set_demilitarized_zone = no
+                    }
+                }
+                annex_country = {
+                    target = LUA
+                    transfer_troops = yes
+                }
+            }
+            if = {
+                limit = {
+                    USN = {
+                        exists = yes
+                        #is_subject_of = USF
+                    }
+                }
+                white_peace = USN
+                set_autonomy = {
+                    target = USN
+                    autonomous_state = USF_homeland_state
+                }
+            }
+            if = {
+                limit = {
+                    RUM = {
+                        exists = yes
+                        is_subject = no
+                        #is_subject_of = USF
+                    }
+                }
+                white_peace = RUM
+                set_autonomy = {
+                    target = RUM
+                    autonomous_state = autonomy_dominion
+                }
+            }
+            if = {
+                limit = {
+                    NSJ = {
+                        exists = yes
+                        #is_subject_of = USF
+                    }
+                    NOT = {
+                        has_global_flag = NSJ_INDEPENDENCE_FLAG
+                    }
+                }
+                white_peace = NSJ
+                set_autonomy = {
+                    target = NSJ
+                    autonomous_state = naval_command
+                }
+            }
+            if = {
+                limit = {
+                    BRG = {
+                        exists = yes
+                        #is_subject_of = ROOT
+                    }
+                }
+                white_peace = BRG
+                set_autonomy = {
+                    target = BRG
+                    autonomous_state = non_mandatory_protection_country
+                }
+            }
+            every_possible_country = {
+                limit = {
+                    is_USF_warlords_tag = yes
+                    NOT = {
+                        tag = ROOT
+                    }
+                }
+                THIS = {
+                    every_state = {
+                        limit = {
+                            is_core_of = PREV
+                        }
+                        remove_core_of = PREV
+                    }
+                    every_state = {
+                        limit = {
+                            is_claimed_by = PREV
+                        }
+                        remove_claim_by = PREV
+                    }
+                }
+            }
+            if = {
+                limit = {
+                    tag = USF
+                }
+                annex_country = {
+                    target = UAR
+                    transfer_troops = yes
+                }
+                news_event = {id = USF_news.9 days = 3}
+				country_event = {id = USF_civ_war.4 days = 5}
+            }
+            if = {
+                limit = {
+                    tag = UAS
+                }
+                set_cosmetic_tag = USF_democratic
+            }
+            if = {
+                limit = {
+                    tag = URV
+                }
+                set_cosmetic_tag = URV_UNIFIED
+            }
+            if = {
+                limit = {
+                    has_global_flag = 406_DESTROYED
+                }
+                country_event = {id = USF_civ_war.7 days = 60}
+            }
+        }
+        ai_will_do = {
+            factor = 9999
+        }
+    }
+}

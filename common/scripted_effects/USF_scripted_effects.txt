@@ -1482,6 +1482,8 @@ USF_kay_var_check = {
 USF_kay_civ_war_setup = {
     USF = {
         country_event = {id = USF_civ_war.9 days = 3}
+        country_event = {id = USF_civ_war.14 days = 17}
+        country_event = {id = USF_civ_war.2 days = 60}
         if = {
             limit = {
                 has_idea = USF_laissez_faire
@@ -1503,14 +1505,41 @@ USF_kay_civ_war_setup = {
             limit = {
                 OR = {
                     region = 24
-                    region = 25
+                    #region = 25
                     region = 30
+                    state = 406
+                    state = 971
+                    state = 1036
+                    state = 973
+                }
+                NOT = {
+                    state = 982
+                    state = 1023
+                    state = 484
+                    state = 481
+                    state = 1026
+                    state = 977
+
                 }
                 is_coastal = no
                 is_owned_and_controlled_by = USF
             }
             transfer_state_to = UAS
             add_core_of = UAS
+        }
+        every_state = {
+            limit = {
+                OR = {
+                    state = 982
+                    state = 1023
+                    state = 484
+                    state = 481
+                    state = 1026
+                }
+                is_owned_by = USF
+            }
+            transfer_state_to = UAR
+            add_core_of = UAR
         }
         #如果整合了路易斯安娜，路易斯安娜也会崩溃
         every_owned_state = {
@@ -1916,6 +1945,100 @@ USF_kay_civ_war_setup = {
 
         }
     }
+
+    UAR = {
+        inherit_technology = USF
+        set_politics = {
+            ruling_party = neutrality
+        }
+        division_template = {
+            name = "步兵旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 0 y = 3 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                infantry = { x = 1 y = 3 }
+                artillery_brigade = { x = 2 y = 0}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "炮兵旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                artillery_brigade = { x = 2 y = 0}
+                artillery_brigade = { x = 2 y = 1}
+                artillery_brigade = { x = 2 y = 2}
+                artillery_brigade = { x = 2 y = 3}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+                signal_company = {x = 0 y = 2}
+            }
+        }
+        division_template = {
+            name = "征召民兵"
+            is_locked = yes
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                militia = { x = 0 y = 1 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+            }
+        }
+        capital_scope = {
+            #南方驻军
+            for_loop_effect = {
+                start = 0
+                end = 4
+
+                create_unit = {
+                    division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.3"
+                    owner = UAR
+                }
+
+            }
+            for_loop_effect = {
+                start = 0
+                end = 2
+
+                create_unit = {
+                    division = "name = \"炮兵旅\" division_template = \"炮兵旅\" start_experience_factor = 0.3"
+                    owner = UAR
+                }
+
+            }
+            for_loop_effect = {
+                start = 0
+                end = 6
+
+                create_unit = {
+                    division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                    owner = UAR
+                }
+
+            }
+        }
+    }
+    USF = {
+        set_autonomy = {
+            target = UAR
+            autonomous_state = USF_homeland_state
+        }
+    }
     USF_macarthur_civil_war_initialize = yes
 }
 
@@ -2145,42 +2268,460 @@ USF_macarthur_civil_war_initialize = {
         dismantle_faction = yes
     }
 }
-
-#内战结束
-USF_civil_war_end = {
-    if = {
-        limit = {
-            OR = {
-                AND = {
-                    country_exists = USF
-                    NOT = { country_exists = UAS }
-                    NOT = { country_exists = UAM }
-                }
-                AND = {
-                    country_exists = UAS
-                    NOT = { country_exists = USF }
-                    NOT = { country_exists = UAM }
-                }
-                AND = {
-                    country_exists = UAM
-                    NOT = { country_exists = USF }
-                    NOT = { country_exists = UAM }
-                }
-            }
-        }
-        set_global_flag = USF_CIV_WAR_ENDED
-    }
-}
 #其他势力出现
 USF_civ_war_phase_2_setup = {
     every_state = {
         limit = {
             OR = {
+                state = 832
+            }
+            owner = {
+                is_USF_tag = yes
+            }
+        }
+        if = {
+            limit = {
+                country_exists = SSN
+            }
+            transfer_state_to = SSN
+        }
+        else_if = {
+            limit = {
+                country_exists = NSN
+            }
+            transfer_state_to = NSN
+        }
+    }
+    every_state = {
+        limit = {
+            OR = {
+                state = 1029
+                state = 407
+                state = 983
+                state = 412
+                state = 1031
+                state = 1027
+            }
+            
+            owner = {
+                is_USF_tag = yes
+            }
+        }
+        transfer_state_to = UUS
+        add_core_of = UUS
+    }
+    every_state = {
+        limit = {
+            OR = {
+                state = 438
+                state = 1025
+                state = 979
+                state = 977
+            }
+            
+            owner = {
+                is_USF_tag = yes
+            }
+        }
+        transfer_state_to = URV
+        add_core_of = URV
+    }
+    every_state = {
+        limit = {
+            OR = {
+                state = 978
+                state = 908
+                state = 530
+                state = 551
+                state = 554
+                state = 556
+            }
+            owner = {
+                is_USF_tag = yes
+            }
+        }
+        transfer_state_to = UAN
+    }
+    978 = {
+        add_core_of = UAN
+    }
+    UUS = {
+        inherit_technology = USF
+        USF = {
+            transfer_units_fraction= {
+                target = UUS
+                size = 0
+                stockpile_ratio = 0.1
+                army_ratio = 0.05
+                navy_ratio = 0
+                air_ratio = 0
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+        }
+        set_politics = {
+            ruling_party = fascism
+        }
+        division_template = {
+            name = "步兵旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 0 y = 3 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                infantry = { x = 1 y = 3 }
+                artillery_brigade = { x = 2 y = 0}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "摩托化步兵旅"
+            regiments = {
+                motorized = { x = 0 y = 0 }
+                motorized = { x = 0 y = 1 }
+                motorized = { x = 0 y = 2 }
+                motorized = { x = 1 y = 0 }
+                motorized = { x = 1 y = 1 }
+                motorized = { x = 1 y = 2 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "征召民兵"
+            is_locked = yes
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                militia = { x = 0 y = 1 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+            }
+        }
+        capital_scope = {
+            for_loop_effect = {
+                start = 0
+                end = 4
 
+                create_unit = {
+                    division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.3"
+                    owner = UUS
+                }
+
+            }
+            for_loop_effect = {
+                start = 0
+                end = 2
+
+                create_unit = {
+                    division = "name = \"摩托化步兵旅\" division_template = \"摩托化步兵旅\" start_experience_factor = 0.3"
+                    owner = UUS
+                }
+
+            }
+            for_loop_effect = {
+                start = 0
+                end = 10
+
+                create_unit = {
+                    division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                    owner = UUS
+                }
             }
         }
     }
+    URV = {
+        inherit_technology = USF
+        create_equipment_variant = {
+            name = "M1 唐纳德"
+            type = light_tank_chassis_1
+            parent_version = 0
+            show_position = no
+            modules = {
+                main_armament_slot = tank_small_cannon
+                turret_type_slot = tank_light_two_man_tank_turret
+                suspension_type_slot = tank_christie_suspension
+                armor_type_slot = tank_riveted_armor
+                engine_type_slot = tank_gasoline_engine
+                special_type_slot_1 = tank_radio_1
+            }
+            upgrades = {
+                tank_nsb_engine_upgrade = 8
+                tank_nsb_armor_upgrade = 4
+                special_historical_equipment_upgrade_max_speed = 8
+            }
+            icon = GFX_USA_basic_light_tank_medium
+        }
+        USF = {
+            transfer_units_fraction= {
+                target = URV
+                size = 0
+                stockpile_ratio = 0.1
+                army_ratio = 0.05
+                navy_ratio = 0
+                air_ratio = 0.1
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+        }
+        UAS = {
+            transfer_units_fraction= {
+                target = URV
+                size = 0
+                stockpile_ratio = 0.1
+                army_ratio = 0
+                navy_ratio = 0
+                air_ratio = 0.1
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+        }
+        set_politics = {
+            ruling_party = communism
+        }
+        division_template = {
+            name = "步兵旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 0 y = 3 }
+                infantry = { x = 1 y = 0 }
+                infantry = { x = 1 y = 1 }
+                infantry = { x = 1 y = 2 }
+                infantry = { x = 1 y = 3 }
+                artillery_brigade = { x = 2 y = 0}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "摩托化步兵旅"
+            regiments = {
+                motorized = { x = 0 y = 0 }
+                motorized = { x = 0 y = 1 }
+                motorized = { x = 0 y = 2 }
+                motorized = { x = 1 y = 0 }
+                motorized = { x = 1 y = 1 }
+                motorized = { x = 1 y = 2 }
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "工人旅"
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                infantry = { x = 0 y = 1 }
+                infantry = { x = 0 y = 2 }
+                infantry = { x = 0 y = 3 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+                militia = { x = 1 y = 2 }
+                militia = { x = 1 y = 3 }
+                artillery_brigade = { x = 2 y = 0}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+            }
+        }
+        division_template = {
+            name = "游骑兵旅"
+            priority = 2
+            regiments = {
+                light_armor = { x = 0 y = 0 }
+                light_armor = { x = 0 y = 1 }
+                light_armor = { x = 0 y = 2 }
+                motorized = {x = 1 y = 0}
+                motorized = {x = 1 y = 1}
+                motorized = {x = 1 y = 2}
+            }
+            support = {
+                artillery = { x = 0 y = 0 }
+                engineer = {x = 0 y = 1}
+                signal_company = {x = 0 y = 2}
+            }
+        }
+        division_template = {
+            name = "征召民兵"
+            is_locked = yes
+            regiments = {
+                infantry = { x = 0 y = 0 }
+                militia = { x = 0 y = 1 }
+                militia = { x = 1 y = 0 }
+                militia = { x = 1 y = 1 }
+            }
+        }
+        capital_scope = {
+            create_unit = {
+                division = "name = \"红色贝雷帽旅\" division_template = \"游骑兵旅\" start_experience_factor = 0.3"
+                owner = URV
+            }
+            for_loop_effect = {
+                start = 0
+                end = 4
+                create_unit = {
+                    division = "name = \"步兵旅\" division_template = \"步兵旅\" start_experience_factor = 0.3"
+                    owner = URV
+                }
+            }
+            for_loop_effect = {
+                start = 0
+                end = 2
+                create_unit = {
+                    division = "name = \"摩托化步兵旅\" division_template = \"摩托化步兵旅\" start_experience_factor = 0.3"
+                    owner = URV
+                }
+            }
+            for_loop_effect = {
+                start = 0
+                end = 3
+                create_unit = {
+                    division = "name = \"工人旅\" division_template = \"工人旅\" start_experience_factor = 0.25"
+                    owner = URV
+                }
+            }
+            for_loop_effect = {
+                start = 0
+                end = 8
+                create_unit = {
+                    division = "name = \"征召民兵\" division_template = \"征召民兵\" start_experience_factor = 0.1"
+                    owner = URV
+                }
+            }
+        }
+    }
+    UAN = {
+        inherit_technology = USF
+        set_politics = {
+            ruling_party = neutrality
+        }
+        USF = {
+            transfer_units_fraction= {
+                target = UAN
+                size = 0
+                stockpile_ratio = 0
+                army_ratio = 0
+                navy_ratio = 0.15
+                air_ratio = 0
+                keep_unit_leaders_trigger = {
+                    always = yes
+                }
+            }
+        }
+        division_template = {
+            name = "海军陆战旅"
+            priority = 2
+            regiments = {
+                marine = { x = 0 y = 0 }
+                marine = { x = 0 y = 1 }
+                marine = { x = 0 y = 2 }
+                marine = { x = 1 y = 0 }
+                marine = { x = 1 y = 1 }
+                marine = { x = 1 y = 2 }
+            }
+            support = {
+                engineer = {x = 0 y = 0}
+            }
+        }
+        capital_scope = {
+            create_unit = {
+                division = "name = \"海军陆战旅\" division_template = \"海军陆战旅\" start_experience_factor = 0.3"
+                owner = UAN
+            }
+            create_unit = {
+                division = "name = \"海军陆战旅\" division_template = \"海军陆战旅\" start_experience_factor = 0.3"
+                owner = UAN
+            }
+        }
+    }
+    UUS = {
+        declare_war_on = {
+            target = USF
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UAS
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UAM
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = URV
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UAR
+            type = annex_everything
+        }
+    }
+    URV = {
+        declare_war_on = {
+            target = USF
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UAS
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UAM
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UUS
+            type = annex_everything
+        }
+        declare_war_on = {
+            target = UAR
+            type = annex_everything
+        }
+    }
 }
+#内战结束
+USF_civil_war_end = {
+    #放到决议里头了
+    # if = {
+    #     limit = {
+    #         OR = {
+    #             AND = {
+    #                 country_exists = USF
+    #                 NOT = { country_exists = UAS }
+    #                 NOT = { country_exists = UAM }
+    #             }
+    #             AND = {
+    #                 country_exists = UAS
+    #                 NOT = { country_exists = USF }
+    #                 NOT = { country_exists = UAM }
+    #             }
+    #             AND = {
+    #                 country_exists = UAM
+    #                 NOT = { country_exists = USF }
+    #                 NOT = { country_exists = UAM }
+    #             }
+    #         }
+    #     }
+    #     set_global_flag = USF_CIV_WAR_ENDED
+    # }
+}
+
 
 USF_kay_civ_war_test_1 = {
     set_variable = {USF_civ_war_var = 1}
