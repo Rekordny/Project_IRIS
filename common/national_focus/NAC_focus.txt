@@ -4307,10 +4307,10 @@ focus_tree = {
         bypass = {
             OR = {
                 NOT = {
-                    country_exists = USF
+                    country_exists = USC
                 }
-                USF = {
-                    has_government = NAC
+                USC = {
+                    #has_government = NAC
                     is_in_faction_with = NAC
                 }
             }
@@ -4321,15 +4321,33 @@ focus_tree = {
             NOT = {
                 has_country_flag = NAC_reconstruction_decisions_flag
             }
-            839 = {
-                is_controlled_by_ROOT_or_ally = yes
+            if = {
+                limit = {
+                    has_global_flag = USF_CIV_WAR_STARTED
+                }
+                has_global_flag = USF_CIV_WAR_ENDED
             }
-            271 = {
-                is_controlled_by_ROOT_or_ally = yes
-            }
-            fighting_army_strength_ratio = {
-                tag = USF
-                ratio > 0.7
+            OR = {
+                USC = {
+                    has_government = communism
+                }
+                AND = {
+                    USC = {
+                        NOT = {
+                            has_government = communism
+                        }
+                    }
+                    839 = {
+                        is_controlled_by_ROOT_or_ally = yes
+                    }
+                    271 = {
+                        is_controlled_by_ROOT_or_ally = yes
+                    }
+                    fighting_army_strength_ratio = {
+                        tag = USC
+                        ratio > 0.7
+                    }
+                }
             }
         }
         cancelable = no
@@ -4408,17 +4426,27 @@ focus_tree = {
             }
             if = {
                 limit = {
-                    country_exists = USF
+                    country_exists = USC
                     USF = {
                         NOT = {
-                            has_government = NAC
-                            is_puppet_of = NAC
+                            has_government = communism
                         }
                     }
                 }
                 declare_war_on = {
-                    target = USF
+                    target = USC
                     type = annex_everything
+                }
+            }
+            else_if = {
+                limit = {
+                    USC = {
+                        has_government = communism
+                        is_faction_leader = no
+                    }
+                }
+                USC = {
+                    country_event = {id = NAC.996}
                 }
             }
             hidden_effect = {
