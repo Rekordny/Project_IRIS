@@ -475,10 +475,11 @@ NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
 
 -- NDefines.NMilitary.UNIT_EXPERIENCE_PER_COMBAT_HOUR = 0.0003 -- 0.0001
 -- --NDefines.NMilitary.EXPERIENCE_LOSS_FACTOR = 0.85 -- 1.00                 -- percentage of experienced solders who die when manpower is removed
--- NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 0.50 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
+NDefines.NMilitary.EQUIPMENT_COMBAT_LOSS_FACTOR = 1.0 -- 0.70	 	   -- % of equipment lost to strength ratio in combat, so some % is returned if below 1
 -- EXPERIENCE_COMBAT_FACTOR = 0.35 -- 0.25
+NDefines.NMilitary.PLAN_EXECUTE_CAREFUL_MAX_FORT = 7								-- If execution mode is set to careful, units will not attack provinces with fort levels greater than or equal to this
 
--- -- 穿甲机制
+-- 穿甲机制
 -- NDefines.NMilitary.PIERCING_THRESHOLDS = {					-- Our piercing / their armor must be this value to deal damage fraction equal to the index in the array below [higher number = higher penetration]. If armor is 0, 1.00 will be returned.
 -- 1.00,
 -- 0.75,
@@ -491,3 +492,87 @@ NDefines.NDiplomacy.VOLUNTEERS_TRANSFER_SPEED = 7
 -- 0.50, -- 0.65
 -- 0.25, -- 0.50
 -- }
+NDefines.NMilitary.PIERCING_THRESHOLDS = {											-- Our piercing / their armor must be this value to deal damage fraction equal to the index in the array below [higher number = higher penetration]. If armor is 0, 1.00 will be returned.
+	1.30,
+	1.1,
+	1.0,
+	0.9,
+	0.75,
+	0.5,
+	0.00, --there isn't much point setting this higher than 0
+}
+NDefines.NMilitary.PIERCING_THRESHOLD_DAMAGE_VALUES = {								-- 0 armor will always receive maximum damage (so add overmatching at your own peril). the system expects at least 2 values, with no upper limit.
+	1.00,
+	0.90,
+	0.80,
+	0.70,
+	0.60,
+	0.55,
+	0.50,
+}
+
+----------- NMilitary but relevant for AI, makes attacks more human like
+
+NDefines.NMilitary.PLAN_SPREAD_ATTACK_WEIGHT = 0.5									-- The higher the value, the less it should crowd provinces with multiple attacks. Minimum Value is 0.5, lower values cause crashes.
+
+NDefines.NMilitary.PLAN_MAX_PROGRESS_TO_JOIN = 1000000.0							--  "Progress" refers to the sum of organization of all divisions. Only if that sum is below the threshold (0.5 vanilla) will certain support attacks be executed
+
+NDefines.NMilitary.PLAN_AREA_DEFENSE_ENEMY_UNIT_FACTOR = -100.0						-- Factor applied to province score in area defense order per enemy unit in that province, stops ai from shuffling defense orders
+NDefines.NMilitary.PLAN_AREA_DEFENSE_ENEMY_CONTROLLER_SCORE = -100.0				-- Score applied to provinces in the defense area order controlled by enemies, stops ai from shuffling defense orders
+
+--NDefines.NMilitary.PLAN_EXECUTE_BALANCED_LIMIT = -20								-- When looking for an attach target, this score limit is required in the battle plan to consider province for attack
+
+NDefines.NMilitary.FRONT_MIN_PATH_TO_REDEPLOY = 3									-- If a units path is at least this long to reach its front location, it will strategically redeploy.
+
+-----------
+
+NDefines.NMilitary.NON_CORE_SUPPLY_SPEED = -0.7				    					-- we are not running on our own VP supply so need to steal stuff along the way
+NDefines.NMilitary.LAND_COMBAT_COLLATERAL_FACTOR = 0.003							-- Factor to scale collateral damage to infra and forts with.
+
+NDefines.NMilitary.ZERO_ORG_MOVEMENT_MODIFIER = -0.25								-- speed impact at 0 org.
+
+NDefines.NMilitary.ATTRITION_DAMAGE_ORG = 0.08					   					-- damage from attrition to Organisation
+NDefines.NMilitary.MAX_OUT_OF_SUPPLY_DAYS = 4 				   						-- how many days of shitty supply until max penalty achieved
+NDefines.NMilitary.OUT_OF_SUPPLY_ATTRITION = 2.0                					-- max attrition when out of supply
+NDefines.NMilitary.OUT_OF_SUPPLY_MORALE = 0                  						-- max org regain reduction from supply
+NDefines.NMilitary.OUT_OF_SUPPLY_SPEED = -1.0                   					-- max speed reduction from supply
+NDefines.NMilitary.COMBAT_SUPPLY_LACK_IMPACT = -0.6									-- combat penalty if out of supply
+
+NDefines.NMilitary.INFRA_ORG_IMPACT = 0.25											-- scale factor of infra on org regain.
+NDefines.NMilitary.STRATEGIC_REDEPLOY_ORG_RATIO = 0.1								-- Ratio of max org while strategic redeployment
+
+NDefines.NMilitary.ARMY_STRATEGIC_DEPLOYMENT_FUEL_MULT = 0.0						-- fuel consumption ratio while doing strategic deployment
+
+NDefines.NMilitary.STRATEGIC_SPEED_INFRA_BASE = 3.0              					-- Base speed of strategic redeployment when not on railways
+NDefines.NMilitary.STRATEGIC_SPEED_INFRA_MAX = 5.0              					-- Additional speed of strategic redeployment on max-level infrastructure
+NDefines.NMilitary.STRATEGIC_SPEED_RAIL_BASE = 3.0              					-- Base speed of strategic redeployment when on railways
+NDefines.NMilitary.STRATEGIC_SPEED_RAIL_MAX = 15.0                					-- Additional speed of strategic redeployment on max-level railways
+
+NDefines.NMilitary.PARACHUTE_COMPLETE_ORG = 0.6									    -- Organisation value (in %) after unit being dropped, regardless if failed, disrupted, or successful.
+NDefines.NMilitary.PARACHUTE_ORG_REGAIN_PENALTY_DURATION = 24						-- penalty in org regain after being parachuted. Value is in hours.
+
+NDefines.NMilitary.SLOWEST_SPEED = 3
+
+NDefines.NMilitary.USE_MULTIPLICATIVE_ORG_LOSS_WHEN_MOVING = false
+NDefines.NMilitary.HOURLY_ORG_MOVEMENT_IMPACT = -0.5								-- how much org is lost every hour while moving an army.
+NDefines.NMilitary.ORG_LOSS_FACTOR_ON_CONQUER = 0.25              					-- percentage of (max) org loss on takign enemy province
+
+-- NDefines.NMilitary.LEND_LEASE_FIELD_EXPERIENCE_SCALE = 0.000						-- Experience scale for lend leased equipment used in combat.
+NDefines.NMilitary.SUPPLY_GRACE = 168												-- troops always carry 10 days of food and supply (HARDCODED, DO NOT CHANGE)
+NDefines.NMilitary.SUPPLY_GRACE_MAX_REDUCE_PER_HOUR = 1         					-- supply grace is not decreased instantly when it is buffed temporarily and buff is removed
+
+NDefines.NMilitary.ATTRITION_EQUIPMENT_LOSS_CHANCE = 0.0015							-- Chance for loosing equipment when suffer attrition. Scaled up the stronger attrition is. Then scaled down by equipment reliability.
+
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_IMPACT = -0.5      						-- effect on defense due to enemy air superiorty
+NDefines.NMilitary.ENEMY_AIR_SUPERIORITY_SPEED_IMPACT = -0.15				   		-- effect on speed due to enemy air superiority
+
+NDefines.NMilitary.RETREAT_SPEED_FACTOR = 1.5              						    -- speed bonus when retreating
+NDefines.NMilitary.COMBAT_MOVEMENT_SPEED = 0.8										-- speed reduction base modifier in combat
+
+NDefines.NMilitary.TRAINING_ORG = 0
+-- NDefines.NMilitary.TRAINING_MAX_DAILY_COUNTRY_EXP = 0.05
+NDefines.NMilitary.FUEL_CAPACITY_DEFAULT_HOURS = 240               					-- default capacity if not specified
+NDefines.NMilitary.ARMY_COMBAT_FUEL_MULT = 0										-- fuel consumption ratio in combat (plus ARMY_MOVEMENT_FUEL_MULT if you are also moving. ie offensive combat)
+
+-- NDefines.NMilitary.BASE_CAPTURE_EQUIPMENT_RATIO = 0.04								-- after a successful land combat, ratio of the equipments that are being captured/salvaged from enemy's lost equipment
+NDefines.NMilitary.NON_CORE_SUPPLY_AIR_SPEED = -0.4			   						-- we are not running on our own VP supply so need to steal stuff along the way, a bit less due to air supply
