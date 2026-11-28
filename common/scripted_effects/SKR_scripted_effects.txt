@@ -3299,3 +3299,165 @@ SKR_bandream_new_clothes = {
         }
     }
 }
+##################################################################################################
+#辣舞莱芜
+##################################################################################################
+NIS_singing_effect = {
+    custom_effect_tooltip = NIS_singing_effect_tt
+    hidden_effect = {
+        add_to_variable = {SKR.NIS_singing_var = NIS_singing_var_temp}
+        clamp_variable = {
+            var = SKR.NIS_singing_var
+            max = 100
+            min = 0
+        }
+    }
+}
+NIS_sync_effect = {
+    custom_effect_tooltip = NIS_sync_effect_tt
+    hidden_effect = {
+        add_to_variable = {SKR.NIS_sync_var = NIS_sync_var_temp}
+        clamp_variable = {
+            var = SKR.NIS_sync_var
+            max = 100
+            min = 0
+        }
+    }
+}
+NIS_stamina_effect = {
+    custom_effect_tooltip = NIS_stamina_effect_tt
+    hidden_effect = {
+        add_to_variable = {SKR.NIS_stamina_var = NIS_stamina_var_temp}
+        clamp_variable = {
+            var = SKR.NIS_stamina_var
+            max = 100
+            min = 0
+        }
+    }
+}
+NIS_publicity_effect = {
+    custom_effect_tooltip = NIS_publicity_effect_tt
+    hidden_effect = {
+        add_to_variable = {SKR.NIS_publicity_var = NIS_publicity_var_temp}
+        clamp_variable = {
+            var = SKR.NIS_publicity_var
+            max = 100
+            min = 0
+        }
+    }
+}
+NIS_dancing_effect = {
+    custom_effect_tooltip = NIS_dancing_effect_tt
+    hidden_effect = {
+        add_to_variable = {SKR.NIS_dancing_var = NIS_dancing_var_temp}
+        clamp_variable = {
+            var = SKR.NIS_dancing_var
+            max = 100
+            min = 0
+        }
+    }
+}
+NIS_stress_effect = {
+    custom_effect_tooltip = NIS_stress_effect_tt
+    hidden_effect = {
+        add_to_variable = {SKR.NIS_stress_var = NIS_stress_var_temp}
+        clamp_variable = {
+            var = SKR.NIS_stress_var
+            max = 100
+            min = 0
+        }
+    }
+}
+
+NIS_update_club_modifier_effect = {
+    hidden_effect = {
+        #基础数值
+        set_variable = {NIS_political_power_factor_b = 0.001}
+        set_variable = {NIS_conscription_factor_b = 0.001}
+        set_variable = {NIS_industrial_capacity_factory_b = 0.001}
+        set_variable = {NIS_stability_factor_b = 0.001}
+        
+        
+        set_variable = {NIS_political_power_factor = NIS_political_power_factor_b}
+        set_variable = {NIS_conscription_factor = NIS_conscription_factor_b}
+        set_variable = {NIS_industrial_capacity_factory = NIS_industrial_capacity_factory_b}
+        set_variable = {NIS_stability_factor = NIS_stability_factor_b}
+
+        
+        set_temp_variable = {NIS_singing_var_r = SKR.NIS_singing_var}
+        set_temp_variable = {NIS_dancing_var_r = SKR.NIS_dancing_var}
+        set_temp_variable = {NIS_stamina_var_r = SKR.NIS_stamina_var}
+        set_temp_variable = {NIS_sync_var_r = SKR.NIS_sync_var}
+
+        #如果默契、体力低于50变成debuff
+        if = {
+            limit = {
+                check_variable = {SKR.NIS_sync_var < 50}
+                check_variable = {SKR.NIS_stamina_var < 50}
+            }
+            set_temp_variable = {NIS_debuff_var = 1}
+
+            multiply_temp_variable = {NIS_singing_var_r = -1}
+            multiply_temp_variable = {NIS_dancing_var_r = -1}
+            multiply_temp_variable = {NIS_stamina_var_r = -1}
+            multiply_temp_variable = {NIS_sync_var_r = -1}
+        }
+
+        set_temp_variable = {NIS_publicity_modifier = SKR.NIS_publicity_var}
+        multiply_temp_variable = {NIS_publicity_modifier = 0.001}
+        add_to_temp_variable = {NIS_publicity_modifier = 1}
+
+        #宣发乘数
+        multiply_temp_variable = {NIS_singing_var_r = NIS_publicity_modifier}
+        multiply_temp_variable = {NIS_dancing_var_r = NIS_publicity_modifier}
+        multiply_temp_variable = {NIS_stamina_var_r = NIS_publicity_modifier}
+        multiply_temp_variable = {NIS_sync_var_r = NIS_publicity_modifier}
+
+        #计算压力惩罚
+        if = {
+            limit = {
+                check_variable = {SKR.NIS_stress_var > 50}
+            }
+            set_temp_variable = {NIS_stress_modifier = SKR.NIS_stress_var}
+            add_to_temp_variable = {NIS_stress_modifier = -50}
+            if = {
+                limit = {
+                    #buff状态则缩减buff
+                    NOT = {
+                        check_variable = {NIS_debuff_var = 1}
+                    }
+                }
+                multiply_temp_variable = {NIS_stress_modifier = -0.001}
+                
+            }
+
+            else = {
+                multiply_temp_variable = {NIS_stress_modifier = 0.001}
+            }
+            add_to_temp_variable = {NIS_stress_modifier = 1}
+            multiply_temp_variable = {NIS_singing_var_r = NIS_stress_modifier}
+            multiply_temp_variable = {NIS_dancing_var_r = NIS_stress_modifier}
+            multiply_temp_variable = {NIS_stamina_var_r = NIS_stress_modifier}
+            multiply_temp_variable = {NIS_sync_var_r = NIS_stress_modifier}
+        }
+
+        multiply_variable = {NIS_political_power_factor = NIS_singing_var_r}
+        multiply_variable = {NIS_conscription_factor = NIS_dancing_var_r}
+        multiply_variable = {NIS_industrial_capacity_factory = NIS_stamina_var_r}
+        multiply_variable = {NIS_stability_factor = NIS_sync_var_r}
+    }
+}
+
+NIS_live_prepare_effect = {
+    hidden_effect = {
+        clr_country_flag = NIS_idol_research_club_resting_flag
+        remove_dynamic_modifier = {modifier = NIS_idol_research_club_dynamic_modifier}
+
+        set_variable = {SKR.NIS_singing_var = 10}
+        set_variable = {SKR.NIS_dancing_var = 10}
+        set_variable = {SKR.NIS_stamina_var = 10}
+        set_variable = {SKR.NIS_sync_var = 10}
+        set_variable = {SKR.NIS_publicity_var = 10}
+        set_variable = {SKR.NIS_stress_var = 0}
+    }
+}
